@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownStyles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+
+<title>Teacher Dashboard</title>
+
+<style>
+   .heading {
+       font-weight: bolder; 
+       font-size: 16pt; 
+       background-color: cornflowerblue; 
+       color:black;
+       }
+    .menu {
+        font-size: 16pt;
+    }
+
+.c {margin: auto; text-align: center;}
+
+h1 {
+    font-weight: bolder; 
+       font-size: 24pt; 
+       
+       color:green;
+}
+
+h2 {
+    font-weight: bolder; 
+       font-size: 20pt; 
+       
+       color:blue;
+}
+
+td {
+    font-size: 14pt;
+
+}
+  
+ th {
+    font-size: 18pt;
+    
+}
+
+#totalData, #wordData {
+    text-align: center;
+}
+   
+body {background-color: lightblue; color: black ; font-size: 16pt ; font-weight: bold;
+
+}
+
+button {margin-right: 1em; margin-top: 2em;}
+
+</style>
+
+<body>
+
+
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-md-12 c">
+              <h1>Teacher links<h1>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-md-12 text-center">
+        <a href = "countDown/countDownWordsTeacher.html" target = "_blank"><button id = "clearTeams" class="btn btn-warning long menu">Word</button></a>
+        <a href = "countDown/countDownNumbersTeacher.html" target = "_blank">  <button id = "showResults" class="btn btn-info long menu">Numbers</button></a>
+            <a href = "askTheAudience/indexTeacher.php" target = "_blank">     <button id = "displayWords" class="btn btn-primary long menu">Ask the Audience</button></a>
+
+      <a href = "tests/english/englishResultsTeacher.html" target = "_blank">    
+         <button id = "displayWords" class="btn btn-danger long menu">
+      English results</button></a>
+ 
+      <a href = "https://pio-students.net/scrabble/findScrabble.html" target = "_blank">    
+         <button id = "displayWords" class="btn btn-success long menu"> Word Builder</button>
+       </a>
+
+   </div></div>
+
+      <div class = "row">
+      <div class = "col-md-12 text-center">
+
+       <a href = "dragons/dragonsTeacher.html" target = "_blank">    
+        <button id = "displayWords" class="btn btn-warning long menu">Dragons</button></a>
+
+         <a href = "jimmySMC/viewDatabaseJimmyTeacher.php" target = "_blank">    
+        <button id = "displayWords" class="btn btn-success long menu">Jimmy Old</button></a>
+
+         <a href = "jimmyNew/jimmyNewTeacher.html" target = "_blank">    
+        <button id = "displayWords" class="btn btn-info long menu">Jimmy New</button>
+      </a>
+      
+         <a href = "threeEquations/triangleTeacher.html" target = "_blank">    
+        <button id = "displayWords" class="btn btn-danger long menu">3 equations</button>
+      </a>
+</div></div>
+   <div class = "row">
+      <div class = "col-md-12 text-center">
+
+          <a href = "race2022/leaderBoard.html" target = "_blank">    
+        <button id = "race204_8" class="btn btn-warning long menu">G7 Race 2024 leaderboard</button>
+      </a>
+
+             <a href = "race2024/leaderBoardG8.html" target = "_blank">    
+        <button id = "race204_8" class="btn btn-warning long menu">G8 Race 2024 leaderboard</button>
+      </a>
+
+          <a href = "race2024/leaderBoardG9.html" target = "_blank">    
+        <button id = "race2024_9" class="btn btn-warning long menu">G9 Race 2024 leaderboard</button>
+      </a>
+
+          <a href = "race2024/leaderBoardG10.html" target = "_blank">    
+        <button id = "race2024_10" class="btn btn-info long menu">G10 Race 2024 leaderboard</button>
+      </a>
+      
+         <a href = "race2024/leaderBoardG11.html" target = "_blank">    
+        <button id = "race2024_11" class="btn btn-success long menu">G11 Race 2024 leaderboard</button>
+      </a>
+
+             <a href = "race2024/leaderBoardG12.html" target = "_blank">    
+        <button id = "race2024_12" class="btn btn-danger long menu">G12 Race 2024 leaderboard</button>
+      </a>
+
+  </div></div>
+
+     <div class = "row">
+      <div class = "col-md-12 text-center">
+
+          <a href = "race2022/crossnumberLeaderboard.html" target = "_blank">    
+        <button id = "crossnumber" class="btn btn-info long menu">Crossnumber leaderboard</button>
+      </a>
+      
+          <a href = "translate/translateLeaderBoard.html" target = "_blank">    
+        <button id = "translateHS" class="btn btn-info long menu">Translate</button>
+      </a>
+</div></div>
+
+
+

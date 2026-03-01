@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+
+<title>Translate Teacher Dashboard</title>
+
+<style>
+   .heading {
+       font-weight: bolder; 
+       font-size: 16pt; 
+       background-color: cornflowerblue; 
+       color:black;
+       }
+    .menu {
+        font-size: 24pt;
+    }
+
+h1 {
+    font-weight: bolder; 
+       font-size: 24pt; 
+       
+       color:green;
+}
+
+h2 {
+    font-weight: bolder; 
+       font-size: 20pt; 
+       
+       color:blue;
+}
+
+td {
+    font-size: 14ptem;
+
+}
+  
+ th {
+    font-size: 18pt;
+    
+}
+
+#totalData, #wordData {
+    text-align: center;
+}
+   
+body {background-color: white; color:black;font-size: 2em;}
+</style>
+
+<body>
+
+
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-md-12 c">
+              <h1>Translate Results</h1>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-md-12 c">
+        <button id = "clearStudents" class="btn btn-warning long menu">Clear results</button>
+        <button id = "showResults" class="btn btn-info long menu">Show results</button>
+      
+        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "yourWords"></p>
+</div></div>
+
+<div class = "row">
+    <div class = "col-md-12 c">
+      <h2>Results</h2>
+        </div></div>
+
+        <div class = "row">
+            <div class = "col-md-12 c">       
+            <table class="table table-bordered table-hover" id="resultsTable">
+                <thead id = "resultsHeader">
+                    <tr >
+                        <th class="text-center">
+                            Student
+                        </th>
+                        <th class="text-center">
+                            Correct
+                        </th>
+                        <th class="text-center">
+                            Wrong
+                        </th>
+                          <th class="text-center">
+                            Percent
+                        </th>
+                     
+                    </tr>
+                </thead>
+                <tbody id = "resultsBody">
+
+                </div></div>
+  
+</div>
+</body>
+</head>
+
+<script>
+    $(document).ready(function(){
+
+// load words into an array
+// sorted in upper case
+
+    })
+
+</script>
+
+<script>
+
+$(document).ready(function(){
+        $('#clearStudents').on('click', function(){
+if (confirm('Clear student results?')) {
+    $.ajax({
+                url: "clearTranslateResults.php",
+                
+                dataType: 'json',
+                
+                contentType: 'application/json',
+                success: function(message) {
+                   alert(message) ;
+                   console.log("Data cleared");
+                },
+                error: function(data, status, jqXHR) {
+                    console.log('There was an error.');
+                }
+            });      // end $.ajax
+} else {
+  // Do nothing!
+  console.log('Tables not cleared.');
+}
+
+        })
+    })
+</script>
+
+<script>
+
+$(document).ready(function(){
+    $('#showResults').on('click', function(){
+        var seconds = 5;
+
+        setInterval(function(){
+        
+            $.ajax({
+                url: "translateShowResults.php",
+                
+                dataType: 'json',
+                
+                contentType: 'application/json',
+                success: function(data) {
+                   $('#results').html(data.html) ; 
+                   console.log("Data",data) ;
+                   // need to display here
+                   $('#resultsBody').empty() ;
+
+                   for (var i = 0 ; i < data.length ; i++)
+                    {   student =  data[i][0] ;
+                        correct = data[i][1] ;
+                        wrong = data[i][2] ;
+                        percent = data[i][3] + '%' ;
+                        console.log("Data",data[i]) ;
+                       $('#resultsTable').append('<tr><td>' + student + 
+                        "</td><td id = 'wordData'>" + correct + 
+                         "</td><td id = 'wordData'>" + wrong + 
+                        "</td><td id = 'totalData'>" + percent + '<tr>')
+                    }
+                },
+                error: function(data, status, jqXHR) {
+                    console.log('There was an error.');
+                }
+            });      // end $.ajax
+        }, seconds * 1000)
+});
+
+})
+    </script>
+

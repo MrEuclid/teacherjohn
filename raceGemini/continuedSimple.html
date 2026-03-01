@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+ 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+
+  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
+<link rel="stylesheet" href="../css/templeStyles.css">
+<link rel="stylesheet" href="../css/newTempleStyles.css">
+<link rel="stylesheet" href="race2024.css">
+<script src="javascript/utilities.js"></script>
+
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+
+<style>
+  
+  #cf {font-size: 2em; font-weight: bolder; color:blue;}
+</style>
+</head>
+<body>
+  <h1>Fraction</h1>
+  <p id = "cf"></p>
+</body>
+</html>
+
+<script>
+
+function continuedFraction(cf) {
+  // Initialize variables for numerator and denominator
+  let numerator = cf[cf.length - 1];
+  let denominator = 1;
+
+  // Iterate through the continued fraction list in reverse order
+  for (let i = cf.length - 2; i >= 0; i--) {
+    // Update numerator and denominator using recursion
+    const temp = numerator;
+    numerator = denominator;
+    denominator = temp + cf[i] * denominator;
+    console.log(i,numerator,denominator);
+  }
+
+  // Return the final fraction
+  return numerator / denominator;
+}
+
+// Continued fraction representation
+let cf = [3, 7, 15, 1];
+
+// Evaluate the continued fraction
+let  result = continuedFraction(cf);
+// alert(result);
+// Print the result
+console.log(result);
+</script>
+
+<script type="text/javascript">
+  function makeContinuedFraction(arr)
+
+  {
+    // use an array like [3,7,15,1] to make a cf with 3 levels
+if (arr.length == 4)
+  {  x = '$' + arr[0] + ' + \\frac{1}{' + arr[1] + 
+                   ' + \\frac{1}{' + arr[2] + 
+            
+                   ' + \\frac{1}{' + arr[3] + '}}} ' + '$' ; }
+
+
+if (arr.length == 5)
+  {  x = '$' + arr[0] + ' + \\frac{1}{' + arr[1] + 
+                   ' + \\frac{1}{' + arr[2] + 
+                   ' + \\frac{1}{' + arr[3] + 
+                   ' + \\frac{1}{' + arr[4] + '}}}} ' + '$' ; }
+          
+            
+  $('#cf').html(x);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "cf" ]);
+  }
+</script>
+
+<script type="text/javascript">
+
+
+function continuedFractionConvergents(cf) {
+  // Initialize empty arrays for numerators and denominators
+  const numerators = [];
+  const denominators = [];
+  let max = cf.length;
+
+  // Handle edge case for single element
+  if (cf.length === 1) {
+    numerators.push(cf[0]);
+    denominators.push(1);
+    return { numerators, denominators };
+  }
+
+  // Initialize first two convergents
+  numerators.push(cf[0]);
+  denominators.push(1);
+  numerators.push(cf[0] * cf[1] + 1);
+  denominators.push(cf[1]);
+
+  // Calculate remaining convergents up to max (or all)
+  for (let i = 2; i < max; i++) {
+    const newNumerator = numerators[i - 1] * cf[i] + numerators[i - 2];
+    const newDenominator = denominators[i - 1] * cf[i] + denominators[i - 2];
+    numerators.push(newNumerator);
+    denominators.push(newDenominator);
+    console.log(i, numerators,denominators);
+  }
+
+  return { numerators, denominators };
+}
+
+
+
+</script>
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+   
+// Sample continued fraction
+ // cf = [1,1,1,1,1];
+ cf = [1,2,3,4,5];
+ // cf = [3, 7, 15, 1];
+//const cf = [6,6,6,6,6,6];
+// Calculate convergents up to the 5th (or all)
+const convergents = continuedFractionConvergents(cf);
+
+console.log("Numerators:", convergents.numerators);
+console.log("Denominators:", convergents.denominators);
+ makeContinuedFraction(cf);
+
+})
+
+</script>

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+    <script src = "https://cdnjs.com/libraries/mathjs"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+          <script type="text/javascript"> google.charts.load('current', {'packages':['corechart', 'controls']});</script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+
+  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+
+    
+<link rel="stylesheet" href="../css/templeStyles.css">
+<!--
+<link rel="stylesheet" href="../css/newTempleStyles.css">
+-->
+
+<link rel="stylesheet" href="race2024.css">
+
+    <meta charset="utf-8">
+    
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+<title>Smart Maths</title>
+
+<style type="text/css">
+
+
+img 
+    {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+
+[id^=q]  {
+
+    color:white; 
+    font-weight:bolder ; 
+    font-size:1em ; 
+    border-radius: 24px;
+    height: 120px;
+    width: 120px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    display: inline-block;
+    margin: 1px;
+    border-width: 1px;
+    border-color: orange;
+    background-color: blue;
+    font-family: "Lucida Console", "Courier New", monospace;
+    
+
+ 
+     }
+h1 {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
+
+p {display:inline-block;}
+
+#instructions {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
+
+img { width: 180px; height: 120px; padding: 5px; }
+
+
+h1 {
+font-weight: bolder; 
+   font-size: 24pt; 
+   
+   color:green;
+}
+
+h2 {
+font-weight: bolder; 
+   font-size: 20pt; 
+   
+   color:blue;
+
+}
+
+#teamName {display: inline-block; color: black; font-size: 2em;font-weight: bolder; width: auto;}
+#total,#timer , #cancel, #home , #start
+    {
+        display: inline-block; 
+        background-color: blue; 
+        color: white; 
+        width: 4em;
+         height: 3em;
+         font-size: 1em;
+         font-weight: bolder;
+        padding-bottom: 1em;
+        text-align:center;
+}
+
+
+#home,#cancel ,#start
+            {
+                display: inline-block; 
+             background-color: green; 
+             color: yellow;
+            font-size:1em ; 
+            font-weight:bolder; 
+        }
+
+#expression{margin: 10px ;
+            background-color: lightblue;
+            color: black;
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1.2em;
+            width:240px ;
+            height:40px;
+            }
+
+            #ans {margin: 10px ;
+            background-color: lightgreen;
+            color: black;
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1.2em;
+            width:320px ;
+            height:40px;
+            }
+#casio {border-style: solid; color: green;}
+
+.calc {background-color: lightgreen;color:black;}
+.think {background-color: lightblue;color:black;}
+.easy {background-color: pink;color:black;}
+.stats {background-color: red;color:black;}
+.graphs {background-color: orange;color:black;}
+.smart {background-color: lightgreen;color:black;}
+
+  </style>
+
+  </head>
+  <body>
+      <div class  = "container-fluid">
+      
+      <div class = "row text-center">
+        <div class = "col- ">
+         
+
+
+ <div id = "heading">
+    <h1>Welcome to Smart Maths</h1>
+</div> <!-- heading -->
+</div></div>
+<div id = "loginBox">
+<div class = "row text-center">
+  <div class = "col- ">
+<label>Team name</label>
+<input type = "text" id = "theTeam">
+<button id = "login">Log in</button>
+<a href = "../index.php"><button>Home</button></a>
+  </div></div>
+
+<div class = "row">
+  <div class = "col- text-center">
+
+<div id = "errorMessage"></div>
+</div></div>

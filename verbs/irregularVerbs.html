@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Irregular Verbs</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <style>
+        body { background-color: #f4f6f9; padding-top: 30px; padding-bottom: 50px; }
+        .score-badge { font-size: 1.5rem; }
+        
+        /* The main verb flashcard */
+        .verb-card {
+            background-color: #198754; 
+            color: #ffc107; 
+            font-size: 3.5rem; 
+            font-weight: bolder; 
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Option Buttons */
+        .option-btn { 
+            font-weight: bold; 
+            font-size: 1.5rem; 
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            transition: transform 0.1s;
+        }
+        .option-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+<div class="container text-center" style="max-width: 600px;">
+
+    <div class="row mb-4 align-items-center">
+        <div class="col-4 text-start">
+            <a href="../index.php" class="btn btn-outline-dark shadow-sm fw-bold">🏠 Home</a>
+        </div>
+        <div class="col-8 text-end">
+            <span class="badge bg-success score-badge me-2 shadow-sm">✔️ <span id="scoreDisplay">0</span></span>
+            <span class="badge bg-danger score-badge shadow-sm">❌ <span id="wrongDisplay">0</span></span>
+        </div>
+    </div>
+
+    <div id="loadingMsg" class="mt-5">
+        <h3 class="text-muted fw-bold">Loading verbs...</h3>
+    </div>
+
+    <div id="gameBoard" style="display:none;">
+        <h4 class="text-muted mb-3 fw-bold">What is the past tense of:</h4>
+        
+        <div class="verb-card" id="targetVerb">
+            </div>
+
+        <div id="optionsArea" class="mb-4">
+            </div>
+
+        <h4 id="feedbackMsg" class="fw-bold" style="min-height: 40px;"></h4>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    
+    let allVerbs = [];
+    let currentIndex = 0;
+    let score = 0;
+    let wrong = 0;
+
+    // Load the dictionary from the database
+    $.getJSON('loadVerbs.php', function(data) {
+        if(data.length === 0) {
+            $('#loadingMsg').html("<span class='text-danger'>Database empty or disconnected.</span>");
+            return;
+        }
+        allVerbs = data;
+        $('#loadingMsg').hide();
+        $('#gameBoard').fadeIn();
+        loadNextQuestion();
+    });
+
+    function loadNextQuestion() {
+        if (currentIndex >= allVerbs.length) {
+            $('#gameBoard').html(`<h1 class='text-success fw-bold display-3'>Great Job!</h1><h2 class='mt-3'>Final Score: ${score}</h2><a href='irregularVerbs.html' class='btn btn-primary mt-4'>Play Again</a>`);
+            return;
+        }
+
+        let currentData = allVerbs[currentIndex]; 
+        
+        // Based on your SQL:
+        // [0] = id, [1] = verb, [2] = opt1, [3] = opt2, [4] = opt3, [5] = opt4, [6] = answer column (1 to 4)
+        let baseVerb = currentData[1].trim();
+        let answerIndex = parseInt(currentData[6]); 
+        
+        // The correct option is offset by 1 because opt1 is at array index 2
+        let correctPast = currentData[1 + answerIndex].trim(); 
+
+        $('#targetVerb').text(baseVerb);
+        $('#feedbackMsg').text("").removeClass();
+        
+        // Grab the 4 specific handcrafted options from the database row
+        let options = [
+            currentData[2].trim(),
+            currentData[3].trim(),
+            currentData[4].trim(),
+            currentData[5].trim()
+        ];
+
+        // Shuffle their display order so it isn't predictable if played multiple times
+        options.sort(() => Math.random() - 0.5);
+
+        // Render the 4 buttons
+        $('#optionsArea').empty();
+        options.forEach(opt => {
+            $('#optionsArea').append(`<button class="btn btn-primary option-btn shadow-sm" data-answer="${opt}">${opt}</button>`);
+        });
+    }
+
+    // CHECK ANSWER LOGIC
+    $(document).on('click', '.option-btn', function() {
+        // Step 1: Immediately disable all buttons to stop spam-clicking
+        $('.option-btn').prop('disabled', true);
+
+        let currentData = allVerbs[currentIndex]; 
+        let baseVerb = currentData[1].trim();
+        let answerIndex = parseInt(currentData[6]); 
+        let correctPast = currentData[1 + answerIndex].trim(); 
+        
+        let chosen = $(this).data('answer');
+
+        if (chosen === correctPast) {
+            // Correct
+            $(this).removeClass('btn-primary').addClass('btn-success');
+            $('#feedbackMsg').removeClass().addClass('text-success').text(`⭐ Correct! The past tense of ${baseVerb} is ${correctPast}.`);
+            score++;
+        } else {
+            // Incorrect - highlight the bad choice red, and reveal the real answer in green
+            $(this).removeClass('btn-primary').addClass('btn-danger');
+            $(`.option-btn[data-answer='${correctPast}']`).removeClass('btn-primary').addClass('btn-success');
+            
+            $('#feedbackMsg').removeClass().addClass('text-danger').text(`❌ Incorrect. The past tense of ${baseVerb} is ${correctPast}.`);
+            wrong++;
+        }
+
+        // Update the scoreboard
+        $('#scoreDisplay').text(score);
+        $('#wrongDisplay').text(wrong);
+
+        // Step 2: Force a NEW word to appear after 2.5 seconds to prevent guessing
+        setTimeout(function() {
+            currentIndex++;
+            loadNextQuestion();
+        }, 2500);
+    });
+
+});
+</script>
+
+</body>
+</html>

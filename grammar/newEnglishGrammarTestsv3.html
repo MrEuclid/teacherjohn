@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>English Grammar Tests</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <style>
+        body { background-color: #f4f6f9; padding-top: 30px; padding-bottom: 50px; }
+        
+        #stars { font-size: 3rem; color: #ffc107; text-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-bottom: 20px;}
+        .control-btn { min-width: 120px; font-weight: bold; margin: 5px; }
+        .grade-btn { min-width: 90px; margin: 5px; font-weight: bold; font-size: 1.2rem;}
+        
+        /* The Fill-in-the-blank styling */
+        .answer-blank {
+            min-width: 100px;
+            display: inline-block;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Option Buttons */
+        .option-btn { font-weight: bold; font-size: 1.1rem; border-radius: 8px;}
+        
+        /* Question Blocks */
+        .question-block {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container text-center">
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <h1 class="text-primary fw-bold text-uppercase">Grammar Challenge</h1> 
+            <h3 class="text-muted">Tap the best word to complete the sentence!</h3>
+            <div id="stars"></div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="../index.php" class="btn btn-outline-dark control-btn shadow-sm">🏠 Home</a>
+            <button id="changeGradeBtn" class="btn btn-info control-btn text-white shadow-sm" style="display:none;">🔄 Change Grade</button>
+            <button class="btn btn-secondary control-btn" disabled>Score: <span id="scoreDisplay">0</span></button>
+        </div>
+    </div>
+
+    <div id="gradeSelectArea" class="card shadow-sm border-0 mb-4 p-4 mx-auto" style="max-width: 700px;">
+        <h4 class="text-muted mb-4">Select Your Grade Level</h4>
+        <div>
+            <button class="btn btn-success grade-btn" data-level="2">G2</button>
+            <button class="btn btn-info grade-btn text-white" data-level="3">G3</button>
+            <button class="btn btn-warning grade-btn text-dark" data-level="4">G4</button>
+            <button class="btn btn-danger grade-btn" data-level="5">G5</button>
+            <button class="btn btn-primary grade-btn" data-level="6">G6</button>
+            <button class="btn btn-secondary grade-btn" data-level="7">G7</button>
+            <button class="btn btn-dark grade-btn" data-level="8">G8</button>
+            <button class="btn btn-success grade-btn" data-level="9">G9</button>
+        </div>
+    </div>
+
+    <div id="gameBoard" style="display:none; max-width: 900px; margin: 0 auto;">
+        
+        <div id="questionsContainer" class="text-start mb-4">
+            </div>
+
+        <div class="text-center">
+            <button id="checkAnswerBtn" class="btn btn-warning btn-lg px-5 py-3 fw-bold shadow rounded-pill fs-4">Check Answers</button>
+            <h3 id="feedbackMsg" class="mt-4 fw-bold"></h3>
+        </div>
+        
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    
+    let allQuestions = [];
+    let currentChunkIndex = 0;
+    const CHUNK_SIZE = 5; // How many questions per round
+    let earnedStars = "";
+    let activeLevel = null;
+
+    // 1. GRADE SELECTION 
+    $('.grade-btn').on("click", function() {
+        activeLevel = $(this).data('level');
+        
+        $('#gradeSelectArea').slideUp();
+        $('#changeGradeBtn').show();
+        $('#feedbackMsg').text("Loading questions...").removeClass().addClass('text-muted mt-4 fw-bold');
+        $('#gameBoard').fadeIn();
+        
+        earnedStars = ""; 
+        $('#stars').text(earnedStars);
+
+        // Fetch all questions for this grade
+        $.ajax({
+            url: 'loadGrammarQuestions.php',
+            type: 'POST',
+            data: { level: activeLevel }, 
+            dataType: 'json',
+            success: function(data) {
+                if (data.length === 0 || data === "No questions") {
+                    $('#feedbackMsg').text("No questions found for this grade!").addClass('text-danger');
+                    $('#checkAnswerBtn').hide();
+                    return;
+                }
+                
+                allQuestions = data;
+                currentChunkIndex = 0; // Reset to the first batch of 5
+                renderChunk(currentChunkIndex);
+            },
+            error: function() {
+                $('#feedbackMsg').text("Error connecting to the database.").addClass('text-danger');
+            }
+        });
+    });
+
+    // 2. RENDER A BATCH OF 5 QUESTIONS
+    function renderChunk(index) {
+        let startIndex = index * CHUNK_SIZE;
+        let chunk = allQuestions.slice(startIndex, startIndex + CHUNK_SIZE);
+
+        if (chunk.length === 0) {
+            // They answered every single question in the database for this level!
+            $('#questionsContainer').empty();
+            $('#checkAnswerBtn').hide();
+            $('#feedbackMsg').removeClass().addClass('text-success').text("🎉 Incredible! You completed all the questions for Grade " + activeLevel + "!");
+            return;
+        }
+
+        $('#questionsContainer').empty();
+        $('#checkAnswerBtn').show();
+        $('#feedbackMsg').removeClass().text("");
+        $('#scoreDisplay').text(`0 / ${chunk.length}`);
+
+        chunk.forEach((q, i) => {
+            let uniqueId = startIndex + i;
+            let clause1 = q[3] || "";
+            let clause2 = q[4] || "";
+            let correctAnswer = q[11] ? q[11].trim() : "";
+            
+            // Build the HTML for the Question
+            let html = `
+                <div class="question-block p-4 mb-4">
+                    <p class="fs-4 lh-base">
+                        <span class="text-muted fw-bold me-2">(${i + 1})</span> 
+                        ${clause1} 
+                        <span class="answer-blank px-3 py-1 bg-light border border-2 border-primary text-primary rounded" 
+                              id="blank-${uniqueId}" 
+                              data-answer="${correctAnswer}">
+                              _____
+                        </span> 
+                        ${clause2}
+                    </p>
+                    <div class="options-container mt-3">`;
+            
+            // Build the Option Buttons (Indices 5 through 10 in your database)
+            for(let j = 5; j <= 10; j++) {
+                if (q[j] && q[j].trim() !== "") {
+                    html += `<button class="btn btn-outline-secondary m-1 option-btn shadow-sm" data-target="blank-${uniqueId}">${q[j].trim()}</button>`;
+                }
+            }
+            
+            html += `</div></div>`;
+            $('#questionsContainer').append(html);
+        });
+    }
+
+    // 3. TAP TO FILL IN THE BLANK
+    $(document).on('click', '.option-btn', function() {
+        let targetBlankId = $(this).data('target');
+        let selectedWord = $(this).text();
+        
+        // Update the blank with the chosen word and highlight it yellow
+        $('#' + targetBlankId)
+            .text(selectedWord)
+            .removeClass('bg-light border-primary border-danger text-primary text-white')
+            .addClass('bg-warning text-dark border-warning');
+    });
+
+    // 4. CHECK ANSWER LOGIC
+    $('#checkAnswerBtn').on("click", function() {
+        let correctCount = 0;
+        let totalInChunk = $('.answer-blank').length;
+
+        // Loop through every blank on the screen
+        $('.answer-blank').each(function() {
+            let userVal = $(this).text().trim();
+            let correctVal = $(this).data('answer').trim();
+
+            if (userVal === correctVal) {
+                correctCount++;
+                // Make it green if right
+                $(this).removeClass('bg-warning border-warning border-danger text-dark').addClass('bg-success text-white border-success');
+                $(this).closest('.question-block').css('border-color', '#198754');
+            } else {
+                // Make it red if wrong
+                $(this).removeClass('bg-warning border-warning bg-success border-success text-dark text-primary').addClass('bg-danger text-white border-danger');
+                $(this).closest('.question-block').css('border-color', '#dc3545');
+            }
+        });
+
+        $('#scoreDisplay').text(`${correctCount} / ${totalInChunk}`);
+
+        if (correctCount === totalInChunk) {
+            // Perfect Score!
+            $('#feedbackMsg').removeClass().addClass('text-success').text("⭐ Perfect 5/5! Loading the next set...");
+            $('#checkAnswerBtn').hide(); 
+            
+            earnedStars += "★ ";
+            $('#stars').text(earnedStars);
+
+            /* Note: If you ever rebuild the student login system, 
+               you can put your writeToDatabase() function right here! */
+
+            // Wait 1.5 seconds so they see the success message, then load the next 5
+            setTimeout(function() {
+                currentChunkIndex++;
+                renderChunk(currentChunkIndex);
+            }, 1500);
+
+        } else {
+            $('#feedbackMsg').removeClass().addClass('text-danger').text(`You got ${correctCount} right. Fix the red ones and try again!`);
+        }
+    });
+
+    // 5. CHANGE GRADE (Escape Hatch)
+    $('#changeGradeBtn').on("click", function() {
+        $(this).hide();
+        $('#gameBoard').hide();
+        $('#feedbackMsg').text("");
+        $('#scoreDisplay').text("0");
+        $('#gradeSelectArea').slideDown(); 
+    });
+
+});
+</script>
+
+</body>
+</html>

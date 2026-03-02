@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teacher Leaderboard</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    
+    <style>
+        body { background-color: #212529; color: white; padding-top: 30px; }
+        .gold { color: #ffd700; font-weight: bold; }
+        .silver { color: #c0c0c0; font-weight: bold; }
+        .bronze { color: #cd7f32; font-weight: bold; }
+        .score-badge { font-size: 1.8rem; font-weight: bold; padding: 10px 20px;}
+        .word-count-badge { font-size: 1.2rem; font-weight: normal; background-color: #495057; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row mb-4 text-center">
+        <div class="col-12">
+            <h1 class="fw-bold text-uppercase text-info display-4">Live Leaderboard</h1>
+            <h4 class="text-secondary">Word Race Competition</h4>
+        </div>
+    </div>
+
+    <div class="card bg-dark border-secondary shadow mx-auto" style="max-width: 900px;">
+        <div class="card-body p-0">
+            <table class="table table-dark table-striped table-hover m-0 fs-3 align-middle text-center">
+                <thead>
+                    <tr class="text-info">
+                        <th>Rank</th>
+                        <th class="text-start">Team Name</th>
+                        <th>Words Found</th>
+                        <th>Total Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr><td colspan="4" class="text-center py-4 text-muted">Waiting for teams to submit words...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+
+    function fetchLeaderboard() {
+        $.getJSON('loadLeaderboard.php', function(data) {
+            
+            if(data.length === 0) return;
+            
+            $('#leaderboardBody').empty();
+
+            data.forEach((team, index) => {
+                let rank = index + 1;
+                let rankClass = "";
+                let rankDisplay = rank;
+
+                if (rank === 1) { rankClass = "gold"; rankDisplay = "🏆 1st"; }
+                else if (rank === 2) { rankClass = "silver"; rankDisplay = "🥈 2nd"; }
+                else if (rank === 3) { rankClass = "bronze"; rankDisplay = "🥉 3rd"; }
+
+                let rowHtml = `
+                    <tr>
+                        <td class="${rankClass}">${rankDisplay}</td>
+                        <td class="fw-bold text-light text-start">${team.team}</td>
+                        <td><span class="badge word-count-badge shadow-sm">${team.word_count} words</span></td>
+                        <td><span class="badge bg-primary score-badge shadow-sm">${team.total_score} pts</span></td>
+                    </tr>
+                `;
+                $('#leaderboardBody').append(rowHtml);
+            });
+        });
+    }
+
+    // Check for new scores every 3 seconds
+    fetchLeaderboard();
+    setInterval(fetchLeaderboard, 3000);
+
+});
+</script>
+</body>
+</html>

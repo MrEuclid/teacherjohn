@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Word Race</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <style>
+        body { background-color: #f4f6f9; padding-top: 30px; }
+        .timer-box { font-size: 4rem; font-weight: bold; font-family: monospace; color: #dc3545; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .score-box { font-size: 3rem; font-weight: bold; color: #0d6efd; }
+        .word-list { min-height: 150px; max-height: 300px; overflow-y: auto; background: white; border-radius: 10px; padding: 15px; border: 2px solid #dee2e6;}
+        
+        /* Auto-generated Keyboard Styling */
+        .keyboard-btn { width: 45px; height: 50px; font-weight: bold; font-size: 1.2rem; margin: 3px; border-radius: 8px; }
+        #wordInput { font-size: 2rem; font-weight: bold; text-align: center; letter-spacing: 3px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="container text-center">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-primary fw-bold text-uppercase">The 25-Minute Word Race</h1> 
+            <h4 class="text-muted">Bigger words equal bigger scores!</h4>
+        </div>
+    </div>
+
+    <div id="loginArea" class="card shadow-sm border-0 p-4 mx-auto mt-5" style="max-width: 400px;">
+        <h3 class="mb-3">Enter Team Name</h3>
+        <input type="text" id="teamName" class="form-control form-control-lg mb-3 text-center fw-bold" placeholder="e.g. Team Alpha" autocomplete="off">
+        <button id="startBtn" class="btn btn-success btn-lg fw-bold w-100">START RACING ▶</button>
+        <p id="loadingMsg" class="text-muted mt-2 fw-bold"></p>
+    </div>
+
+    <div id="gameArea" style="display:none; max-width: 800px; margin: 0 auto;">
+        
+        <div class="row align-items-center mb-3">
+            <div class="col-4 text-start">
+                <h4 class="text-muted">Total Score</h4>
+                <div class="score-box" id="score">0</div>
+            </div>
+            <div class="col-4">
+                <div class="timer-box" id="timer">25:00</div>
+            </div>
+            <div class="col-4 text-end">
+                <button id="quitBtn" class="btn btn-outline-danger fw-bold">Quit Early</button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 p-4 mb-4 bg-light">
+            <div class="input-group mb-3 px-3">
+                <input type="text" id="wordInput" class="form-control" placeholder="TYPE A WORD..." autocomplete="off">
+                <button id="submitBtn" class="btn btn-primary px-4 fw-bold fs-5">ENTER</button>
+            </div>
+            <h4 id="feedbackMsg" class="fw-bold" style="height: 30px;"></h4>
+            
+            <hr>
+            <div id="keyboard" class="d-flex flex-wrap justify-content-center">
+                </div>
+            <div class="mt-2">
+                <button id="backspaceBtn" class="btn btn-secondary px-4 fw-bold mt-2">⌫ Backspace</button>
+                <button id="clearBtn" class="btn btn-danger px-4 fw-bold mt-2">Clear</button>
+            </div>
+        </div>
+
+        <h5 class="text-muted text-start">Words Found:</h5>
+        <div id="foundWords" class="word-list text-start shadow-sm"></div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    
+    let dictionary = [];
+    let foundWords = [];
+    let currentScore = 0; // Tracks the total letter count
+    let teamName = "";
+    let timeLeft = 25 * 60; // 25 Minutes
+    let timerInterval;
+
+    // Load dictionary on page load
+    $('#loadingMsg').text("Loading dictionary...");
+    $('#startBtn').prop('disabled', true);
+    
+    $.getJSON('loadWords.php', function(data) {
+        dictionary = data;
+        $('#loadingMsg').text("Dictionary Ready! (" + dictionary.length + " words)");
+        $('#startBtn').prop('disabled', false).removeClass('btn-secondary').addClass('btn-success');
+    });
+
+    // Build the dynamic A-Z keyboard
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    alphabet.forEach(letter => {
+        $('#keyboard').append(`<button class="btn btn-outline-dark keyboard-btn" data-letter="${letter}">${letter}</button>`);
+    });
+
+    // Keyboard Clicks
+    $('.keyboard-btn').click(function() {
+        let current = $('#wordInput').val();
+        $('#wordInput').val(current + $(this).data('letter'));
+    });
+    
+    $('#backspaceBtn').click(function() {
+        let current = $('#wordInput').val();
+        $('#wordInput').val(current.slice(0, -1));
+    });
+
+    $('#clearBtn').click(function() {
+        $('#wordInput').val('');
+    });
+
+    // Handle "Enter" key press
+    $('#wordInput').keypress(function(e) {
+        if(e.which == 13) { $('#submitBtn').click(); }
+    });
+
+    // START GAME
+    $('#startBtn').click(function() {
+        teamName = $('#teamName').val().trim();
+        if(teamName === "") { alert("Please enter a Team Name!"); return; }
+        
+        $('#loginArea').slideUp();
+        $('#gameArea').fadeIn();
+        $('#wordInput').focus();
+
+        // Start Timer
+        timerInterval = setInterval(function() {
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            $('#timer').text(`${m}:${s}`);
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                $('#gameArea').html("<h1 class='text-danger fw-bold display-1 mt-5'>TIME'S UP!</h1><h2 class='mt-3'>Final Score: " + currentScore + "</h2>");
+            }
+        }, 1000);
+    });
+
+    // SUBMIT WORD LOGIC
+    $('#submitBtn').click(function() {
+        let guess = $('#wordInput').val().toLowerCase().trim();
+        $('#wordInput').val('').focus();
+
+        if (guess.length < 2) return;
+
+        if (foundWords.includes(guess)) {
+            $('#feedbackMsg').removeClass().addClass('text-warning').text("You already found that word!");
+            return;
+        }
+
+        if (dictionary.includes(guess)) {
+            // Correct Word! Calculate Score Based on Length
+            foundWords.push(guess);
+            currentScore += guess.length; 
+            
+            $('#score').text(currentScore);
+            $('#foundWords').prepend(`<span class="badge bg-success m-1 fs-5 shadow-sm">${guess.toUpperCase()} <small class="text-light opacity-75">(${guess.length})</small></span>`);
+            $('#feedbackMsg').removeClass().addClass('text-success').text("⭐ +" + guess.length + " Points!");
+            
+            // Save to database
+            $.post('writeData.php', { team: teamName, word: guess });
+        } else {
+            // Incorrect Word
+            $('#feedbackMsg').removeClass().addClass('text-danger').text("Not in dictionary!");
+        }
+    });
+
+    $('#quitBtn').click(function() {
+        if(confirm("Are you sure you want to quit early?")) {
+            location.reload();
+        }
+    });
+
+});
+</script>
+</body>
+</html>

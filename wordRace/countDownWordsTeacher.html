@@ -14,17 +14,23 @@
         .bronze { color: #cd7f32; font-weight: bold; }
         .score-badge { font-size: 1.8rem; font-weight: bold; padding: 10px 20px;}
         .word-count-badge { font-size: 1.2rem; font-weight: normal; background-color: #495057; }
+        .control-panel { max-width: 900px; margin: 0 auto; }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <div class="row mb-4 text-center">
+    <div class="row mb-3 text-center">
         <div class="col-12">
             <h1 class="fw-bold text-uppercase text-info display-4">Live Leaderboard</h1>
             <h4 class="text-secondary">Word Race Competition</h4>
         </div>
+    </div>
+
+    <div class="control-panel d-flex justify-content-end mb-3">
+        <button id="exportCsvBtn" class="btn btn-outline-info shadow-sm me-3 fw-bold">⬇ Export CSV</button>
+        <button id="clearBtn" class="btn btn-outline-danger shadow-sm fw-bold">🗑 Clear Board</button>
     </div>
 
     <div class="card bg-dark border-secondary shadow mx-auto" style="max-width: 900px;">
@@ -52,10 +58,17 @@
 <script>
 $(document).ready(function() {
 
+    let currentLeaderboardData = []; // Store the data globally for CSV export
+
     function fetchLeaderboard() {
         $.getJSON('loadLeaderboard.php', function(data) {
             
-            if(data.length === 0) return;
+            currentLeaderboardData = data; // Save it for the export button
+
+            if(data.length === 0) {
+                $('#leaderboardBody').html('<tr><td colspan="4" class="text-center py-4 text-muted">Waiting for teams to submit words...</td></tr>');
+                return;
+            }
             
             $('#leaderboardBody').empty();
 
@@ -81,9 +94,65 @@ $(document).ready(function() {
         });
     }
 
-    // Check for new scores every 3 seconds
+    // Run immediately, then check for new scores every 3 seconds
     fetchLeaderboard();
     setInterval(fetchLeaderboard, 3000);
+
+    // ==========================================
+    // EXPORT TO CSV LOGIC
+    // ==========================================
+    $('#exportCsvBtn').click(function() {
+        if (currentLeaderboardData.length === 0) {
+            alert("There is no data to export yet!");
+            return;
+        }
+
+        // Build the CSV headers
+        let csvContent = "data:text/csv;charset=utf-8,Rank,Team Name,Words Found,Total Score\n";
+
+        // Loop through the data and build rows
+        currentLeaderboardData.forEach(function(team, index) {
+            let safeTeamName = team.team.replace(/"/g, '""'); // Protects against commas/quotes in team names
+            let row = `${index + 1},"${safeTeamName}",${team.word_count},${team.total_score}`;
+            csvContent += row + "\n";
+        });
+
+        // Trigger the download
+        let encodedUri = encodeURI(csvContent);
+        let link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Word_Race_Results.csv");
+        document.body.appendChild(link); // Required for Firefox
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // ==========================================
+    // CLEAR RESULTS LOGIC (Password Protected)
+    // ==========================================
+    $('#clearBtn').click(function() {
+        // Prompt for the password
+        let pwd = prompt("Enter teacher password to clear results:");
+        
+        if (pwd === "pythagoras") {
+            // Double check so you don't accidentally wipe a live game
+            if (confirm("⚠️ Are you sure? This will permanently delete all current scores!")) {
+                
+                // Send the password to the secure PHP file
+                $.post('clearResults.php', { password: pwd }, function(response) {
+                    if (response === "Success") {
+                        currentLeaderboardData = []; // Clear local data
+                        fetchLeaderboard(); // Update UI immediately
+                        alert("The leaderboard has been completely cleared.");
+                    } else {
+                        alert("Error: Could not clear the database.");
+                    }
+                });
+            }
+        } else if (pwd !== null && pwd !== "") {
+            alert("❌ Incorrect password.");
+        }
+    });
 
 });
 </script>

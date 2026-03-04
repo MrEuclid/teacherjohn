@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<title>Countdown Teacher Dashboard</title>
+
+<style>
+   .heading {
+       font-weight: bolder; 
+       font-size: 16pt; 
+       background-color: cornflowerblue; 
+       color:black;
+       }
+    .menu {
+        font-size: 24pt;
+    }
+
+h1 {
+    font-weight: bolder; 
+       font-size: 24pt; 
+       
+       color:green;
+}
+
+h2 {
+    font-weight: bolder; 
+       font-size: 20pt; 
+       
+       color:blue;
+}
+
+td {
+    font-size: 14pt;
+
+}
+  
+ th {
+    font-size: 18pt;
+    
+}
+
+#totalData, #wordData {
+    text-align: center;
+}
+ 
+body {background-color: lightblue; color: black ; font-size: 16pt ; font-weight: bold;
+
+}
+
+</style>
+
+<body>
+
+
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-md-12 c">
+              <h1>Number Race Results</h1>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-md-12 c">
+        <button id = "clearTeams" class="btn btn-warning long menu">Clear teams</button>
+        <button id = "showResults" class="btn btn-info long menu">Show results</button>
+        <button id = "displayEquations" class="btn btn-primary long menu">Display equations</button>
+        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "yourEquations"></p>
+</div></div>
+
+<div class = "row">
+    <div class = "col-md-12 c">
+      <h2>Results</h2>
+        </div></div>
+
+        <div class = "row">
+            <div class = "col-md-12 c">       
+            <table class="table table-bordered table-hover" id="resultsTable">
+                <thead id = "resultsHeader">
+                    <tr >
+                        <th class="text-center">
+                            Team
+                        </th>
+                        <th class="text-center">
+                            Equations
+                        </th>
+                        <th class="text-center">
+                            Total
+                        </th>
+                     
+                    </tr>
+                </thead>
+                <tbody id = "resultsBody">
+
+                </div></div>
+  
+</div>
+</body>
+</head>
+
+<script>
+    $(document).ready(function(){
+
+// load words into an array
+// sorted in upper case
+
+    })
+
+</script>
+
+<script>
+
+$(document).ready(function(){
+        $('#clearTeams').on('click', function(){
+if (confirm('Clear team results?')) {
+    $.ajax({
+                url: "clearNumberResults.php",
+                
+                dataType: 'json',
+                
+                contentType: 'application/json',
+                success: function(message) {
+                   alert(message) ;
+                   console.log("Data cleared");
+                },
+                error: function(data, status, jqXHR) {
+                    console.log('There was an error.');
+                }
+            });      // end $.ajax
+} else {
+  // Do nothing!
+  console.log('Tables not cleared.');
+}
+
+        })
+    })
+</script>
+
+<script>
+
+$(document).ready(function(){
+    $('#showResults').on('click', function(){
+        var seconds = 5;
+
+        setInterval(function(){
+        
+            $.ajax({
+                url: "countDownShowResultsNumbers.php",
+                
+                dataType: 'json',
+                
+                contentType: 'application/json',
+                success: function(data) {
+                   $('#results').html(data.html) ; 
+                   console.log("Data",data) ;
+                   // need to display here
+                   $('#resultsBody').empty() ;
+
+                   for (var i = 0 ; i < data.length ; i++)
+                    {   team =  data[i]["team"] ;
+                        equations = data[i]["equations"] ;
+                        total = data[i]["total"] ;
+                        // console.log("Data",data[i]) ;
+                       $('#resultsTable').append('<tr><td>' + team + "</td><td id = 'wordData'>" + equations + "</td><td id = 'totalData'>" + total + '<tr>')
+                    }
+                },
+                error: function(data, status, jqXHR) {
+                    console.log('There was an error.');
+                }
+            });      // end $.ajax
+        }, seconds * 1000)
+});
+
+})
+    </script>
+
+<script>
+
+    $(document).ready(function(){
+        $('#displayEquations').on('click', function(){
+
+          $('#yourEquations').empty() ;
+         $('#yourEquations').toggle() ;
+
+           $.ajax({
+    url: 'loadAllNumbers.php',
+    type: 'POST',
+   // data: yourData,
+    datatype: 'json'
+})
+.done(function (response) { 
+
+// alert('Success') ;
+//console.log(response[0],response.length) ;
+ data = JSON.parse(response) ;
+
+// data = data.map(data => data.toUpperCase());
+console.log(data,data.length) ;
+for (var i = 0 ; i < data.length ; i++)
+
+{
+   n =  Object.values(data[i]) ;
+   $('#yourEquations').append(n + ' <br> ') ;
+   console.log(i,data[i],n) ;
+}
+
+})
+
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+});
+    })
+    })
+</script>

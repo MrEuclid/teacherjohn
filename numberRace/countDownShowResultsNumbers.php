@@ -1,25 +1,23 @@
 <?php
 include "../connectTeacherJohn.php" ;
-$query = "SELECT team,count(team) AS equations, sum(score) AS total  FROM `countDownNumberResults` 
-GROUP BY team
-ORDER BY total DESC" ;
 
-//echo $query ;
+$query = "SELECT team, count(team) AS equations, sum(score) AS total 
+          FROM `countDownNumberResults` 
+          GROUP BY team 
+          ORDER BY total DESC";
 
-$result = mysqli_query($dbServer,$query) ;
-$output = [] ;
-$i = 0 ;
-while ($data = mysqli_fetch_assoc($result))
-{
+$result = mysqli_query($dbServer, $query);
+$output = [];
 
-//echo $i ;
-$output[$i] = $data ;
-//print_r($data) ;
-$i++ ;
-
-
+if ($result) {
+    while ($data = mysqli_fetch_assoc($result)) {
+        $output[] = $data;
+    }
 }
 
-echo json_encode($output) ;
+// Ensure the browser knows we are sending JSON
+header('Content-Type: application/json');
+echo json_encode($output);
+
 mysqli_close($dbServer) ;
 ?>

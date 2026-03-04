@@ -1,227 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
- 
+<head>
     <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/countDownStyles.css">
-  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-
-<title>Countdown Teacher Dashboard</title>
-
-<style>
-   .heading {
-       font-weight: bolder; 
-       font-size: 16pt; 
-       background-color: cornflowerblue; 
-       color:black;
-       }
-    .menu {
-        font-size: 24pt;
-    }
-
-h1 {
-    font-weight: bolder; 
-       font-size: 24pt; 
-       
-       color:green;
-}
-
-h2 {
-    font-weight: bolder; 
-       font-size: 20pt; 
-       
-       color:blue;
-}
-
-td {
-    font-size: 14pt;
-
-}
-  
- th {
-    font-size: 18pt;
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teacher Admin | Number Race Leaderboard</title>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     
-}
-
-#totalData, #wordData {
-    text-align: center;
-}
- 
-body {background-color: lightblue; color: black ; font-size: 16pt ; font-weight: bold;
-
-}
-
-</style>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body { background-color: #1a1d20; color: #e9ecef; padding: 40px 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .card { background-color: #212529; border: 1px solid #373b3e; border-radius: 15px; overflow: hidden; }
+        .table { color: #dee2e6; margin-bottom: 0; }
+        .table thead th { background-color: #2c3034; color: #0dcaf0; text-transform: uppercase; padding: 20px; font-size: 0.9rem; letter-spacing: 1px;}
+        .table tbody td { padding: 18px; border-bottom: 1px solid #373b3e; vertical-align: middle; }
+        .gold { color: #ffd700; font-weight: bold; }
+        .silver { color: #c0c0c0; font-weight: bold; }
+        .bronze { color: #cd7f32; font-weight: bold; }
+        .team-name { font-size: 1.4rem; color: #fff; }
+        .score-val { font-family: monospace; font-size: 1.8rem; color: #198754; font-weight: bold; }
+        .controls-bar { background: rgba(33, 37, 41, 0.95); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #373b3e; }
+    </style>
+</head>
 <body>
 
+<div class="container-fluid px-5">
+    
+    <div class="controls-bar d-flex justify-content-between align-items-center shadow">
+        <div>
+            <h1 class="m-0 fw-bold"><span class="text-primary">⏱️</span> Number Race Rankings</h1>
+            <p class="text-muted m-0" id="statusUpdate">Connecting to database...</p>
+        </div>
+        
+        <div class="d-flex gap-3">
+            <button id="exportCsv" class="btn btn-success fw-bold px-4 shadow-sm">📥 Export CSV</button>
+            <button id="clearResults" class="btn btn-outline-danger fw-bold px-4 shadow-sm">🗑️ Clear All Data</button>
+        </div>
+    </div>
 
-
-    <div class  = "container-fluid">
-
-        <div class = "row">
-            <div class = "col-md-12 c">
-              <h1>Number Race Results</h1>
-                </div></div>
-
-    <div class = "row">
-      <div class = "col-md-12 c">
-        <button id = "clearTeams" class="btn btn-warning long menu">Clear teams</button>
-        <button id = "showResults" class="btn btn-info long menu">Show results</button>
-        <button id = "displayEquations" class="btn btn-primary long menu">Display equations</button>
-        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
-</div></div>
-
-<div class = "row">
-    <div class = "col-sm-12 c">
-<p id = "yourEquations"></p>
-</div></div>
-
-<div class = "row">
-    <div class = "col-md-12 c">
-      <h2>Results</h2>
-        </div></div>
-
-        <div class = "row">
-            <div class = "col-md-12 c">       
-            <table class="table table-bordered table-hover" id="resultsTable">
-                <thead id = "resultsHeader">
-                    <tr >
-                        <th class="text-center">
-                            Team
-                        </th>
-                        <th class="text-center">
-                            Equations
-                        </th>
-                        <th class="text-center">
-                            Total
-                        </th>
-                     
+    <div class="card shadow-lg">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover text-center" id="resultsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Rank</th>
+                        <th class="text-start ps-5" style="width: 45%;">Team Name</th>
+                        <th style="width: 20%;">Puzzles Solved</th>
+                        <th style="width: 20%;">Total Score</th>
                     </tr>
                 </thead>
-                <tbody id = "resultsBody">
-
-                </div></div>
-  
+                <tbody id="leaderboardBody">
+                    <tr><td colspan="4" class="py-5 text-muted fs-4">Loading scores...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-</body>
-</head>
 
 <script>
-    $(document).ready(function(){
+$(document).ready(function() {
 
-// load words into an array
-// sorted in upper case
+    // --- FETCH DATA FUNCTION ---
+    function refreshLeaderboard() {
+        $.ajax({
+            url: 'countDownShowResultsNumbers.php',
+            type: 'GET',
+            dataType: 'json'
+        }).done(function(data) {
+            let body = $('#leaderboardBody');
+            body.empty();
 
-    })
+            if (!data || data.length === 0) {
+                body.append('<tr><td colspan="4" class="py-5 text-muted fs-4">No results recorded yet.</td></tr>');
+                return;
+            }
 
-</script>
-
-<script>
-
-$(document).ready(function(){
-        $('#clearTeams').on('click', function(){
-if (confirm('Clear team results?')) {
-    $.ajax({
-                url: "clearNumberResults.php",
+            data.forEach((row, index) => {
+                let rank = index + 1;
+                let rankDisplay = rank;
                 
-                dataType: 'json',
-                
-                contentType: 'application/json',
-                success: function(message) {
-                   alert(message) ;
-                   console.log("Data cleared");
-                },
-                error: function(data, status, jqXHR) {
-                    console.log('There was an error.');
-                }
-            });      // end $.ajax
-} else {
-  // Do nothing!
-  console.log('Tables not cleared.');
-}
+                // Add medals for top 3
+                if (rank === 1) rankDisplay = "<span class='gold fs-2'>🥇 1st</span>";
+                else if (rank === 2) rankDisplay = "<span class='silver fs-3'>🥈 2nd</span>";
+                else if (rank === 3) rankDisplay = "<span class='bronze fs-4'>🥉 3rd</span>";
 
-        })
-    })
-</script>
+                body.append(`
+                    <tr>
+                        <td>${rankDisplay}</td>
+                        <td class="text-start ps-5 team-name fw-bold">${row.team}</td>
+                        <td><span class="badge bg-secondary fs-5 p-2">${row.equations}</span></td>
+                        <td class="score-val">${row.total}</td>
+                    </tr>
+                `);
+            });
 
-<script>
+            $('#statusUpdate').text("Live Update: " + new Date().toLocaleTimeString());
+        }).fail(function() {
+            $('#statusUpdate').text("Error: Connection failed.");
+        });
+    }
 
-$(document).ready(function(){
-    $('#showResults').on('click', function(){
-        var seconds = 5;
+    // --- SECURE DELETION WITH PASSWORD ---
+    $('#clearResults').click(function() {
+        if (confirm("WARNING: This will permanently delete ALL team results from the database. Proceed?")) {
+            
+            let password = prompt("Authorisation Required: Please enter the Teacher Password:");
+            
+            if (password === "pythagoras") {
+                $.post('clearNumberResults.php', { 
+                    pass: password 
+                }, function(response) {
+                    alert(response);
+                    refreshLeaderboard();
+                });
+            } else if (password !== null) {
+                alert("Access Denied: Incorrect password.");
+            }
+        }
+    });
 
-        setInterval(function(){
+    // --- EXPORT TO CSV ---
+    $('#exportCsv').click(function() {
+        let csv = ["Rank,Team Name,Puzzles Solved,Total Score"];
         
-            $.ajax({
-                url: "countDownShowResultsNumbers.php",
-                
-                dataType: 'json',
-                
-                contentType: 'application/json',
-                success: function(data) {
-                   $('#results').html(data.html) ; 
-                   console.log("Data",data) ;
-                   // need to display here
-                   $('#resultsBody').empty() ;
+        $('#leaderboardBody tr').each(function() {
+            let row = [];
+            $(this).find('td').each(function() {
+                // Strip emojis before exporting
+                let text = $(this).text().replace(/[🥇🥈🥉]/g, '').trim();
+                row.push('"' + text + '"');
+            });
+            csv.push(row.join(","));
+        });
 
-                   for (var i = 0 ; i < data.length ; i++)
-                    {   team =  data[i]["team"] ;
-                        equations = data[i]["equations"] ;
-                        total = data[i]["total"] ;
-                        // console.log("Data",data[i]) ;
-                       $('#resultsTable').append('<tr><td>' + team + "</td><td id = 'wordData'>" + equations + "</td><td id = 'totalData'>" + total + '<tr>')
-                    }
-                },
-                error: function(data, status, jqXHR) {
-                    console.log('There was an error.');
-                }
-            });      // end $.ajax
-        }, seconds * 1000)
+        let csvString = csv.join("\n");
+        let blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        
+        link.setAttribute("href", url);
+        link.setAttribute("download", "Number_Race_Leaderboard.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Start live updates
+    refreshLeaderboard();
+    setInterval(refreshLeaderboard, 5000);
 });
-
-})
-    </script>
-
-<script>
-
-    $(document).ready(function(){
-        $('#displayEquations').on('click', function(){
-
-          $('#yourEquations').empty() ;
-         $('#yourEquations').toggle() ;
-
-           $.ajax({
-    url: 'loadAllNumbers.php',
-    type: 'POST',
-   // data: yourData,
-    datatype: 'json'
-})
-.done(function (response) { 
-
-// alert('Success') ;
-//console.log(response[0],response.length) ;
- data = JSON.parse(response) ;
-
-// data = data.map(data => data.toUpperCase());
-console.log(data,data.length) ;
-for (var i = 0 ; i < data.length ; i++)
-
-{
-   n =  Object.values(data[i]) ;
-   $('#yourEquations').append(n + ' <br> ') ;
-   console.log(i,data[i],n) ;
-}
-
-})
-
-.fail(function (jqXHR, textStatus, errorThrown) { 
-alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
-});
-    })
-    })
 </script>
+
+</body>
+</html>

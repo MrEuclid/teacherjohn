@@ -1,696 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
- 
+<head>
     <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/countDownNumberStyles.css">
-  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Number Race Challenge</title>
    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
 
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, sans-serif; padding-top: 20px; padding-bottom: 50px; }
+        
+        /* Setup Screen */
+        .setup-card { max-width: 500px; margin: 40px auto; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: none; }
+        
+        /* Game Dashboard */
+        .dash-header { background: #212529; color: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .target-box { background: #ffc107; color: #212529; font-size: 4rem; font-weight: 900; border-radius: 15px; padding: 10px 30px; display: inline-block; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .stat-box { font-family: monospace; font-size: 1.8rem; font-weight: bold; }
+        
+        /* Equation Builder Area */
+        .equation-area { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 2px solid #e9ecef;}
+        .calc-slot { width: 80px; height: 80px; font-size: 2rem; font-weight: bold; border-radius: 15px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border: 2px dashed #adb5bd; color: #495057; cursor: pointer; transition: 0.2s;}
+        .calc-slot.filled { background: #e7f1ff; border: 2px solid #0d6efd; color: #0d6efd; }
+        .btn-go { height: 80px; font-size: 1.8rem; font-weight: bold; border-radius: 15px; }
 
-<title>CountdownNumbers</title>
-
-
-
-
+        /* Game Buttons (Tiles) */
+        .game-btn { height: 70px; font-size: 2rem; font-weight: bold; border-radius: 12px; transition: transform 0.1s, box-shadow 0.1s; display: flex; align-items: center; justify-content: center;}
+        .game-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 10px rgba(0,0,0,0.15); }
+        .btn-num { background-color: #0dcaf0; color: #000; border: none; }
+        .btn-num:hover { background-color: #31d2f2; color: #000;}
+        .btn-op { background-color: #6c757d; color: white; border: none; }
+        .btn-op:hover { background-color: #5c636a; color: white; }
+    </style>
 </head>
 <body>
 
-    <div class  = "container-fluid">
+<div class="container">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
-
-    <div class = "row">
-      <div class = "col-sm-12 c">
-
-    <h1> 
-        <a href = "countDownNumbersLoad.html"><button id = "newGame" class="btn btn-info long menu">New</button></a>&nbsp; Number Race
-        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
-    </h1>
-   <h4>How quickly can you find the answer?</h4>
-   
-</div></div>
-
-<div id  = "registration">
-<div class = "row">
-    <div class = "col-sm-12 c">
-
-  <h2> 
-       <label>Your team name</label>
-       <br>
-       <input type = "text" id = "teamName">
-       <button id = "register">Go</button>
-       <br>
-       <p id = "error"></p>
-  </h2>
-</div></div>
-
-</div> <!-- register -->
-
-<div id  = "gameLevels">
-    <!--
-    <div class = "row">
-        <div class = "col-sm-12 c">
-
-          <button id = "level1">G2 - G4</button>
-          <button id = "level2">G5 - G6</button>
-          <button id = "level3">G7 - G9</button>
-          <button id = "level4">G10 - G12</button>
-       
-
-            </div></div>
-    -->
-</div>
-
-
-<div class = "row">
-    <div class = "col-sm-12 c">
-<p class = "c" id = "ourTeam"></p>
-</div></div>
-
-<div class = "row">
-    <div class = "col-sm-12 c">
-<div id = 'timer' class= 'round'>
-    0:00
-        </div>
-   
-<button class = 'round' id = "target">0</button>
-<button class = 'round' id = "score">0</button>
-<button  class = 'round' id = "start">Play</button>
-
-</div></div>
-
-
-<div id = "gameArea">
-
-  <p id = "solution"></p>
-
-    <div class = "row">
-        <div class = "col-sm-12 c">
-           <button id = "operand1" class="large1"></button>
-           <button id = "op" class="large1"></button>
-           <button id = "operand2" class="large1"></button>
-           <button id = "go" class="large2">Go</button>
-                
-       </div></div>
+    <div id="registration" class="card setup-card p-5 text-center">
+        <h1 class="fw-bold text-primary mb-4">Number Race</h1>
+        <p class="text-muted mb-4">How quickly can you use the numbers to find the target?</p>
         
-     <div class = "row">
-       <div class = "col-sm-12 c">
-           <button id = "operation+" class = "small">+</button>
-           <button id = "operation*" class = "small">$ \times $</button>
-           <button id = "operation-" class = "small">-</button>
-           <button id = "operationd" class = "small">$ \div $</button>  
-       </div></div>
-     
-     <div class = "row">
-       <div class = "col-sm-12 c">
-           <button id = "number0" class = "large"></button>
-           <button id = "number1" class = "large"></button>
-           <button id = "number2" class = "large"></button>
-           <button id = "number3" class = "large"></button>
-       </div>
-     </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">Enter Your Team Name</label>
+            <input type="text" id="teamName" class="form-control form-control-lg text-center fw-bold" placeholder="e.g., The Mathletes">
+        </div>
+        
+        <p id="errorMsg" class="text-danger fw-bold"></p>
+        <button id="registerBtn" class="btn btn-primary btn-lg w-100 fw-bold shadow">Start Game 🚀</button>
+    </div>
 
-<div class = "row">
-    <div class = "col-sm-12 c">
-<p id = "keypad">
-    <button id = "clear" class = "long">Clear</button>
-    <input id = "symbol" type = "text" readonly="true" hidden="true">
-    <p id = "warning"></p>
-</p>
+    <div id="gameArea" style="display:none;">
+        
+        <div class="dash-header d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="m-0 fw-bold text-info" id="ourTeam">Team Name</h4>
+                <div id="starsDisplay" class="fs-4 text-warning mt-1"></div>
+            </div>
+            <div class="text-center">
+                <div class="small text-uppercase fw-bold opacity-75">Target Number</div>
+                <div class="target-box" id="targetDisplay">0</div>
+            </div>
+            <div class="text-end">
+                <div class="small text-uppercase fw-bold opacity-75 text-danger">Time Left</div>
+                <div class="stat-box text-danger" id="timerDisplay">45:00</div>
+                <div class="small text-uppercase fw-bold opacity-75 text-success mt-2">Score</div>
+                <div class="stat-box text-success" id="scoreDisplay">0</div>
+            </div>
+        </div>
 
-</div> <!-- game area-->
+        <div class="equation-area">
+            <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                <div id="operand1" class="calc-slot"></div>
+                <div id="operatorBox" class="calc-slot border-0 bg-transparent fs-1 text-dark" style="width: 50px;">?</div>
+                <div id="operand2" class="calc-slot"></div>
+                <div class="fs-1 fw-bold text-muted mx-2">=</div>
+                <button id="btnGo" class="btn btn-success btn-go px-5 shadow" disabled>CALCULATE</button>
+            </div>
+            <p class="text-center text-muted small mt-3 m-0">Click your numbers and an operation, then click Calculate.</p>
+        </div>
 
-</div></div>
+        <div class="row g-3 justify-content-center mb-4">
+            <div class="col-2"><button class="btn btn-op game-btn w-100 op-btn" data-val="+">+</button></div>
+            <div class="col-2"><button class="btn btn-op game-btn w-100 op-btn" data-val="-">-</button></div>
+            <div class="col-2"><button class="btn btn-op game-btn w-100 op-btn" data-val="*">×</button></div>
+            <div class="col-2"><button class="btn btn-op game-btn w-100 op-btn" data-val="/">÷</button></div>
+        </div>
 
+        <div class="row g-3 justify-content-center mb-5" id="numberPad">
+            </div>
 
+        <div class="text-center">
+            <button id="btnClear" class="btn btn-outline-danger btn-lg px-5 fw-bold me-3">Reset Try</button>
+            <button id="btnQuit" class="btn btn-outline-secondary btn-lg px-5 fw-bold">Quit Game</button>
+        </div>
+
+    </div>
 
 </div>
+
+<script>
+$(document).ready(function() {
+    
+    // --- GAME STATE VARIABLES ---
+    let teamName = "";
+    let data2 = []; // Holds the puzzles from DB
+    let wins = 0;
+    let currentScore = 0;
+    
+    let target = 0;
+    let originalNumbers = []; // The starting 4 numbers
+    let currentNumbers = [];  // The numbers currently available to click
+
+    let activeOp1 = null;
+    let activeOp2 = null;
+    let activeOperator = null; // Stores actual math symbol (+, -, *, /)
+
+    let timerInterval;
+
+    // --- INITIALIZATION & AJAX ---
+    // Pre-fetch equations from database right away
+    $.ajax({
+        url: 'loadEquations.php', 
+        type: 'POST',
+        data: { level: 1 }, // Default level for now
+        dataType: 'json'
+    }).done(function (response) { 
+        for (let i = 0; i < response.length; i++) {
+            data2.push([response[i]["target"], response[i]["puzzle"]]);
+        }
+        console.log("Puzzles loaded:", data2);
+    }).fail(function (jqXHR, textStatus, errorThrown) { 
+        console.error("Failed to load equations:", textStatus, errorThrown);
+    });
+
+    // --- REGISTRATION & START ---
+    $('#registerBtn').click(function() {
+        teamName = $('#teamName').val().trim();
+        if (teamName.length === 0) {
+            $('#errorMsg').text("Please enter your team name to begin!");
+            return;
+        }
+
+        // Add random ID tag
+        let n = Math.floor((Math.random() * 899) + 100);   
+        teamName = teamName + '-#' + n;
+        
+        $('#ourTeam').text(teamName);
+        $('#registration').hide();
+        $('#gameArea').fadeIn();
+
+        startTimer(45 * 60); // 45 Minutes
+        loadLevel(wins);
+    });
+
+    function startTimer(duration) {
+        let timer = duration, minutes, seconds;
+        timerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            $('#timerDisplay').text(minutes + ":" + seconds);
+
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                $('#timerDisplay').text('00:00');
+                alert("Time is up! Game Over.");
+                location.reload();
+            }
+        }, 1000);
+    }
+
+    // --- LEVEL MANAGEMENT ---
+    function loadLevel(levelIndex) {
+        if (!data2[levelIndex]) {
+            alert("Congratulations! You've completed all puzzles!");
+            return;
+        }
+
+        target = parseInt(data2[levelIndex][0]);
+        let pString = data2[levelIndex][1]; 
+        
+        // Clean puzzle string (e.g., "*2*7*13*14*")
+        pString = pString.replace(/^\*|\*$/g, ''); 
+        let strNums = pString.split("*");
+        
+        originalNumbers = strNums.map(Number).sort((a,b) => a - b);
+        currentNumbers = [...originalNumbers];
+
+        $('#targetDisplay').text(target);
+        resetBuilder();
+        renderNumberPad();
+    }
+
+    function renderNumberPad() {
+        $('#numberPad').empty();
+        currentNumbers.sort((a,b) => a - b);
+        
+        currentNumbers.forEach((num, index) => {
+            let btnHtml = `
+            <div class="col-3 col-md-2">
+                <button class="btn btn-num game-btn w-100 num-btn" data-index="${index}" data-val="${num}">${num}</button>
+            </div>`;
+            $('#numberPad').append(btnHtml);
+        });
+
+        // Attach click handlers to new buttons
+        $('.num-btn').click(handleNumberClick);
+    }
+
+    function resetBuilder() {
+        activeOp1 = null;
+        activeOp2 = null;
+        activeOperator = null;
+        
+        $('#operand1').text('').removeClass('filled');
+        $('#operand2').text('').removeClass('filled');
+        $('#operatorBox').text('?').removeClass('text-primary');
+        $('#btnGo').prop('disabled', true);
+    }
+
+    // --- GAMEPLAY LOGIC ---
+    function handleNumberClick() {
+        let val = $(this).data('val');
+        let index = $(this).data('index');
+
+        if (activeOp1 === null) {
+            activeOp1 = val;
+            $('#operand1').text(val).addClass('filled');
+        } else if (activeOp2 === null) {
+            activeOp2 = val;
+            $('#operand2').text(val).addClass('filled');
+        } else {
+            return; // Both slots full
+        }
+
+        // Remove from available numbers and re-render
+        currentNumbers.splice(index, 1);
+        renderNumberPad();
+        checkReady();
+    }
+
+    $('.op-btn').click(function() {
+        activeOperator = $(this).data('val');
+        let displaySymbol = $(this).text(); // Gets the visual × or ÷
+        $('#operatorBox').text(displaySymbol).addClass('text-primary');
+        checkReady();
+    });
+
+    function checkReady() {
+        if (activeOp1 !== null && activeOp2 !== null && activeOperator !== null) {
+            $('#btnGo').prop('disabled', false);
+        } else {
+            $('#btnGo').prop('disabled', true);
+        }
+    }
+
+    // Calculate Button
+    $('#btnGo').click(function() {
+        // Evaluate the math safely
+        let result = 0;
+        if (activeOperator === '+') result = activeOp1 + activeOp2;
+        if (activeOperator === '-') result = activeOp1 - activeOp2;
+        if (activeOperator === '*') result = activeOp1 * activeOp2;
+        if (activeOperator === '/') result = activeOp1 / activeOp2;
+
+        // Ensure decimals are handled if division doesn't produce an integer (optional, based on your game rules)
+        result = parseFloat(result.toFixed(2)); 
+
+        currentNumbers.push(result);
+        
+        if (currentNumbers.length === 1) {
+            // Final number left, check if it matches target
+            if (currentNumbers[0] === target) {
+                wins++;
+                currentScore = wins * 10;
+                $('#scoreDisplay').text(currentScore);
+                $('#starsDisplay').append('⭐');
+                
+                // Write to DB
+                let puzzleStr = "*" + originalNumbers.join("*") + "*TARGET " + target;
+                $.post('writeDataNumbers.php', { team: teamName, puzzle: puzzleStr, score: 10 });
+
+                alert("Target Reached! Well done.");
+                loadLevel(wins);
+            } else {
+                alert("You ended up with " + currentNumbers[0] + ". Try again!");
+                $('#btnClear').click(); // Auto-reset
+            }
+        } else {
+            // Still numbers left to calculate
+            resetBuilder();
+            renderNumberPad();
+        }
+    });
+
+    // Clear / Reset Level
+    $('#btnClear').click(function() {
+        currentNumbers = [...originalNumbers];
+        resetBuilder();
+        renderNumberPad();
+    });
+
+    // Quit Game
+    $('#btnQuit').click(function() {
+        if(confirm("Are you sure you want to quit?")) {
+            window.location.href = "../index.php";
+        }
+    });
+
+});
+</script>
 
 </body>
 </html>
-
-
-<script type="text/javascript">
-
-    $(document).ready(function(){
-    
-     // load words into an array
-     // sorted in upper case
-    
-    
-    data2 = [] ;
-    wins = 0 ;
-    
-    
-    })
-    </script>
-
-
-<script>
-    function setUp(n)
-
-    {
- // alert(n) ;
-  
-   $('#clear').show() ;
- 
-
-   console.log("arrived",n,data2) ;
-   //data2[n][0],data2[n][1]) ;
-answer = 0 ; // answer reached by player
-equation = '' ; // string with calcs to evaluate
-operation = '' ; // symbol of operator + - * /
-
-$('#go').prop('disabled',true) ;
-$('[id^=operand]').text('') ;
-$('#symbol').val('') ;
-$('#op').text('') ;
-
-
-// p = "*2*7*13*14" ;
-// target = 12 ;
- var p = data2[n][1] ; // puzzle
- console.log("p",p) ;
-numbers = [] ;
-// remove empty items
-p = p.substring(0, p.length - 1);
-p = p.substr(1) ;
-numbers = p.split("*") ;
-target = data2[n][0] ;
-console.log("to be displayed",p,numbers,target) ; 
-numbers.sort(function(a,b){return a - b})
-
-original = [] ; // store a copy of the numbers array 
-for (var i = 0 ; i < numbers.length; i++)
-{
-    original[i] = numbers[i] ;
- //   $('#solution').append(numbers[i] + ' - ') ;
-
-}
-original.sort(function(a,b){return a - b}) ;
-// $('#solution').append('<br>') ;
-
-numbers.sort(function(a,b){return a - b})
-for (var i = 0 ; i < numbers.length; i++)
-{
-    var offset = parseInt(i) ;
-    $('#number' + offset).text(numbers[i]).show() 
-
-}
-
-$('#target').html(target);
-
-    }
-
-</script>
-
-
-<script type="text/javascript">
-
-    $(document).ready(function(){
-    
- 
-  if (wins == 0)    
-  {
-     $( document ).ajaxComplete(function() {
-  add();
-  setUp(wins) ;
-  console.log('complete load on ready ',data2) ;
-});
-} 
-    var level = 1 ;
-  
-    
-     $.ajax({
-        url: 'loadEquations.php', // to be done
-        type: 'POST',
-        data: {level:level}, 
-        datatype: 'json',
-        
-    })  // parameters
-    .done(function (response) { 
-    
-  console.log(response) ;
-   chosen = JSON.parse(response) ;
-   
-    })  //done
-    .fail(function (jqXHR, textStatus, errorThrown) { 
-    alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
-    
-    })  // fail
-
-    function add(){
-        for (var i = 0 ; i < chosen.length; i++)
-    {
-       
-     
-        a = chosen[i]["target"] ;
-        b = chosen[i]["puzzle"] ;
-        x = [a,b] ;
-        data2.push(x) ;
-     //   console.log("Looping",i,data2,data2[i],data2[i][0],data2[i][1]) ;
-      
-    }
-    
-   
-   
-    console.log("Added" ,data2)
-    
-    }
-    queen = '&#9813;' ;
-    
-       cntMoves = 0 ;
-       score = 0 ; 
-       cancelled = 0 ; // counts cancelled moves
-      
-       target = 0 ;
-       $('#target').text(target) ;
-       $('#score').text(score) ;
-      
-    
-    $('#timer').hide() ;
-    $('#score').hide() ;
-    $('#gameArea').hide() ;
-    $('#target').hide() ;
-    $('#start').hide() ;
-    $('#keypad').hide() ; 
-     $('#stars').empty() ;
-     $('#gameLevels').hide() ;
-    
-    
-    
-    
-    
-     
-    
-    })
-        </script>
-    
-
-
-
-
-<script>
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.text(minutes + ":" + seconds);
-
-        if (--timer < 0) {
-            display.text('X' + ":" + 'X');
-            $('#gameArea').hide() ;
-            $('#words').show() ;
-          $('#answers').show() ;
-            $('#newGame').show() ;
-        }
-    }, 1000);
-}
-
-</script>
-
-<script>
-  function writeNumbers()
-  {
-    numbers.sort(function(a,b){return a - b});
-    $('[id^=number]').hide() ;
-      for (var i = 0 ; i < numbers.length; i++)
-      {
-        $('#number' + i).text(numbers[i]).show() ;
-      }
-  }
-</script>
-
-<script>
-
-    function writeData() {
-
-  
-var team = $('#teamName').val() ;
-var score = 10  ;
-var target = parseInt($('#target').text()) ;
-var puzzle = '*' ;
-original.sort(function(a,b){return a - b}) ;
-for (var i = 0 ; i < original.length; i++)
-{
-  puzzle = puzzle + original[i] + '*' ;
-}
-
-puzzle = puzzle + 'TARGET ' + target ;
-    $.ajax({
-    url: 'writeDataNumbers.php', // to be done
-    type: 'POST',
-    data: {team:team,puzzle:puzzle,score:score}, 
-    datatype: 'json'
-})  // parameters
-.done(function (response) { 
-
-// console.log("writing",team,word) ;
-
-})  //done
-.fail(function (jqXHR, textStatus, errorThrown) { 
-alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
-
-})  // fail
-
-
-    }  // function
-</script>
-
-<script>
-
-    $(document).ready(function(){
-        $('#register').on('click', function(){
-          teamName = $('#teamName').val() ;
-        //  alert(teamName);
-           if (teamName.length > 0 )
-           {
-            var lowerLimit = 100 ; 
-            var upperLimit = 999 ;   
-            var n = Math.floor((Math.random() * upperLimit) + lowerLimit);   
-           teamName = teamName + '-#' + n ;
-           $('#ourTeam').text(teamName);
-
-
-$('#gameLevels').hide() ; // not used yet
-$('#timer').show() ;
-$('#target').show() ;
-$('#score').hide ;
-$('#nWords').show() ;
-$('#start').show() ;
-$('#maxWords').show() ;
-$('#registration').hide() ;
-
-        }
-else
-{
-    $('#error').text("Please write you team name") ;
-}
-
-        })
-    })
-</script>
-<!--
-<script>
-
-    $(document).ready(function(){
-
-      // get game level
-
-        $('[id^=level]').on('click', function(){
-    var firedButton = this.id;
-    $('#gameLevels').hide() ;
-
-
-gameLevel  = parseInt(firedButton.substr(5)) ;
-$('#solutions').append('<br>' + ' Level ' + gameLevel) ;
-
-alert('Level = ' + gameLevel) ;
-$('#timer').show() ;
-$('#target').show() ;
-$('#score').hide ;
-$('#nWords').show() ;
-$('#start').show() ;
-$('#maxWords').show() ;
-        })
-  
-    })
-
-</script>
--->
-
-<script>
-$(document).ready(function(){
-    $('#start').on('click', function(){
-
-       // alert("Timer on") ;
-        $('#keypad').show() ;
-        $('#gameArea').show() ;
-        $('#start').hide() ;
-        $('#score').show() ;
-
-        jQuery(function ($) {
-            var fiveMinutes = 60 * 20,
-                display = $('#timer');
-            startTimer(fiveMinutes, display);
-        });      
-    })
-    })
-        </script>
-<script type="text/javascript">
-  
-  $(document).ready(function(){
-    $('[id^=operand]').on('click', function(){
-
-   var id = this.id;
-   var index = parseInt(id.substr(7)) ;
-   var numberValue = parseFloat($('#operand'+index).text()) ;
-   
-   // find index of the value in numbers and push it back into number? button and sort
-  numbers.push(numberValue) ;
-  writeNumbers() ;
-
-   $('#operand' + index).text('') ;
-   $('#go').prop('diabled',true) ;
-
-  
-    })
-    
-    })     
-</script>
-
-
-<script type="text/javascript">
-  
-    $(document).ready(function(){
-      $('[id^=number]').on('click', function(){
-  
-     var id = this.id;
-     var index = parseInt(id.substr(6)) ;
-     var numberValue = numbers[index] ;
-   //  alert(id + ' ' + index + ' ' + numberValue) ;  
-     var content1 = $('#operand1').text() ;
-     var content2 = $('#operand2').text() ; 
-     if (content1 == '')
-     {$('#operand1').text(numberValue) ;}
-     else 
-     {$('#operand2').text(numberValue) ;}
-      // hide button
-      $('#number'+index).hide() ;
-
-      // take out of numbers
-      numbers.splice(index,1) ;
-        writeNumbers() ;
-      
-
-      if ($('#operand1').text()  != '' & $('#operand1').text() != '' & $('#symbol').val() != '')
- {$('#go').prop('disabled',false) ;}
- else 
- {
-  $('#go').prop('disabled',true) ;
- }
-
-    })    
-  })     
- </script>
-
-
-
-<script type="text/javascript">
-  
-    $(document).ready(function(){
-      $('[id^= operation]').on('click', function(){
-
-   // get plain symbol
-   var id = this.id;
-     var symbol  = id.substr(9) ; 
-     if (symbol == 'd') {symbol = '/' ;}
-     
-     $('#symbol').val(symbol) ;
- // alert(id + '-> ' + symbol)
- 
- // alert('OP clicked ') ;
-  var op1 = $('#operand1').text() ;
-  var op2 = $('#operand2').text() ;
- 
- $('#clear').show() ;
-  var operationID = this.id;
- var operation = $('#'+operationID).text() ;
- // alert(operationID + ' clicked' ) ;
-  myOp = operationID[operationID.length -1];
- 
- 
-  if (myOp == 'd') {myOp =  '$ \\div $'  ;}
-  if (myOp == '*') {myOp =  '$ \\times $'  ;}
- 
- 
- $('#op').text(myOp) ;
- 
- MathJax.Hub.Queue(["Typeset", MathJax.Hub, "op"]);
-
-
-  // alert('op1 = ' + op1 + ' op2 ' + op2 + 'Clicked = ' + operationID) ;
- 
-
- 
-  if ($('#operand1').text()  != '' & $('#operand1').text() != '' & $('#symbol').val() != '')
- {$('#go').prop('disabled',false) ;}
- else
- {
-  $('#go').prop('disabled',true) ;
- }
- 
-
- 
- 
- })
-      
-      })     
- </script>
- 
- <script type="text/javascript">
-   
-    $(document).ready(function(){
-      $('#clear').on('click', function(){
-
-     
-
-   $('#clear').show() ;
-
-  answer = 0 ;
-
-  for (var i = 0 ; i <= 3 ; i++)
-  {
-    
-    numbers[i] = original[i] ;
-    $('#number' +i ).text(original[i]).show() ;
-
-  }
-  original.sort(function(a,b){return a - b}) ;
- $('#operand1').text('') ;
- $('#operand2').text('') ;
- $('#op').text('') ;
- $('#symbol').val('') ;
- answer = 0 ;
- equation = '' ;
-
- $('#go').prop('disabled',true) ;
-
-
-      })
-      
-      })     
- </script>
-
-
- 
- 
- <script type="text/javascript">
-   
-   $(document).ready(function(){
-     $('#go').on('click', function(){
-
-      var x = parseFloat($('#operand1').text()) ;
-      var y = parseFloat($('#operand2').text()) ;
-      var op = $('#symbol').val() ;
-
-
-
-      console.log("numbers at start",numbers) ;
-      if (op == 'a') {op = '+' ;}
-      if (op == 's') {op = '-' ;}
-      if (op == '\times ') {op = '*' ;}
-      if (op == '\div ' ) {op = '/' ;}
-
-      
-      var expression = x+op+y ;
-      console.log("expression ",expression) ;
-      answer = eval(x + op + y) ;
-      answer = parseFloat(answer) ; // allow for decimals
-    //   alert(x + op + y + ' = ' + answer);
-     
-      numbers.push(answer) ;
-      console.log("numbers + answer",numbers.length,numbers,answer,x,y,target, target == answer)
-      // alert(' numbers = ' + numbers + ' length ' + numbers.length) ;
-
-      if (numbers.length > 1)
-      {$('#operand1').text('') ;
-      $('#operand2').text('') ;
-      $('#symbol').val('') ;
-      $('#op').text('') ;
-
-      writeNumbers() ;}
-
-     if (numbers.length == 1)
-      {
-        guess = answer ;
-        target = parseInt($('#target').text());
-        console.log("numbers + answer",numbers.length,numbers,answer,x,y,target, target == answer)
-       if (target == answer)
-       {alert("You win") ;
-        wins = wins + 1 ;
-        score = wins * 10 ;
-        writeData() ;
-        $('#score').text(score) ;
-        $('#stars').append(queen) ;
-        console.log("wins = ",wins);
-        setUp(wins); }
-        else
-        {
-          alert('Try again') ;
-          answer = 0 ;
-
-for (var i = 0 ; i <= 3 ; i++)
-{
-
-  numbers[i] = original[i] ;
-  $('#number' +i ).text(original[i]).show() ;
-
-}
-
-$('#operand1').text('') ;
-$('#operand2').text('') ;
-$('#op').text('') ;
-$('#symbol').val('') ;
-answer = 0 ;
-equation = '' ;
-
-$('#go').prop('disabled',true) ;
-
-
-        }
-      }
-     
-     })   
-    })  
-</script>
-
- 

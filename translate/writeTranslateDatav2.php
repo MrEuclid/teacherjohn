@@ -1,32 +1,25 @@
 <?php 
-include "../connectTeacherJohn.php" ;
+include "../connectTeacherJohn.php";
 
+$studentID = $_POST['studentID'];
+$kword = $_POST['khmerWord'];
+$eword = $_POST['englishWord'];
+$guess = $_POST['guess'];
+$wordID = $_POST['wordID'];
+$mark = $_POST['mark'];
 
-$studentID = $_POST['studentID'] ;
-$guess = $_POST['guess'] ;
-$mark = $_POST['mark'] ;
-$wordID = $_POST['wordID'] ;
-$eword = $_POST['englishWord'] ;
-$kword = $_POST['khmerWord'] ;
+$query = "INSERT INTO translateResults (studentID, kword, eword, guess, wordID, mark) VALUES (?, ?, ?, ?, ?, ?)";
 
-/*
+$stmt = $dbServer->prepare($query);
+// "ssssii" means: String, String, String, String, Integer, Integer
+$stmt->bind_param("ssssii", $studentID, $kword, $eword, $guess, $wordID, $mark);
 
-$studentID = 5001 ;
-$eword = 'hope' ;
-$kword = 'ហើរ';
-$guess = 'vb';
-$mark = 0 ;
-$wordID = 24;
+if ($stmt->execute()) {
+    echo "success";
+} else {
+    echo "error";
+}
 
-*/
-
-$query = "INSERT INTO translateResults 
-                (studentID,kword,eword,guess,wordID,mark) 
-                VALUES ('$studentID' , '$kword', '$eword','$guess', '$wordID','$mark') " ;
-
-// echo "<br>" . $query  . "<br>" ;
-
-echo "updated";                                                                                                                                     
-$result = mysqli_query($dbServer,$query);
-mysqli_close($dbServer) ;
+$stmt->close();
+mysqli_close($dbServer);
 ?>

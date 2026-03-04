@@ -1,32 +1,30 @@
-
-
 <?php
-include "../connectTempleTeacherJohn.php" ;
+include "../connectTeacherJohn.php";
 
- $studentID = $_POST['studentID'];
+$studentID = isset($_POST['studentID']) ? $_POST['studentID'] : '';
 
-// $studentID = 4429 ;
-$query = " SELECT translateResults.studentID,
-Family_name, First_name,Grade,
-sum(case when mark = 1 then 1 end ) as correct,
-count(mark) as total,
-round(100*sum(case when mark = 1 then 1 end )/count(mark),0) AS percent
-FROM `translateResults` 
-JOIN Students_2023
-ON Students_2023.studentID = translateResults.studentID
-AND Students_2023.studentID = '$studentID' 
-GROUP BY translateResults.studentID ";
+$query = "SELECT 
+            round(100 * sum(case when mark = 1 then 1 else 0 end) / count(mark), 0) AS percent,
+            count(mark) as total
+          FROM translateResults 
+          WHERE studentID = ?";
 
-// echo "<br>" . $query . "<br>" ;
+$stmt = $dbServer->prepare($query);
+$stmt->bind_param("s", $studentID);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$output = [] ;
+$data = $result->fetch_assoc();
 
-$result = mysqli_query($dbServer,$query);
+if ($data['total'] > 0) {
+    $response = $data['percent'] . "% (" . $data['total'] . " words)";
+} else {
+    $response = "0%";
+}
 
-$data = mysqli_fetch_assoc($result); 
-$output[0][1] = $data["percent"];
-$output[0][1] = $data["total"];
+header('Content-Type: application/json');
+echo json_encode($response);
 
-echo json_encode($data["percent"] . "% from " .  $data["total"]);
-exit();
+$stmt->close();
+mysqli_close($dbServer);
 ?>

@@ -1,194 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
- 
+<head>
     <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.com/libraries/mathjs"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-
-<title>Translate Teacher Dashboard</title>
-
-<style>
-   .heading {
-       font-weight: bolder; 
-       font-size: 16pt; 
-       background-color: cornflowerblue; 
-       color:black;
-       }
-    .menu {
-        font-size: 24pt;
-    }
-
-h1 {
-    font-weight: bolder; 
-       font-size: 24pt; 
-       
-       color:green;
-}
-
-h2 {
-    font-weight: bolder; 
-       font-size: 20pt; 
-       
-       color:blue;
-}
-
-td {
-    font-size: 14ptem;
-
-}
-  
- th {
-    font-size: 18pt;
-    
-}
-
-#totalData, #wordData {
-    text-align: center;
-}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teacher Admin | Translation Leaderboard</title>
    
-body {background-color: white; color:black;font-size: 2em;}
-</style>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body { background-color: #1a1d20; color: #e9ecef; padding: 40px 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .card { background-color: #212529; border: 1px solid #373b3e; border-radius: 15px; overflow: hidden; }
+        .table { color: #dee2e6; margin-bottom: 0; }
+        .table thead th { background-color: #2c3034; color: #0dcaf0; text-transform: uppercase; padding: 20px; font-size: 0.9rem; letter-spacing: 1px; border-bottom: 2px solid #373b3e;}
+        .table tbody td { padding: 18px; border-bottom: 1px solid #373b3e; vertical-align: middle; }
+        
+        /* Rank Formatting */
+        .gold { color: #ffd700; font-weight: bold; }
+        .silver { color: #c0c0c0; font-weight: bold; }
+        .bronze { color: #cd7f32; font-weight: bold; }
+        .student-name { font-size: 1.3rem; color: #fff; letter-spacing: 0.5px;}
+        
+        /* Stat Badges */
+        .stat-correct { color: #198754; font-weight: bold; font-size: 1.2rem; }
+        .stat-wrong { color: #dc3545; font-weight: bold; font-size: 1.2rem; }
+        .percent-badge { font-size: 1.2rem; padding: 8px 15px; border-radius: 8px; font-weight: bold; display: inline-block; min-width: 80px; }
+        
+        .controls-bar { background: rgba(33, 37, 41, 0.95); padding: 20px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #373b3e; }
+    </style>
+</head>
 <body>
 
+<div class="container-fluid px-5">
+    
+    <div class="controls-bar d-flex justify-content-between align-items-center shadow">
+        <div>
+            <h1 class="m-0 fw-bold"><span class="text-primary">🇰🇭 🇬🇧</span> Khmer-English Translation Results</h1>
+            <p class="text-muted m-0" id="statusUpdate">Connecting to database...</p>
+        </div>
+        
+        <div class="d-flex gap-3">
+            <button id="exportCsv" class="btn btn-success fw-bold px-4 shadow-sm">📥 Export CSV</button>
+            <button id="clearResults" class="btn btn-outline-danger fw-bold px-4 shadow-sm">🗑️ Clear All Data</button>
+        </div>
+    </div>
 
-
-    <div class  = "container-fluid">
-
-        <div class = "row">
-            <div class = "col-md-12 c">
-              <h1>Translate Results</h1>
-                </div></div>
-
-    <div class = "row">
-      <div class = "col-md-12 c">
-        <button id = "clearStudents" class="btn btn-warning long menu">Clear results</button>
-        <button id = "showResults" class="btn btn-info long menu">Show results</button>
-      
-        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
-</div></div>
-
-<div class = "row">
-    <div class = "col-sm-12 c">
-<p id = "yourWords"></p>
-</div></div>
-
-<div class = "row">
-    <div class = "col-md-12 c">
-      <h2>Results</h2>
-        </div></div>
-
-        <div class = "row">
-            <div class = "col-md-12 c">       
-            <table class="table table-bordered table-hover" id="resultsTable">
-                <thead id = "resultsHeader">
-                    <tr >
-                        <th class="text-center">
-                            Student
-                        </th>
-                        <th class="text-center">
-                            Correct
-                        </th>
-                        <th class="text-center">
-                            Wrong
-                        </th>
-                          <th class="text-center">
-                            Percent
-                        </th>
-                     
+    <div class="card shadow-lg">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover text-center" id="resultsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">Rank</th>
+                        <th class="text-start ps-5" style="width: 35%;">Student Name</th>
+                        <th style="width: 15%;">Correct</th>
+                        <th style="width: 15%;">Wrong</th>
+                        <th style="width: 25%;">Accuracy</th>
                     </tr>
                 </thead>
-                <tbody id = "resultsBody">
-
-                </div></div>
-  
+                <tbody id="leaderboardBody">
+                    <tr><td colspan="5" class="py-5 text-muted fs-4">Loading scores...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-</body>
-</head>
 
 <script>
-    $(document).ready(function(){
+$(document).ready(function() {
 
-// load words into an array
-// sorted in upper case
+    function refreshLeaderboard() {
+        $.ajax({
+            url: 'translateShowResults.php',
+            type: 'GET',
+            dataType: 'json'
+        }).done(function(data) {
+            let body = $('#leaderboardBody');
+            body.empty();
 
-    })
+            if (!data || data.length === 0) {
+                body.append('<tr><td colspan="5" class="py-5 text-muted fs-4">No translations recorded yet.</td></tr>');
+                return;
+            }
 
-</script>
-
-<script>
-
-$(document).ready(function(){
-        $('#clearStudents').on('click', function(){
-if (confirm('Clear student results?')) {
-    $.ajax({
-                url: "clearTranslateResults.php",
+            data.forEach((row, index) => {
+                let rank = index + 1;
+                let rankDisplay = `<span class="fs-4">${rank}</span>`;
                 
-                dataType: 'json',
-                
-                contentType: 'application/json',
-                success: function(message) {
-                   alert(message) ;
-                   console.log("Data cleared");
-                },
-                error: function(data, status, jqXHR) {
-                    console.log('There was an error.');
-                }
-            });      // end $.ajax
-} else {
-  // Do nothing!
-  console.log('Tables not cleared.');
-}
+                if (rank === 1) rankDisplay = "<span class='gold fs-3'>🥇 1st</span>";
+                else if (rank === 2) rankDisplay = "<span class='silver fs-4'>🥈 2nd</span>";
+                else if (rank === 3) rankDisplay = "<span class='bronze fs-5'>🥉 3rd</span>";
 
-        })
-    })
-</script>
+                // Color code the percentage badge
+                let pct = parseFloat(row.percent);
+                let pctClass = "bg-danger"; // Default red for < 50%
+                if (pct >= 80) pctClass = "bg-success";
+                else if (pct >= 50) pctClass = "bg-warning text-dark";
 
-<script>
+                body.append(`
+                    <tr>
+                        <td>${rankDisplay}</td>
+                        <td class="text-start ps-5 student-name fw-bold">${row.student}</td>
+                        <td class="stat-correct">${row.correct}</td>
+                        <td class="stat-wrong">${row.wrong}</td>
+                        <td><span class="percent-badge ${pctClass}">${row.percent}%</span></td>
+                    </tr>
+                `);
+            });
 
-$(document).ready(function(){
-    $('#showResults').on('click', function(){
-        var seconds = 5;
+            $('#statusUpdate').text("Live Update: " + new Date().toLocaleTimeString());
+        }).fail(function() {
+            $('#statusUpdate').text("Error: Connection failed.");
+        });
+    }
 
-        setInterval(function(){
+    // --- SECURE DELETION WITH PASSWORD ---
+    $('#clearResults').click(function() {
+        if (confirm("WARNING: This will permanently delete ALL translation results. Proceed?")) {
+            let password = prompt("Authorisation Required: Please enter the Teacher Password:");
+            
+            if (password === "pythagoras") {
+                $.post('clearTranslate.php', { pass: password }, function(response) {
+                    alert(response);
+                    refreshLeaderboard();
+                });
+            } else if (password !== null) {
+                alert("Access Denied: Incorrect password.");
+            }
+        }
+    });
+
+    // --- EXPORT TO CSV ---
+    $('#exportCsv').click(function() {
+        let csv = ["Rank,Student Name,Correct,Wrong,Accuracy(%)"];
         
-            $.ajax({
-                url: "translateShowResults.php",
-                
-                dataType: 'json',
-                
-                contentType: 'application/json',
-                success: function(data) {
-                   $('#results').html(data.html) ; 
-                   console.log("Data",data) ;
-                   // need to display here
-                   $('#resultsBody').empty() ;
+        $('#leaderboardBody tr').each(function() {
+            let row = [];
+            $(this).find('td').each(function() {
+                // Strip emojis and % signs before exporting
+                let text = $(this).text().replace(/[🥇🥈🥉%]/g, '').trim();
+                row.push('"' + text + '"');
+            });
+            csv.push(row.join(","));
+        });
 
-                   for (var i = 0 ; i < data.length ; i++)
-                    {   student =  data[i][0] ;
-                        correct = data[i][1] ;
-                        wrong = data[i][2] ;
-                        percent = data[i][3] + '%' ;
-                        console.log("Data",data[i]) ;
-                       $('#resultsTable').append('<tr><td>' + student + 
-                        "</td><td id = 'wordData'>" + correct + 
-                         "</td><td id = 'wordData'>" + wrong + 
-                        "</td><td id = 'totalData'>" + percent + '<tr>')
-                    }
-                },
-                error: function(data, status, jqXHR) {
-                    console.log('There was an error.');
-                }
-            });      // end $.ajax
-        }, seconds * 1000)
+        let csvString = csv.join("\n");
+        let blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        
+        link.setAttribute("href", url);
+        link.setAttribute("download", "Translation_Results.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Initial load and set interval for live refreshing
+    refreshLeaderboard();
+    setInterval(refreshLeaderboard, 5000);
 });
+</script>
 
-})
-    </script>
-
+</body>
+</html>

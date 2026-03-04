@@ -205,6 +205,34 @@ $(document).ready(function() {
 
     $('#btnLogout').click(() => location.reload());
 
+  // --- ZERO-TOLERANCE ANTI-CHEAT MONITOR ---
+    let hasViolated = false; // Acts as a lock to prevent multiple alerts firing at once
+
+    function enforceSecurity() {
+        // Only penalize if they are actively playing and haven't been caught yet
+        if ($('#gameScreen').is(':visible') && !hasViolated) {
+            hasViolated = true; // Lock it so it only runs once
+            
+            // Give the browser a split second to render their return before firing the alert
+            setTimeout(function() {
+                alert("⛔ SECURITY VIOLATION ⛔\n\nYou left the test screen. To keep the competition fair, your session has been terminated. Please log in again.");
+                location.reload(); // Instantly boots them back to the login screen
+            }, 200);
+        }
+    }
+
+    // Trigger 1: The window loses focus (e.g., clicking the taskbar or another app)
+    $(window).on("blur", function() {
+        enforceSecurity();
+    });
+
+    // Trigger 2: The document visibility changes (e.g., switching to another browser tab)
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            enforceSecurity();
+        }
+    });
+
 });
 </script>
 

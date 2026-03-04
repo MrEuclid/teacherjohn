@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Green Light Math Puzzles</title>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, sans-serif; padding-top: 30px; padding-bottom: 50px; user-select: none; }
+        
+        .dash-header { background: #212529; color: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .level-badge { font-size: 1.5rem; font-weight: bold; padding: 10px 20px; border-radius: 10px; background: #0dcaf0; color: #000; }
+        .rule-box { background: #e9ecef; border-left: 5px solid #ffc107; padding: 15px; border-radius: 8px; font-size: 1.2rem; margin-bottom: 20px;}
+
+        /* Mastery Stars */
+        .mastery-tracker { font-size: 1.8rem; letter-spacing: 5px; color: #dee2e6; }
+        .star-filled { color: #ffc107; text-shadow: 0 0 5px rgba(255,193,7,0.5); }
+
+        /* Grid System */
+        .game-board { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: inline-block; margin-bottom: 20px; }
+        .puzzle-table { margin: 0 auto; border-spacing: 10px; border-collapse: separate; }
+        
+        /* Input Cells */
+        .cell-input { width: 70px; height: 70px; font-size: 2rem; font-weight: bold; text-align: center; border: 3px solid #dee2e6; border-radius: 15px; background: #fff; color: #0d6efd; cursor: pointer; caret-color: transparent; }
+        .cell-input.active-cell { border-color: #0dcaf0; background-color: #f0fcff; box-shadow: 0 0 15px rgba(13, 202, 240, 0.4); }
+        
+        .target-val { font-size: 1.8rem; font-weight: 900; color: #343a40; min-width: 50px; }
+        
+        /* Traffic Lights */
+        .light { width: 25px; height: 25px; border-radius: 50%; background-color: #dc3545; margin: 5px auto; transition: background-color 0.4s ease; border: 2px solid #b02a37;}
+        .light.green { background-color: #198754; border-color: #146c43; box-shadow: 0 0 15px #198754; }
+
+        /* Keypad */
+        .keypad-area { max-width: 300px; margin: 0 auto; }
+        .key-btn { height: 60px; font-size: 1.8rem; font-weight: bold; border-radius: 12px; border: none; background-color: #e9ecef; color: #343a40; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.1s; }
+        .key-btn:active { transform: translateY(2px); background-color: #dee2e6; }
+        .key-action { background-color: #6c757d; color: white; }
+
+        #successMessage { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container text-center">
+
+    <div class="dash-header d-flex justify-content-between align-items-center">
+        <h2 class="m-0 fw-bold">🚦 Green Light Puzzles</h2>
+        <div class="d-flex flex-column align-items-end">
+            <div class="level-badge mb-1" id="levelDisplay">Level 1</div>
+            <div class="mastery-tracker" id="starTracker">☆☆☆</div>
+        </div>
+    </div>
+
+    <div class="rule-box fw-bold text-muted shadow-sm" id="ruleDisplay">
+        Rule: Fill in the grid!
+    </div>
+
+    <div class="game-board">
+        <table class="puzzle-table" id="gridTable"></table>
+        
+        <div id="successMessage" class="alert alert-success border-2 border-success p-4 shadow-sm">
+            <h2 class="fw-bold mb-2 text-success" id="winTitle">⭐ Brilliant! ⭐</h2>
+            <p class="fs-5 text-muted mb-4" id="winText">One more win to master this level!</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <button id="sameLevelBtn" class="btn btn-outline-success btn-lg fw-bold px-4">Another Puzzle Here</button>
+                <button id="levelUpBtn" class="btn btn-success btn-lg fw-bold px-4 shadow">Level Up ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="keypad-area" id="keypadArea">
+        <div class="row g-2 mb-2">
+            <div class="col-4"><button class="btn key-btn w-100" data-val="1">1</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="2">2</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="3">3</button></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-4"><button class="btn key-btn w-100" data-val="4">4</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="5">5</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="6">6</button></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-4"><button class="btn key-btn w-100" data-val="7">7</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="8">8</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="9">9</button></div>
+        </div>
+        <div class="row g-2">
+            <div class="col-4"><button class="btn key-btn key-action w-100" data-val="clear">C</button></div>
+            <div class="col-4"><button class="btn key-btn w-100" data-val="0">0</button></div>
+            <div class="col-4"><button class="btn key-btn key-action w-100" data-val="del">⌫</button></div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button id="skipPuzzleBtn" class="btn btn-outline-secondary fw-bold px-4">Skip Puzzle</button>
+    </div>
+
+</div>
+
+<script>
+$(document).ready(function() {
+    
+    let currentLevel = 1;
+    let levelWins = 0; // TRACKS WINS FOR THE CURRENT LEVEL
+    const MAX_MASTERY = 3;
+
+    const levels = {
+        1: { size: 2, name: "2x2 Addition", rule: "A + B", calc: (a) => a[0]+a[1] },
+        2: { size: 2, name: "2x2 Multiplication", rule: "A × B", calc: (a) => a[0]*a[1] },
+        3: { size: 2, name: "2x2 Sum of Squares", rule: "a² + b²", calc: (a) => (a[0]*a[0])+(a[1]*a[1]) },
+        4: { size: 2, name: "2x2 Algebra", rule: "x + y + (x × y)", calc: (a) => a[0]+a[1]+(a[0]*a[1]) },
+        5: { size: 3, name: "3x3 Addition", rule: "A + B + C", calc: (a) => a[0]+a[1]+a[2] },
+        6: { size: 3, name: "3x3 Multiplication", rule: "A × B × C", calc: (a) => a[0]*a[1]*a[2] }
+    };
+
+    let gridSize, targetRow, targetCol, activeCell;
+
+    function initLevel(isNewLevel = false) {
+        if(isNewLevel) levelWins = 0;
+        
+        let config = levels[currentLevel];
+        if(!config) { alert("Game Mastered!"); currentLevel=1; config=levels[1]; }
+
+        gridSize = config.size;
+        $('#levelDisplay').text("Level " + currentLevel);
+        $('#ruleDisplay').html(`<strong>Formula:</strong> ${config.rule}`);
+        updateStars();
+        
+        $('#successMessage').hide();
+        $('#gridTable').show();
+        $('#keypadArea').show();
+        $('#skipPuzzleBtn').show();
+
+        generatePuzzleData(config);
+        renderGrid();
+    }
+
+    function updateStars() {
+        let stars = "";
+        for(let i=1; i<=MAX_MASTERY; i++) {
+            stars += (i <= levelWins) ? "<span class='star-filled'>★</span>" : "☆";
+        }
+        $('#starTracker').html(stars);
+    }
+
+    function generatePuzzleData(config) {
+        let hidden = [];
+        targetRow = []; targetCol = [];
+        for(let r=0; r<gridSize; r++) {
+            hidden[r] = [];
+            for(let c=0; c<gridSize; c++) hidden[r][c] = Math.floor(Math.random()*9)+1;
+        }
+        for(let i=0; i<gridSize; i++) {
+            targetRow[i] = config.calc(hidden[i]);
+            let colArr = [];
+            for(let r=0; r<gridSize; r++) colArr.push(hidden[r][i]);
+            targetCol[i] = config.calc(colArr);
+        }
+    }
+
+    function renderGrid() {
+        let html = "";
+        for(let r=0; r<gridSize; r++) {
+            html += `<tr>`;
+            for(let c=0; c<gridSize; c++) html += `<td><input type="text" class="cell-input form-control" data-row="${r}" data-col="${c}" readonly></td>`;
+            html += `<td class="ps-3"><div class="target-val">${targetRow[r]}</div><div class="light" id="light-r${r}"></div></td></tr>`;
+        }
+        html += `<tr>`;
+        for(let c=0; c<gridSize; c++) html += `<td class="pt-3"><div class="target-val">${targetCol[c]}</div><div class="light" id="light-c${c}"></div></td>`;
+        html += `</tr>`;
+        $('#gridTable').html(html);
+        $('.cell-input').click(function() { $('.cell-input').removeClass('active-cell'); $(this).addClass('active-cell'); activeCell = $(this); });
+        $('.cell-input').first().click();
+    }
+
+    $('.key-btn').click(function() {
+        if (!activeCell) return;
+        let v = $(this).data('val'), cur = activeCell.val();
+        if(v==='clear') activeCell.val('');
+        else if(v==='del') activeCell.val(cur.slice(0,-1));
+        else if(cur.length < 3) activeCell.val(cur + v);
+        validateGrid();
+    });
+
+    function validateGrid() {
+        let config = levels[currentLevel], user = [], all = true;
+        for(let r=0; r<gridSize; r++) {
+            user[r] = [];
+            for(let c=0; c<gridSize; c++) user[r][c] = parseInt($(`.cell-input[data-row='${r}'][data-col='${c}']`).val()) || 0;
+        }
+
+        for(let r=0; r<gridSize; r++) {
+            if(!user[r].includes(0) && config.calc(user[r]) === targetRow[r]) $(`#light-r${r}`).addClass('green');
+            else { $(`#light-r${r}`).removeClass('green'); all = false; }
+        }
+
+        for(let c=0; c<gridSize; c++) {
+            let col = [];
+            for(let r=0; r<gridSize; r++) col.push(user[r][c]);
+            if(!col.includes(0) && config.calc(col) === targetCol[c]) $(`#light-c${c}`).addClass('green');
+            else { $(`#light-c${c}`).removeClass('green'); all = false; }
+        }
+
+        if (all) handleWin();
+    }
+
+    function handleWin() {
+        levelWins++;
+        updateStars();
+        $('.cell-input').removeClass('active-cell');
+        
+        $('#gridTable').fadeOut(300, function() {
+            $('#keypadArea').hide();
+            $('#skipPuzzleBtn').hide();
+            
+            if(levelWins >= MAX_MASTERY) {
+                $('#winTitle').text("🏆 Mastery Achieved! 🏆");
+                $('#winText').text("You've mastered this concept. Moving to the next challenge!");
+                $('#sameLevelBtn').hide();
+                $('#levelUpBtn').text("Continue to Level " + (currentLevel + 1)).show();
+            } else {
+                $('#winTitle').text("⭐ Brilliant! ⭐");
+                $('#winText').text(`You have ${MAX_MASTERY - levelWins} more star(s) to earn for this level.`);
+                $('#sameLevelBtn').show();
+                $('#levelUpBtn').show();
+            }
+            $('#successMessage').fadeIn();
+        });
+    }
+
+    $('#sameLevelBtn').click(() => initLevel(false));
+    $('#levelUpBtn').click(() => { currentLevel++; initLevel(true); });
+    $('#skipPuzzleBtn').click(() => initLevel(false));
+
+    initLevel(true);
+});
+</script>
+</body>
+</html>

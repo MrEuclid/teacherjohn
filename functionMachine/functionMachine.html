@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Guess the Function Machine</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+
+    <style>
+        body { background-color: #f0f2f5; color: #333; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .game-container { max-width: 1000px; margin: 0 auto; padding: 2rem; background: #fff; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        
+        .machine-box {
+            background: #212529;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 4px solid #0d6efd;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+        }
+        
+        table { margin-bottom: 0 !important; }
+        th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 1; }
+
+        .guess-box {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ced4da;
+        }
+
+        .coeff-input {
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 5px;
+        }
+
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Feedback Animations */
+        .shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        #star-display {
+            font-size: 2rem;
+            color: #ffc107; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body class="py-5">
+
+
+<div class="container game-container">   <div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary">
+        ← Back to Home
+    </a>
+</div>
+   
+    <div class="text-center mb-4">
+        <h1 class="text-primary fw-bold mb-2">Guess the Function</h1>
+        <p class="text-secondary">Input numbers into the machine to reveal the pattern. Can you deduce the hidden function?</p>
+        <div id="star-display" class="mb-2"></div>
+    </div>
+
+    <div class="level-selector">
+        <input type="radio" class="btn-check" name="level" id="lvl1" value="1" autocomplete="off" checked>
+        <label class="btn btn-outline-primary" for="lvl1">Level 1: Linear</label>
+
+        <input type="radio" class="btn-check" name="level" id="lvl2" value="2" autocomplete="off">
+        <label class="btn btn-outline-primary" for="lvl2">Level 2: Simple Quadratic</label>
+
+        <input type="radio" class="btn-check" name="level" id="lvl3" value="3" autocomplete="off">
+        <label class="btn btn-outline-primary" for="lvl3">Level 3: Hard Quadratic</label>
+
+        <input type="radio" class="btn-check" name="level" id="lvl4" value="4" autocomplete="off">
+        <label class="btn btn-outline-primary" for="lvl4">Level 4: Cubic</label>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="machine-box">
+                <h4 class="text-info border-bottom border-secondary pb-2">Function Machine</h4>
+                <p class="small text-light">Enter an integer for $x$:</p>
+                <div class="input-group mb-3 px-3">
+                    <span class="input-group-text">$x =$</span>
+                    <input type="number" id="x-input" class="form-control text-center fs-4 fw-bold">
+                </div>
+                <button id="btn-process" class="btn btn-info fw-bold w-100 mb-2">Process Input →</button>
+                <div id="machine-output" class="fs-1 fw-bold text-warning mt-3" style="min-height: 60px;"></div>
+            </div>
+            <button id="btn-new-function" class="btn btn-secondary w-100 mt-3">Reset / New Function</button>
+        </div>
+
+        <div class="col-md-4">
+            <h5 class="text-center text-secondary">Data Table</h5>
+            <div class="table-container">
+                <table class="table table-bordered table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th class="w-50">Input ($x$)</th>
+                            <th class="w-50">Output ($f(x)$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="guess-box">
+                <h4 class="text-primary text-center border-bottom pb-2">Your Guess</h4>
+                <div id="equation-format" class="text-center fs-5 my-3 text-secondary">
+                    </div>
+
+                <div id="inputs-container" class="d-flex flex-column align-items-center gap-2 mb-4">
+                    </div>
+
+                <button id="btn-guess" class="btn btn-primary fw-bold w-100 btn-lg">Check Answer</button>
+                
+                <div id="success-msg" class="alert alert-success mt-3 text-center" style="display:none;">
+                    <strong>Correct!</strong> Well done.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// --- Game State ---
+let currentLevel = 1;
+let hiddenA, hiddenB, hiddenC;
+let dataPoints = []; // Array of objects: { x: value, y: value }
+let gameActive = true;
+let totalWins = 0;
+
+$(document).ready(function() {
+    startNewFunction();
+
+    // Event Listeners
+    $('input[name="level"]').change(function() {
+        currentLevel = parseInt($(this).val());
+        startNewFunction();
+    });
+
+    $('#btn-new-function').click(startNewFunction);
+
+    $('#btn-process').click(processInput);
+    $('#x-input').keypress(function(e) { if(e.which == 13) processInput(); });
+
+    $('#btn-guess').click(checkGuess);
+});
+
+function startNewFunction() {
+    gameActive = true;
+    dataPoints = [];
+    $('#data-table-body').empty();
+    $('#machine-output').text('');
+    $('#x-input').val('');
+    $('#success-msg').hide();
+    $('.coeff-input').css('background-color', '#fff');
+
+    // Generate random hidden coefficients based on level
+    if (currentLevel === 1) { // f(x) = ax + b
+        hiddenA = getRandomInt(-5, 5, [0]); // A cannot be 0
+        hiddenB = getRandomInt(-10, 10, []);
+        hiddenC = 0;
+        setupUI("f(x) = ax + b", ["a", "b"]);
+    } 
+    else if (currentLevel === 2) { // f(x) = x^2 + bx + c
+        hiddenA = 1; 
+        hiddenB = getRandomInt(-5, 5, []);
+        hiddenC = getRandomInt(-10, 10, []);
+        setupUI("f(x) = x^2 + bx + c", ["b", "c"]);
+    }
+    else if (currentLevel === 3) { // f(x) = ax^2 + bx + c
+        hiddenA = getRandomInt(-4, 4, [0, 1]); // A cannot be 0 or 1
+        hiddenB = getRandomInt(-6, 6, []);
+        hiddenC = getRandomInt(-10, 10, []);
+        setupUI("f(x) = ax^2 + bx + c", ["a", "b", "c"]);
+    }
+    else if (currentLevel === 4) { // f(x) = x^3 + ax^2 + bx + c
+        hiddenA = getRandomInt(-5, 5, []);
+        hiddenB = getRandomInt(-8, 8, []);
+        hiddenC = getRandomInt(-10, 10, []);
+        setupUI("f(x) = x^3 + ax^2 + bx + c", ["a", "b", "c"]);
+    }
+}
+
+function getRandomInt(min, max, exclude) {
+    let num;
+    do {
+        num = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (exclude.includes(num));
+    return num;
+}
+
+function setupUI(mathJaxString, activeInputs) {
+    // 1. Set Equation Format
+    $('#equation-format').html(`$${mathJaxString}$`);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation-format"]);
+
+    // 2. Build Inputs dynamically
+    let $container = $('#inputs-container');
+    $container.empty();
+
+    activeInputs.forEach(variable => {
+        $container.append(`
+            <div class="input-group w-75">
+                <span class="input-group-text bg-white fw-bold">$${variable} =$</span>
+                <input type="number" id="guess-${variable}" class="form-control coeff-input" placeholder="?">
+            </div>
+        `);
+    });
+    
+    // Rerender the variable labels
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "inputs-container"]);
+}
+
+function processInput() {
+    if (!gameActive) return;
+
+    let xVal = parseInt($('#x-input').val());
+    if (isNaN(xVal)) return;
+
+    // Calculate Y based on hidden function
+    let yVal;
+    if (currentLevel === 1) {
+        yVal = (hiddenA * xVal) + hiddenB;
+    } else if (currentLevel === 2) {
+        yVal = (xVal * xVal) + (hiddenB * xVal) + hiddenC;
+    } else if (currentLevel === 3) {
+        yVal = (hiddenA * xVal * xVal) + (hiddenB * xVal) + hiddenC;
+    } else if (currentLevel === 4) {
+        yVal = (xVal * xVal * xVal) + (hiddenA * xVal * xVal) + (hiddenB * xVal) + hiddenC;
+    }
+
+    // Flash output in machine
+    $('#machine-output').hide().text(yVal).fadeIn(200);
+    $('#x-input').val('').focus(); // Clear for next input
+
+    // Check if X already exists to prevent duplicates
+    if (!dataPoints.some(pt => pt.x === xVal)) {
+        dataPoints.push({ x: xVal, y: yVal });
+        
+        // SORT mathematically so table is easy to read
+        dataPoints.sort((a, b) => a.x - b.x);
+        
+        renderTable();
+    }
+}
+
+function renderTable() {
+    let $tbody = $('#data-table-body');
+    $tbody.empty();
+    
+    dataPoints.forEach(pt => {
+        $tbody.append(`
+            <tr>
+                <td class="fw-bold bg-light">${pt.x}</td>
+                <td class="fw-bold">${pt.y}</td>
+            </tr>
+        `);
+    });
+}
+
+function checkGuess() {
+    if (!gameActive) return;
+
+    let isCorrect = true;
+
+    // Check A (If level uses it)
+    if (currentLevel === 1 || currentLevel === 3 || currentLevel === 4) {
+        let guessA = parseInt($('#guess-a').val());
+        if (guessA !== hiddenA) isCorrect = false;
+    }
+
+    // Check B (All levels use B)
+    let guessB = parseInt($('#guess-b').val());
+    if (guessB !== hiddenB) isCorrect = false;
+
+    // Check C (Levels 2, 3, 4)
+    if (currentLevel >= 2) {
+        let guessC = parseInt($('#guess-c').val());
+        if (guessC !== hiddenC) isCorrect = false;
+    }
+
+    // Feedback
+    if (isCorrect) {
+        gameActive = false;
+        $('.coeff-input').css('background-color', '#c8e6c9'); // Green
+        
+        totalWins++;
+        $('#star-display').text('⭐'.repeat(totalWins)); 
+
+        $('#success-msg').fadeIn();
+
+        // Reveal full equation dynamically
+        let equationString = "";
+        if(currentLevel === 1) equationString = `f(x) = ${hiddenA}x ${hiddenB >= 0 ? '+' : ''} ${hiddenB}`;
+        else if(currentLevel === 2) equationString = `f(x) = x^2 ${hiddenB >= 0 ? '+' : ''} ${hiddenB}x ${hiddenC >= 0 ? '+' : ''} ${hiddenC}`;
+        else if(currentLevel === 3) equationString = `f(x) = ${hiddenA}x^2 ${hiddenB >= 0 ? '+' : ''} ${hiddenB}x ${hiddenC >= 0 ? '+' : ''} ${hiddenC}`;
+        else if(currentLevel === 4) equationString = `f(x) = x^3 ${hiddenA >= 0 ? '+' : ''} ${hiddenA}x^2 ${hiddenB >= 0 ? '+' : ''} ${hiddenB}x ${hiddenC >= 0 ? '+' : ''} ${hiddenC}`;
+
+        $('#equation-format').html(`<span class="text-success fw-bold">$${equationString}$</span>`);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation-format"]);
+
+    } else {
+        $('.coeff-input').css('background-color', '#ffcdd2'); // Red
+        $('.guess-box').addClass('shake');
+        setTimeout(() => $('.guess-box').removeClass('shake'), 400);
+    }
+}
+</script>
+</body>
+</html>

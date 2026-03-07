@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" translate="no" class="notranslate">
+<html lang="en">
 <head>
+
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Khmer-English Translation</title>
@@ -9,9 +11,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, sans-serif; padding-top: 10px; padding-bottom: 50px; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, sans-serif; padding-top: 40px; padding-bottom: 50px; }
         
-        .card-container { max-width: 600px; margin: 0 auto; margin-top: 20px; }
+        .card-container { max-width: 600px; margin: 0 auto; }
         .app-card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; }
         
         /* Khmer Text Display */
@@ -26,39 +28,9 @@
         .stats-bar { background: #212529; color: white; border-radius: 12px; padding: 15px 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
         .student-name { font-size: 1.2rem; font-weight: bold; color: #0dcaf0; }
         .accuracy-badge { font-size: 1.1rem; background: #198754; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-
-        /* The Annoying Penalty Overlay */
-        #penaltyOverlay {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(220, 53, 69, 0.95); /* Danger Red */
-            z-index: 9999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #penaltyTimer {
-            font-size: 6rem;
-            font-weight: bold;
-            margin: 20px 0;
-        }
     </style>
 </head>
 <body>
-
-<div class="p-3">
-    <a href="/index.php" class="btn btn-outline-secondary">
-        ← Back to Hub
-    </a>
-</div>
 
 <div class="container card-container">
 
@@ -101,13 +73,6 @@
         </div>
     </div>
 
-</div>
-
-<div id="penaltyOverlay">
-    <h1 class="display-3 fw-bold">Translation Detected!</h1>
-    <p class="fs-4 mt-3">Please use your own knowledge for this exercise.<br>The page is locked.</p>
-    <div id="penaltyTimer">10</div>
-    <p class="fs-5">The exercise will restart automatically...</p>
 </div>
 
 <script>
@@ -241,76 +206,37 @@ $(document).ready(function() {
     }
 
     $('#btnLogout').click(() => location.reload());
+/*
+  // --- ZERO-TOLERANCE ANTI-CHEAT MONITOR ---
+    let hasViolated = false; // Acts as a lock to prevent multiple alerts firing at once
 
-    /* // OLD ZERO-TOLERANCE BLUR CHEAT MONITOR (Kept commented out per your original code)
-    let hasViolated = false;
     function enforceSecurity() {
+        // Only penalize if they are actively playing and haven't been caught yet
         if ($('#gameScreen').is(':visible') && !hasViolated) {
-            hasViolated = true;
+            hasViolated = true; // Lock it so it only runs once
+            
+            // Give the browser a split second to render their return before firing the alert
             setTimeout(function() {
                 alert("⛔ SECURITY VIOLATION ⛔\n\nYou left the test screen. To keep the competition fair, your session has been terminated. Please log in again.");
-                location.reload(); 
+                location.reload(); // Instantly boots them back to the login screen
             }, 200);
         }
     }
-    $(window).on("blur", function() { enforceSecurity(); });
-    document.addEventListener("visibilitychange", function() { if (document.hidden) { enforceSecurity(); } });
+
+    // Trigger 1: The window loses focus (e.g., clicking the taskbar or another app)
+    $(window).on("blur", function() {
+        enforceSecurity();
+    });
+
+    // Trigger 2: The document visibility changes (e.g., switching to another browser tab)
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden) {
+            enforceSecurity();
+        }
+
+    });
     */
 
-    // --- NEW: GOOGLE TRANSLATE ANTI-CHEAT LOGIC ---
-    let penaltyActive = false;
-
-    function triggerAnnoyingPenalty() {
-        if (penaltyActive) return; 
-        penaltyActive = true;
-
-        // Blur background slightly and lock scrolling
-        document.body.style.overflow = 'hidden'; 
-        
-        // Show the red overlay
-        const overlay = document.getElementById('penaltyOverlay');
-        const timerText = document.getElementById('penaltyTimer');
-        overlay.style.display = 'flex';
-
-        let timeLeft = 10;
-
-        // Start 10-second countdown
-        const countdown = setInterval(() => {
-            timeLeft--;
-            timerText.innerText = timeLeft;
-
-            // When zero, reload page to wipe out the translation
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                window.location.reload(); 
-            }
-        }, 1000); 
-    }
-
-    // MutationObserver to watch for Chrome translation modifications
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes') {
-                const htmlTag = document.documentElement;
-                
-                // Chrome adds 'translated-ltr' or 'translated-rtl' classes
-                const isTranslated = htmlTag.classList.contains('translated-ltr') || 
-                                     htmlTag.classList.contains('translated-rtl');
-                
-                // Or if language attribute changes unexpectedly
-                const langChanged = htmlTag.getAttribute('lang') !== 'en';
-
-                if (isTranslated || langChanged) {
-                    triggerAnnoyingPenalty();
-                }
-            }
-        });
-    });
-
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class', 'lang']
-    });
 });
 </script>
 

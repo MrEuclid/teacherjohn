@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dragon Match: Decimals & Fractions</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
+        .header-section { margin-top: 20px; margin-bottom: 30px; }
+        
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: none;
+        }
+
+        /* The Dragon Mastery Tracker */
+        .dragon-tracker {
+            min-height: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .dragon-icon {
+            width: 30px;
+            height: 30px;
+            animation: popIn 0.4s ease-out;
+            filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.2));
+        }
+
+        /* Match Lists Styling */
+        #decimalList, #fractionList {
+            min-height: 400px;
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .match-block {
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Fixed Decimals on the Left */
+        .fixed-block {
+            background-color: #e9ecef;
+            color: #495057;
+            border: 2px dashed #ced4da;
+        }
+
+        /* Draggable Fractions on the Right */
+        .draggable-block {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            border: 2px solid #90caf9;
+            cursor: grab;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .draggable-block:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.2);
+            z-index: 1000;
+        }
+
+        /* MathJax sizing */
+        .mathjax-lg .MathJax { font-size: 2.2rem !important; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Home
+    </a>
+</div>
+
+<div class="container pb-5">
+    <div class="header-section text-center">
+        <h1 class="display-5 fw-bold text-primary">Free the Dragons!</h1>
+        <p class="text-muted fs-5">Match the fractions to their decimals to unlock the dragons.</p>
+    </div>
+
+    <div class="row justify-content-center mb-5 text-center">
+        <div class="col-md-10">
+            <h4 class="text-secondary mb-4" id="menuInstructions">Select a difficulty to begin:</h4>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <button id="btnEasy" class="btn btn-success btn-lg w-100 fw-bold py-3 fs-5">Easy</button>
+                    <div id="tracker-easy" class="dragon-tracker"></div>
+                </div>
+                <div class="col-md-4">
+                    <button id="btnMedium" class="btn btn-warning btn-lg w-100 fw-bold py-3 fs-5 text-dark">Medium</button>
+                    <div id="tracker-medium" class="dragon-tracker"></div>
+                </div>
+                <div class="col-md-4">
+                    <button id="btnHard" class="btn btn-danger btn-lg w-100 fw-bold py-3 fs-5">Hard</button>
+                    <div id="tracker-hard" class="dragon-tracker"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameArea" style="display:none;" class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="game-card">
+                
+                <div class="d-flex justify-content-between mb-3 px-2">
+                    <h4 class="text-secondary text-center w-50 m-0">Decimals</h4>
+                    <h4 class="text-secondary text-center w-50 m-0">Drag Fractions Here</h4>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <ul id="decimalList" class="w-50"></ul>
+                    
+                    <ul id="fractionList" class="w-50 mathjax-lg"></ul>
+                </div>
+
+                <button id="btnCheck" class="btn btn-primary btn-lg w-100 mt-4 py-3 fw-bold fs-4 shadow">
+                    🔓 Unlock Dragons
+                </button>
+                
+                <div id="feedbackAlert" class="mt-4 text-center fs-4 fw-bold" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    const MAX_DRAGONS = 10;
+    let dragons = { easy: 0, medium: 0, hard: 0 };
+    let currentLevel = null;
+
+    // 1. Initialize Menu and Drag & Drop
+    $('#btnEasy').click(() => startRound('easy'));
+    $('#btnMedium').click(() => startRound('medium'));
+    $('#btnHard').click(() => startRound('hard'));
+    $('#btnCheck').click(checkAnswers);
+
+    // Initialize jQuery UI Sortable on the right column
+    $('#fractionList').sortable({
+        containment: "parent",
+        tolerance: "pointer",
+        cursor: "grabbing",
+        revert: 200 // Smooth snap-back animation
+    });
+    $('#fractionList').disableSelection();
+
+    // 2. Math Logic
+    function gcd(a, b) { 
+        return b ? gcd(b, a % b) : Math.abs(a); 
+    }
+
+    function generatePairs(level) {
+        let denoms = [];
+        if (level === 'easy') {
+            denoms = [2, 4, 5, 10]; 
+        } else if (level === 'medium') {
+            denoms = [2, 4, 5, 8, 10, 20, 25]; 
+        } else {
+            denoms = [8, 12, 16, 20, 24, 25, 40, 50, 100]; 
+        }
+        
+        let pairs = [];
+        let usedValues = new Set();
+        
+        // Generate exactly 5 unique pairs
+        while(pairs.length < 5) {
+            let d = denoms[Math.floor(Math.random() * denoms.length)];
+            let n = Math.floor(Math.random() * (d - 1)) + 1;
+            
+            // Simplify fraction
+            let factor = gcd(n, d);
+            n = n / factor;
+            d = d / factor;
+            
+            let decimalValue = n / d;
+            
+            // Prevent duplicate mathematical values in the same round
+            if (!usedValues.has(decimalValue)) {
+                usedValues.add(decimalValue);
+                pairs.push({
+                    decText: Number(decimalValue.toFixed(4)).toString(),
+                    fracText: `$\\frac{${n}}{${d}}$`,
+                    value: decimalValue
+                });
+            }
+        }
+        return pairs;
+    }
+
+    // 3. Game Loop
+    function startRound(level) {
+        if (dragons[level] >= MAX_DRAGONS) return;
+        
+        currentLevel = level;
+        $('#gameArea').fadeIn();
+        $('#feedbackAlert').hide();
+        
+        $('html, body').animate({ scrollTop: $("#gameArea").offset().top - 30 }, 500);
+
+        let roundPairs = generatePairs(level);
+        
+        // Paint the Left Column (Fixed Decimals)
+        $('#decimalList').empty();
+        roundPairs.forEach(pair => {
+            $('#decimalList').append(`<li class="match-block fixed-block" data-val="${pair.value}">${pair.decText}</li>`);
+        });
+
+        // Shuffle the pairs for the Right Column
+        let shuffledPairs = [...roundPairs].sort(() => Math.random() - 0.5);
+        
+        // Paint the Right Column (Draggable Fractions)
+        $('#fractionList').empty();
+        shuffledPairs.forEach(pair => {
+            $('#fractionList').append(`<li class="match-block draggable-block shadow-sm" data-val="${pair.value}">${pair.fracText}</li>`);
+        });
+        
+        // Refresh Sortable and render MathJax equations
+        $('#fractionList').sortable("refresh");
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "fractionList"]);
+    }
+
+    function checkAnswers() {
+        // Collect the mathematical values in order from top to bottom
+        let decimalOrder = $('#decimalList li').map(function() { return $(this).data('val'); }).get();
+        let fractionOrder = $('#fractionList li').map(function() { return $(this).data('val'); }).get();
+        
+        let isCorrect = true;
+        let incorrectCount = 0;
+
+        for (let i = 0; i < 5; i++) {
+            let fracElement = $('#fractionList li').eq(i);
+            
+            if (decimalOrder[i] !== fractionOrder[i]) {
+                isCorrect = false;
+                incorrectCount++;
+                // Briefly flash red on incorrect blocks
+                fracElement.css('background-color', '#f8d7da').css('border-color', '#f5c2c7');
+                setTimeout(() => fracElement.css('background-color', '').css('border-color', ''), 800);
+            } else {
+                // Briefly flash green on correct blocks
+                fracElement.css('background-color', '#d1e7dd').css('border-color', '#badbcc');
+                setTimeout(() => fracElement.css('background-color', '').css('border-color', ''), 800);
+            }
+        }
+        
+        if (isCorrect) {
+            $('#feedbackAlert').removeClass('text-danger').addClass('text-success').html('✅ Perfect Match! You freed a dragon!').fadeIn();
+            
+            dragons[currentLevel]++;
+            renderTrackers();
+            
+            if (dragons[currentLevel] >= MAX_DRAGONS) {
+                setTimeout(() => {
+                    $('#gameArea').slideUp();
+                    $('#menuInstructions').html(`<span class="text-success fw-bold">Mastered ${currentLevel}! Try a harder difficulty.</span>`);
+                    $('html, body').animate({ scrollTop: 0 }, 500);
+                }, 2000);
+            } else {
+                setTimeout(() => startRound(currentLevel), 1500);
+            }
+        } else {
+            $('#feedbackAlert').removeClass('text-success').addClass('text-danger').html(`❌ Keep trying! You have ${incorrectCount} wrong.`).fadeIn();
+        }
+    }
+
+    // 4. UI Trackers
+    function renderTrackers() {
+        ['easy', 'medium', 'hard'].forEach(lvl => {
+            let count = dragons[lvl];
+            
+            // Build the string of dragon images
+            let html = '';
+            for(let i=0; i<count; i++) {
+                html += '<img src="/images/dragon3.png" class="dragon-icon" alt="Dragon">';
+            }
+            $(`#tracker-${lvl}`).html(html);
+            
+            // Lock out the button if mastery is achieved
+            if (count >= MAX_DRAGONS) {
+                let btn = $(`#btn${lvl.charAt(0).toUpperCase() + lvl.slice(1)}`);
+                btn.prop('disabled', true).removeClass('btn-success btn-warning btn-danger text-dark').addClass('btn-secondary');
+            }
+        });
+        
+        if (dragons.easy >= MAX_DRAGONS && dragons.medium >= MAX_DRAGONS && dragons.hard >= MAX_DRAGONS) {
+            $('#menuInstructions').html('<span class="text-success fw-bold fs-3">🏆 AMAZING! YOU SAVED ALL THE DRAGONS! 🏆</span>');
+            $('#gameArea').hide();
+        }
+    }
+
+    // Initial setup draw
+    renderTrackers();
+});
+</script>
+
+</body>
+</html>

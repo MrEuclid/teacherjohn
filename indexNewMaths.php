@@ -85,6 +85,10 @@
             <a href="functionMachine/functionMachine.html"><button class="btn btn-success shape"><img src="functionMachine/fm.png"><br>Func. Machine</button></a>
             <a href="fractionsG6.html"><button class="btn btn-success shape"><img src="images/fractions.png"><br>Fractions</button></a>
             <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-success shape"><img src="images/numberRace.png"><br>Number Race</button></a>
+
+               <a href="egyptian/egyptianFractions.php"><button class="btn btn-success shape"><img src="egyptian/king.jpg"><br>Egyptian fractions</button></a>
+             <a href="pyramidGame/pyramids.html"><button class="btn btn-info shape"><img src="pyramidGame/pyramid.jpeg"><br>Pyramids</button></a>
+
         </div>
 
         <div class="footer-text text-center">

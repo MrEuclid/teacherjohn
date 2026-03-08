@@ -71,7 +71,7 @@
 
 <div class="p-3">
     <a href="/index.php" class="btn btn-outline-secondary fw-bold">
-        ← Back to Home
+        ← Back to Hub
     </a>
 </div>
 
@@ -211,21 +211,31 @@ $(document).ready(function() {
         if (!currentOp) return;
         keystrokes++; 
 
-        let a = parseInt($('#l1-1').val()) || 0;
-        let b = parseInt($('#l1-2').val()) || 0;
-        let c = parseInt($('#l1-3').val()) || 0;
+        // Safely parse inputs. Empty inputs default to 0.
+        let a = parseInt($('#l1-1').val());
+        let b = parseInt($('#l1-2').val());
+        let c = parseInt($('#l1-3').val());
+        
+        // We use || 0 just for the math calculations so it doesn't show NaN on screen
+        let mathA = a || 0;
+        let mathB = b || 0;
+        let mathC = c || 0;
+        
         let m1 = 0, m2 = 0, top = 0;
 
-        if (currentOp === '+') { m1 = a + b; m2 = b + c; top = m1 + m2; } 
-        else if (currentOp === '-') { m1 = a - b; m2 = b - c; top = m1 - m2; } 
-        else if (currentOp === '*') { m1 = a * b; m2 = b * c; top = m1 * m2; }
+        if (currentOp === '+') { m1 = mathA + mathB; m2 = mathB + mathC; top = m1 + m2; } 
+        else if (currentOp === '-') { m1 = mathA - mathB; m2 = mathB - mathC; top = m1 - m2; } 
+        else if (currentOp === '*') { m1 = mathA * mathB; m2 = mathB * mathC; top = m1 * m2; }
 
         $('#l2-1').text(m1);
         $('#l2-2').text(m2);
         $('#l3-1').text(top);
 
-        // Win Condition Hit
-        if (top === targetGoal && (m1 * m2 * top !== 0)) {
+        // CHEAT PREVENTION: Make sure none of the base boxes are 0 or empty
+        let inputsValid = (a !== 0 && b !== 0 && c !== 0 && !isNaN(a) && !isNaN(b) && !isNaN(c));
+
+        // Win Condition Hit (Requires inputsValid to be true)
+        if (top === targetGoal && inputsValid && (m1 * m2 * top !== 0)) {
             
             // UI Feedback
             $('#l3-1').css('background-color', '#ffc107'); 

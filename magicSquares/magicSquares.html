@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Magic Square Master</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        
+        .header-section { margin-top: 20px; margin-bottom: 20px; }
+        .game-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; }
+        
+        /* Dynamic CSS Grid for the Magic Squares */
+        .magic-grid {
+            display: grid;
+            gap: 12px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+        .grid-3 { grid-template-columns: repeat(3, 90px); }
+        .grid-4 { grid-template-columns: repeat(4, 75px); }
+
+        /* The Grid Cells */
+        .grid-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 4px solid #ced4da;
+            border-radius: 15px;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #0d6efd;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .grid-cell.active {
+            border-color: #ffc107;
+            background-color: #fffde7;
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+            z-index: 10;
+        }
+        
+        .grid-cell.filled { background: white; }
+
+        /* The Number Bank Buttons */
+        .bank-btn {
+            min-width: 70px;
+            height: 70px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            border-radius: 12px;
+            margin: 5px;
+            transition: transform 0.1s;
+        }
+        
+        .bank-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Adjust MathJax size inside grids and buttons */
+        .mathjax-container .MathJax { font-size: 1.6rem !important; }
+        
+        /* Star Tracker */
+        .star-container { font-size: 1.2rem; color: #ffc107; }
+    </style>
+</head>
+
+<body>
+
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Hub
+    </a>
+</div>
+
+<div class="container pb-5">
+    <div class="header-section text-center">
+        <h1 class="display-5 fw-bold text-primary">Magic Square Master</h1>
+        <p class="text-muted fs-5">Arrange the numbers so every row, column, and diagonal matches the target!</p>
+    </div>
+
+    <div class="row justify-content-center mb-4 text-center">
+        <div class="col-lg-10">
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <button class="btn btn-outline-primary fw-bold px-4 lvl-btn" data-id="0">Magic 15</button>
+                <button class="btn btn-outline-primary fw-bold px-4 lvl-btn" data-id="1">Magic 24</button>
+                <button class="btn btn-outline-primary fw-bold px-4 lvl-btn" data-id="2">Magic 34</button>
+                <button class="btn btn-outline-primary fw-bold px-4 lvl-btn" data-id="3">Magic 216</button>
+                <button class="btn btn-outline-primary fw-bold px-4 lvl-btn" data-id="4">Magic 1 (Fractions)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="game-card text-center shadow">
+                
+                <h4 class="text-secondary mb-2" id="levelTitle">Select a Level</h4>
+                <h5 class="text-danger fw-bold" id="levelTarget">Target: ?</h5>
+                <div id="levelStars" class="star-container mb-3"></div>
+
+                <div id="gridArea" class="magic-grid mathjax-container">
+                    </div>
+
+                <div class="d-flex justify-content-center gap-3 mb-4 mt-2">
+                    <button id="btnClear" class="btn btn-secondary fw-bold px-4">Clear Board</button>
+                    <button id="btnCheck" class="btn btn-success fw-bold px-4 fs-5 shadow">Check Magic ✨</button>
+                </div>
+
+                <div id="feedbackAlert" class="alert fw-bold fs-4" style="display:none;"></div>
+
+                <hr>
+                
+                <h5 class="text-secondary mb-3">Number Bank (Tap a cell, then tap a number):</h5>
+                <div id="bankArea" class="d-flex flex-wrap justify-content-center pb-3 mathjax-container">
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    
+    // The Master Data Structure for all 5 games
+    const levels = [
+        { id: '15', name: 'The Magic 15', type: 'sum', target: 15, size: 3, bank: [1,2,3,4,5,6,7,8,9] },
+        { id: '24', name: 'The Magic 24', type: 'sum', target: 24, size: 3, bank: [4,5,6,7,8,9,10,11,12] },
+        { id: '34', name: 'The Magic 34 (4x4)', type: 'sum', target: 34, size: 4, bank: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] },
+        { id: '216', name: 'The Multiplicative 216', type: 'product', target: 216, size: 3, bank: [1,2,3,4,6,9,12,18,36] },
+        { id: '1', name: 'The Fractional 1', type: 'fraction', target: 1, size: 3, 
+          bank: [
+              { val: 1/15, label: '$\\frac{1}{15}$' },
+              { val: 2/15, label: '$\\frac{2}{15}$' },
+              { val: 3/15, label: '$\\frac{1}{5}$' }, // Simplified 3/15
+              { val: 4/15, label: '$\\frac{4}{15}$' },
+              { val: 5/15, label: '$\\frac{1}{3}$' }, // Simplified 5/15
+              { val: 6/15, label: '$\\frac{2}{5}$' }, // Simplified 6/15
+              { val: 7/15, label: '$\\frac{7}{15}$' },
+              { val: 8/15, label: '$\\frac{8}{15}$' },
+              { val: 9/15, label: '$\\frac{3}{5}$' }  // Simplified 9/15
+          ]
+        }
+    ];
+
+    let currentLevel = null;
+    let activeCell = null;
+    let completionStars = { 0: false, 1: false, 2: false, 3: false, 4: false };
+
+    // --- 1. INITIALIZATION ---
+    $('.lvl-btn').click(function() {
+        let index = $(this).data('id');
+        
+        $('.lvl-btn').removeClass('btn-primary text-white').addClass('btn-outline-primary');
+        $(this).removeClass('btn-outline-primary').addClass('btn-primary text-white');
+        
+        loadLevel(index);
+    });
+
+    function loadLevel(index) {
+        currentLevel = levels[index];
+        $('#feedbackAlert').hide();
+        
+        // Update Titles
+        $('#levelTitle').text(currentLevel.name);
+        let targetText = currentLevel.type === 'product' ? `Target Product: ${currentLevel.target}` : `Target Sum: ${currentLevel.target}`;
+        $('#levelTarget').text(targetText);
+        $('#levelStars').text(completionStars[index] ? '⭐ Solved!' : '');
+
+        buildGrid();
+        buildBank();
+    }
+
+    // --- 2. BUILD UI ---
+    function buildGrid() {
+        let area = $('#gridArea');
+        area.empty().removeClass('grid-3 grid-4').addClass('grid-' + currentLevel.size);
+        
+        for (let i = 0; i < currentLevel.size * currentLevel.size; i++) {
+            let cell = $('<div>', { class: 'grid-cell shadow-sm' });
+            
+            // Touch & Click Logic for Cells
+            cell.click(function() {
+                // If it already has a number, return it to the bank!
+                let oldId = $(this).data('bank-id');
+                if (oldId !== undefined) {
+                    $(`#bank-btn-${oldId}`).prop('disabled', false).removeClass('btn-secondary').addClass('btn-primary');
+                    $(this).removeData('val').removeData('bank-id').empty().removeClass('filled');
+                }
+                
+                $('.grid-cell').removeClass('active');
+                $(this).addClass('active');
+                activeCell = $(this);
+            });
+            
+            area.append(cell);
+        }
+        
+        // Auto-select the first cell to get them started
+        activeCell = $('.grid-cell').first().addClass('active');
+    }
+
+    function buildBank() {
+        $('#bankArea').empty();
+        
+        currentLevel.bank.forEach((item, index) => {
+            let val = typeof item === 'object' ? item.val : item;
+            let label = typeof item === 'object' ? item.label : item;
+            
+            let btn = $('<button>', {
+                class: 'btn btn-primary bank-btn shadow-sm',
+                id: 'bank-btn-' + index,
+                'data-val': val,
+                'data-id': index,
+                html: label
+            });
+            
+            // Clicking a bank button places it in the active grid cell
+            btn.click(function() {
+                if (!activeCell) return;
+                
+                let oldId = activeCell.data('bank-id');
+                if (oldId !== undefined) {
+                    $(`#bank-btn-${oldId}`).prop('disabled', false).removeClass('btn-secondary').addClass('btn-primary');
+                }
+                
+                // Set Data into Grid
+                activeCell.data('val', val).data('bank-id', index).html(label).addClass('filled');
+                
+                // Disable this bank button
+                $(this).prop('disabled', true).removeClass('btn-primary').addClass('btn-secondary');
+                
+                // Tell MathJax to render the fraction if necessary
+                if (currentLevel.type === 'fraction') {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, activeCell[0]]);
+                }
+                
+                // Auto-advance the yellow highlight to the next empty cell
+                let nextCell = activeCell.nextAll('.grid-cell:not(.filled)').first();
+                if (nextCell.length === 0) {
+                    nextCell = $('.grid-cell:not(.filled)').first(); // Loop to beginning
+                }
+                
+                $('.grid-cell').removeClass('active');
+                if (nextCell.length > 0) {
+                    activeCell = nextCell.addClass('active');
+                } else {
+                    activeCell = null; // The board is full!
+                }
+            });
+            
+            $('#bankArea').append(btn);
+        });
+        
+        if (currentLevel.type === 'fraction') {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, "bankArea"]);
+        }
+    }
+
+    $('#btnClear').click(() => {
+        buildGrid();
+        buildBank();
+        $('#feedbackAlert').hide();
+    });
+
+    // --- 3. THE UNIVERSAL CHECKING ENGINE ---
+    $('#btnCheck').click(function() {
+        if (!currentLevel) return;
+
+        // Ensure board is completely full
+        if ($('.grid-cell:not(.filled)').length > 0) {
+            $('#feedbackAlert').removeClass('alert-success alert-danger').addClass('alert-warning').html('⚠️ Please fill all the squares first!').fadeIn();
+            setTimeout(() => $('#feedbackAlert').fadeOut(), 2000);
+            return;
+        }
+
+        let size = currentLevel.size;
+        let target = currentLevel.target;
+        let isProduct = currentLevel.type === 'product';
+        
+        // Extract all values into a flat array
+        let vals = [];
+        $('.grid-cell').each(function() {
+            vals.push($(this).data('val'));
+        });
+
+        let isWinning = true;
+        let tolerance = 0.001; // Necessary to prevent floating-point fraction errors
+
+        // 1. Check Rows
+        for (let r = 0; r < size; r++) {
+            let res = isProduct ? 1 : 0;
+            for (let c = 0; c < size; c++) {
+                if (isProduct) res *= vals[r * size + c];
+                else res += vals[r * size + c];
+            }
+            if (Math.abs(res - target) > tolerance) isWinning = false;
+        }
+
+        // 2. Check Columns
+        for (let c = 0; c < size; c++) {
+            let res = isProduct ? 1 : 0;
+            for (let r = 0; r < size; r++) {
+                if (isProduct) res *= vals[r * size + c];
+                else res += vals[r * size + c];
+            }
+            if (Math.abs(res - target) > tolerance) isWinning = false;
+        }
+
+        // 3. Check Diagonals
+        let d1 = isProduct ? 1 : 0;
+        let d2 = isProduct ? 1 : 0;
+        for (let i = 0; i < size; i++) {
+            if (isProduct) {
+                d1 *= vals[i * size + i];
+                d2 *= vals[i * size + (size - 1 - i)];
+            } else {
+                d1 += vals[i * size + i];
+                d2 += vals[i * size + (size - 1 - i)];
+            }
+        }
+        if (Math.abs(d1 - target) > tolerance || Math.abs(d2 - target) > tolerance) isWinning = false;
+
+        // Feedback
+        if (isWinning) {
+            $('#feedbackAlert').removeClass('alert-warning alert-danger').addClass('alert-success').html('✅ Magic achieved! Incredible job!').fadeIn();
+            $('.grid-cell').css('background-color', '#d1e7dd').css('border-color', '#198754');
+            
+            // Find current index to mark star
+            let currentIndex = $('.lvl-btn.btn-primary').data('id');
+            completionStars[currentIndex] = true;
+            $('#levelStars').text('⭐ Solved!');
+            
+        } else {
+            $('#feedbackAlert').removeClass('alert-warning alert-success').addClass('alert-danger').html('❌ Not quite magic yet. Keep tweaking!').fadeIn();
+        }
+    });
+
+    // Start with Level 1 (Make 15) automatically
+    $('.lvl-btn').first().click();
+});
+</script>
+
+</body>
+</html>

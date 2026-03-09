@@ -58,7 +58,7 @@
 
 <div class="p-3">
     <a href="/index.php" class="btn btn-outline-secondary fw-bold">
-        ← Back to Hub
+        ← Back to Home
     </a>
 </div>
 
@@ -200,29 +200,44 @@ $(document).ready(function() {
         clearAttempt();
         setTarget();
     }
-
-    function setTarget() {
+function setTarget() {
         let chosen = [];
-        // Generate random, distinct unit fractions that sum up to a reasonable target
+        let pool = [];
+        
+        // Determine the "friendly" number pool based on difficulty
+        if (currentLevel === 'easy') {
+            pool = [2, 3, 4, 5, 6, 8, 10, 12]; // Avoids awkward primes
+        } else if (currentLevel === 'medium') {
+            pool = [2, 3, 4, 5, 6, 8, 9, 10, 12, 14, 15, 16, 20]; // Introduces mild challenge
+        } else {
+            // Hard mode: All numbers from 2 to 20
+            pool = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]; 
+        }
+
+        // Generate random, distinct unit fractions from the approved pool
         while(true) {
             chosen = [];
             while(chosen.length < clicksMax) {
-                let r = Math.floor(Math.random() * 19) + 2; // numbers 2-20
+                // Select randomly from the specific pool, not just 2-20
+                let r = pool[Math.floor(Math.random() * pool.length)];
+                
                 if (!chosen.includes(r)) chosen.push(r);
             }
             
             let sum = addFractions(chosen);
-            if (sum[0] / sum[1] <= 1.5) { // Ensure the targets aren't wildly massive
+            
+            // Ensure the targets aren't wildly massive
+            if (sum[0] / sum[1] <= 1.5) { 
                 targetNum = sum[0];
                 targetDen = sum[1];
                 break;
             }
         }
         
+        // Display the target on screen
         $('#targetDisplay').html('$' + '\\frac{' + targetNum + '}{' + targetDen + '}' + '$');
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "targetDisplay"]);
     }
-
     function handleFractionClick(d) {
         if (!currentLevel) return;
         if (currentAttemptFractions.includes(d)) return; // Prevents clicking same button twice

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($teamName) || empty($classCode)) {
         $error_message = "Please enter a team name and select a class.";
     } else {
-        $stmt = $conn->prepare("SELECT classCode, startTime FROM teams WHERE teamName = ?");
+        $stmt = $dbServer->prepare("SELECT classCode, startTime FROM teams WHERE teamName = ?");
         $stmt->bind_param("s", $teamName);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -33,14 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
         } else {
-            $insert_stmt = $conn->prepare("INSERT INTO teams (teamName, classCode, startTime) VALUES (?, ?, ?)");
+            $insert_stmt = $dbServer->prepare("INSERT INTO teams (teamName, classCode, startTime) VALUES (?, ?, ?)");
             $insert_stmt->bind_param("ssi", $teamName, $classCode, $currentTime);
             
             if ($insert_stmt->execute()) {
                 $_SESSION['teamName'] = $teamName;
                 $_SESSION['classCode'] = $classCode;
                 $_SESSION['startTime'] = $currentTime;
-                header("Location: indexMathsSeniorComp.php");
+                header("Location: indexMathsComp.php");
                 exit();
             } else {
                 $error_message = "An error occurred setting up your team. Try a different name.";

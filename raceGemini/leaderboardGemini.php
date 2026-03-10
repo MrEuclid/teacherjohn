@@ -18,14 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 FROM teams t LEFT JOIN results r ON t.teamName = r.teamName 
                 GROUP BY t.teamName, t.classCode 
                 ORDER BY t.classCode ASC, totalPoints DESC, finalTime ASC";
-        $stmt = $conn->prepare($sql);
+        $stmt = $dbServer->prepare($sql);
     } else {
         $sql = "SELECT t.teamName, t.classCode, COALESCE(SUM(r.points), 0) as totalPoints, COALESCE(MAX(r.elapsedTime), 0) as finalTime 
                 FROM teams t LEFT JOIN results r ON t.teamName = r.teamName 
                 WHERE t.classCode = ? 
                 GROUP BY t.teamName, t.classCode 
                 ORDER BY totalPoints DESC, finalTime ASC";
-        $stmt = $conn->prepare($sql);
+        $stmt = $dbServer->prepare($sql);
         $stmt->bind_param("s", $classSelect);
     }
     
@@ -55,15 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (strtolower(trim($teacherPassword)) === 'pythagoras') {
         if ($classToClear === 'ALL') {
             // Wipe everything
-            $conn->query("SET FOREIGN_KEY_CHECKS = 0;");
-            $conn->query("TRUNCATE TABLE results;");
-            $conn->query("TRUNCATE TABLE teams;");
-            $conn->query("SET FOREIGN_KEY_CHECKS = 1;");
+            $dbServer->query("SET FOREIGN_KEY_CHECKS = 0;");
+            $dbServer->query("TRUNCATE TABLE results;");
+            $dbServer->query("TRUNCATE TABLE teams;");
+            $dbServer->query("SET FOREIGN_KEY_CHECKS = 1;");
             $message = "<div class='alert alert-success'>Entire database successfully cleared!</div>";
         } else {
             // Wipe ONLY the selected class. 
             // The ON DELETE CASCADE in the database automatically deletes their scores in the results table!
-            $stmt = $conn->prepare("DELETE FROM teams WHERE classCode = ?");
+            $stmt = $dbServer->prepare("DELETE FROM teams WHERE classCode = ?");
             $stmt->bind_param("s", $classToClear);
             $stmt->execute();
             $message = "<div class='alert alert-success'>Data for class <strong>{$classToClear}</strong> successfully cleared!</div>";
@@ -81,14 +81,14 @@ if ($viewClass === 'ALL') {
             FROM teams t LEFT JOIN results r ON t.teamName = r.teamName 
             GROUP BY t.teamName, t.classCode 
             ORDER BY t.classCode ASC, totalPoints DESC, finalTime ASC";
-    $stmt = $conn->prepare($sql);
+    $stmt = $dbServer->prepare($sql);
 } else {
     $sql = "SELECT t.teamName, t.classCode, COALESCE(SUM(r.points), 0) as totalPoints, COALESCE(MAX(r.elapsedTime), 0) as finalTime 
             FROM teams t LEFT JOIN results r ON t.teamName = r.teamName 
             WHERE t.classCode = ?
             GROUP BY t.teamName, t.classCode 
             ORDER BY totalPoints DESC, finalTime ASC";
-    $stmt = $conn->prepare($sql);
+    $stmt = $dbServer->prepare($sql);
     $stmt->bind_param("s", $viewClass);
 }
 
@@ -129,7 +129,27 @@ $result = $stmt->get_result();
                     <option value="11B" <?php if($viewClass == '11B') echo 'selected'; ?>>11B</option>
                     <option value="12A" <?php if($viewClass == '12A') echo 'selected'; ?>>12A</option>
                     <option value="12B" <?php if($viewClass == '12B') echo 'selected'; ?>>12B</option>
-                </select>
+                </select><select name="class_clear" class="form-select w-25 me-3 border-danger" required>
+    <option value="" disabled selected>Select class to clear...</option>
+    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
+    
+    <option value="7A">7A</option>
+    <option value="7B">7B</option>
+    <option value="7C">7C</option>
+    <option value="8A">8A</option>
+    <option value="8B">8B</option>
+    <option value="8C">8C</option>
+    <option value="9A">9A</option>
+    <option value="9B">9B</option>
+    <option value="9C">9C</option>
+
+    <option value="10A">10A</option>
+    <option value="10B">10B</option>
+    <option value="11A">11A</option>
+    <option value="11B">11B</option>
+    <option value="12A">12A</option>
+    <option value="12B">12B</option>
+</select>
                 <a href="leaderboardGemini.php?view_class=<?php echo htmlspecialchars($viewClass); ?>" class="btn btn-outline-primary">🔄 Refresh</a>
             </form>
         </div>
@@ -177,15 +197,27 @@ $result = $stmt->get_result();
         <p class="text-muted small">Download a CSV spreadsheet of the final standings.</p>
         <form method="POST" action="leaderboardGemini.php" target="_blank" class="d-flex align-items-center mb-4">
             <input type="hidden" name="action" value="download_csv">
-            <select name="class_select" class="form-select w-25 me-3" required>
-                <option value="ALL">All Classes</option>
-                <option value="10A">10A</option>
-                <option value="10B">10B</option>
-                <option value="11A">11A</option>
-                <option value="11B">11B</option>
-                <option value="12A">12A</option>
-                <option value="12B">12B</option>
-            </select>
+           <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
+    <option value="" disabled selected>Select class to clear...</option>
+    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
+    
+    <option value="7A">7A</option>
+    <option value="7B">7B</option>
+    <option value="7C">7C</option>
+    <option value="8A">8A</option>
+    <option value="8B">8B</option>
+    <option value="8C">8C</option>
+    <option value="9A">9A</option>
+    <option value="9B">9B</option>
+    <option value="9C">9C</option>
+
+    <option value="10A">10A</option>
+    <option value="10B">10B</option>
+    <option value="11A">11A</option>
+    <option value="11B">11B</option>
+    <option value="12A">12A</option>
+    <option value="12B">12B</option>
+</select>
             <button type="submit" class="btn btn-success">Download CSV</button>
         </form>
 

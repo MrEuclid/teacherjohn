@@ -1,8 +1,24 @@
 <?php
-session_save_path(sys_get_temp_dir());
 session_start();
 
-require_once '../connectTeacherJohn.php';
+
+$server = 'localhost' ;
+$username = 'teacherj_euclid';
+$password = 'puthisastra2024' ;
+$database = 'teacherj_temple' ;
+
+
+
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+try {
+    $dbServer = new mysqli($server, $username, $password, $database);
+    $dbServer->set_charset("utf8mb4");
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    exit("Database connection failed. Please contact the administrator.");
+}
+
 $error_message = "";
 $competition_duration = 45 * 60; // 45 minutes in seconds
 
@@ -40,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['teamName'] = $teamName;
                 $_SESSION['classCode'] = $classCode;
                 $_SESSION['startTime'] = $currentTime;
-                header("Location: indexMathsComp.php");
+                header("Location: indexMathsSeniorComp.php");
                 exit();
             } else {
                 $error_message = "An error occurred setting up your team. Try a different name.";
@@ -85,15 +101,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="mb-4">
                 <label for="classCode" class="form-label">Select Class</label>
-                <select class="form-select" id="classCode" name="classCode" required>
-                    <option value="" disabled selected>Choose your class...</option>
-                    <option value="10A">10A</option>
-                    <option value="10B">10B</option>
-                    <option value="11A">11A</option>
-                    <option value="11B">11B</option>
-                    <option value="12A">12A</option>
-                    <option value="12B">12B</option>
-                </select>
+              <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
+    <option value="" disabled selected>Select class to clear...</option>
+    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
+    
+    <option value="7A">7A</option>
+    <option value="7B">7B</option>
+    <option value="7C">7C</option>
+    <option value="8A">8A</option>
+    <option value="8B">8B</option>
+    <option value="8C">8C</option>
+    <option value="9A">9A</option>
+    <option value="9B">9B</option>
+    <option value="9C">9C</option>
+
+    <option value="10A">10A</option>
+    <option value="10B">10B</option>
+    <option value="11A">11A</option>
+    <option value="11B">11B</option>
+    <option value="12A">12A</option>
+    <option value="12B">12B</option>
+</select>
             </div>
             
             <button type="submit" class="btn btn-primary w-100 fs-5">Start Competition</button>

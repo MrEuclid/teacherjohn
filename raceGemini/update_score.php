@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['teamName'])) {
     $competition_duration = 45 * 60; // 45 minutes
 
     // 1. SECURITY CHECK: Verify they are still within their 45-minute window
-    $stmt = $conn->prepare("SELECT startTime FROM teams WHERE teamName = ?");
+    $stmt = $dbServer->prepare("SELECT startTime FROM teams WHERE teamName = ?");
     $stmt->bind_param("s", $teamName);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['teamName'])) {
     }
 
     // 2. CHECK FOR DUPLICATES: Prevent submitting the same question twice
-    $check_stmt = $conn->prepare("SELECT id FROM results WHERE teamName = ? AND questionTitle = ?");
+    $check_stmt = $dbServer->prepare("SELECT id FROM results WHERE teamName = ? AND questionTitle = ?");
     $check_stmt->bind_param("ss", $teamName, $questionTitle);
     $check_stmt->execute();
     $check_result = $check_stmt->get_result();
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['teamName'])) {
     }
 
     // 3. LOG THE SCORE: Insert the points into the results table
-    $insert_stmt = $conn->prepare("INSERT INTO results (teamName, questionTitle, points, elapsedTime) VALUES (?, ?, ?, ?)");
+    $insert_stmt = $dbServer->prepare("INSERT INTO results (teamName, questionTitle, points, elapsedTime) VALUES (?, ?, ?, ?)");
     $insert_stmt->bind_param("ssii", $teamName, $questionTitle, $points, $elapsedTime);
     
     if ($insert_stmt->execute()) {

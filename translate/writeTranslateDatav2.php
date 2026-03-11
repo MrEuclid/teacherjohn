@@ -17,9 +17,11 @@ $stmt->bind_param("ssssii", $studentID, $kword, $eword, $guess, $wordID, $mark);
 if ($stmt->execute()) {
     echo "success";
 } else {
-    echo "error";
+    // Send the exact error back to the browser so you can debug it
+    echo "error: " . $stmt->error; 
 }
 
 $stmt->close();
 mysqli_close($dbServer);
+?>
 ?>

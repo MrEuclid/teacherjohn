@@ -56,7 +56,7 @@
 
 <div class="p-3">
     <a href="/index.php" class="btn btn-outline-secondary">
-        ← Back to Hub
+        ← Back to Home
     </a>
 </div>
 
@@ -185,16 +185,9 @@ $(document).ready(function() {
         let isCorrect = (guess === correctAnswer);
         let mark = isCorrect ? 1 : 0;
 
-        // Visual Feedback
+        // Visual Feedback (Temporarily disable submit to prevent double-clicks)
         $('#englishGuess').prop('disabled', true);
-        $('#btnSubmit').hide();
-        $('#btnNext').show().focus();
-
-        if(isCorrect) {
-            $('#feedbackAlert').removeClass('alert-danger').addClass('alert-success').html("✅ Correct! Brilliant job.").fadeIn();
-        } else {
-            $('#feedbackAlert').removeClass('alert-success').addClass('alert-danger').html(`❌ Incorrect.<br>The correct word is: <span class='text-dark'>${currentWordData.word}</span>`).fadeIn();
-        }
+        $('#btnSubmit').prop('disabled', true).text("Saving...");
 
         // Write to Database
         $.ajax({
@@ -208,8 +201,30 @@ $(document).ready(function() {
                 wordID: currentWordData.id,
                 mark: mark
             }
-        }).done(function() {
-            updateStudentStats(); // Refresh the top bar
+        }).done(function(response) {
+            // Check if PHP actually echoed "success"
+            if (response.trim() === "success") {
+                $('#btnSubmit').hide().prop('disabled', false).text("Check Translation");
+                $('#btnNext').show().focus();
+                
+                if(isCorrect) {
+                    $('#feedbackAlert').removeClass('alert-danger').addClass('alert-success').html("✅ Correct! Brilliant job.").fadeIn();
+                } else {
+                    $('#feedbackAlert').removeClass('alert-success').addClass('alert-danger').html(`❌ Incorrect.<br>The correct word is: <span class='text-dark'>${currentWordData.word}</span>`).fadeIn();
+                }
+                
+                updateStudentStats(); 
+            } else {
+                // PHP echoed "error"
+                alert("Database Error: Could not save your answer. Please show this to a teacher. Error details: " + response);
+                $('#btnSubmit').prop('disabled', false).text("Check Translation");
+                $('#englishGuess').prop('disabled', false);
+            }
+        }).fail(function() {
+            // The network dropped
+            alert("Network Error: Please check your internet connection and try clicking Check Translation again.");
+            $('#btnSubmit').prop('disabled', false).text("Check Translation");
+            $('#englishGuess').prop('disabled', false);
         });
     });
 
@@ -221,7 +236,7 @@ $(document).ready(function() {
 
     $('#englishGuess').keypress(function(e) {
         if(e.which == 13) { // Enter key
-            if($('#btnSubmit').is(':visible')) $('#btnSubmit').click();
+            if($('#btnSubmit').is(':visible') && !$('#btnSubmit').prop('disabled')) $('#btnSubmit').click();
             else if($('#btnNext').is(':visible')) $('#btnNext').click();
         }
     });
@@ -241,21 +256,6 @@ $(document).ready(function() {
     }
 
     $('#btnLogout').click(() => location.reload());
-
-    /* // OLD ZERO-TOLERANCE BLUR CHEAT MONITOR (Kept commented out per your original code)
-    let hasViolated = false;
-    function enforceSecurity() {
-        if ($('#gameScreen').is(':visible') && !hasViolated) {
-            hasViolated = true;
-            setTimeout(function() {
-                alert("⛔ SECURITY VIOLATION ⛔\n\nYou left the test screen. To keep the competition fair, your session has been terminated. Please log in again.");
-                location.reload(); 
-            }, 200);
-        }
-    }
-    $(window).on("blur", function() { enforceSecurity(); });
-    document.addEventListener("visibilitychange", function() { if (document.hidden) { enforceSecurity(); } });
-    */
 
     // --- NEW: GOOGLE TRANSLATE ANTI-CHEAT LOGIC ---
     let penaltyActive = false;

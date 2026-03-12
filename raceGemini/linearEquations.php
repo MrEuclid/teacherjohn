@@ -1,18 +1,18 @@
 <?php 
-$question = $_POST['question'];
+ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
- 
- 
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
-    
+  <title>Progressive Linear Equations</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -20,481 +20,196 @@ $question = $_POST['question'];
       tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
     });
   </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+  <script src="javascript/utilities.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-
-<link rel="stylesheet" href="../css/templeStyles.css">
-<link rel="stylesheet" href="../css/newTempleStyles.css">
-<link rel="stylesheet" href="../race2024.css">
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
-
-<title>Linear equations</title>
-
-<style>
-<!--
-[id^=solution]  {text-align: center;margin-bottom:1em;}
-[id^=check] {margin-bottom:1em;}
-[id^=equation] {margin-bottom:1em;}
--->
-</style>
-
-
+  <style>
+    .game-container { text-align: center; margin-top: 20px; }
+    #equation-display { font-size: 2.2em; margin: 30px 0; min-height: 80px; }
+    input {
+      text-align: center; 
+      background-color: lightgreen; 
+      font-size: 1.5em; 
+      font-weight: bold;
+      width: 4em;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 game-container">
+        
+        <h3 class="fw-bold text-primary">Find <i style="font-family: serif;">x</i></h3>
+        <p class="text-muted fs-5" id="level-indicator">Level 1 of 3</p>
 
-    <div class  = "container-fluid">
+        <div id="equation-display"></div>
 
+        <div id="play-area" class="row justify-content-center align-items-center mt-4">
+          <div class="col-auto text-end"><label class="fs-3 fw-bold"><i style="font-family: serif;">x</i> =</label></div>
+          <div class="col-auto"><input type="number" id="user-answer" class="form-control" step="any"></div>
+          <div class="col-auto"><button id="check-btn" class="btn btn-primary btn-lg">Check</button></div>
+        </div>
+        
+        <div id="feedback" class="mt-4 fs-5 fw-bold"></div>
 
-    <div class = "row">
-      <div class = "col-sm-12 c">
-
- <h1>Find x</h1>
-</div></div>
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex1"></div>
+      </div>
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation1"></label>
-</div>
+  </div>
 
-    <div class = "col-3">   
-<input id = "solution1">
-</div>
+  <script type="text/javascript">
+    var questionID = '<?php echo $question; ?>';
+    var currentLevel = 0;
+    var currentSolution = null;
 
- <div class = "col-3"> 
-<button id = "check1">Check 1</button>
-</div>
-</div>
+    // --- HELPER FUNCTIONS ---
+    function randomInteger(min, max) { 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex2"></div>
-    </div>
-    
- <div class = "col-3"> 
-<label id = "equation2"></label>
-</div>
-
-<div class = "col-3">   
-<input id = "solution2">
-</div>
-
- <div class = "col-3 "> 
-<button id = "check2">Check 2</button>
-</div></div>
-
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex3"></div>
-    </div>
-
- <div class = "col-3"> 
-<label id = "equation3"></label>
-</div>
-
-<div class = "col-3">   
-<input id = "solution3">
-</div>
-
- <div class = "col-3"> 
-<button id = "check3">Check 3</button>
-</div></div>
-
-<!--
- <div class = "row justify-content-evenly">
-      <div class = "col-3">
-    <div id = "ex4"></div>
-    </div>
-    
- <div class = "col-3"> 
-<label id = "equation4"></label>
-</div>
-
-<div class = "col-3">   
-<input id = "solution4">
-</div>
-
- <div class = "col-3"> 
-<button id = "check4">Check 4</button>
-</div>
-</div>
-
--->
-
-
-
-</div>
-
-</body>
-</html>
-
-<script type="text/javascript">
-    
     function gcd(a, b) {
-   
-   a = Math.abs(a) ;
-   b = Math.abs(b) ;
-
-//alert('Now ' + a + ' ' + b);
-
-    if (a == 0)
-        return b;
-
-    if (b == 0)
-       return a ;  
-
-    while (b != 0) 
-    {
-        if (a > b)
-            a = a - b;
-        else
-            b = b - a;
+        a = Math.abs(a);
+        b = Math.abs(b);
+        if (b) {
+            return gcd(b, a % b);
+        } else {
+            return Math.abs(a);
+        }
     }
 
-    return a;
-}
-
-</script>
-
-
-
-<script type="text/javascript">
-    
-
-      function randomInteger(min, max) { // min and max included 
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-</script>
-
-
-<script type="text/javascript">
-  
-function gcd(a, b) {
-    if (b) {
-        return gcd(b, a % b);
-    } else {
-        return Math.abs(a);
-    }
-}
-
-</script>
-
-<script type="text/javascript">
-    
-
-
-function findDouble(limit) {
-
-
-// equation 2 
-    // ab / (a-b)
-let p = 1;
-while (true) {
-  const [a, b] = Array.from({ length: 4 }, () => Math.floor(Math.random() * limit) + 1);
-   p = (a*b) / (a - b);
- //  console.log(a,b,c,d,p);
- // if (gcd(d - c, a - b) === 1) 
-   if 
-    (
-    (parseInt(p) == p) & 
-    (a  != b ) & 
-    (gcd(a*b,(a-b)) == 1)
-     )
-  {
-    var data = [a,b,p];
-   return data;
-    break;
-  }
-}
-
-
-
-}
-
-</script>
-
-<script type="text/javascript">
-    
-
-
-function findQuadruple(limit) {
-
-let p = 1;
-while (true) {
-  const [a, b, c, d] = Array.from({ length: 4 }, () => Math.floor(Math.random() * limit) + 1);
-   p = (d-c) / (a - b);
- //  console.log(a,b,c,d,p);
- // if (gcd(d - c, a - b) === 1) 
-   if 
-    (
-    (parseInt(p) == p) & 
-    (a + 10 > b) & 
-     (c + 10 > 10)
-     )
-  {
-    var data = [a,b,c,d,p];
-   return data;
-    break;
-  }
-}
-
-
-
-}
-
-</script>
-
-<script type="text/javascript">
-
-function findQuadrupleQ3(limit) {
-
-// matrix inverse
-
-
-let p = 1;
-let x = 0 ;
-let y = 0 ;
-let delta = 0;
-while (true) {
-     const [a, b, c, d,e,f] = Array.from({ length: 6 }, () => Math.floor(Math.random() * limit) + 1);
-     delta = a*d - b*c ;
-     x = (d*e - b*f)/delta;
-     y = (-c*e + a*f)/ delta
-    if 
-        (
-            (parseInt(x) == x) & 
-            (parseInt(y) == y) & 
-            (b > 0) &
-            (d > 0) &
-            (a != c) &
-            (b != d) &
-            (x*y != 0) &
-            (delta != 0) 
-        )
-  {
-    var data = [a,b,c,d,e,f,x,y];
-   return data;
-    break;
-  }
-}  // while
-
-
-
-}  // function
-
-</script>
-
-
-<script type="text/javascript">
-
-function findQuadrupleQ2(limit) {
-
-// 1/x + a/b  = c/d 
- //   p = b*d /(b*c - a*d)
-
-let p = 1;
-while (true) {
-     const [a, b, c, d] = Array.from({ length: 4 }, () => Math.floor(Math.random() * limit) + 1);
-      p = (b*d /(b*c - a*d));
-
-    if 
-        (
-            (parseInt(p) == p) & 
-            (a  < b) & 
-            (c  < d) &
-            (gcd(b*d ,(b*c - a*d))) == 1
-        )
-  {
-    var data = [a,b,c,d,p];
-   return data;
-    break;
-  }
-}  // while
-
-
-
-}  // function
-
-</script>
-
-<script type="text/javascript">
-    
-    function makeQuestion1()
-
-    {
-
-        data = findQuadruple(100);
-        a = data[0];
-        b = data[1];
-        c = data[2];
-        d = data[3];
-        p = data[4];
-        num = (d-c);
-        den = (a-b)
-        x = num/den;
-
-console.log("q1",a,b,c,d,num,den,p);
-
- var expr = '$ ' + a + 'x + ' + c + ' = ' + b + 'x + ' +  d + ' $';
-  //  var expr = '$ \\frac{' + a + '!' + '}{' + b + '!' + '} = $';
-  $('#equation1').html(expr);
-       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
-
-ans = x;
-    return x;
-    }
-
-</script>
-
-<script type="text/javascript">
-    
-    function makeQuestion2()
-
-    {
-// 1/x + a/b  = c/d 
-var data = findQuadrupleQ2(20);
-a = data[0];
-b = data[1];
-c = data[2];
-d = data[3];
-x = data[4];
-
-       var expr = '$ \\frac{1}{x} + \\frac{' + a + '}{' + b + '}'  
-                    + ' = \\frac{' +  c + '}{' + d + '} $';
-    //  var expr = '$ \\sum_{i=1}^n a_i$';
-    $('#equation2').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
-        ans = x;
-        return x;
-    }
-</script>
-
-
-<script>
-
-    function makeQuestion3()
-
-   {
-// x (x+1) = n
- x = randomInteger(5,15);
- let m = x*parseInt((x+1));
-      var expr = '$ x(x+1) = ' + m + ' $' ;
-    $('#equation3').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
-
-
-        return x;
-
-    }
-</script>
-
-<script type="text/javascript">
-  
-    $(document).ready(function(){
-   
-    question = '<?php echo $question; ?>' ;
-// points = question.substr(-1);
-// calculate points on exit
-// $('#cancel').text("Exit");
-
-answer = [];
-points = 0;
-
-answer[1] = makeQuestion1() ;
-answer[2] = makeQuestion2() ;
-answer[3] = makeQuestion3() ;
-//answer[4] = makeQuestion4() ;
-
-correct = 0 ; // number correct;
-points = 0 ;
-
-console.log("answers - all",answer);
-  })
-
-
-</script>
-
-
-
-
-
-
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-      //  alert("Checking " + qNumber);
-
-        var guess1 = $('#solution' + qNumber).val() ;
-
-        if (qNumber == 3)
-            {
-                guess = parseFloat(guess1);
-                guess = +guess.toFixed(2);  // + to change from string to number
-             //   alert(guess + ' ' + guess1);
-                $('#solution3').text(guess);
-    }
-    else {guess = guess1;}
-        if (guess == answer[qNumber])
-        {
-           // alert("Correct");
-            $('#solution' + qNumber).prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            
-            points = parseInt(qNumber) + parseInt(points);
-            console.log("points", points,clicked,qNumber,total);
-            if (points == 6)
-
-            {
-
-            //    alert("You have solved " + points/3 + " equations!");
-alert("Processing win " + questionID + " with " + points + " pts");
-processWin(questionID);
-    console.log("processing ",questionID);
-
+    // --- MATH GENERATORS ---
+
+    // Level 1: ax + c = bx + d
+    function makeQuestion1() {
+        let a, b, c, d, x;
+        let valid = false;
+
+        while (!valid) {
+            a = randomInteger(1, 100);
+            b = randomInteger(1, 100);
+            c = randomInteger(1, 100);
+            d = randomInteger(1, 100);
+
+            if (a !== b) {
+                let p = (d - c) / (a - b);
+                // Condition: x is an integer, and the layout looks balanced
+                if (Number.isInteger(p) && (a + 10 > b) && (c + 10 > 10)) {
+                    x = p;
+                    valid = true;
+                }
             }
         }
 
-        else
+        let expr = '\\( ' + a + 'x + ' + c + ' = ' + b + 'x + ' + d + ' \\)';
+        return { equation: expr, solution: x };
+    }
 
-        {
-            alert("keep trying")
+    // Level 2: 1/x + a/b = c/d
+    function makeQuestion2() {
+        let a, b, c, d, x;
+        let valid = false;
+
+        while (!valid) {
+            a = randomInteger(1, 20);
+            b = randomInteger(1, 20);
+            c = randomInteger(1, 20);
+            d = randomInteger(1, 20);
+
+            let num = b * d;
+            let den = (b * c) - (a * d);
+
+            if (den !== 0) {
+                let p = num / den;
+                // Condition: x is integer, fractions are proper (a<b, c<d), and numerator/denominator are coprime
+                if (Number.isInteger(p) && a < b && c < d && gcd(num, den) === 1) {
+                    x = p;
+                    valid = true;
+                }
+            }
         }
-})
-})
 
-</script>
+        let expr = '\\( \\frac{1}{x} + \\frac{' + a + '}{' + b + '} = \\frac{' + c + '}{' + d + '} \\)';
+        return { equation: expr, solution: x };
+    }
 
+    // Level 3: x(x+1) = m
+    function makeQuestion3() {
+        let x = randomInteger(5, 15);
+        let m = x * (x + 1);
 
+        // Added (x > 0) so the student knows to ignore the negative root!
+        let expr = '\\( x(x+1) = ' + m + ' \\) &nbsp;&nbsp; \\text{(where } x > 0 \\text{)}';
+        return { equation: expr, solution: x };
+    }
 
+    // --- GAME LOGIC ---
+    function loadNextLevel() {
+        let qData;
+        if (currentLevel === 0) qData = makeQuestion1();
+        else if (currentLevel === 1) qData = makeQuestion2();
+        else if (currentLevel === 2) qData = makeQuestion3();
+
+        currentSolution = qData.solution;
+        
+        $('#level-indicator').text(`Level ${currentLevel + 1} of 3`);
+        $('#equation-display').html(qData.equation);
+        $('#user-answer').val('').focus();
+        $('#feedback').text('');
+
+        // Instruct MathJax to re-render the new equation beautifully
+        if (typeof MathJax !== 'undefined') {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation-display"]);
+        }
+    }
+
+    $(document).ready(function() {
+        // Kick off the first question
+        loadNextLevel();
+
+        $('#check-btn').click(function() {
+            // Using parseFloat in case answers require decimals
+            let guess = parseFloat($('#user-answer').val());
+            
+            if (isNaN(guess)) {
+                $('#feedback').html('<span class="text-danger">Please enter a number.</span>');
+                return;
+            }
+
+            if (guess === currentSolution) {
+                currentLevel++; // Advance level
+                
+                if (currentLevel < 3) { // 3 levels for this gauntlet
+                    $('#feedback').html('<span class="text-success">Correct! Loading next level...</span>');
+                    setTimeout(loadNextLevel, 800); 
+                } else {
+                    // Won all levels
+                    $('#level-indicator').text("Gauntlet Complete!");
+                    $('#equation-display').html('<span class="text-success fw-bold">⭐ All Equations Solved! ⭐</span>');
+                    $('#play-area').hide();
+                    $('#feedback').text("");
+                    
+                    if (typeof handleCorrectAnswer === "function") {
+                        handleCorrectAnswer();
+                    } else if (typeof processWin === "function") {
+                        processWin(questionID);
+                    } else {
+                        alert("Great job! You answered all questions correctly.");
+                    }
+                }
+            } else {
+                $('#feedback').html('<span class="text-danger">Not quite. Try again!</span>');
+                $('#user-answer').val('').focus();
+            }
+        });
+
+        // Allow pressing Enter to check answer
+        $('#user-answer').keypress(function(e) {
+            if(e.which == 13) { 
+                $('#check-btn').click(); 
+            }
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,20 +1,19 @@
 <?php 
- 
-$question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 
+ $question = isset($_POST['question']) ? $_POST['question'] : '';
+// line intersecting a parabola at AB, find the length of AB
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
 
-  <head>
- 
- 
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -22,33 +21,10 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
       tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
     });
   </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
 
-<link rel="stylesheet" href="../css/templeStyles.css">
-<link rel="stylesheet" href="../css/newTempleStyles.css">
-   
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-<script src="javascript/utilities.js"></script>
-
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
-
+  <script src="javascript/utilities.js"></script>
 <title>Birthdays</title>
 
 <style>

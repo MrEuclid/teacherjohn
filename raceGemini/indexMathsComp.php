@@ -5,7 +5,6 @@ session_start();
 require_once '../connectTeacherJohn.php'; 
 // Connect to the database
 
-
 // Fetch all questions this team has already solved
 $solved_questions = [];
 $stmt = $dbServer->prepare("SELECT questionTitle FROM results WHERE teamName = ?");
@@ -29,8 +28,6 @@ $startTime = $_SESSION['startTime'];
 // 2. EXTRACT GRADE: Strips all letters, turning '10A' -> '10', '7A' -> '7', or 'G8B' -> '8'
 $grade = preg_replace('/[^0-9]/', '', $classCode);
 
-
-
 // 3. CALCULATE TIMER: 45 minutes = 2700 seconds
 $duration = 45 * 60;
 $elapsed = time() - $startTime;
@@ -49,7 +46,7 @@ if ($timeRemaining < 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Maths Competition - Dashboard</title>
     
-     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script type="text/x-mathjax-config">
@@ -60,6 +57,8 @@ if ($timeRemaining < 0) {
         });
     </script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
     <style>
         body { background-color: #f8f9fa; }
@@ -101,10 +100,12 @@ if ($timeRemaining < 0) {
         
         <div class="col-md-7 mb-4">
             <h4 class="mb-3">Current Problem</h4>
-            <div id="play" class="d-flex align-items-center justify-content-center">
-                <div class="text-center">
-                    <p class="text-muted fs-5">Welcome Team <?php echo htmlspecialchars($teamName); ?>!</p>
-                    <p>Select a question from the menu to begin.</p>
+            <div id="play" class="p-3">
+                <div class="d-flex align-items-center justify-content-center" style="min-height: 350px;">
+                    <div class="text-center">
+                        <p class="text-muted fs-5">Welcome Team <?php echo htmlspecialchars($teamName); ?>!</p>
+                        <p>Select a question from the menu to begin.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -134,20 +135,21 @@ if ($timeRemaining < 0) {
     // Global tracking variables
     var activeQuestionId = "";
     var activeQuestionPoints = 0;
-    // 2. EXTRACT GRADE: Strips all letters, turning '10A' -> '10', '7A' -> '7', or 'G8B' -> '8'
 
     // PHP to JS Variables
     var lockedGrade = "<?php echo $grade; ?>";
     var timeRemaining = <?php echo $timeRemaining; ?>;
     var competitionDuration = <?php echo $duration; ?>;
     console.log("Grade",lockedGrade);
+    
     $(document).ready(function() {
         // 1. AUTO-FILTER QUESTIONS (Locks them into their grade)
         $('.q-btn').hide(); // Hide all
-        // 1. Grab the array of solved questions from PHP
+        
+        // Grab the array of solved questions from PHP
         var solvedArray = <?php echo json_encode($solved_questions); ?>;
         
-        // 2. Loop through the array and lock the buttons immediately
+        // Loop through the array and lock the buttons immediately
         solvedArray.forEach(function(qId) {
             $('#' + qId)
                 .prop('disabled', true)
@@ -156,7 +158,7 @@ if ($timeRemaining < 0) {
                 .text('✅ Solved');
         });
         
-     if(lockedGrade === "7") {
+        if(lockedGrade === "7") {
             $('.g7, .g7_g8').fadeIn();
         } else if(lockedGrade === "8") {
             $('.g8 ,.g7_g8 ,.g8_g9').fadeIn();

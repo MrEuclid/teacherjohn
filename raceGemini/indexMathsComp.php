@@ -2,6 +2,20 @@
 session_save_path(sys_get_temp_dir());
 session_start();
 
+require_once '../connectTeacherJohn.php'; 
+// Connect to the database
+
+
+// Fetch all questions this team has already solved
+$solved_questions = [];
+$stmt = $dbServer->prepare("SELECT questionTitle FROM results WHERE teamName = ?");
+$stmt->bind_param("s", $teamName);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $solved_questions[] = $row['questionTitle'];
+}
+
 // 1. SECURITY: Redirect to login if they haven't logged in
 if (!isset($_SESSION['teamName'])) {
     header("Location: login.php");
@@ -14,6 +28,8 @@ $startTime = $_SESSION['startTime'];
 
 // 2. EXTRACT GRADE: Strips all letters, turning '10A' -> '10', '7A' -> '7', or 'G8B' -> '8'
 $grade = preg_replace('/[^0-9]/', '', $classCode);
+
+
 
 // 3. CALCULATE TIMER: 45 minutes = 2700 seconds
 $duration = 45 * 60;
@@ -118,22 +134,34 @@ if ($timeRemaining < 0) {
     // Global tracking variables
     var activeQuestionId = "";
     var activeQuestionPoints = 0;
-    
+    // 2. EXTRACT GRADE: Strips all letters, turning '10A' -> '10', '7A' -> '7', or 'G8B' -> '8'
+
     // PHP to JS Variables
     var lockedGrade = "<?php echo $grade; ?>";
     var timeRemaining = <?php echo $timeRemaining; ?>;
     var competitionDuration = <?php echo $duration; ?>;
-
+    console.log("Grade",lockedGrade);
     $(document).ready(function() {
         // 1. AUTO-FILTER QUESTIONS (Locks them into their grade)
         $('.q-btn').hide(); // Hide all
+        // 1. Grab the array of solved questions from PHP
+        var solvedArray = <?php echo json_encode($solved_questions); ?>;
+        
+        // 2. Loop through the array and lock the buttons immediately
+        solvedArray.forEach(function(qId) {
+            $('#' + qId)
+                .prop('disabled', true)
+                .addClass('btn-success text-white')
+                .removeClass('btn-primary btn-light')
+                .text('✅ Solved');
+        });
         
      if(lockedGrade === "7") {
-            $('.g7 .g7_g8').fadeIn();
+            $('.g7, .g7_g8').fadeIn();
         } else if(lockedGrade === "8") {
-            $('.g8 g7_g8 g8_g9').fadeIn();
+            $('.g8 ,.g7_g8 ,.g8_g9').fadeIn();
         } else if(lockedGrade === "9") {
-            $('.g9 g8_g9').fadeIn();
+            $('.g9, .g8_g9').fadeIn();
         } else if(lockedGrade === "10") {
             $('.g10, .g10_11').fadeIn();
         } else if(lockedGrade === "11") {

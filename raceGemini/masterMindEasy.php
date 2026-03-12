@@ -119,6 +119,16 @@
             <span class="ms-2"></span>
             <button id="turn51" disabled></button><button id="turn52" disabled></button><button id="turn53" disabled></button><button id="turn54" disabled></button>
           </div>
+          <div>
+            <input id="grid61" readonly><input id="grid62" readonly><input id="grid63" readonly><input id="grid64" readonly>
+            <span class="ms-2"></span>
+            <button id="turn61" disabled></button><button id="turn62" disabled></button><button id="turn63" disabled></button><button id="turn64" disabled></button>
+          </div>
+          <div>
+            <input id="grid71" readonly><input id="grid72" readonly><input id="grid73" readonly><input id="grid74" readonly>
+            <span class="ms-2"></span>
+            <button id="turn71" disabled></button><button id="turn72" disabled></button><button id="turn73" disabled></button><button id="turn74" disabled></button>
+          </div>
         </div>
 
         <div id="numPad" class="mb-4">
@@ -149,7 +159,7 @@
     var secret = [];
     var turnNumber = 1;
     var target = "";
-    var maxTurns = 5;
+    var maxTurns = 7;
 
     // --- GAME ENGINE FUNCTIONS ---
 

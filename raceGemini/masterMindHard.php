@@ -32,21 +32,21 @@
       border: 2px solid #ccc;
       border-radius: 4px;
     }
-
-    /* Score Boxes for Hard Mode */
-    .score-box {
-      width: 2.5em; 
-      height: 2.5em; 
-      font-weight: bolder;
-      font-size: 1.2em;
-      text-align: center;
-      margin: 4px;
-      border: 2px solid #ccc;
-      border-radius: 4px;
-      background-color: #f8f9fa;
+    [id^=turn] {
+      width: 1em; 
+      height: 1em; 
+      margin: 2px; 
+      background-color: #212529;
+      border: none;
+      border-radius: 50%;
+      vertical-align: middle;
+      display: inline-block;
     }
-    .bull-box { color: #198754; } /* Green text for Bulls */
-    .cow-box { color: #fd7e14; }  /* Orange text for Cows */
+
+    /* Result Colors */
+    .bull { background-color: #198754 !important; color: white !important; border-color: #198754 !important; } /* Green */
+    .cow  { background-color: #fd7e14 !important; color: white !important; border-color: #fd7e14 !important; } /* Orange */
+    .miss { background-color: #212529 !important; color: white !important; border-color: #212529 !important; } /* Black */
 
     /* Numpad */
     [id^=key] {
@@ -83,7 +83,7 @@
       <div class="col-12 col-md-8 game-container">
         
         <h3>Mastermind: HARD</h3>
-        <h5>Find the 4-digit code. Digits are 1-9. No duplicates.</h5>
+        <h5>Find the 4-digit code. Digits are 1-9. Duplicates allowed.</h5>
 
         <div class="mb-3">
           <button id="send" class="btn btn-success action-btn" disabled>Check</button>
@@ -94,53 +94,40 @@
         <div id="victory" class="fs-4 fw-bold text-success mb-2"></div>
 
         <div id="playingArea" class="mb-4">
-          
-          <div class="d-flex justify-content-center align-items-center mb-1">
-             <div style="width: 170px;"></div> <div class="ms-3 d-flex" style="width: 90px; justify-content: space-around;">
-                 <span class="text-success fw-bold">Bulls</span>
-                 <span class="text-warning fw-bold text-dark">Cows</span>
-             </div>
+          <div>
+            <input id="grid11" readonly><input id="grid12" readonly><input id="grid13" readonly><input id="grid14" readonly>
+            <span class="ms-2"></span>
+            <button id="turn11" disabled></button><button id="turn12" disabled></button><button id="turn13" disabled></button><button id="turn14" disabled></button>
           </div>
-
-          <div class="d-flex justify-content-center align-items-center">
-            <div>
-                <input id="grid11" readonly><input id="grid12" readonly><input id="grid13" readonly><input id="grid14" readonly>
-            </div>
-            <div class="ms-3">
-                <input id="bulls1" class="score-box bull-box" readonly placeholder="-"><input id="cows1" class="score-box cow-box" readonly placeholder="-">
-            </div>
+          <div>
+            <input id="grid21" readonly><input id="grid22" readonly><input id="grid23" readonly><input id="grid24" readonly>
+            <span class="ms-2"></span>
+            <button id="turn21" disabled></button><button id="turn22" disabled></button><button id="turn23" disabled></button><button id="turn24" disabled></button>
           </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <div>
-                <input id="grid21" readonly><input id="grid22" readonly><input id="grid23" readonly><input id="grid24" readonly>
-            </div>
-            <div class="ms-3">
-                <input id="bulls2" class="score-box bull-box" readonly placeholder="-"><input id="cows2" class="score-box cow-box" readonly placeholder="-">
-            </div>
+          <div>
+            <input id="grid31" readonly><input id="grid32" readonly><input id="grid33" readonly><input id="grid34" readonly>
+            <span class="ms-2"></span>
+            <button id="turn31" disabled></button><button id="turn32" disabled></button><button id="turn33" disabled></button><button id="turn34" disabled></button>
           </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <div>
-                <input id="grid31" readonly><input id="grid32" readonly><input id="grid33" readonly><input id="grid34" readonly>
-            </div>
-            <div class="ms-3">
-                <input id="bulls3" class="score-box bull-box" readonly placeholder="-"><input id="cows3" class="score-box cow-box" readonly placeholder="-">
-            </div>
+          <div>
+            <input id="grid41" readonly><input id="grid42" readonly><input id="grid43" readonly><input id="grid44" readonly>
+            <span class="ms-2"></span>
+            <button id="turn41" disabled></button><button id="turn42" disabled></button><button id="turn43" disabled></button><button id="turn44" disabled></button>
           </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <div>
-                <input id="grid41" readonly><input id="grid42" readonly><input id="grid43" readonly><input id="grid44" readonly>
-            </div>
-            <div class="ms-3">
-                <input id="bulls4" class="score-box bull-box" readonly placeholder="-"><input id="cows4" class="score-box cow-box" readonly placeholder="-">
-            </div>
+          <div>
+            <input id="grid51" readonly><input id="grid52" readonly><input id="grid53" readonly><input id="grid54" readonly>
+            <span class="ms-2"></span>
+            <button id="turn51" disabled></button><button id="turn52" disabled></button><button id="turn53" disabled></button><button id="turn54" disabled></button>
           </div>
-          <div class="d-flex justify-content-center align-items-center">
-            <div>
-                <input id="grid51" readonly><input id="grid52" readonly><input id="grid53" readonly><input id="grid54" readonly>
-            </div>
-            <div class="ms-3">
-                <input id="bulls5" class="score-box bull-box" readonly placeholder="-"><input id="cows5" class="score-box cow-box" readonly placeholder="-">
-            </div>
+          <div>
+            <input id="grid61" readonly><input id="grid62" readonly><input id="grid63" readonly><input id="grid64" readonly>
+            <span class="ms-2"></span>
+            <button id="turn61" disabled></button><button id="turn62" disabled></button><button id="turn63" disabled></button><button id="turn64" disabled></button>
+          </div>
+          <div>
+            <input id="grid71" readonly><input id="grid72" readonly><input id="grid73" readonly><input id="grid74" readonly>
+            <span class="ms-2"></span>
+            <button id="turn71" disabled></button><button id="turn72" disabled></button><button id="turn73" disabled></button><button id="turn74" disabled></button>
           </div>
         </div>
 
@@ -157,8 +144,8 @@
         </div>
 
         <div class="d-flex justify-content-center flex-wrap mt-3">
-          <div class="legend-box bg-success">Bull = Right Num & Pos</div>
-          <div class="legend-box bg-warning text-dark">Cow = Right Num, Wrong Pos</div>
+          <div class="legend-box bg-success">Right Num & Pos</div>
+          <div class="legend-box bg-warning text-dark">Right Num, Wrong Pos</div>
         </div>
 
       </div>
@@ -171,31 +158,25 @@
     var secret = [];
     var turnNumber = 1;
     var target = "";
-    var maxTurns = 5;
+    var maxTurns = 7;
 
     // --- GAME ENGINE FUNCTIONS ---
 
-    // Generate a 4-digit code with unique numbers from 1-9
+    // Generate a 4-digit code (Duplicates are now allowed 1-9)
     function makeNumber() {
       let numbers = [];
-      while (numbers.length < 4) {
-        let digit = Math.floor(Math.random() * 9) + 1;
-        if (numbers.indexOf(digit) === -1) {
-          numbers.push(digit);
-        }
+      for (let i = 0; i < 4; i++) {
+        numbers.push(Math.floor(Math.random() * 9) + 1);
       }
       return numbers;
     }
 
-    // Check if the current row has 4 distinct numbers filled in
+    // Check if the current row is completely filled (duplicates allowed)
     function checkNumbers(row) {
       let good = true;
-      let temp = [];
       for (let i = 1; i <= 4; i++) {
         let digit = $('#grid' + row + i).val();
         if (digit === "") { good = false; break; }
-        if (temp.indexOf(digit) !== -1) { good = false; break; }
-        temp.push(digit);
       }
       return good;
     }
@@ -209,11 +190,12 @@
 
       // Reset Grid
       $('[id^=grid]').val('')
+                     .removeClass('bull cow miss')
                      .css({"background-color":"#fff","color":"#000"})
                      .prop('disabled', true);
                      
-      // Reset Score Boxes
-      $('[id^=bulls], [id^=cows]').val('');
+      // Reset Turn indicators
+      $('[id^=turn]').css({"background-color":"#212529"});
 
       // Enable first row
       $('#grid11, #grid12, #grid13, #grid14').css({"background-color":"#e9ecef"});
@@ -302,21 +284,43 @@
 
         let bulls = 0;
         let cows = 0;
+        
+        // Arrays to manage the two-pass algorithm safely
+        let secretCopy = [...secret];
+        let tempCopy = [...temp];
+        let statusColor = ["#212529", "#212529", "#212529", "#212529"]; // Default to miss (Black)
+        let statusClass = ["miss", "miss", "miss", "miss"];
 
-        // Grade the submission (Hard Mode logic)
+        // First Pass: Find exact matches (Bulls)
         for (let i = 0; i < 4; i++) {
-          let t = secret.indexOf(temp[i]);
-
-          if (secret[i] === temp[i]) {
-            bulls++; 
-          } else if (t !== -1) {
-            cows++;
+          if (secretCopy[i] === tempCopy[i]) {
+            bulls++;
+            statusColor[i] = "#198754"; // Green
+            statusClass[i] = "bull";
+            secretCopy[i] = null; // Mark as used
+            tempCopy[i] = null;   // Mark as used
           }
         }
 
-        // Display Bulls and Cows for this row
-        $('#bulls' + row).val(bulls);
-        $('#cows' + row).val(cows);
+        // Second Pass: Find number matches in wrong positions (Cows)
+        for (let i = 0; i < 4; i++) {
+          if (tempCopy[i] !== null) {
+            let matchIndex = secretCopy.indexOf(tempCopy[i]);
+            if (matchIndex !== -1) {
+              cows++;
+              statusColor[i] = "#fd7e14"; // Orange
+              statusClass[i] = "cow";
+              secretCopy[matchIndex] = null; // Mark as used
+            }
+          }
+        }
+
+        // Apply colors to the grid and turn dots
+        for (let i = 0; i < 4; i++) {
+          let offset = i + 1;
+          $('#turn' + row + offset).css({"background-color": statusColor[i]});
+          $('#grid' + row + offset).addClass(statusClass[i]);
+        }
 
         // Win Condition
         if (bulls === 4) {
@@ -350,7 +354,6 @@
           $('#' + target).css({"background-color":"#0d6efd", "color":"#fff"});
           
           $('#send').prop('disabled', true);
-          $('[id^=key]').prop('disabled', false); // Re-enable keypad for the new row
         }
       });
 

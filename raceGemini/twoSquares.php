@@ -1,19 +1,18 @@
 <?php 
-$question = $_POST['question'];
-
+ $question = isset($_POST['question']) ? $_POST['question'] : 'Two Squares';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
- 
- 
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
-    
+  <title>Two Squares Challenge</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -21,281 +20,216 @@ $question = $_POST['question'];
       tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
     });
   </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+  <script src="javascript/utilities.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+  <style>
+    .game-container { text-align: center; margin-top: 20px; }
+    
+    /* Canvas Styling */
+    canvas {
+      border: 3px solid #dee2e6;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      max-width: 100%;
+    }
 
-<link rel="stylesheet" href="../css/templeStyles.css">
-<link rel="stylesheet" href="../css/newTempleStyles.css">
-<link rel="stylesheet" href="race2024.css">
-
-<script src="javascript/utilities.js">
-
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
-
-<title>Two squares</title>
-
-<style>
-
-#summary {text-align: center;}
-
-[id^=solution]  {text-align: center;margin-bottom:1em;}
-[id^=check] {margin-bottom:1em;}
-[id^=equation] {margin-bottom:1em;}
-</style>
-
+    #equation-display { font-size: 2.2em; margin: 20px 0; min-height: 60px; }
+    
+    input {
+      text-align: center; 
+      background-color: lightgreen; 
+      font-size: 1.5em; 
+      font-weight: bold;
+      width: 5em;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 game-container">
+        
+        <h3 class="fw-bold text-primary">Two Squares Challenge</h3>
+        <p class="text-muted fs-5">Use the diagram to solve the equations below.</p>
 
-    <div class  = "container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <canvas id="myCanvas" width="600" height="300">
+                    Your browser does not support the HTML canvas tag.
+                </canvas>
+            </div>
+        </div>
 
-    
- <div class = "row justify-content-center">
-      <div class = "col-12 ">
-<p id = "question">x <sup>2</sup></p>
-</div></div>
+        <div id="equation-display"></div>
 
-  
-</div></div>
-   <div class = "row">
-      <div class = "col-sm-12 c">
+        <div id="play-area" class="row justify-content-center align-items-center mt-3">
+          <div class="col-auto text-end"><label class="fs-3 fw-bold"><i style="font-family: serif;">x</i> + <i style="font-family: serif;">y</i> =</label></div>
+          <div class="col-auto"><input type="number" id="solution1" class="form-control"></div>
+          <div class="col-auto"><button id="check1" class="btn btn-primary btn-lg">Check</button></div>
+        </div>
+        
+        <div id="feedback" class="mt-4 fs-5 fw-bold"></div>
 
-<canvas id="myCanvas" width="600" height="300" style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML canvas tag.</canvas>
-</div></div>
-
-<p id = "summary"></p>
-
-<!-- questions -->
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <p id = "ex">x<sup>2</sup></p>
+      </div>
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation"></label>
-</div>
+  </div>
 
-    <div class = "col-3">   
-<input id = "solution1">
-</div>
+  <script type="text/javascript">
+    var questionID = '<?php echo $question; ?>';
+    var answer = [];
+    var ctx;
 
- <div class = "col-3"> 
-<button id = "check1">Check </button>
-</div>
-</div>
+    // --- HELPER FUNCTIONS ---
+    function randomInteger(min, max) { 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
+    // --- CANVAS DRAWING FUNCTIONS ---
+    function drawLine(ptx1, pty1, ptx2, pty2) {
+        ctx.beginPath();
+        ctx.moveTo(ptx1, pty1);
+        ctx.lineTo(ptx2, pty2);
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#343a40'; // Dark grey baseline
+        ctx.stroke();
+    }
 
+    function drawSquare(ptx1, pty1, side, fillColor, strokeColor) {
+        ctx.beginPath();
+        ctx.rect(ptx1, pty1, side, side);
+        ctx.fillStyle = fillColor;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = strokeColor;
+        ctx.stroke();
+    }
 
+    function labelSquareSides(ptx, pty, letter) {
+        ctx.font = "italic bold 26px serif"; // Math-style font
+        ctx.fillStyle = "#212529";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(letter, ptx, pty);
+    }
 
+    function renderDiagram() {
+        var c = document.getElementById("myCanvas");
+        ctx = c.getContext("2d");
 
+        let xmax = 600;
+        let ymax = 300;
+        
+        // Clear canvas just in case
+        ctx.clearRect(0, 0, xmax, ymax);
 
-</body>
-</html>
+        let startY = ymax - 40;  
+        let endY = ymax - 40;
+        
+        // Draw Baseline
+        drawLine(20, startY, xmax - 20, endY);
+        
+        let sideA = 80;
+        let sideB = 140;
 
-<script>
+        // Position Square A
+        let startAX = 150;
+        let startAY = startY - sideA;  
 
-    function makeQuestion1()
+        // Position Square B (Adjacent)
+        let startBX = startAX + sideA;   
+        let startBY = startY - sideB;  
 
-    {
+        // Draw Squares (Adding nice translucent fill colors)
+        drawSquare(startAX, startAY, sideA, "rgba(13, 110, 253, 0.15)", "#0d6efd"); // Blue tint
+        drawSquare(startBX, startBY, sideB, "rgba(25, 135, 84, 0.15)", "#198754");  // Green tint
 
-        let x = 0 ;
-        let y = 0 ;
+        // Label Square A (x)
+        labelSquareSides(startAX + sideA / 2, startY + 20, "x");  // Bottom
+        labelSquareSides(startAX - 20, startAY + sideA / 2, "x"); // Left Side
+
+        // Label Square B (y)
+        labelSquareSides(startBX + sideB / 2, startY + 20, "y");  // Bottom
+        labelSquareSides(startBX + sideB + 20, startBY + sideB / 2, "y"); // Right Side
+    }
+
+    // --- MATH GENERATOR ---
+    function makeQuestion1() {
+        let x = 0;
+        let y = 0;
         let min = 2;
         let max = 10;
 
-        while (x == y)
-        {
-            x = randomInteger(min,max);
-            y = randomInteger(min,max);
 
+        while (x === y) {
+            x = randomInteger(min, max);
+            y = randomInteger(min, max);
         }
-        let n = x*x + y*y;
-        let a = parseInt(x + y);
-     //  $('#ex').html("x<sup>2</sup>");
-       let  term = '$ x^2 + y^2 = ' + n + "$";
-       term = term + " ,  x + y = ? "
-        $('#equation').html(term);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 
-     console.log("question 1 ",a,n,x,y);
-      
-        return a;
+        let n = x * x + y * y;
+        let solution = x + y;
+        
+        // Format nicely using MathJax
+        let term = '\\( x^2 + y^2 = ' + n + ' \\)';
+        $('#equation-display').html(term);
+        
+        if (typeof MathJax !== 'undefined') {
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation-display"]);
+        }
 
-    }
-</script>
-
-
-<script type="text/javascript">
-   function decodeHTML(html) {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-}
-</script>
-
-<script type="text/javascript">
-    function labelSquareSides(ptx,pty,letter)
-
-    {
-
-        ctx.font = "24px Arial";
-        ctx.fillText(letter,ptx,pty);
-    }
-</script>
-
-
-<script>
-    function drawLine(ptx1,pty1,ptx2,pty2)
-    {
-        // Start a new Path
-            ctx.beginPath();
-            ctx.moveTo(ptx1, pty1);
-            ctx.lineTo(ptx2, pty2);
-
-            // Draw the Path
-        ctx.stroke();
-    }
-</script>
-
-<script>
-    function drawSquare(ptx1,pty1,side)
-    {
-
-        ctx.beginPath();
-        ctx.rect(ptx1, pty1, side, side);
-        ctx.stroke();
+        return solution;
     }
 
-</script>
+    // --- GAME LOGIC ---
+    $(document).ready(function() {
+        correct = 0;
+        // 1. Draw the geometric diagram
+        renderDiagram();
 
+        // 2. Generate question and store answer
+        answer[1] = makeQuestion1();
 
-<script type="text/javascript">
-    function writeText(ptx,pty,words)
-    {
-             ctx.font = "24px Arial";
-        ctx.fillText(letter,ptx,pty);
-    }
-</script>
+        // 3. Handle 'Check' Button Click
+        $('#check1').click(function() {
+            let guess = parseInt($('#solution1').val());
 
-
-
-<script>
-
-$(document).ready(function(){
-
-question = '<?php echo $question; ?>' ;
-
-var c = document.getElementById("myCanvas");
- ctx = c.getContext("2d");
-
- xmax = 600;
- ymax = 300;
- ctx.width  = xmax;
-ctx.height =  ymax;
-labels = ["A","B"];
-
-startY = ymax - 50;  // 550
-endY = ymax - 50;
-drawLine(0,startY,xmax,endY);
-sideA = 60;
-sideB = 130;
-
-startAX = sideA;
-startAY = startY - sideA;  // 550 - 100 = 450
-// (100,450)
-// squares go downwards from (0,0)
-
-startBX = startAX + sideA;   // 100 + 100 = 200
-startBY = startY - sideB;  // 450 - 250 = 200
-// (450,200)
-ctx.font = "24px Arial";
-
-drawSquare(startAX,startAY ,sideA);
-drawSquare(startBX,startBY,sideB);
-
-
-// label x 
-
-labelSquareSides(startAX + sideA/2, ymax-20 , "x");  // base
-labelSquareSides(startAX - sideA/4, startAY + sideA/2 , "x");  // left hand side
-
-// label y
-
-labelSquareSides(startBX + sideB/2, ymax-20 , "y");  // base 
-labelSquareSides(startBX + sideB + 10, startBY + sideB/2 , "y");  // right hand side
-
-
-
-answer = makeQuestion1() ;
-
-
-
-console.log(answer);
-
-})
-</script> 
-
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-        alert("Checking " + qNumber);
-
-        var guess = $('#solution' + qNumber).val() ;
-        if (guess == answer)
-        {
-            alert("Correct");
-            $('#solution' + qNumber).prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            points = 6 ;
-            console.log(clicked,points);
-            if (points == 6)
-
-            {
-
-
-alert("Processing win " + questionID + " with " + points + " pts");
-processWin(questionID);
-    console.log("processing ",questionID);
-
-
+            if (isNaN(guess)) {
+                $('#feedback').html('<span class="text-danger">Please enter a number.</span>');
+                return;
             }
-        }
 
-        else
+            if (guess === answer[1]) {
+                // Correct styling
+                $('#solution1').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
+                $('#check1').hide();
+                $('#feedback').html('<span class="text-success fw-bold fs-4">⭐ Correct! ⭐</span>');
+                
+                // Trigger dashboard logic
+                if (typeof handleCorrectAnswer === "function") {
+                    handleCorrectAnswer();
+                } else if (typeof processWin === "function") {
+                    processWin(questionID);
+                } else {
+                    // Fallback
+                    setTimeout(function() { alert("Great job! You solved it."); }, 500);
+                }
+            } else {
+                // Incorrect styling
+                $('#feedback').html('<span class="text-danger">Not quite. Try again!</span>');
+                $('#solution1').val('').focus();
+            }
+        });
 
-        {
-            alert("keep trying")
-        }
-})
-})
-
-</script>
-
-
-
+        // 4. Allow pressing Enter to submit
+        $('#solution1').keypress(function(e) {
+            if(e.which == 13) { 
+                $('#check1').click(); 
+            }
+        });
+    });
+  </script> 
+</body>
+</html>

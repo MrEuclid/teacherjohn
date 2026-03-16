@@ -1,3 +1,7 @@
+// Add these to the very top of wat.js
+var primes = [];
+var solved = [];
+
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -96,6 +100,7 @@ function displayUnsolved() {
   {
   var limit = 999 ;
   var cnt = 1 ;
+  primes = [];
   n = 2 ;
   primes[1] = n ;
   $('#primeNumbers').empty() ;
@@ -114,4 +119,5 @@ function displayUnsolved() {
   
 
   }
+  return primes ;
 }

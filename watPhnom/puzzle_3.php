@@ -37,21 +37,20 @@
           <p id="description-3" class="text-muted fs-5"></p>
           <h4 id="question-3" class="fw-bold text-dark mt-4"></h4>
           
-          <div class="mt-3 mb-4">
-            <label id="label-3a" style="font-size: 2.5em; font-weight: bold; color: #0d6efd;"></label>
-          </div>
+         <div id="answer-3" class="d-flex justify-content-center align-items-center gap-3 mt-3 mb-4">
+  
+  <label id="label-3a" style="font-size: 2em; font-weight: bold; color: #0d6efd; margin: 0;"></label>
 
-          <div id="answer-3" class="d-flex justify-content-center align-items-center mb-4">
-            <input id="input-3a" type="number" class="form-control" style="width: 120px; height: 60px; font-size: 1.8em; text-align: center; background-color: lightgreen; border: 2px solid #198754; border-radius: 10px;" placeholder="Answer">
-            
-            <input id="hidden3Val" type="hidden">
-          </div>
+  <input id="input-3a" type="number" class="form-control" style="width: 120px; height: 60px; font-size: 1.8em; text-align: center; background-color: lightgreen; border: 2px solid #198754; border-radius: 10px;" placeholder="">
+  <input id="hidden3Val" type="hidden">
 
-          <button id="check-btn" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check Answer</button>
+  <button id="check-btn" class="btn btn-primary btn-lg fw-bold shadow-sm" style="height: 60px;">Check Answer</button>
+
+</div>
 
           <div id="comment-3" class="mt-4 fs-4 fw-bold"></div>
           
-          <div id="visited" class="mt-4"></div>
+   
 
       </div>
     </div>

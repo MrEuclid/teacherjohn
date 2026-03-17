@@ -121,3 +121,55 @@ function displayUnsolved() {
   }
   return primes ;
 }
+
+function encryptWord(word) {
+    var l = word.length;
+    var str = '';
+    var newLetter;
+    var code = '';
+
+    for (var i = 0; i < l; i++) {
+        var x = getRandomInt(1, 2);
+        // Ensure we are looking up the uppercase version to match the 'letters' array
+        var index = letters.indexOf(word[i].toUpperCase());
+
+        if (index === -1) {
+            // If the character isn't a letter (like a space), keep it as is
+            str += word[i];
+        } else {
+            if (x == 1) {
+                newLetter = shiftForward[index];
+            } else {
+                newLetter = shiftBack[index];
+            }
+            str += newLetter;
+        }
+    }
+
+    code = str.toUpperCase();
+    console.log("Original:", word, "Encrypted:", code);
+    return code;
+}
+ 
+ function decodeQ(n) {
+    var temp = [];
+    n = parseInt(n);
+    // Convert to binary and split into an array
+    var base2 = n.toString(2).split(""); 
+    
+    // Reverse it so index 0 is the 2^0 bit, index 1 is 2^1, etc.
+    base2.reverse(); 
+
+    // Initialize the array with 0s (for 10 puzzles)
+    for (var i = 0; i <= 10; i++) {
+        temp[i] = 0;
+    }
+
+    // Fill temp array from the reversed binary
+    for (var i = 0; i < base2.length; i++) {
+        // If your puzzles are 1-indexed, use i+1
+        temp[i + 1] = parseInt(base2[i]);
+    }
+
+    return temp;
+}

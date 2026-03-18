@@ -1,0 +1,44 @@
+// big monopoly type project
+<!--
+
+Visit all 24 provinces and finish in Phnom Penh
+Provinces numbered 0 - 23
+Emphasis on speedy decision making
+Teams of 2 - 4
+Start with $n
+Roll dice (free) or teleport (premium) move = place + die mod 24
+Can buy 1,2,3 star hotel 1000*star rating
+Guests pay 100*star rating - your own province is free
+Taxes at the end of each week = 10% of sales + land tax
+Can auction purchased properties to players or the bank
+? answer question to leave province, if not have to stay another night new question the next day
+? can take time to find answer but that means a player has less time to move
+Banking system for all transactions - bank is separate
+Need to complete outstanding transactions before moving
+Can move in any order - no waiting for turn
+Land documents at bank
+Chat system for auctions and other communication - separate from the main game
+** problem with timing because javascript is asynchronous
+** queueing system, moves go into a FIFO stack
+** use time stamp based on when it goes to the data table stack
+** can more than one person visit a province at the same time - yes, adds to the excitement but only one can buy
+6 x 4 grid
+Leader board
+Make move area roll, teleport, buy, auction, pay for room, score
+Players start from Phnom Penh - Position 24
+
+Initial roll of the die
+AJAX - generates a number (1 - 6) adds it to the database table moves for that player
+    compares with table positions - which is the current location of each player
+    if free goes there, if not invites player to roll again after informing them that someone is already there
+
+
+n players get the same initial roll of the die
+if occupied then throw again
+
+
+
+
+
+
+-->

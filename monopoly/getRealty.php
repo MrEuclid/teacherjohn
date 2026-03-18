@@ -1,0 +1,30 @@
+<?php
+
+// load team 
+
+ include "../connectTempleDB.php";
+
+// $team = "alpha" ;
+// $game = 1 ;
+
+ $team = $_POST['team'];
+ $game = $_POST['game'];
+
+
+$query = "SELECT sum(purchasePrice) FROM propertyRegister
+			WHERE team = '$team'
+			AND game = '$game'
+			GROUP BY team ";
+
+
+$result = mysqli_query($dbServer,$query);
+//echo "<br>" . $query . "<br>";
+$data = mysqli_fetch_row($result);
+//print_($data);
+$realty = $data[0];
+
+echo '$' . number_format($realty) ;
+
+
+exit() ;
+?>

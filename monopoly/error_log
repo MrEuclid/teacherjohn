@@ -1,0 +1,48 @@
+[27-Aug-2025 02:54:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[27-Aug-2025 03:06:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[27-Aug-2025 03:06:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[27-Aug-2025 03:06:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[27-Aug-2025 03:25:26 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[30-Aug-2025 20:01:40 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[30-Aug-2025 20:38:53 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[02-Sep-2025 20:41:42 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[02-Sep-2025 20:47:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[02-Sep-2025 20:47:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[02-Sep-2025 20:47:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[03-Sep-2025 02:51:33 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[03-Sep-2025 03:11:21 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[03-Sep-2025 03:11:49 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[07-Sep-2025 20:28:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getGameID.php on line 26
+[07-Sep-2025 20:28:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[07-Sep-2025 20:28:17 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home3/teacherjohn/public_html/monopoly/getRegisteredStudent.php on line 31
+[28-Sep-2025 14:39:47 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[03-Oct-2025 00:31:25 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[05-Oct-2025 09:32:52 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[05-Oct-2025 13:14:36 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[05-Oct-2025 13:36:46 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[09-Oct-2025 00:12:43 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[09-Oct-2025 17:55:33 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[10-Oct-2025 08:24:53 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[23-Oct-2025 19:33:50 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[23-Oct-2025 19:33:50 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[07-Nov-2025 20:17:36 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[05-Dec-2025 21:33:10 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[06-Dec-2025 04:58:13 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[11-Dec-2025 21:04:54 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[01-Jan-2026 19:43:58 America/Chicago] PHP Warning:  Undefined array key "studentID" in /home3/teacherjohn/public_html/monopoly/showCash.php on line 9
+[05-Jan-2026 23:27:09 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[10-Jan-2026 18:27:24 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[10-Jan-2026 19:16:19 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[02-Feb-2026 00:21:17 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[02-Feb-2026 06:28:13 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[14-Feb-2026 11:47:55 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[17-Feb-2026 03:29:50 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[28-Feb-2026 07:22:09 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[01-Mar-2026 23:03:10 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[02-Mar-2026 02:21:29 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[02-Mar-2026 04:01:29 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[03-Mar-2026 06:26:22 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[07-Mar-2026 11:09:46 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[08-Mar-2026 06:42:25 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[14-Mar-2026 20:48:15 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1
+[17-Mar-2026 14:45:53 America/Chicago] PHP Warning:  Undefined array key "game" in /home3/teacherjohn/public_html/monopoly/pioBankPortal.php on line 1

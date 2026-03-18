@@ -1,0 +1,557 @@
+<?php $studentID = $_GET['studentID'];
+echo "Student ID " . $studentID;
+$studentID = 1581;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+ 
+
+
+    <meta charset="utf-8">
+    
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+<title>MBooks</title>
+<style>
+
+
+table {border-width:0.5em; border-color:blue; }
+</style>
+</head>
+<body>
+        <div class  = "container-fluid">
+
+     <div class = "row text-center">
+  <div class = "col- ">
+   <h1> MBooks Report</h1>
+  </div></div>
+
+      <div class = "row text-center">
+  <div class = "col-12 ">
+   <button id = "transactionLog">Transactions</button>
+    <button id = "position">Financial Position</button>
+     <button id = "performance">Financial Performance</button>
+      <button id = "cashflow">Download</button>
+
+      <button id = "back">Back</button>
+  </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-12 ">
+    <div id = "myTransactions"></div>
+      <div id = "myPosition">
+             <div class = "row text-center">
+  <div class = "col-12 ">
+        <h2>Statement of Financial Position <?php echo  $studentID ; ?></h2>
+</div></div>
+  <div class = "row text-left">
+  <div class = "col-12 ">
+        <h3>Assets</h3>
+      </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "assetNames"></div>
+    <div class = "col-8 text-left" id = "assetValues"> </div>
+  </div>
+
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "assetTotal"> </div>
+  </div>
+
+
+
+ <div class = "row text-left">
+  <div class = "col-12 ">
+        <h3>Liabilities</h3>
+      </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "liabilityNames"></div>
+    <div class = "col-8 text-left" id = "liabilityValues"> </div>
+  </div>
+
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "liabilityTotal"> </div>
+  </div>
+
+      <div class = "row text-left">
+ 
+   <div class = "col-6 text-left" id = "netAssetsName"><h3>Net Assets</h3></div>
+    <div class = "col-6 text-left" id = "netAssetsTotal"> </div>
+  </div>
+
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "liabilityTotal"> </div>
+  </div>
+
+
+ <div class = "row text-left">
+  <div class = "col-12 ">
+        <h3>Equity</h3>
+      </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "equityName"></div>
+    <div class = "col-8 text-left" id = "equityValue"> </div>
+  </div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "retainedEarnings">Retained earnings</div>
+    <div class = "col-8 text-left" id = "retainedEarningsValue"> </div>
+  </div>
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "equityTotal"> </div>
+  </div></div>
+
+</div>
+
+
+
+
+    <div id = "myPerformance">
+      
+ 
+  <div class = "row text-center">
+  <div class = "col-12 ">
+  <h2>Statement of Financial Performance <?php echo $studentID ; ?></h2>
+</div></div>
+  <div class = "row text-left">
+  <div class = "col-12 ">
+        <h3>Income</h3>
+      </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "incomeNames"></div>
+    <div class = "col-8 text-left" id = "incomeValues"> </div>
+  </div>
+
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "incomeTotal"> </div>
+  </div>
+
+
+
+ <div class = "row text-left">
+  <div class = "col-12 ">
+        <h3>Expenses</h3>
+      </div></div>
+
+      <div class = "row text-left">
+  <div class = "col-2 ">  </div>
+   <div class = "col-2 text-left" id = "expensesNames"></div>
+    <div class = "col-8 text-left" id = "expensesValues"> </div>
+  </div>
+
+
+     <div class = "row text-left">
+  <div class = "col-6 ">  </div>
+  
+    <div class = "col-6 text-left" id = "expensesTotal"> </div>
+  </div>
+
+      <div class = "row text-left">
+ 
+   <div class = "col-6 text-left" id = "nettProfitName"><h3>Profit / Loss</h3></div>
+    <div class = "col-6 text-left" id = "nettProfit"> Number</div>
+  </div>
+
+
+ 
+
+
+    </div>
+  
+      <div id = "myCashflow"></div>
+
+
+
+</div> <!-- container -->
+
+</body>
+
+
+</html>
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+
+   
+$('#myTransactions').hide();
+$('#myPerformance').hide();
+$('#myPosition').hide();
+$('#mycashflow').hide();
+
+$('[id^=my]').hide();
+})
+</script>
+
+
+<script type="text/javascript">
+  
+  function formatAccounting(number)
+
+  {
+ let money = Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+     currencySign: "accounting",
+  signDisplay: "negative",
+    minimumFractionDigits: 0,
+      maximumfractionDigits: 0,
+    maximumSignificantDigits: 12,
+  
+});
+
+
+
+console.log("$s ",money.format(number));
+
+if (Math.abs(number) > 0)
+  {  return money.format(number);}
+     else {return 0 ;}
+  }
+</script>
+
+<script>
+  function parseMoney(str)
+  {
+   
+    value = parseInt(str.replace(/\D/g, ""));  // gets with of $ , - and ,
+if (str.substring(0,1) == "-")
+{amt  = -value}
+else 
+{amt  = value ; }
+
+    return amt ;
+  }
+
+</script>
+
+<script>
+
+  function convertJSONToTable(jsonData) {
+  // Body of the function
+    let headers = Object.keys(jsonData[0]);
+    let table = '<table><thead><tr>';
+headers.forEach(header => table += `<th>${header}</th>`);
+table += '</tr></thead><tbody>';
+
+jsonData.forEach(row => {
+  table += '<tr>';
+  headers.forEach(header => table += `<td>${row[header]}</td>`);
+  table += '</tr>';
+});
+table += '</tbody></table>';
+
+
+  document.getElementById('myTransactions').innerHTML = table + "<br>Copy with ctrl + A then ctrl + C<br>";
+}
+
+</script>
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+    $('#transactionLog').on('click', function()
+
+{
+  $('[id^=my]').hide();
+  $('#myTransactions').show();
+  studentID = $('#who').text();
+  alert("transactions for " + studentID);
+
+$.ajax({
+  url: 'transactionReport.php',
+  type: "POST",
+  data:{studentID:studentID},
+  dataType:'text',
+
+})  // parameters
+.done(function (data) { 
+
+console.log(data);
+let json  = JSON.parse(data);
+convertJSONToTable(json);
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure transaction log " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+})
+})
+
+</script>
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+    $('#back').on('click', function()
+
+{
+
+  $('#menu').show();
+  $('#dataEntry').show();
+  let url = "mBooksReportIndex.php" + "?studentID=" + studentID;
+  $('#reportMenu').hide();
+
+  $('#')
+})
+  })
+
+</script>
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+    $('#position').on('click', function()
+
+{
+  $('[id^=my]').hide();
+alert("financial position for " + studentID);
+$('#myPosition').show();
+$
+
+$.ajax({
+  url: 'positionReport.php',
+  type: "POST",
+  data:{studentID:studentID},
+  dataType:'text',
+
+})  // parameters
+.done(function (data) { 
+
+
+let json  = JSON.parse(data);
+console.log(json);
+
+let i = 0 ;
+// assets
+let acc = 100
+let category = "1" ;
+let sum = 0;
+while (category == "1")
+{
+     amt = json[i].linkedAmount ;
+     amtformatted = formatAccounting(amt);
+     acc =json[i].linkedAccount ;
+     category = acc.substring(0,1);
+     name = json[i].linkedName;
+     if (category == 1)
+  {
+    $('#assetNames').append(name + acc  + "<br>");
+    $('#assetValues').append(amtformatted + "<br>");
+    sum = +sum + parseInt(amt);
+
+    i++;
+  }
+
+}
+  assetTotal = sum;
+$("#assetTotal").text(formatAccounting(assetTotal));
+
+
+
+// liabilities
+ acc = 200
+ category = "2" ;
+ sum = 0;
+while (category == "2")
+{
+     amt = json[i].linkedAmount ;
+     amtformatted = formatAccounting(amt);
+     acc =json[i].linkedAccount ;
+     category = acc.substring(0,1);
+     name = json[i].linkedName;
+     if (category == 2)
+  {
+    $('#liabilityNames').append(name + acc  + "<br>");
+    $('#liabilityValues').append(amtformatted + "<br>");
+    sum = +sum + parseInt(amt);
+    i++;
+  }
+
+}
+liabilityTotal = sum;
+ $("#liabilityTotal").text(formatAccounting(liabilityTotal));
+ if (sum == 0)
+{$("#liabilityTotal").text(liabilityTotal);}
+
+
+let netAssets = assetTotal - liabilityTotal;
+
+ $("#netAssetsTotal").text(formatAccounting(netAssets));
+
+equity  = parseInt(parseMoney($('#equity').text()));
+profit = parseMoney($('#income').text()) - parseMoney($('#expenses').text());
+
+
+$('#equityName').text("Capital");
+$('#equityValue').text(formatAccounting(equity));
+
+retainedEarnings = profit;
+$("#retainedEarningsValue").text(formatAccounting(retainedEarnings));
+
+console.log(equity,retainedEarnings); $("#loginForm").hide();
+  $("#menu").hide();
+  $('#dataEntry').hide();
+  let url = "mBooksReportIndex.php" + "?studentID=" + studentID;
+  $('#reportMenu').load(url);
+
+equitySum = parseInt(equity + retainedEarnings) ;
+console.log("equity",equitySum);
+ $("#equityTotal").text(formatAccounting(equitySum));
+
+console.log("equity total",retainedEarnings,equitySum);
+
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure transaction log " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+
+})
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+    $('#performance').on('click', function()
+
+{
+  $('[id^=my]').hide();
+alert("financial performance for " + studentID);
+$('#myPerformance').show();
+$
+
+$.ajax({
+  url: 'performanceReport.php',
+  type: "POST",
+  data:{studentID:studentID},
+  dataType:'text',
+
+})  // parameters
+.done(function (data) { 
+
+
+ json  = JSON.parse(data);
+console.log(json);
+
+// alert(json[0].linkedAccount);
+
+ i = 0 ;
+// assets
+ acc = 400
+ category = "4" ;
+ sum = 0;
+while (category == "4")
+{
+  console.log("Category ",category);
+     amt = json[i].linkedAmount ;
+     amtformatted = formatAccounting(amt);
+     acc =json[i].linkedAccount ;
+     category = acc.substring(0,1);
+     name = json[i].linkedName;
+     if (category == 4)
+  {
+    $('#incomeNames').append(name + acc  + "<br>");
+    $('#incomeValues').append(amtformatted + "<br>");
+    sum = +sum + parseInt(amt);
+
+    i++;
+  }
+
+}
+  incomeTotal = sum;
+  incomeTotal = parseMoney($('#income').text())
+$("#incomeTotal").text(formatAccounting(incomeTotal));
+
+
+
+// expenses
+
+ acc = 500
+ category = "5" ;
+ sum = 0;
+while (category == "5" & i < json.length)
+{
+     console.log("Category ",category);
+     amt = json[i].linkedAmount ;
+     amtformatted = formatAccounting(amt);
+     acc =json[i].linkedAccount ;
+     category = acc.substring(0,1);
+     name = json[i].linkedName;
+     if (category == 5)
+  {
+    $('#expensesNames').append(name + acc  + "<br>");
+    $('#expensesValues').append(amtformatted + "<br>");
+    sum = +sum + parseInt(amt);
+    i++;
+  }
+
+}
+expensesTotal = sum;
+ $("#expensesTotal").text(formatAccounting(expensesTotal));
+ expensesTotal = parseMoney($('#expenses').text())
+$("#expensesTotal").text(formatAccounting(expensesTotal));
+
+
+nettProfit = parseMoney($('#profit').text());
+
+alert("Nett " + nettProfit);
+
+$('#nettProfit').text(formatAccounting(nettProfit))
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure transaction log " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+
+})
+})
+
+</script>
+
+
+
+

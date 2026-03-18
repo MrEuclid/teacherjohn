@@ -1,0 +1,72 @@
+<<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+  <title></title>
+
+  <style type="text/css">
+    .class {
+   border: 1px solid red;
+   height: 100px;
+   width: 100px;
+}
+  </style>
+</head>
+<body>
+<div id = "your-container"></div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+ function createTableFromJSON(jsonArray) {
+  // Parse the JSON string
+  const data = JSON.parse(jsonArray);
+
+  // Create the table element
+  const table = $('<table>');
+
+  // Create table header row (optional)
+  const headerRow = $('<tr>');
+  for (const key in data[0]) {
+    headerRow.append($('<th>').text(key));
+  }
+  table.append(headerRow);
+
+  // Loop through each object in the array
+  $.each(data, function(index, item) {
+    const row = $('<tr>');
+
+    // Add each value as a table cell
+    for (const key in item) {
+      row.append($('<td>').text(item[key]));
+    }
+
+    // Make the row clickable with an index reference
+    row.click(function() {
+      // You can access the data object using the index here
+      console.log("Row clicked:", index, item);
+      alert(this + " " + data[index].name + " " + index);
+      // Perform your desired action on row click
+    });
+
+    table.append(row);
+  });
+
+  return table;
+}
+
+</script>
+<script>
+const jsonData = '[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]';
+const myTable = createTableFromJSON(jsonData);
+
+// Append the table to your HTML element
+$('#your-container').append(myTable);
+</script>

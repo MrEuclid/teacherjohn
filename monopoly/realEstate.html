@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/templeStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<title  "Chat room - Temple of Learning"></title>
+
+<style>
+
+.c {text-align: center;
+margin-right: auto;
+margin-left: auto;
+margin: 0 ;} 
+
+#teamDetails {font-weight: bolder; color:red ; font-size: 12pt;}
+
+#send {background-color: cornflowerblue; color: black; font-size: 14pt; width: 120px ; height:40px;}
+
+input {text-align: center; ; background-color: ivory; color: black; font-size: 14pt ;}
+
+#error {font-size: 12pt ; font-style: italic;color: red ; text-align: justify;}
+
+body {background-color: lightblue;}
+
+h2 {color: green }
+h1 {color: blue;}
+h3 {color:orange;}
+</style>
+
+</head>
+
+<body>
+
+
+    <div class  = "container-fluid">
+
+
+    <div class = "row">
+        <div class = "col-sm-12 c">
+            <h1>Race to Phnom Penh</h1>
+            <p id = "teamDetails"></p></p>
+        </div></div>
+
+    <div id = "registration">
+        <div class = "row">
+            <div class = "col-sm-12 c">       
+               <h4>registration</h4>
+            </div></div>
+            <div class = "row">
+                <div class = "col-sm-12 c"> 
+                    <label>Team name</label>
+                    <input id = "teamName" type = "text"><button id = "register">Register</button>
+                </div></div>
+
+                <div class = "row">
+                    <div class = "col-sm-12 c"> 
+                        <label>Message</label>
+                        <p id = "registrationMessage"></p>
+                        <input id = "teamID" type = "text" hidden = "true">
+                    </div></div>
+        
+    </div>
+    <div class = "row">
+        <div class = "col-sm-12 c">       
+           <h2>Provinces</h2>
+        </div></div>
+        <div id = "provinces">
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province0">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province1">Battambong - 1 <br>បាត់ដំបង</button></div>
+            <div class = "col-sm-3 c"><button id = "province2">Battambong - 2  <br>បាត់ដំបង</button></div>
+            <div class = "col-sm-3 c"><button id = "province3">Battambong - 3  <br>បាត់ដំបង</button></div>
+        </div>
+            
+        
+
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province4">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province5">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province6">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province7">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+        </div>
+            
+        
+
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province8">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province9">9</button></div>
+            <div class = "col-sm-3 c"><button id = "province10">10</button></div>
+            <div class = "col-sm-3 c"><button id = "province11">11</button></div>
+        </div>
+
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province12">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province13">13</button></div>
+            <div class = "col-sm-3 c"><button id = "province14">14</button></div>
+            <div class = "col-sm-3 c"><button id = "province15">15</button></div>
+        </div>
+
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province16">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province17">17</button></div>
+            <div class = "col-sm-3 c"><button id = "province18">18</button></div>
+            <div class = "col-sm-3 c"><button id = "province19">19</button></div>
+        </div>
+
+        <div class = "row">
+            <div class = "col-sm-3 c"><button id = "province20">Battambong - 0 <br>បាត់ដំបង <br>$300<br>Amazon fighters</button></div>
+            <div class = "col-sm-3 c"><button id = "province21">21</button></div>
+            <div class = "col-sm-3 c"><button id = "province22">22</button></div>
+            <div class = "col-sm-3 c"><button id = "province23">23</button></div>
+        </div>
+        
+        
+        </div> <!-- provinces -->
+        </div></div>
+
+        <div class = "row">
+            <div class = "col-sm-12 c">  
+                <h2>Game controls</h2>
+            </div></div>
+
+            <div class = "row">
+                <div class = "col-sm-12 c"> 
+            <div id = "controls">
+                <button id = "move">Move</button>
+                <button id = "teleport">teleport</button>
+            </div>
+            </div></div>
+            
+            
+           
+
+            <div class = "row">
+                <div class = "col-sm-12 c">    
+                    <h3>Stats</h3>
+                </div></div>
+
+                <div class = "row">
+                    <div class = "col-sm-12 c"> 
+                        <div id = "stats"></div>
+                    </div></div>
+
+            <div class = "row">
+                <div class = "col-sm-12 c"> 
+                    <h3>Leader board</h3>
+            </div></div>
+
+            <div class = "row">
+                <div class = "col-sm-12 c"> 
+                    <div id = "leaderBoard"></div>
+            </div></div>
+
+
+
+    </div>
+</body>
+</html>
+
+<script>
+    $(document).keypress(
+      function(event){
+        if (event.which == '13') {
+          event.preventDefault();
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+    
+  playersLocation = [] ; // current location of each player
+  provinces = [] ; // json object with assets, owner
+    
+    })
+    
+    </script>
+    
+    
+    <script>
+      $(document).ready(function() {
+        $('#register').on('click', function(){
+
+       teamName = $('#teamName').val() ;
+    
+        $.ajax({
+        type:"POST",
+        url: "checkTeamName.php",
+        data:{teamName:teamName},
+        success: function(data){
+        console.log(data) ;
+        alert(data) ;
+       
+    if (data == 0)
+     {
+       $('#registrationMessage').text('You must give your team a name.') ;
+       $('#team').val('') ;
+     }  
+     else 
+        if (data == 1)
+        {
+            $('#registrationMessage').text('Your team name is already used.') ;
+       $('#team').val('') ;
+        }
+    
+    else 
+        if (data == 32)
+        {
+            $('#registrationMessage').text('Your team name too long.') ;
+       $('#team').val('') ;
+        }
+     else
+     {
+
+        var t =  data.split('*');
+$('#teamDetails').text(data) ;
+$('#registrationMessage').text('OK');
+       $('#team').val(t[1]) ;
+       $('#team').prop('readonly', true);
+       $('#registration').hide() ;
+       $('#teamID').val(t[0]) ;
+       $('#provinces').show() ;
+       $('#controls').show() ;
+     }
+        }
+    });
+
+        })
+      })
+</script>    
+
+        

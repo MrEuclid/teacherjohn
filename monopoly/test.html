@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Dashboard</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
+      google.charts.setOnLoadCallback(drawDashboard);
+    </script>
+</head>
+<body>
+  <div id="dashboard"></div>
+  <div id="filter_container"></div>
+  <div id="chart_container"></div>
+</body>
+</html>
+
+
+<script>
+function drawDashboard() {
+  // Sample data
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', 'Region');
+  data.addColumn('number', 'Sales');
+  data.addColumn('string', 'Product');
+  data.addRows([
+    ['West', 1000, 'Electronics'],
+    ['West', 500, 'Clothing'],
+    ['East', 1200, 'Electronics'],
+    ['East', 800, 'Furniture'],
+    ['South', 700, 'Electronics'],
+    ['South', 900, 'Appliances'],
+  ]);
+
+  // Create a dashboard
+  var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
+
+  // Create a category filter for Product
+  var categoryFilter = new google.visualization.ControlWrapper({
+    controlType: 'CategoryFilter',
+    containerId: 'filter_container',
+    options: {
+      filterColumnLabel: 'Product',
+      ui: {
+        label: 'Filter by Product:',
+        multiselect: true,
+      }
+    }
+  });
+
+  // Create a table view
+  var table = new google.visualization.Table(document.getElementById('chart_container'));
+
+  // Create a chart view (pie chart in this example)
+  var chart = new google.visualization.ChartWrapper({
+    chartType: 'PieChart',
+    containerId: 'chart_container',
+    options: {
+      title: 'Sales by Product',
+      isStacked: true,
+    }
+  });
+
+  // Bind the filter to the data table
+  categoryFilter.setDataTable(data);
+
+  // Bind the data table to both table and chart views
+  dashboard.bind([categoryFilter], [table, chart]);
+
+  // Draw the dashboard
+  dashboard.draw(data);
+}
+</script>

@@ -1,0 +1,153 @@
+<html>
+  <head>
+
+
+  <style>
+    
+    #chart_container {font-size: 1.5em;}
+
+    .bigAndBold {color:green; font-size: 2em; fon-weight:bold;}
+
+    .content {color:black; background-color: yellow; font-size:1.6em; font-weight: bold;}
+
+      .bold-green-font {
+    font-weight: bold;
+    color: green;
+  }
+
+  .bold-font {
+    font-weight: bolder;
+  }
+
+  .right-text {
+    text-align: right;
+  }
+
+  .large-font {
+    font-size: 15px;
+  }
+
+  .italic-darkblue-font {
+    font-style: italic;
+    color: darkblue;
+  }
+
+  .italic-purple-font {
+    font-style: italic;
+    color: purple;
+  }
+
+  .underline-blue-font {
+    text-decoration: underline;
+    color: blue;
+  }
+
+  .gold-border {
+    border: 3px solid gold;
+  }
+
+  .deeppink-border {
+    border: 3px solid deeppink;
+  }
+
+  .orange-background {
+    background-color: orange;
+  }
+
+  .orchid-background {
+    background-color: orchid;
+  }
+
+  .beige-background {
+    background-color: beige;}
+  </style>
+      <title>Visualization</title>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+  
+    // Load the Visualization API and the piechart package.
+  google.charts.load("current", {
+        packages : [ "corechart","table" ]
+    });
+      
+
+
+     function drawDashboard() {
+
+      var cssClassNames = {'headerRow': 'bigAndBold', 'tableCell': 'content'};
+ 
+      var jsonData = $.ajax({
+          url: "wealth2.php",
+          dataType: "json",
+          async: false
+          }).responseText;
+  // Sample data
+   var data = new google.visualization.DataTable(jsonData);
+ 
+
+  // Create a dashboard
+  var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
+
+  // Create a category filter for Product
+  var categoryFilter = new google.visualization.ControlWrapper({
+    controlType: 'CategoryFilter',
+    containerId: 'filter_container',
+    options: {
+      filterColumnLabel: 'Game',
+      ui: {
+        label: 'Filter by game:',
+        multiselect: true,
+        'width':600,
+      }
+    }
+  });
+
+  // Create a table view
+  var table = new google.visualization.Table(document.getElementById('chart_container'));
+
+  // Create a chart view (pie chart in this example)
+  var chart = new google.visualization.ChartWrapper({
+    chartType: 'Table',
+    containerId: 'chart_container',
+    options: {
+      'title': 'Wealth',
+      'isStacked': true,
+      'width': 728,
+      'allowHtml': true, 
+      'cssClassNames': cssClassNames
+    }
+  });
+
+  // Bind the filter to the data table
+  categoryFilter.setDataTable(data);
+
+  // Bind the data table to both table and chart views
+  dashboard.bind([categoryFilter], [chart]);
+
+  // Draw the dashboard
+  dashboard.draw(data);
+}
+
+    </script>
+
+  </head>
+
+  <body>
+   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
+      google.charts.setOnLoadCallback(drawDashboard);
+    </script>
+</head>
+<body>
+  <h1>Games</h1>
+  <div id="dashboard">
+  <div id="filter_container"></div>
+  <div id="chart_container"></div>
+  </div>
+</body>
+</html>
+  </body>
+</html>

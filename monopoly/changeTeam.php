@@ -73,11 +73,12 @@ p {display:inline-block;}
   <div class = "col- text-center"><label>New team name</label>
  <br><input id = "teamNew" type = "text" autocomplete="new-password" name="teamNew" value = ""></div>
 </div> <!-- row -->
-
+<!--
 <div class = "row">
   <div class = "col- text-center"><label>New email</label>
  <br><input id = "email" type = "text" autocomplete="new-password" name="email" value = ""></div>
-</div> <!-- row -->
+</div> 
+-->
 
 <div class = "row">
   <div class = "col- text-center"><label>New Password</label>
@@ -126,7 +127,7 @@ p {display:inline-block;}
     $.ajax({
         url: 'changeData.php',
         type: 'POST',
-        data: {game:game ,team:team, password:password,email:email,teamNew:teamNew} ,
+        data: {game:game ,team:team, password:password,teamNew:teamNew} ,
         dataType:'text',
         success: function (response) {
          //   alert("success " + JSON.stringify(response));

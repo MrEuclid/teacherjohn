@@ -29,11 +29,14 @@ $codeWord = $data[0] ;
     });
   </script>   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
-  
-<script src="javascript/utilities.js"></script>
+
+
+<!--
   <script src="wat.js"></script>  
+
+--> 
 </head>
-</head>
+
 
 <body>
 <input id = "codeWord" type = "hidden" value = "<?php echo $codeWord ; ?>">
@@ -70,123 +73,104 @@ $codeWord = $data[0] ;
       </div>
     </div>
   </div> 
-
 <script type="text/javascript">
-  $(document).ready(function() {
 
-      // 1. Setup the Puzzle Data
+  
+  function powerMod(base, exponent, modulus) {
+    if (modulus === 1) return 0;
+    var result = 1;
+    base = base % modulus;
+    while (exponent > 0) {
+        if (exponent % 2 === 1)  //odd number
+            result = (result * base) % modulus;
+        exponent = exponent >> 1; //divide by 2
+        base = (base * base) % modulus;
+    }
+    return result;
+}
+  
+  // 1. Put encodeWord OUTSIDE and ABOVE the document ready function
+  function encodeWord(word) {
+      var numbers = []; 
+      
+      // Get the ASCII value and deduct 64 so A=1, B=2, etc.
+      var n1 = word.charCodeAt(0) - 64;  
+      var n2 = word.charCodeAt(1) - 64; 
+      var n3 = word.charCodeAt(2) - 64; 
+
+      var n = 33; // modulus 
+      var e = 3;  // encryption exponent
+
+      // encode letters using powerMod from utilities.js
+      numbers[0] = powerMod(n1, e, n);
+      numbers[1] = powerMod(n2, e, n);
+      numbers[2] = powerMod(n3, e, n);
+
+      return numbers;
+  }
+
+  // 2. Start the main page logic
+  $(document).ready(function() {
+      
+      // Initialize State
       window.solved = window.solved || []; 
       
-    
-var answerP =  $('#input-tena').val() ;
-var answerQ =  $('#input-tenb').val() ;
-var answerR =  $('#input-tenc').val() ;
+      var secretWord = $('#codeWord').val() ;
 
+      // Extract the 3 letters
+      var h1 = secretWord.substr(0,1) ;
+      var h2 = secretWord.substr(1,1) ;
+      var h3 = secretWord.substr(2,1) ;
 
+      var numbers = encodeWord(secretWord) ;  // get coded numbers for the chosen word
 
-var secretWord = $('#codeWord').val() ;
+      var numberP = numbers[0] ;
+      var numberQ = numbers[1] ;
+      var numberR = numbers[2] ; 
 
-var h1 = secretWord.substr(0,1) ;
-var h2 = secretWord.substr(1,1) ;
-var h3 = secretWord.substr(2,1) ;
+      // Build the UI
+      $('#label-10a').text(numberP + ' = ').show() ;
+      $('#label-10b').text(numberQ + ' = ').show() ;
+      $('#label-10c').text(numberR + ' = ').show() ;
 
-$('#hiddenAnswerP').val(h1) ;
-$('#hiddenAnswerQ').val(h2) ;
-$('#hiddenAnswerR').val(h3) ;
-
-console.log(10,secretWord,h1,h2,h3) ;
-
-// alert('Hiddens ' + h1 + ' ' + h2 + ' ' + h3) ;
-
-var numbers = [] ;
-numbers = encodeWord(secretWord) ;  // get coded lettes for the chosen word
-
-// alert('My numbers = ' + numbers + 'My word ' + secretWord) ;
-
-numberP = numbers[0] ;
-numberQ = numbers[1] ;
-numberR = numbers[2] ; 
-
-// alert('Codes are ' + numbers) ;
-
-  $('#label-tena').text(numberP).show() ;
-  $('#label-tenb').text(numberQ).show() ;
-  $('#label-tenc').text(numberR).show() ;
-
-
-
-      // 2. Build the UI
-   
-  var photo = "images/watPhnom.jpg" ;
-  $("#picture").attr("src",photo);  
-  var location = "Wat Phnom ";
-  var description = 'Wat Phnom is the oldest pagoda in Phnom Penh it on top of the only hill in the city.'
-  + '<br>'
- +  'Many people visit Wat Phnom. At Khmer New Year people go there to pray at the pagoda and to celebrate the New Year with singing and dancing.';
-  $('#location-ten').text(location).show() ;
-  $('#description-ten').text(description).show() ;
- // $('#title-ten').text(title).show() ;
-  $('#question-ten').html(question).show() ;
-     
+      var photo = "images/watPhnom.jpg" ;
       $("#picture").attr("src", photo).show();  
-      $('#location-10').text(location);
-      $('#description-10').text(description);
-     
-
-    var solved = false ;    
       
-  var question =  "To finish the game you need to break the code."
-  + 'Here is what you need to do.'
-  + '<br>' 
-  + 'To break the code you need to raise each number to the power of 3, '
-  + "Then you divide your answer by 33 and find out what the remainder is."
-  + "<br>"
-  + "After that change the remainder into  number using "
-   + " using 1 = A, 2 = B, 3 = C etc. ";
+      var location = "Wat Phnom";
+      var description = 'Wat Phnom is the oldest pagoda in Phnom Penh it on top of the only hill in the city.'
+        + '<br>'
+        + 'Many people visit Wat Phnom. At Khmer New Year people go there to pray at the pagoda and to celebrate the New Year with singing and dancing.';
+      
+      $('#location-10').text(location).show() ;
+      $('#description-10').text(description).show() ;
+
+      var question =  "To finish the game you need to break the code. Here is what you need to do."
+        + '<br><br>' 
+        + 'To break the code you need to raise each number to the power of 3. '
+        + "Then you divide your answer by 33 and find out what the remainder is."
+        + "<br><br>"
+        + "After that, change the remainder into a letter using 1 = A, 2 = B, 3 = C etc. Type the letters below!";
       
       $('#question-10').html(question);
 
       // Render MathJax
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "question-10"]);
 
-      // 3. Interaction Logic (Read inputs ONLY when clicked!)
+      // Interaction Logic (Read inputs ONLY when clicked!)
       $('#check-btn').off('click').on('click', function() {
-       solutionP = $('#hiddenAnswerP').val() ;
-solutionQ = $('#hiddenAnswerQ').val() ;
-solutionR = $('#hiddenAnswerR').val() ;
+          // Get the user's guessed letters
+          var answerP = $('#input-10a').val().toUpperCase() ;
+          var answerQ = $('#input-10b').val().toUpperCase() ;
+          var answerR = $('#input-10c').val().toUpperCase() ;
 
-
-
-var answerP = $('#input-tena').val() ;
-var answerQ = $('#input-tenb').val() ;
-var answerR = $('#input-tenc').val() ;
-
-solutionP = solutionP.toUpperCase() ;
-solutionq = solutionQ.toUpperCase() ;
-solutionR = solutionR.toUpperCase() ;
-
-//alert('Solution Q. = ' + solutionQ) ;
-
-answerP = answerP.toUpperCase() ;
-answerQ = answerQ.toUpperCase() ;
-answerR = answerR.toUpperCase() ;
-
-//alert('Answer Q. = ' + answerQ) ;
-
-//alert(answerP+answerQ+answerR+' compared with ' + solutionP+solutionQ+solutionR) ;
-
-$('#puzzle-10').show() ;
-if (answerP == solutionP & answerQ == solutionQ  & solutionR == answerR 
-  & (answerA > '' & answerB > '' & answerC > ''))
-          if (userGuesses[0] === targetPrimes[0] && 
-              userGuesses[1] === targetPrimes[1] && 
-              userGuesses[2] === targetPrimes[2]) {
+          // Check if they match the original secret word letters
+          if (answerP === h1 && answerQ === h2 && answerR === h3) {
               
               // SUCCESS
-              $('#comment-10').html('<span class="text-success fs-3">⭐ Correct! ⭐</span>');
+              $('#comment-10').html('<span class="text-success fs-3">⭐ Correct! You broke the code! ⭐</span>');
               
               if (typeof window.solved !== 'undefined') {
-                  window.solved[9] = 1;
+                  window.solved[10] = 1; // Mark puzzle 10 as solved
               }
               
               // Add thumbnail
@@ -198,7 +182,7 @@ if (answerP == solutionP & answerQ == solutionQ  & solutionR == answerR
                   displayUnsolved();
               }
               
-              // Lock inputs (Fixed the selector syntax)
+              // Lock inputs
               $('[id^="input-10"]').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide(); 
               
@@ -211,7 +195,7 @@ if (answerP == solutionP & answerQ == solutionQ  & solutionR == answerR
             // FAILURE
             $('#comment-10').html(`<span class="text-danger">Incorrect! Keep trying!</span>`);
 
-            // Wiggle animation (Fixed the selector syntax)
+            // Wiggle animation
             $('[id^="input-10"]').animate({marginLeft: '-10px'}, 100).animate({marginLeft: '10px'}, 100).animate({marginLeft: '0'}, 100);
         }
       });

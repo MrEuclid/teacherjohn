@@ -173,3 +173,36 @@ function encryptWord(word) {
 
     return temp;
 }
+
+
+  function encodeWord(word) 
+
+  {
+    var numbers = [] ; // array to hold codes.
+
+    // based on RSA
+  //  n = 33 , e = 7 (d = 3)
+  // powerMod(base, exponent modulus). e.g. 3^7 mod 35 = powerMod(3,7,50)
+
+  var n = 33 ;
+  var e = 7 ;
+  var firstLetter = word.substr(0,1);
+  var secondLetter = word.substr(1,2);
+  var thirdLetter  = word.substr(2); 
+
+
+  var n1 = firstLetter.charCodeAt(0) - 64;
+  var n2 = secondLetter.charCodeAt(0) - 64 ;
+  var n3 = thirdLetter.charCodeAt(0) - 64 ;
+
+//  alert('hiddens to be encoded ' + n1+n2+n3) ;
+
+  // now get ascii - 65 ;
+numbers[0] = powerMod(n1,e,n) ;
+numbers[1] = powerMod(n2,e,n) ;
+numbers[2] = powerMod(n3,e,n) ;
+
+// alert('Word ' + word + ' numbers ' + numbers) ;
+
+    return numbers ;
+  }

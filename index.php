@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Teacher John</title>
+    <title>Teacher John home</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="raceGeminiStyles.css">
@@ -43,8 +43,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 c">
-            <a href="https://chhorndalin.my.canva.site/asia" target="_blank"><button class="btn btn-warning">Ancient Empires</button></a>
-            <a href="https://chhorndalin.my.canva.site/fifa2026" target="_blank"><button class="btn btn-warning">FIFA 2026</button></a>
+            <a href="/monopoly/adminMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly Admin</button></a>
+            <a href="/monopoly/indexMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly login</button></a>
             <a href="/askTheAudience/indexTeacher.php" target="_blank"><button class="btn btn-info">Teacher</button></a> 
             <a href="/askTheAudience/indexStudent.php" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
@@ -55,10 +55,10 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12 c">
+        <div class="col-md-12 text-center">
             <h1>
                 <img id="pio1" src="images/PioLogo.png" width="50" height="50">
-                The Teacher John Site
+                The Teacher John Site y
                 <img id="pio2" src="images/PioLogo.png" width="50" height="50">
             </h1>
         </div>
@@ -67,19 +67,13 @@
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "pyramidGame/pyramids.html"><button class = "btn btm sm btn-info">Pyramid game</button></a>
-
-    <a href="decimalsPercentages/decimals.html"><button class="btn btn-info">Fractions and Percentages</button></a>
+  <a href = "words/indexWords.php"><button class = "btn btm sm btn-info">Word game</button></a>
 
   <a href = "translate/translatev2.html">
     <button class = "btn btm sm btn-info">Translation HS</button></a>
+ <a href="/greenLight/greenLightApp.html"><button class="btn btn-success">Greenlight app</button></a> 
+ 
 
-     <a href = "egyptian/egyptianFractions.php">
-    <button class = "btn btm sm btn-info">Egyptian fractions (all)</button></a> 
-
-
-     <a href = "verbs/irregularVerbs.html">
-    <button class = "btn btm sm btn-info">Verbs</button></a> 
  
     <div class="row mt-3">
         <div class="col-12 text-center">

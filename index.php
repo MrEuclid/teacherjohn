@@ -58,7 +58,7 @@
         <div class="col-md-12 text-center">
             <h1>
                 <img id="pio1" src="images/PioLogo.png" width="50" height="50">
-                The Teacher John Site y
+                The Teacher John Site
                 <img id="pio2" src="images/PioLogo.png" width="50" height="50">
             </h1>
         </div>
@@ -73,7 +73,9 @@
     <button class = "btn btm sm btn-info">Translation HS</button></a>
  <a href="/greenLight/greenLightApp.html"><button class="btn btn-success">Greenlight app</button></a> 
  
-
+<a href="/escape/escape.html">
+    <button class="btn btn-success">Cats & Tigers</button></a>
+ 
  
     <div class="row mt-3">
         <div class="col-12 text-center">

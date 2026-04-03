@@ -75,7 +75,8 @@
  
 <a href="/escape/escape.html">
     <button class="btn btn-success">Cats & Tigers</button></a>
- 
+ <a href = "files/Websites/dogs.html">Dogs</a>
+ <a href = "files/Websites/coffee.html">Coffee</a>
  
     <div class="row mt-3">
         <div class="col-12 text-center">

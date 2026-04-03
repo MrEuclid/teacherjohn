@@ -304,9 +304,9 @@ Electrostatics</button></a>
  <div class = "row">
   <div clas s= "col-12 text-center">
       <a href = "/scrabble/scrabbleComp2.html" target="_blank"><button title = "Build words on a grid. A simple version of Scrabble. Grade 5+." class = "btn btn-success">Word builder</button></a>
-      <a href = "race/racev2.php" target = "_blank"><button class = "btn btn-danger" title = "Play in teams and win a trip to the National Museum.">Race to Wat Phnom</button></a>
+      <a href = "watPhnom/index.php" target = "_blank"><button class = "btn btn-danger" title = "Play in teams and win a trip to the National Museum.">Race to Wat Phnom</button></a>
 
-    <a href =   "/newJimmy.html" target = "_blank"><button class = "btn btn-info" title = "Revised version of Jimmy's Game">New Jimmy</button>
+    <a href =   "jimmyGame/jimmyMath.html" target = "_blank"><button class = "btn btn-info" title = "Revised version of Jimmy's Game">New Jimmy</button>
 
         <a href =  "twoPlayerGames/countDown/countDownWords.html" target = "_blank"><button class = "btn btn-info" title = "Race to make words">Spelling</button>
 

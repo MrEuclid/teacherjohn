@@ -65,12 +65,15 @@
         <a href="escape/escape.html"><button class="btn btn-primary">Escape</button></a>
      <a href="jimmyGame/jimmyMath.html"><button class="btn btn-primary">Jimmy Gemini</button></a>
       <a href="decimalFractionPercent.php"><button class="btn btn-primary">Percent</button></a>
-
+<a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
 </div>
+</div> 
 
 <div class = "row text-center">
     <p class = "h2">G7 - G8</p>
     <div class="math-grid">
+        <a href="2048Game.html"><button class="btn btn-primary">2048</button></a>
+
      <a href="crossNumber/crossNumberGemini"><button class="btn btn-success">Crossnumber</button></a>
     <a href="egyptian/egyptianFractions.php"><button class="btn btn-success">Egyptian fractions</button></a>
       <a href="escape/escape.html"><button class="btn btn-success">Escape</button></a>

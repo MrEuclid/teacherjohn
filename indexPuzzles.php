@@ -286,7 +286,9 @@ Electrostatics</button></a>
 <a href = "logic/sevenSegGamev2.php" target = "_blank"><button class = "btn btn-primary">Seven Segment</button></a> 
 <a href = "logic/eleusis.html" target = "_blank"><button class = "btn btn-warning" title = "A game of logic where you nneed to find the secret rule.">Eleusis</button></a> 
 <a href = "logic/numberMystery.html" target="=_blank"><button class= "btn btn-success" title = "Find the unknown number.">Find the number</button></a>
-  </div></div>
+<a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
+ 
+</div></div>
 
         </div>
       </div>

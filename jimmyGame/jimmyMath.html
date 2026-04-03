@@ -148,10 +148,12 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
     let mode = 'guest', level = 1, currentScore = 0, timerVal = 30 * 60;
     let studentId = '', activeOp = '', activeDiff = 1;
+    let $activeButton = null; // Variable to keep track of the clicked button
 
     $('input[name="mode"]').change(function() {
         $('#idGroup').toggle(this.id === 'mComp');
@@ -182,6 +184,7 @@ $(document).ready(function() {
     }
 
     $('.diff-btn').click(function() {
+        $activeButton = $(this); // Save the button that was just clicked
         activeOp = $(this).data('op');
         activeDiff = $(this).data('diff');
         $('#feedback').text("");
@@ -190,7 +193,7 @@ $(document).ready(function() {
             operation: activeOp,
             difficulty: activeDiff,
             level: level,
-            digits: parseInt(level) + parseInt(activeDiff) // Logic scales with Grade + Difficulty
+            digits: parseInt(level) + parseInt(activeDiff)
         }, function(html) {
             $('#problemArea').html(html);
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, "problemArea"]);
@@ -216,6 +219,15 @@ $(document).ready(function() {
             $('#feedback').html(`<span class="text-success">⭐ Correct! +${pts} Points</span>`);
             $('#checkRow').hide();
             
+            // Disable the active button and update its look
+            if ($activeButton) {
+                $activeButton.prop('disabled', true);
+                $activeButton.text('Done');
+                // Optional: Swap outline classes for a grayed-out look
+                $activeButton.removeClass('btn-outline-success btn-outline-danger btn-outline-primary btn-outline-warning');
+                $activeButton.addClass('btn-secondary opacity-50');
+            }
+            
             if(mode === 'comp') {
                 $.post('writeDatabase9.php', { userName: studentId, operation: activeOp, difficulty: activeDiff, level: level });
             }
@@ -224,6 +236,5 @@ $(document).ready(function() {
         }
     });
 });
-</script>
-</body>
+</script></body>
 </html>

@@ -2,7 +2,7 @@
 
 // load team 
 
- include "../connectTempleDB.php";
+ include "../connectTeacherJohn.php";
   
  
  	$action = $_POST['action'];

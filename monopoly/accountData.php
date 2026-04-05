@@ -4,7 +4,7 @@
 // includes gameID and sorts by htat before sorting by value
 // calculate A,L,I,E,C , profit and worth
 
- include "../connectTempleDB.php";
+ include "../connectTeacherJohn.php";
 
  // $studentID = 1338;
  $output =[];

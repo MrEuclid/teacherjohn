@@ -1,7 +1,7 @@
 <?php
 
 
- include "../connectDatabase.php";
+ include "../../connectTeacherJohn.php";
 
 // $studentID = 12345;
 
@@ -15,7 +15,7 @@ $query = "SELECT studentsPIO.studentID
 			JOIN mBooksRegistration 
 			ON studentsPIO.studentId = mBooksRegistration.playerID
 		ORDER BY studentsPIO.studentID; ";
-// echo "<br>" . $query . "<br>";
+ echo "<br>" . $query . "<br>";
 
 $result = mysqli_query($dbServer,$query);
 

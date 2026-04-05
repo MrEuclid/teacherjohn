@@ -2,11 +2,11 @@
 
 // load team 
 
- include "../connectTempleDB.php";
+ include "../connectTeacherJohn.php";
 
- $studentID = '5627';
+ //$studentID = '5627';
 
-// $studentID = $_REQUEST['studentID'];
+ $studentID = $_REQUEST['studentID'];
 
 $cnt = 0;
 $output = []; 
@@ -76,7 +76,7 @@ ORDER BY
 include "make_json_from_query.php";
     
     
- include "make_json_from_query.php";
+ // include "make_json_from_query.php";
     
 
 

@@ -2,12 +2,12 @@
 
 // calculate A,L,I,E,C , profit and worth
 
- include "../connectTempleDB.php";
+ include "../../connectTeacherJohn.php";
 
-  $studentID = 'bank11B-2';
+  // $studentID = 'bank11B-2';
  $output =[];
 
-// $studentID = $_POST['studentID'];
+$studentID = $_POST['studentID'];
 
 
 $query = "SELECT mbooksJournal.studentID,

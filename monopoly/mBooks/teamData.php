@@ -5,7 +5,7 @@
 // clists transactions
 // filter by gameID
 
- include "../connectTempleDB.php";
+ include "../../connectTeacherJohn.php";
 
  // $studentID = 1338;
  $output =[];

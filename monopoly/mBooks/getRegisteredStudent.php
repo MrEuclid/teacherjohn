@@ -2,7 +2,7 @@
 
 // load team 
 
- include "../connectTempleDB.php";
+ include "../../connectTeacherJohn.php";
 
 // gets the name of the student to dispaly on the page
  $studentID = $_REQUEST['studentID'];

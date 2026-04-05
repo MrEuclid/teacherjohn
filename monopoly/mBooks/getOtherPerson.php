@@ -1,7 +1,7 @@
 <?php
 
 
- include "../connectTempleDB.php";
+ include "../../connectTeacherJohn.php";
 
 
 

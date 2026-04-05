@@ -136,7 +136,7 @@ th {text-align: center;}
 
 <div class = "row text-center">
   <div class = "col- ">
-  <img src = "images/accountsImage.jpeg">
+  <img src = "../images/accountsImage.jpeg">
 </div></div>
 
 
@@ -167,7 +167,7 @@ th {text-align: center;}
      <button  id = "showTransactions">Transactions</button>
          <button  id = "showStatements">My Value</button>
            <button  id = "showProfitLoss">Profit / Loss</button>  
-     <a href = "https://pio-students.net/index.php"> <button id = "quit">Quit</button></a>
+     <a href = "../../index.php"> <button id = "quit">Quit</button></a>
 </div></div>
 
 </div> <!-- menu -->

@@ -1,7 +1,7 @@
 <?php
 
 
- include "../connectTempleDB.php";
+ include "../connectDatabase.php";
 
 // $studentID = 12345;
 

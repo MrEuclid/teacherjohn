@@ -10,7 +10,7 @@
 // includes gameID and sorts by htat before sorting by value
 // calculate A,L,I,E,C , profit and worth
 
- include "../connectTempleDB.php";
+ include "../../connectTeacherJohn.php";
 
  // $studentID = 1338;
  $output =[];
@@ -44,7 +44,7 @@ ORDER BY gameID, value DESC  , assets DESC, profit DESC" ;
 
 // echo "<br>" . $query . "<br>";
 $result = mysqli_query($dbServer,$query);
-include "print_query_data_plain.php" ;
+include "../print_query_data_plain.php" ;
 
 
 ?>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pentomino Challenge</title>
+    <style>
+        /* Prevents tablet "bouncing" when dragging */
+        html, body { overflow: hidden; touch-action: none; position: fixed; width: 100%; height: 100%; }
+        
+        body { font-family: 'Comic Sans MS', sans-serif; background: #eef2f7; text-align: center; margin: 0; }
+        
+        #menu { 
+            position: relative; z-index: 2000; background: #2c3e50; padding: 10px; 
+            display: flex; justify-content: center; gap: 10px; align-items: center; 
+            color: white; flex-wrap: wrap;
+        }
+
+        .level-btn, .control-btn { padding: 10px 15px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; color: white; font-weight: bold; }
+        .btn-easy { background: #27ae60; } .btn-med { background: #f39c12; } .btn-hard { background: #c0392b; }
+        .btn-rotate { background: #3498db; } .btn-flip { background: #9b59b6; }
+
+        #game-container { position: relative; width: 100vw; height: calc(100vh - 100px); background: white; }
+        
+        #target-grid { 
+            position: absolute; top: 50px; left: 50px; 
+            border: 8px solid #27ae60; background-color: #f9f9f9;
+            background-image: radial-gradient(#ccc 1px, transparent 1px);
+            background-size: 50px 50px; pointer-events: none;
+        }
+
+        .pentomino { position: absolute; display: grid; grid-template-columns: repeat(5, 50px); grid-template-rows: repeat(5, 50px); z-index: 5; }
+        .pentomino.active { z-index: 1000 !important; filter: drop-shadow(10px 10px 10px rgba(0,0,0,0.3)); }
+        .pentomino.active .block-visible { border: 3px solid white; }
+
+        .block { width: 50px; height: 50px; box-sizing: border-box; }
+        .block-visible { border: 2px solid rgba(0,0,0,0.1); border-radius: 4px; pointer-events: auto; }
+        .block-hidden { visibility: hidden; pointer-events: none; }
+
+        #win-banner {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px;
+            border: 10px solid #27ae60; box-shadow: 0 0 50px rgba(0,0,0,0.5); z-index: 3000;
+        }
+
+        .color-P { background: #F333FF; } .color-U { background: #F5FF33; }
+        .color-V { background: #FFA533; } .color-L { background: #3357FF; }
+        .color-Y { background: #FFD700; } .color-I { background: #33FF57; }
+        .color-F { background: #FF5733; } .color-N { background: #FF33A1; }
+        .color-T { background: #33FFF5; } .color-W { background: #8D33FF; }
+        .color-X { background: #33FF8D; } .color-Z { background: #33A1FF; }
+    </style>
+</head>
+<body>
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Home
+    </a>
+</div>
+    <div id="menu">
+        <button class="level-btn btn-easy" onclick="startLevel('easy')">Level 1</button>
+        <button class="level-btn btn-med" onclick="startLevel('medium')">Level 2</button>
+        <button class="level-btn btn-hard" onclick="startLevel('hard')">Level 3</button>
+        <div style="width: 2px; height: 30px; background: #555; margin: 0 10px;"></div>
+        <button class="control-btn btn-rotate" onclick="rotateActive()">Rotate ↻</button>
+        <button class="control-btn btn-flip" onclick="flipActive()">Flip ↔</button>
+    </div>
+
+    <div id="win-banner">
+        <h1 style="color: #27ae60; margin: 0;">🌟 Puzzle Complete! 🌟</h1>
+        <button onclick="document.getElementById('win-banner').style.display='none'" style="margin-top:20px; padding:10px;">Play Again</button>
+    </div>
+
+    <div id="game-container">
+        <div id="target-grid"></div>
+    </div>
+
+<script>
+    const shapes = {
+        P:[[1,1,0,0,0],[1,1,0,0,0],[1,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        U:[[1,0,1,0,0],[1,1,1,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        V:[[1,0,0,0,0],[1,0,0,0,0],[1,1,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        L:[[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,0,0,0],[0,0,0,0,0]],
+        Y:[[0,1,0,0,0],[1,1,0,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,0,0,0,0]],
+        I:[[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]],
+        F:[[0,1,1,0,0],[1,1,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        N:[[0,1,0,0,0],[0,1,0,0,0],[1,1,0,0,0],[1,0,0,0,0],[0,0,0,0,0]],
+        T:[[1,1,1,0,0],[0,1,0,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        W:[[1,0,0,0,0],[1,1,0,0,0],[0,1,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        X:[[0,1,0,0,0],[1,1,1,0,0],[0,1,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+        Z:[[1,1,0,0,0],[0,1,0,0,0],[0,1,1,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+    };
+
+    const levels = {
+        easy: { w: 5, h: 3, p: ['P', 'U', 'V'] },
+        medium: { w: 5, h: 4, p: ['L', 'P', 'Y', 'U'] },
+        hard: { w: 10, h: 6, p: Object.keys(shapes) }
+    };
+
+    let activeEl = null;
+    let currentLvl = 'easy';
+
+    // Desktop Keyboard Controls
+    window.addEventListener('keydown', (e) => {
+        if (!activeEl) return;
+        if (e.key === "ArrowLeft") rotateActive(-90);
+        if (e.key === "ArrowRight") rotateActive(90);
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") flipActive();
+    });
+
+    function rotateActive(deg = 90) {
+        if (!activeEl) return;
+        activeEl.dataset.r = (parseInt(activeEl.dataset.r) + deg) % 360;
+        updateT(activeEl);
+        checkWin();
+    }
+
+    function flipActive() {
+        if (!activeEl) return;
+        activeEl.dataset.f *= -1;
+        updateT(activeEl);
+        checkWin();
+    }
+
+    function startLevel(lvlKey) {
+        currentLvl = lvlKey;
+        const lvl = levels[lvlKey];
+        const grid = document.getElementById('target-grid');
+        document.querySelectorAll('.pentomino').forEach(p => p.remove());
+        document.getElementById('win-banner').style.display = 'none';
+        activeEl = null;
+        grid.style.width = (lvl.w * 50) + 'px';
+        grid.style.height = (lvl.h * 50) + 'px';
+        let startX = 650, startY = 50;
+        lvl.p.forEach(type => {
+            createPiece(type, startX, startY);
+            startY += 130; if (startY > 500) { startX += 160; startY = 50; }
+        });
+    }
+
+    function createPiece(type, x, y) {
+        const div = document.createElement('div');
+        div.className = 'pentomino';
+        div.style.left = x + 'px'; div.style.top = y + 'px';
+        div.dataset.r = 0; div.dataset.f = 1;
+
+        shapes[type].forEach(row => {
+            row.forEach(cell => {
+                const b = document.createElement('div');
+                b.className = cell ? `block block-visible color-${type}` : 'block block-hidden';
+                div.appendChild(b);
+            });
+        });
+
+        // UNIFIED INPUT HANDLER (Touch & Mouse)
+        const startMove = (e) => {
+            e.preventDefault();
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            if (activeEl) activeEl.classList.remove('active');
+            activeEl = div; activeEl.classList.add('active');
+            
+            let sX = clientX - activeEl.offsetLeft;
+            let sY = clientY - activeEl.offsetTop;
+
+            const move = (mE) => {
+                const mX = mE.type.includes('touch') ? mE.touches[0].clientX : mE.clientX;
+                const mY = mE.type.includes('touch') ? mE.touches[0].clientY : mE.clientY;
+                activeEl.style.left = (mX - sX) + 'px';
+                activeEl.style.top = (mY - sY) + 'px';
+            };
+
+            const stop = () => {
+                let cL = parseInt(activeEl.style.left), cT = parseInt(activeEl.style.top);
+                activeEl.style.left = (Math.round((cL - 50) / 50) * 50 + 50) + 'px';
+                activeEl.style.top = (Math.round((cT - 50) / 50) * 50 + 50) + 'px';
+                window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop);
+                window.removeEventListener('touchmove', move); window.removeEventListener('touchend', stop);
+                checkWin();
+            };
+
+            window.addEventListener('mousemove', move); window.addEventListener('mouseup', stop);
+            window.addEventListener('touchmove', move, {passive: false}); window.addEventListener('touchend', stop);
+        };
+
+        div.addEventListener('mousedown', startMove);
+        div.addEventListener('touchstart', startMove, {passive: false});
+
+        document.getElementById('game-container').appendChild(div);
+    }
+
+    function updateT(el) { el.style.transform = `rotate(${el.dataset.r}deg) scaleX(${el.dataset.f})`; }
+
+    function checkWin() {
+        const lvl = levels[currentLvl];
+        const occupied = new Set();
+        document.querySelectorAll('.pentomino').forEach(p => {
+            p.querySelectorAll('.block-visible').forEach(b => {
+                const r = b.getBoundingClientRect();
+                const gX = Math.round((r.left - 58) / 50);
+                const gY = Math.round((r.top - 108) / 50);
+                if (gX >= 0 && gX < lvl.w && gY >= 0 && gY < lvl.h) occupied.add(`${gX},${gY}`);
+            });
+        });
+        if (occupied.size === lvl.p.length * 5) document.getElementById('win-banner').style.display = 'block';
+    }
+
+    startLevel('easy');
+</script>
+</body>
+</html>

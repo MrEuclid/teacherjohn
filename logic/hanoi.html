@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tower-rod {
+            width: 14px;
+            height: 220px;
+            background-color: #cbd5e1; /* Slate-300 */
+            border-radius: 7px 7px 0 0;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        .disk {
+            height: 32px;
+            border-radius: 12px;
+            transition: all 0.2s ease-out;
+            cursor: pointer;
+            border: 2px solid rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        /* Selection animation for students */
+        .disk.selected {
+            transform: translateY(-25px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 0 20px #fbbf24;
+            border: 3px solid #fbbf24;
+        }
+        .tower-base {
+            height: 12px;
+            background-color: #334155;
+            border-radius: 6px;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body class="bg-indigo-50 min-h-screen font-sans p-4">
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Home
+    </a>
+</div>
+    <div class="max-w-4xl mx-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-10 border-b-8 border-indigo-200">
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-black text-indigo-600 mb-2 tracking-tight">Tower of Hanoi</h1>
+            <p class="text-slate-500 font-bold text-lg">Logic Puzzle for Young Explorers</p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-6 mb-10 bg-indigo-100/50 p-6 rounded-3xl border-2 border-indigo-100">
+            <div class="flex items-center gap-3">
+                <span class="font-black text-indigo-900 uppercase text-sm tracking-widest">Difficulty:</span>
+                <select id="difficulty" onchange="resetGame()" class="p-3 pr-8 rounded-xl border-2 border-white bg-white shadow-sm focus:ring-4 focus:ring-indigo-200 focus:outline-none font-bold text-indigo-700">
+                    <option value="3">3 Disks (Beginner)</option>
+                    <option value="4">4 Disks (Intermediate)</option>
+                    <option value="5">5 Disks (Expert)</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-8">
+                <div class="bg-white px-6 py-2 rounded-2xl shadow-sm border-2 border-white">
+                    <span class="text-slate-400 font-bold text-xs uppercase block">Moves</span>
+                    <span id="moveCount" class="text-indigo-600 text-3xl font-black">0</span>
+                </div>
+                <button onclick="resetGame()" class="bg-rose-500 hover:bg-rose-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-lg shadow-rose-200">
+                    Restart
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6 h-[320px] mb-6 relative px-4">
+            <div id="tower0" class="tower h-full relative flex flex-col-reverse items-center cursor-pointer" onclick="handleTowerClick(0)">
+                <div class="tower-rod"></div>
+                <div class="tower-base w-full absolute bottom-0"></div>
+            </div>
+            <div id="tower1" class="tower h-full relative flex flex-col-reverse items-center cursor-pointer" onclick="handleTowerClick(1)">
+                <div class="tower-rod"></div>
+                <div class="tower-base w-full absolute bottom-0"></div>
+            </div>
+            <div id="tower2" class="tower h-full relative flex flex-col-reverse items-center cursor-pointer" onclick="handleTowerClick(2)">
+                <div class="tower-rod"></div>
+                <div class="tower-base w-full absolute bottom-0"></div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mt-12 bg-slate-900 text-white p-8 rounded-[2rem] shadow-inner">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="bg-indigo-500 p-1 rounded-md text-xs font-black">PLAY</span>
+                    <h3 class="font-bold text-xl">How to play</h3>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Click a tower to <b>pick up</b> the top disk. Then click a different tower to <b>drop it</b>.
+                    Your goal is to move the whole stack to the last tower!
+                </p>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="bg-rose-500 p-1 rounded-md text-xs font-black">STOP</span>
+                    <h3 class="font-bold text-xl">The Main Rule</h3>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    You can only put a <b>smaller</b> disk on top of a <b>larger</b> one. Never put a big disk on a tiny one!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="winModal" class="fixed inset-0 bg-indigo-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-[100]">
+        <div class="bg-white rounded-[3rem] p-10 max-w-sm w-full text-center shadow-2xl border-[12px] border-yellow-400">
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-4xl font-black text-slate-800 mb-2">AMAZING!</h2>
+            <p id="winText" class="text-slate-500 mb-8 font-bold leading-tight"></p>
+            <button onclick="closeWinModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-indigo-200 uppercase tracking-widest">
+                Play Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let towers = [[], [], []];
+        let selectedTower = null;
+        let moveCount = 0;
+        // Primary colors: Red, Blue, Green, Amber, Purple
+        const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#a855f7'];
+
+        function resetGame() {
+            const diskCount = parseInt(document.getElementById('difficulty').value);
+            towers = [[], [], []];
+            moveCount = 0;
+            selectedTower = null;
+            document.getElementById('moveCount').textContent = "0";
+
+            // Initialize Tower 0: [Big, Medium, Small]
+            // For 3 disks: [3, 2, 1]
+            for (let i = diskCount; i > 0; i--) {
+                towers[0].push(i);
+            }
+
+            render();
+        }
+
+        function render() {
+            towers.forEach((disks, towerIdx) => {
+                const towerElement = document.getElementById(`tower${towerIdx}`);
+                
+                // Remove only disk elements, keep rods and bases
+                const existingDisks = towerElement.querySelectorAll('.disk');
+                existingDisks.forEach(d => d.remove());
+
+                // Loop through disks array.
+                // In flex-col-reverse, the FIRST element added is at the BOTTOM.
+                // towers[0] = [3, 2, 1]. So 3 is index 0.
+                disks.forEach((diskSize, index) => {
+                    const diskDiv = document.createElement('div');
+                    diskDiv.className = `disk mb-1`;
+                    
+                    // Width formula ensures significant difference
+                    const widthPercent = 35 + (diskSize * 12);
+                    diskDiv.style.width = `${widthPercent}%`;
+                    diskDiv.style.backgroundColor = colors[diskSize - 1];
+                    
+                    // Highlight if currently selected
+                    if (selectedTower === towerIdx && index === disks.length - 1) {
+                        diskDiv.classList.add('selected');
+                    }
+
+                    // appendChild + flex-col-reverse = Order preserved (Bottom to Top)
+                    towerElement.appendChild(diskDiv);
+                });
+            });
+        }
+
+        function handleTowerClick(towerIdx) {
+            if (selectedTower === null) {
+                // SELECTING: Only pick up if tower has disks
+                if (towers[towerIdx].length > 0) {
+                    selectedTower = towerIdx;
+                }
+            } else {
+                // PLACING
+                if (selectedTower === towerIdx) {
+                    selectedTower = null; // Deselect
+                } else {
+                    const movingDisk = towers[selectedTower][towers[selectedTower].length - 1];
+                    const targetTowerTop = towers[towerIdx][towers[towerIdx].length - 1];
+
+                    // Move Rule: Empty tower OR smaller onto larger
+                    if (!targetTowerTop || movingDisk < targetTowerTop) {
+                        towers[towerIdx].push(towers[selectedTower].pop());
+                        moveCount++;
+                        document.getElementById('moveCount').textContent = moveCount;
+                        selectedTower = null;
+                        checkWin();
+                    } else {
+                        // Error visual (Briefly change rod color)
+                        const rod = document.getElementById(`tower${towerIdx}`).querySelector('.tower-rod');
+                        rod.style.backgroundColor = '#f87171'; // Red-400
+                        setTimeout(() => rod.style.backgroundColor = '#cbd5e1', 400);
+                        selectedTower = null;
+                    }
+                }
+            }
+            render();
+        }
+
+        function checkWin() {
+            const diskCount = parseInt(document.getElementById('difficulty').value);
+            // All disks moved to the third tower
+            if (towers[2].length === diskCount) {
+                setTimeout(() => {
+                    const minMoves = Math.pow(2, diskCount) - 1;
+                    const winMsg = moveCount === minMoves 
+                        ? `Perfect Score! Exactly ${moveCount} moves.` 
+                        : `You did it in ${moveCount} moves!`;
+                    
+                    document.getElementById('winText').innerHTML = `${winMsg}<br><span class="text-xs uppercase tracking-tighter opacity-50">Target for ${diskCount} disks: ${minMoves} moves</span>`;
+                    document.getElementById('winModal').classList.remove('hidden');
+                }, 400);
+            }
+        }
+
+        function closeWinModal() {
+            document.getElementById('winModal').classList.add('hidden');
+            resetGame();
+        }
+
+        resetGame();
+    </script>
+</body>
+</html>

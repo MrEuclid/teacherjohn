@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Lab - Full Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+
+        .game-container {
+            width: 95%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* CONTAINER (The Cell) */
+        .grid-cell {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 4px solid transparent; 
+            border-radius: 12px;
+            background-color: white; /* Card background */
+            width: 120px;
+            height: 120px;
+        }
+        .grid-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+            border: 4px solid #10b981; /* Highlight border on CELL */
+        }
+        
+        /* INNER SHAPE */
+        .shape-square { 
+            border-radius: 12px; 
+        }
+        .shape-circle { 
+            border-radius: 50%; 
+        }
+        .shape-triangle { 
+            width: 0 !important;
+            height: 0 !important;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom-width: 100px;
+            border-bottom-style: solid;
+            background-color: transparent !important; 
+            transform: translateY(-5px);
+        }
+        
+        .star-icon {
+            font-size: 2.5rem;
+            color: gold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 min-h-screen flex items-start justify-center">
+    
+    <div id="app" class="game-container bg-white p-6 md:p-8 rounded-xl shadow-2xl space-y-6">
+        
+        <header class="text-center space-y-2">
+            <h1 class="text-4xl font-extrabold text-gray-800">Logic Lab 🧪</h1>
+            <p class="text-xl text-indigo-600 font-semibold">Match the 3 Objects to the 4 Clues!</p>
+        </header>
+
+        <div class="flex flex-col items-center p-3 bg-yellow-50 rounded-lg border border-yellow-200 shadow-md">
+            <h2 class="text-xl font-bold text-yellow-700 mb-2">Your Star Rewards:</h2>
+            <div id="star-rewards" class="flex gap-2 min-h-[40px]">
+                <!-- Stars rendered here -->
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+            
+            <div class="lg:w-[30%] bg-indigo-50 p-6 rounded-lg border-2 border-indigo-200 shadow-inner">
+                <h2 class="text-2xl font-bold text-indigo-700 mb-4">Current Clues:</h2>
+                <ol id="clues-list" class="list-decimal list-inside space-y-3 text-lg text-gray-700 font-medium">
+                    <p class="text-center text-gray-500 italic">Loading...</p>
+                </ol>
+                <div class="mt-6 p-3 bg-indigo-100 rounded-md text-sm text-indigo-800">
+                    <p>💡 **How to Play:** Click shapes to change **Shape**. Hold **Alt/Option or Ctrl** + Click to change **Color**.</p>
+                </div>
+            </div>
+
+            <div class="lg:w-[70%] space-y-6 flex flex-col justify-between">
+                
+                <div class="flex-grow flex flex-col justify-center">
+                    <div id="game-grid" class="flex justify-around items-end h-48 bg-gray-100 p-4 rounded-lg shadow-lg">
+                        <!-- Grid cells inserted here -->
+                    </div>
+                    
+                    <div id="position-labels" class="flex justify-around px-4 mt-2">
+                        <div class="text-center w-[120px] text-xl font-bold text-gray-700">Position 1</div>
+                        <div class="text-center w-[120px] text-xl font-bold text-gray-700">Position 2</div>
+                        <div class="text-center w-[120px] text-xl font-bold text-gray-700">Position 3</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <p id="feedback-message" class="text-center text-xl font-bold min-h-[30px]"></p>
+                    
+                    <div class="flex justify-center gap-4">
+                        <button id="check-btn" class="px-8 py-4 bg-green-500 text-white text-xl font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-150 transform hover:scale-105">
+                            Check Solution
+                        </button>
+                        <button id="new-puzzle-btn" class="px-8 py-4 bg-indigo-500 text-white text-xl font-semibold rounded-lg shadow-md hover:bg-indigo-600 transition duration-150 transform hover:scale-105">
+                            New Puzzle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const POSITIONS = [1, 2, 3];
+        const STORAGE_KEY = 'logicLabStars';
+
+        const COLORS_MAP = {
+            'red': '#f87171',   
+            'blue': '#60a5fa',  
+            'green': '#4ade80'  
+        };
+        const COLOR_NAMES = Object.keys(COLORS_MAP);
+        const SHAPES = ['square', 'circle', 'triangle'];
+        const SHAPE_CSS = {
+            'square': 'shape-square',
+            'circle': 'shape-circle',
+            'triangle': 'shape-triangle' 
+        };
+
+        let currentSolution = [];
+        let userArrangement = [];
+        
+        const getColorNameByIndex = (index) => COLOR_NAMES[index];
+        const getShapeNameByIndex = (index) => SHAPES[index];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        function renderStars() {
+            const starsContainer = document.getElementById('star-rewards');
+            const starCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+            
+            starsContainer.innerHTML = '';
+            if (starCount === 0) {
+                 starsContainer.innerHTML = `<p class="text-gray-500 italic">No stars yet! Solve a puzzle to earn your first star.</p>`;
+                 return;
+            }
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('span');
+                star.className = 'star-icon';
+                star.textContent = '⭐'; 
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function rewardStar() {
+            let starCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+            starCount++;
+            localStorage.setItem(STORAGE_KEY, starCount.toString());
+            renderStars();
+        }
+
+        function generateSolution() {
+            const shuffledColors = COLOR_NAMES.slice();
+            const shuffledShapes = SHAPES.slice();
+            shuffleArray(shuffledColors);
+            shuffleArray(shuffledShapes);
+            
+            return POSITIONS.map((pos, index) => ({
+                position: pos,
+                color: shuffledColors[index],
+                shape: shuffledShapes[index]
+            }));
+        }
+
+        function getPropByPos(pos, type, solution = currentSolution) {
+            const item = solution.find(item => item.position === pos);
+            return item ? item[type] : null;
+        }
+
+        function getPosByProp(value, type, solution = currentSolution) {
+            const item = solution.find(item => item[type] === value);
+            return item ? item.position : null;
+        }
+
+        function generateClues() {
+            const solution = currentSolution;
+            const generatedClues = [];
+            
+            const directClues = solution.map(item => `The **${item.color}** object is at **Position ${item.position}**.`);
+            const binaryClues = [];
+            for (let i = 0; i < 2; i++) {
+                const shapeA = solution[i].shape;
+                const shapeB = solution[i+1].shape;
+                const colorA = solution[i].color;
+                const colorB = solution[i+1].color;
+                binaryClues.push(`The **${shapeA}** is on the **immediate left** of the **${shapeB}**.`);
+                binaryClues.push(`The **${colorB}** is on the **immediate right** of the **${colorA}**.`);
+            }
+            const associativeClues = solution.map(item => `The **${item.color}** object is the **${item.shape}**.`);
+            
+            generatedClues.push(directClues.splice(Math.floor(Math.random() * directClues.length), 1)[0]);
+            generatedClues.push(binaryClues.splice(Math.floor(Math.random() * binaryClues.length), 1)[0]);
+            generatedClues.push(associativeClues.splice(Math.floor(Math.random() * associativeClues.length), 1)[0]);
+
+            const matchedPos = parseInt(generatedClues[0].match(/Position (\d)/)[1]);
+            const matchedColor = getPropByPos(matchedPos, 'color');
+            const remainingColors = COLOR_NAMES.filter(c => c !== matchedColor);
+            
+            if (remainingColors.length > 0) {
+                 const randomColor = remainingColors[Math.floor(Math.random() * remainingColors.length)];
+                 const randomPos = getPosByProp(randomColor, 'color'); 
+                 generatedClues.push(`The **${randomColor}** object is at **Position ${randomPos}**.`);
+            }
+            
+            shuffleArray(generatedClues);
+            return generatedClues;
+        }
+
+        function applyCellStyles(shapeElement, newColorName, newShapeName) {
+            const newColorHex = COLORS_MAP[newColorName];
+            
+            shapeElement.classList.remove(...SHAPES.map(s => `shape-${s}`));
+            shapeElement.classList.add(SHAPE_CSS[newShapeName]);
+            
+            // Reset styles
+            shapeElement.style.width = '';
+            shapeElement.style.height = '';
+            shapeElement.style.backgroundColor = '';
+            shapeElement.style.borderBottomColor = '';
+
+            if (newShapeName === 'triangle') {
+                shapeElement.style.width = '0px';
+                shapeElement.style.height = '0px';
+                shapeElement.style.backgroundColor = 'transparent';
+                shapeElement.style.borderBottomColor = newColorHex; 
+            } else {
+                shapeElement.style.width = '100px'; 
+                shapeElement.style.height = '100px';
+                shapeElement.style.backgroundColor = newColorHex;
+            }
+        }
+
+        function renderGrid() {
+            const gridContainer = document.getElementById('game-grid');
+            gridContainer.innerHTML = '';
+            userArrangement = [];
+
+            const initialColors = COLOR_NAMES.slice();
+            const initialShapes = SHAPES.slice();
+            shuffleArray(initialColors);
+            shuffleArray(initialShapes);
+
+            POSITIONS.forEach((pos, index) => {
+                const startColorName = initialColors[index];
+                const startShapeName = initialShapes[index];
+
+                // 1. Container (The Cell)
+                const cellContainer = document.createElement('div');
+                cellContainer.className = `grid-cell`;
+                
+                // Add attributes to container
+                cellContainer.dataset.position = pos;
+                cellContainer.dataset.colorIndex = COLOR_NAMES.indexOf(startColorName);
+                cellContainer.dataset.shapeIndex = SHAPES.indexOf(startShapeName);
+
+                // 2. Inner Visual (The Shape)
+                const shapeElement = document.createElement('div');
+                shapeElement.className = 'shape-visual';
+
+                applyCellStyles(shapeElement, startColorName, startShapeName);
+                
+                cellContainer.appendChild(shapeElement);
+                cellContainer.addEventListener('click', handleCellClick);
+                gridContainer.appendChild(cellContainer);
+                
+                userArrangement.push({
+                    position: pos,
+                    color: startColorName,
+                    shape: startShapeName,
+                    element: cellContainer
+                });
+            });
+        }
+        
+        function handleCellClick(e) {
+            const cellContainer = e.currentTarget; 
+            const shapeElement = cellContainer.querySelector('.shape-visual');
+
+            const position = parseInt(cellContainer.dataset.position);
+            
+            let colorIndex = parseInt(cellContainer.dataset.colorIndex);
+            let shapeIndex = parseInt(cellContainer.dataset.shapeIndex);
+
+            let newShapeName;
+            let newColorName;
+
+            if (e.altKey || e.ctrlKey) {
+                 colorIndex = (colorIndex + 1) % COLOR_NAMES.length;
+                 newColorName = getColorNameByIndex(colorIndex);
+                 newShapeName = getShapeNameByIndex(shapeIndex); 
+            } else {
+                 shapeIndex = (shapeIndex + 1) % SHAPES.length;
+                 newShapeName = getShapeNameByIndex(shapeIndex);
+                 newColorName = getColorNameByIndex(colorIndex); 
+            }
+            
+            // Update Data Attributes
+            cellContainer.dataset.colorIndex = colorIndex;
+            cellContainer.dataset.shapeIndex = shapeIndex;
+
+            // Apply Styles to Inner Shape
+            applyCellStyles(shapeElement, newColorName, newShapeName);
+
+            const state = userArrangement.find(a => a.position === position);
+            if (state) {
+                state.color = newColorName;
+                state.shape = newShapeName;
+            }
+
+            document.getElementById('feedback-message').textContent = '';
+        }
+
+        function checkSolution() {
+            let correctCount = 0;
+
+            userArrangement.forEach((userItem) => {
+                const solutionItem = currentSolution.find(sol => sol.position === userItem.position);
+                if (solutionItem && 
+                    solutionItem.color === userItem.color && 
+                    solutionItem.shape === userItem.shape) {
+                    correctCount++;
+                }
+            });
+
+            const feedback = document.getElementById('feedback-message');
+            if (correctCount === 3) {
+                feedback.textContent = "🎉 Fantastic! You solved the puzzle! ⭐";
+                feedback.className = "text-center text-2xl font-bold text-green-600";
+                rewardStar();
+            } else {
+                feedback.textContent = `Keep trying! You have ${correctCount} property combinations correct.`;
+                feedback.className = "text-center text-xl font-bold text-red-500";
+            }
+        }
+
+        function startNewPuzzle() {
+            currentSolution = generateSolution();
+            const clues = generateClues();
+
+            const cluesList = document.getElementById('clues-list');
+            cluesList.innerHTML = '';
+            clues.forEach(clue => {
+                const li = document.createElement('li');
+                const coloredClue = clue.replace(/red|blue|green/g, (match) => 
+                    `<span style="color: ${COLORS_MAP[match]}; font-weight: 800;">${match}</span>`
+                );
+                li.innerHTML = coloredClue;
+                cluesList.appendChild(li);
+            });
+
+            renderGrid();
+            document.getElementById('feedback-message').textContent = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStars();
+            document.getElementById('new-puzzle-btn').addEventListener('click', startNewPuzzle);
+            document.getElementById('check-btn').addEventListener('click', checkSolution);
+            startNewPuzzle();
+        });
+    </script>
+</body>
+</html>

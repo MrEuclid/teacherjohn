@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eleusis: The Logic Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Card Styles */
+        .card {
+            width: 80px;
+            height: 120px;
+            border-radius: 8px;
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-inner {
+            width: 70%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .circle {
+            border-radius: 50%;
+        }
+        .square {
+            border-radius: 2px;
+        }
+        .blue-card { background-color: #3b82f6; border-color: #1d4ed8; }
+        .red-card { background-color: #ef4444; border-color: #b91c1c; }
+        .card-shape {
+            width: 40px;
+            height: 40px;
+            border: 3px solid white;
+        }
+
+        /* Board Styles */
+        #mainline-grid {
+            display: grid;
+            /* FIX: Use fixed column width (100px) instead of 1fr to prevent stretching */
+            grid-template-columns: repeat(6, 100px); 
+            gap: 16px;
+            margin-bottom: 24px;
+            justify-content: center; /* Center the grid within its container */
+        }
+        .mainline-cell {
+            min-height: 120px;
+            border: 2px dashed #9ca3af;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #incorrect-pile {
+            min-height: 140px;
+            border: 2px dashed #f87171;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-content: flex-start;
+        }
+        #incorrect-pile .card {
+            transform: rotate(-5deg); /* Visual effect for incorrect */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input Card Styling */
+        .input-card-preview {
+            margin: 10px auto;
+        }
+
+        /* Button styling for color/shape selection */
+        .selector-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.1s;
+        }
+        .selector-button.active {
+            border: 3px solid black;
+            transform: scale(1.05);
+        }
+        .selector-button:not(.active) {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-6">
+
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2 text-center">Eleusis: The Secret Rule Game</h1>
+        <p id="rule-hint" class="text-center text-lg font-medium text-indigo-600 mb-6">
+            </p>
+
+        <h2 class="text-xl font-semibold mb-3">Mainline (12 Cards Max)</h2>
+        <div id="mainline-grid" class="max-w-3xl mx-auto">
+            </div>
+
+        <h2 class="text-xl font-semibold mb-3">Incorrect Placements</h2>
+        <div id="incorrect-pile">
+            <p class="text-gray-500 text-sm">Incorrectly played cards will show up here.</p>
+        </div>
+
+        <hr class="my-8">
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-6 md:space-y-0">
+            <div class="w-full md:w-1/3">
+                <div class="text-lg font-semibold mb-2">Game Status:</div>
+                <p id="move-count" class="text-gray-600">Moves Used: 0 / 10</p>
+                <p id="streak" class="text-gray-600">Correct Streak: 0 / 3</p>
+                <p id="final-score" class="text-xl font-extrabold hidden"></p>
+            </div>
+
+            <div class="w-full md:w-2/3 text-center border-l-2 md:pl-8">
+                <h3 class="text-xl font-bold mb-4">Your Next Card</h3>
+                
+                <div id="input-card-preview" class="input-card-preview card mx-auto red-card">
+                    <div class="card-inner">
+                        <div class="card-shape square" style="background-color: white;"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center space-x-4 mb-4">
+                    <button id="color-red" data-color="red" class="selector-button bg-red-400 active">Red</button>
+                    <button id="color-blue" data-color="blue" class="selector-button bg-blue-400">Blue</button>
+                </div>
+
+                <div class="flex justify-center space-x-4 mb-6">
+                    <button id="shape-square" data-shape="square" class="selector-button bg-gray-200 active">Square</button>
+                    <button id="shape-circle" data-shape="circle" class="selector-button bg-gray-200">Circle</button>
+                </div>
+
+                <button id="submit-card" class="w-2/3 px-6 py-3 bg-green-500 text-white text-xl font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors">
+                    Place Card
+                </button>
+                <button id="new-game" class="w-2/3 px-6 py-3 bg-indigo-500 text-white text-xl font-bold rounded-lg shadow-md hover:bg-indigo-600 transition-colors mt-3 hidden">
+                    Start New Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Game State ---
+        const MAINLINE_SIZE = 12;
+        const MAX_MOVES = 10;
+        const WIN_STREAK = 3;
+
+        let rule = null;
+        let mainline = []; // Array of {color, shape} objects
+        let incorrects = [];
+        let mainlineIndex = 0;
+        let totalMoves = 0;
+        let correctStreak = 0;
+        let gameActive = false;
+
+        let currentCard = { color: 'red', shape: 'square' };
+
+        // --- DOM Elements ---
+        const mainlineGrid = document.getElementById('mainline-grid');
+        const incorrectPile = document.getElementById('incorrect-pile');
+        const statusMoveCount = document.getElementById('move-count');
+        const statusStreak = document.getElementById('streak');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const ruleHintDisplay = document.getElementById('rule-hint');
+        const submitButton = document.getElementById('submit-card');
+        const newGameButton = document.getElementById('new-game');
+        const cardPreview = document.getElementById('input-card-preview');
+
+        // --- Rule Definitions (If A then B, Else C) ---
+        const rules = [
+            // Rule 1: If Red then Blue, Else Red (if Blue)
+            { 
+                id: 1, 
+                desc: "If the last card was **Red**, the next must be **Blue**. <br> Else (if Blue), the next must be **Red**.", 
+                check: (last, next) => (last.color === 'red' ? next.color === 'blue' : next.color === 'red') 
+            },
+            // Rule 2: If Square then Circle, Else Square (if Circle)
+            { 
+                id: 2, 
+                desc: "If the last card was a **Square**, the next must be a **Circle**. <br> Else (if Circle), the next must be a **Square**.", 
+                check: (last, next) => (last.shape === 'square' ? next.shape === 'circle' : next.shape === 'square') 
+            },
+            // Rule 3: If Red then Same Shape, Else Opposite Shape (if Blue)
+            { 
+                id: 3, 
+                desc: "If the last card was **Red**, the next must be the **Same Shape**. <br> Else (if Blue), the next must be the **Opposite Shape**.", 
+                check: (last, next) => (last.color === 'red' ? next.shape === last.shape : next.shape !== last.shape) 
+            },
+            // Rule 4: If Square then Same Color, Else Opposite Color (if Circle)
+            { 
+                id: 4, 
+                desc: "If the last card was a **Square**, the next must be the **Same Color**. <br> Else (if Circle), the next must be the **Opposite Color**.", 
+                check: (last, next) => (last.shape === 'square' ? next.color === last.color : next.color !== last.color) 
+            },
+        ];
+        
+        // --- UI Rendering Functions ---
+
+        /** Creates the HTML for a card based on its properties. */
+        function createCardElement(card) {
+            const cardEl = document.createElement('div');
+            cardEl.className = `card ${card.color}-card`;
+
+            const innerEl = document.createElement('div');
+            innerEl.className = 'card-inner';
+
+            const shapeEl = document.createElement('div');
+            shapeEl.className = `card-shape ${card.shape}`;
+            shapeEl.style.backgroundColor = 'white';
+
+            innerEl.appendChild(shapeEl);
+            cardEl.appendChild(innerEl);
+            return cardEl;
+        }
+
+        /** Updates the mainline display. */
+        function renderMainline() {
+            mainlineGrid.innerHTML = '';
+            for (let i = 0; i < MAINLINE_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'mainline-cell';
+                cell.id = `cell-${i}`;
+                
+                if (mainline[i]) {
+                    cell.appendChild(createCardElement(mainline[i]));
+                    cell.style.border = 'none'; 
+                    cell.style.backgroundColor = '#d1d5db';
+                }
+                mainlineGrid.appendChild(cell);
+            }
+        }
+
+        /** Updates the incorrect pile display. */
+        function renderIncorrects() {
+            incorrectPile.innerHTML = '';
+            if (incorrects.length === 0) {
+                 incorrectPile.innerHTML = '<p class="text-gray-500 text-sm">Incorrectly played cards will show up here.</p>';
+            } else {
+                incorrects.forEach(card => {
+                    incorrectPile.appendChild(createCardElement(card));
+                });
+            }
+        }
+
+        /** Updates the card preview based on player selection. */
+        function updateCardPreview() {
+            cardPreview.className = `card input-card-preview mx-auto ${currentCard.color}-card`;
+            const shapeEl = cardPreview.querySelector('.card-shape');
+            shapeEl.className = `card-shape ${currentCard.shape}`;
+        }
+        
+        /** Updates status and score displays. */
+        function updateStatusDisplay() {
+            statusMoveCount.textContent = `Moves Used: ${totalMoves} / ${MAX_MOVES}`;
+            statusStreak.textContent = `Correct Streak: ${correctStreak} / ${WIN_STREAK}`;
+
+            // Style the streak status
+            statusStreak.className = `text-lg font-semibold ${correctStreak > 0 ? 'text-green-600' : 'text-gray-600'}`;
+        }
+
+        // --- Game Logic ---
+
+        /** Checks the player's move against the secret rule. */
+        function checkMove(newCard) {
+            // The rule is always based on the last correctly placed card
+            const lastCard = mainline[mainlineIndex - 1]; 
+            
+            return rule.check(lastCard, newCard);
+        }
+
+        /** Handles player submitting a card. */
+        function handleSubmit() {
+            if (!gameActive) return;
+            if (mainlineIndex >= MAINLINE_SIZE) return; 
+
+            const newCard = { ...currentCard }; 
+            const isCorrect = checkMove(newCard);
+
+            totalMoves++;
+
+            if (isCorrect) {
+                // Correct Move
+                mainline[mainlineIndex] = newCard;
+                mainlineIndex++;
+                correctStreak++;
+                
+                // Render the new card
+                const cell = document.getElementById(`cell-${mainlineIndex - 1}`);
+                cell.appendChild(createCardElement(newCard));
+                cell.style.border = 'none';
+                cell.style.backgroundColor = '#d1d5db';
+                
+                ruleHintDisplay.innerHTML = `**CORRECT!** Keep up the good work! The rule is based on the **last card played**.`;
+
+            } else {
+                // Incorrect Move
+                incorrects.push(newCard);
+                renderIncorrects();
+
+                correctStreak = 0;
+                
+                ruleHintDisplay.innerHTML = `**INCORRECT!** The rule was not followed. The rule is based on the **last card played**.`;
+            }
+
+            // Check Win/Loss conditions
+            checkGameEnd();
+            
+            // Update status display
+            updateStatusDisplay();
+        }
+
+        function checkGameEnd() {
+            if (gameActive === false) return;
+
+            const finalScore = MAINLINE_SIZE - totalMoves;
+            let message = '';
+            let win = false;
+
+            if (correctStreak >= WIN_STREAK) {
+                // Win Condition
+                win = true;
+                message = `YOU WIN! You found the rule after ${totalMoves} moves.`;
+            } else if (totalMoves >= MAX_MOVES) {
+                // Loss Condition (Max moves used)
+                message = `GAME OVER (Loss). You used ${MAX_MOVES} moves without finding the rule.`;
+            } else if (mainlineIndex >= MAINLINE_SIZE) {
+                 // Loss Condition (Mainline full before streak reached)
+                 message = `GAME OVER (Loss). The Mainline is full (12 cards). You needed a streak of ${WIN_STREAK} to win.`;
+            }
+
+            if (message) {
+                gameActive = false;
+                
+                // --- Display the rule upon game end ---
+                const ruleMessage = `The secret rule was: <strong>${rule.desc}</strong>`;
+                ruleHintDisplay.innerHTML = `<span class="text-xl font-bold ${win ? 'text-green-700' : 'text-red-700'}">${message}</span> <br><br> <span class="text-gray-800">${ruleMessage}</span>`;
+                
+                submitButton.classList.add('hidden');
+                newGameButton.classList.remove('hidden');
+
+                if (win) {
+                    finalScoreDisplay.textContent = `Score: ${finalScore}`;
+                    finalScoreDisplay.classList.remove('hidden', 'text-red-600');
+                    finalScoreDisplay.classList.add('text-green-600');
+                } else {
+                    finalScoreDisplay.textContent = `Score: 0`;
+                    finalScoreDisplay.classList.remove('hidden', 'text-green-600');
+                    finalScoreDisplay.classList.add('text-red-600');
+                }
+            }
+        }
+
+        /** Initializes all game state and UI. */
+        function initGame() {
+            // 1. Reset State
+            rule = rules[Math.floor(Math.random() * rules.length)];
+            mainline = [];
+            incorrects = [];
+            mainlineIndex = 0;
+            totalMoves = 0;
+            correctStreak = 0;
+            gameActive = true;
+            
+            // 2. Place the Seed Card (The first card that everything checks against)
+            const seedCard = { 
+                color: Math.random() < 0.5 ? 'red' : 'blue', 
+                shape: Math.random() < 0.5 ? 'square' : 'circle' 
+            };
+            mainline[0] = seedCard; 
+            mainlineIndex = 1;      
+
+            // 3. Render UI
+            renderMainline(); // This is the ONLY call that draws the cards now.
+            renderIncorrects();
+            updateStatusDisplay();
+            updateCardPreview();
+            
+            // 4. Update Status
+            ruleHintDisplay.innerHTML = `**Goal:** Place ${WIN_STREAK} correct cards in a row in the Mainline. A random starter card is placed. The secret rule is based on the **last card played**.`;
+            submitButton.classList.remove('hidden');
+            newGameButton.classList.add('hidden');
+            finalScoreDisplay.classList.add('hidden');
+        }
+
+        // --- Event Listeners ---
+        
+        // Color selection
+        document.getElementById('color-red').addEventListener('click', (e) => {
+            document.querySelectorAll('[data-color]').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCard.color = 'red';
+            updateCardPreview();
+        });
+
+        document.getElementById('color-blue').addEventListener('click', (e) => {
+            document.querySelectorAll('[data-color]').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCard.color = 'blue';
+            updateCardPreview();
+        });
+
+        // Shape selection
+        document.getElementById('shape-square').addEventListener('click', (e) => {
+            document.querySelectorAll('[data-shape]').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCard.shape = 'square';
+            updateCardPreview();
+        });
+
+        document.getElementById('shape-circle').addEventListener('click', (e) => {
+            document.querySelectorAll('[data-shape]').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCard.shape = 'circle';
+            updateCardPreview();
+        });
+
+        // Submit and New Game
+        submitButton.addEventListener('click', handleSubmit);
+        newGameButton.addEventListener('click', initGame);
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>

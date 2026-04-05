@@ -260,24 +260,22 @@ button {margin: 0.5em;}
  <div class = "col-12 text-center">
 <a href = "logic/hanoi.html" target = "_blank"><button class = "btn btn-info">Tower of Hanoi</button></a>
 
-<a href = "logic//blackbox.html" target = "_blank"><button class = "btn btn-warning">Atoms</button></a>
+<a href = "logic/blackbox.html" target = "_blank"><button class = "btn btn-warning">Atoms</button></a>
 
-<a href = "logic//electrostatics.html" target = "_blank"><button class = "btn btn-danger">
+<a href = "logic/electrostatics.html" target = "_blank"><button class = "btn btn-danger">
 Electrostatics</button></a>
 
-<a href = "logic//pentominoes.html" target = "_blank"><button class = "btn btn-info">Pentominoes</button></a>
+<a href = "logic/pentominoes.html" target = "_blank"><button class = "btn btn-info">Pentominoes</button></a>
 
-<a href = "logic/t/pentominoesiPad.html" target = "_blank"><button class = "btn btn-info">Pentominoes (iPad)</button></a>
+<a href = "logic/pentominoesiPad.html" target = "_blank"><button class = "btn btn-info">Pentominoes (iPad)</button></a>
 
-<a href = "logic//trianglePeg.html" target = "_blank"><button class = "btn btn-info">Peg game</button></a>
+<a href = "logic/trianglePeg.html" target = "_blank"><button class = "btn btn-info">Peg game</button></a>
 
- <a href = "logic//HS_Logic.html" target = "_blank"><button class = "btn btn-warning">HS Logic</button></a>
-<a href = "logic/zebraEasy.html" target = "_blank"><button class = "btn btn-primary">Logic </button></a>
-<a href = "logic//zebraEasyKhmer/" target = "_blank"><button class = "btn btn-warning">Logic khmer</button></a>
-<a href = "logic//deduction.html" target = "_blank"><button class = "btn btn-success">4 number puzzle</button></a>
-<a href = "logic//zebra3Objects" target = "_blank"><button class = "btn btn-info">3 objects</button></a>
-<a href = "logic//zebra4Objects.html" target = "_blank"><button class = "btn btn-primary">4 objects</button></a>
-<a href = "logic//numberDetective.html" target = "_blank"><button class = "btn btn-warning">Number detective</button></a>
+ <a href = "logic/HS_Logic.html" target = "_blank"><button class = "btn btn-warning">HS Logic</button></a>
+<a href = "logic/deduction.html" target = "_blank"><button class = "btn btn-success">4 number puzzle</button></a>
+<a href = "logic/zebra3Objects.html" target = "_blank"><button class = "btn btn-info">3 objects</button></a>
+<a href = "logic/zebra4Objects.html" target = "_blank"><button class = "btn btn-primary">4 objects</button></a>
+<a href = "logic/numberDetective.html" target = "_blank"><button class = "btn btn-warning">Number detective</button></a>
 <a href = "logic/make15.html" target = "_blank"><button class = "btn btn-primary">Make 15</button></a> 
 <a href = "logic/colourGame.html" arget="_blank"><button class = "btn btn-info">Colour Game</button></a> 
 <a href = "logic/lightsOut.html" target = "_blank"><button class = "btn btn-primary">Lights Out</button></a> 

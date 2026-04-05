@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alpha Particle Deduction Lab</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Bright, Modern Lab Theme */
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        /* The Grid Framework */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 45px);
+            grid-template-rows: repeat(10, 45px);
+            gap: 2px;
+            background-color: #e2e8f0;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #cbd5e1;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            user-select: none;
+            position: relative;
+        }
+        
+        /* The "Black Box" (Now a sleek dark slate) */
+        .inner {
+            background-color: #334155;
+            border: 1px solid #1e293b;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .inner:hover { background-color: #475569; }
+        
+        /* The outer perimeter shooters */
+        .edge {
+            background-color: #cbd5e1;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.2s;
+            border: 1px solid #94a3b8;
+        }
+        .edge:hover:not(.fired) {
+            background-color: #94a3b8;
+            color: white;
+        }
+        .corner { background-color: transparent; border: none; }
+        
+        /* --- Feedback Animations --- */
+        .correct-guess::after {
+            content: ''; width: 25px; height: 25px;
+            background-color: #10b981; /* Bright Green */
+            border-radius: 50%; position: absolute;
+            box-shadow: 0 0 10px #10b981;
+        }
+        .wrong-guess::after {
+            content: ''; width: 25px; height: 25px;
+            background-color: #ef4444; /* Bright Red */
+            border-radius: 50%; position: absolute;
+            animation: fadeOut 0.8s forwards ease-out;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* Ray Result Colors */
+        .hit { background-color: #ef4444 !important; color: white !important; border-color: #ef4444 !important;}
+        .reflect { background-color: #f59e0b !important; color: white !important; border-color: #f59e0b !important;}
+        .deflect { background-color: #10b981 !important; color: white !important; border-color: #10b981 !important;}
+        
+        .legend-box {
+            display: inline-block; width: 20px; height: 20px;
+            vertical-align: middle; margin-right: 8px; border-radius: 4px;
+        }
+
+        #star-display {
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            min-height: 50px;
+            letter-spacing: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Home
+    </a>
+</div>
+<div class="container game-container">
+    <div class="text-center mb-3">
+        <h1 class="text-primary fw-bold mb-2">Alpha Particle Lab</h1>
+        <p class="text-secondary">
+        Find the 4 atoms hidden inside the box using as few shots as possible!</p>
+        
+        <div id="star-display" class="mb-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-3 bg-white">
+                <div class="card-body">
+                    <h5 class="card-title text-primary border-bottom pb-2">How to Play</h5>
+                    <p class="small">Click the outer gray border to fire a particle. Deduce the atoms' locations and click inside the box to guess.</p>
+                    
+                    <h6 class="mt-3 text-secondary">Signal Legend</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><div class="legend-box hit"></div> <strong>H (Hit):</strong> Direct impact.</li>
+                        <li class="mb-2"><div class="legend-box reflect"></div> <strong>R (Reflect):</strong> Head-on forcefield bounce.</li>
+                        <li class="mb-2"><div class="legend-box deflect"></div> <strong>Num:</strong> Deflected 90° by nearby atom.</li>
+                    </ul>
+
+                    <h6 class="mt-3 text-secondary">Efficiency Target</h6>
+                    <ul class="list-unstyled small">
+                        <li><span style="color: #ffc107;">★</span> <strong>Gold:</strong> ≤ 14 shots</li>
+                        <li><span style="color: #c0c0c0;">★</span> <strong>Silver:</strong> 15 - 22 shots</li>
+                        <li><span style="color: #cd7f32;">★</span> <strong>Bronze:</strong> 23+ shots</li>
+                    </ul>
+
+                    <div class="d-grid mt-4">
+                        <button id="btn-reset" class="btn btn-outline-primary">Reset Experiment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div id="game-message" class="alert text-center fw-bold shadow-sm" style="display:none;"></div>
+            
+            <div class="d-flex justify-content-center gap-4 mb-2">
+                <span class="badge bg-primary fs-6 p-2 shadow-sm">Shots Fired: <span id="shots-counter">0</span></span>
+                <span class="badge bg-secondary fs-6 p-2 shadow-sm">Atoms Found: <span id="found-counter">0</span> / 4</span>
+            </div>
+
+            <div class="board-wrapper">
+                <div id="grid" class="grid">
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const GRID_SIZE = 8;
+const NUM_ATOMS = 4;
+let atoms = [];
+let foundAtomsCount = 0;
+let shotsFired = 0;
+let edgeCounter = 1;
+let gameOver = false;
+
+$(document).ready(function() {
+    buildGrid();
+    startNewGame();
+    $('#btn-reset').click(startNewGame);
+});
+
+function buildGrid() {
+    const $grid = $('#grid');
+    $grid.empty();
+
+    for (let r = 0; r <= GRID_SIZE + 1; r++) {
+        for (let c = 0; c <= GRID_SIZE + 1; c++) {
+            let $cell = $('<div>').addClass('cell').attr('data-r', r).attr('data-c', c);
+
+            if ((r === 0 || r === GRID_SIZE + 1) && (c === 0 || c === GRID_SIZE + 1)) {
+                $cell.addClass('corner');
+            }
+            else if (r === 0 || r === GRID_SIZE + 1 || c === 0 || c === GRID_SIZE + 1) {
+                $cell.addClass('edge').click(function() { fireRay(r, c); });
+            }
+            else {
+                $cell.addClass('inner').click(function() { makeGuess(r, c); });
+            }
+            $grid.append($cell);
+        }
+    }
+}
+
+function startNewGame() {
+    atoms = [];
+    foundAtomsCount = 0;
+    shotsFired = 0;
+    edgeCounter = 1;
+    gameOver = false;
+    
+    // Reset UI
+    $('.cell').removeClass('correct-guess wrong-guess hit reflect deflect fired').text('');
+    $('#found-counter').text('0');
+    $('#shots-counter').text('0');
+    $('#game-message').hide().removeClass('alert-success alert-info alert-warning');
+
+    // Place hidden atoms
+    while (atoms.length < NUM_ATOMS) {
+        let r = Math.floor(Math.random() * GRID_SIZE) + 1;
+        let c = Math.floor(Math.random() * GRID_SIZE) + 1;
+        
+        if (!atoms.some(a => a.r === r && a.c === c)) {
+            atoms.push({r: r, c: c});
+        }
+    }
+}
+
+function isAtom(r, c) {
+    if (r < 1 || r > GRID_SIZE || c < 1 || c > GRID_SIZE) return false;
+    return atoms.some(a => a.r === r && a.c === c);
+}
+
+// Real-time guess evaluation
+function makeGuess(r, c) {
+    if (gameOver) return;
+
+    let $cell = $(`.cell[data-r='${r}'][data-c='${c}']`);
+    
+    if ($cell.hasClass('correct-guess') || $cell.hasClass('wrong-guess')) return;
+
+    if (isAtom(r, c)) {
+        // Correct Guess
+        $cell.addClass('correct-guess');
+        foundAtomsCount++;
+        $('#found-counter').text(foundAtomsCount);
+
+        // Check for Win Condition
+        if (foundAtomsCount === NUM_ATOMS) {
+            handleWin();
+        }
+    } else {
+        // Wrong Guess Animation
+        $cell.addClass('wrong-guess');
+        setTimeout(() => {
+            $cell.removeClass('wrong-guess');
+        }, 800);
+    }
+}
+
+function fireRay(startR, startC) {
+    if (gameOver) return;
+    
+    let $startCell = $(`.cell[data-r='${startR}'][data-c='${startC}']`);
+    if ($startCell.hasClass('fired')) return; // Ignore if already shot from here
+
+    // Increment Shots
+    shotsFired++;
+    $('#shots-counter').text(shotsFired);
+
+    let dr = 0, dc = 0;
+    if (startR === 0) dr = 1;                   
+    else if (startR === GRID_SIZE + 1) dr = -1; 
+    else if (startC === 0) dc = 1;              
+    else if (startC === GRID_SIZE + 1) dc = -1; 
+
+    let result = traceRay(startR, startC, dr, dc);
+
+    $startCell.addClass('fired');
+    
+    if (result === 'H') {
+        $startCell.addClass('hit').text('H');
+    } 
+    else if (result === 'R') {
+        $startCell.addClass('reflect').text('R');
+    } 
+    else {
+        let exitR = result.r;
+        let exitC = result.c;
+        let $exitCell = $(`.cell[data-r='${exitR}'][data-c='${exitC}']`);
+        
+        $startCell.addClass('deflect').text(edgeCounter);
+        $exitCell.addClass('deflect fired').text(edgeCounter);
+        edgeCounter++;
+    }
+}
+
+// Raytracing Algorithm
+function traceRay(startR, startC, initial_dr, initial_dc) {
+    let r = startR;
+    let c = startC;
+    let dr = initial_dr;
+    let dc = initial_dc;
+
+    let nr = r + dr;
+    let nc = c + dc;
+    
+    if (isAtom(nr, nc)) return 'H'; 
+    
+    if (dr === 1 && (isAtom(r+1, c-1) || isAtom(r+1, c+1))) return 'R';
+    if (dr === -1 && (isAtom(r-1, c-1) || isAtom(r-1, c+1))) return 'R';
+    if (dc === 1 && (isAtom(r-1, c+1) || isAtom(r+1, c+1))) return 'R';
+    if (dc === -1 && (isAtom(r-1, c-1) || isAtom(r+1, c-1))) return 'R';
+
+    while(true) {
+        nr = r + dr;
+        nc = c + dc;
+
+        if (nr < 1 || nr > GRID_SIZE || nc < 1 || nc > GRID_SIZE) {
+            if (nr === startR && nc === startC) return 'R'; 
+            return {r: nr, c: nc}; 
+        }
+
+        if (isAtom(nr, nc)) return 'H';
+
+        let atomLeft = false, atomRight = false;
+        
+        if (dr === 0) { 
+            atomLeft = isAtom(r - 1, c + dc); 
+            atomRight = isAtom(r + 1, c + dc); 
+            
+            if (atomLeft && atomRight) { dr = -dr; dc = -dc; } 
+            else if (atomLeft) { dr = 1; dc = 0; }             
+            else if (atomRight) { dr = -1; dc = 0; }           
+            else { r = nr; c = nc; }                           
+        } 
+        else { 
+            atomLeft = isAtom(r + dr, c - 1); 
+            atomRight = isAtom(r + dr, c + 1); 
+            
+            if (atomLeft && atomRight) { dr = -dr; dc = -dc; } 
+            else if (atomLeft) { dr = 0; dc = 1; }             
+            else if (atomRight) { dr = 0; dc = -1; }           
+            else { r = nr; c = nc; }                           
+        }
+    }
+}
+
+// --- WIN LOGIC & SCORING ---
+function handleWin() {
+    gameOver = true;
+    
+    // Evaluate Efficiency
+    let starColor = '#cd7f32'; // Bronze
+    let rankName = "Bronze";
+    let alertClass = "alert-warning";
+
+    if (shotsFired <= 14) {
+        starColor = '#ffc107'; // Gold
+        rankName = "Gold";
+        alertClass = "alert-success";
+    } else if (shotsFired <= 22) {
+        starColor = '#c0c0c0'; // Silver
+        rankName = "Silver";
+        alertClass = "alert-info";
+    }
+
+    // Append the colored star to the tally
+    $('#star-display').append(`<span style="color: ${starColor};">★</span>`);
+    
+    // Display Message
+    $('#game-message')
+        .addClass(alertClass)
+        .html(`🎉 <strong>Chamber Cleared!</strong> You found all atoms in ${shotsFired} shots (${rankName} Efficiency).`)
+        .fadeIn();
+
+    // Auto-start next round after a delay
+    setTimeout(() => {
+        startNewGame();
+    }, 4500);
+}
+</script>
+</body>
+</html>

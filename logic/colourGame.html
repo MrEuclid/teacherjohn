@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<!-- new version up to 4 shades of each colour 0%, 25%,50%, 100% -->
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+<title>Colour game v2</title>
+  <link rel = "stylesheet" href = "css/mathsTestStyles.css">
+  <link rel="stylesheet" href="javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+  
+    <style type="text/css">
+
+hr {
+
+height: 2px;
+
+background-color:#555;
+
+margin-top: 20px;
+
+margin-bottom: 20px;
+
+width: 75%;
+
+}
+
+.c {
+     text-align: center;
+     margin-right: auto;
+     margin-left: auto;
+     margin: 0 ;
+   } 
+
+   h1
+   { 
+     color:blue; 
+   } 
+ h2 
+   { 
+     color:green; 
+   } 
+
+ h4 
+   {
+     color:orange ;
+   }
+
+   [id^=btn] {width:160px; height:40px ; 
+                      background-color: lightblue; color:white; 
+                      font-size: 12pt; font-weight: bolder;
+                      margin:10px ; }
+   #model {width:240px; height:160px ;}
+   #palette {margin:20px ; padding:5px ; width:160px ; height:40px ; 
+    font-size:14pt ; font-weight: bolder; color:black;}
+
+#clear {margin: 10px ;}
+
+#btnRed,#btnGreen, #btnBlue {background-color: white;} 
+  </style>
+
+  </head>
+
+  <body>
+<hr>
+    <div class = "container-fluid">
+      <div class = "row">
+        <div class = "col-xs-12 c">
+          <h1>
+          <a href = "index.php">
+          <button id = "home">
+            <span class="glyphicon glyphicon-home"></span>
+          </button></a>
+          Make the Colour
+          <a href = "">
+          <button id = "restart">
+            <span class="glyphicon glyphicon-repeat"></span>
+          </button>
+          </a>
+          </h1>
+        </div></div>
+        <div id = "gameLevels">
+        <div class = "row">
+            <div class = "col-xs-12 c">
+
+                <button id = "l1">Easy</button>
+                <button id = "l2">Medium</button>
+                <button id = "l4">Hard</button>
+               
+              
+
+                </div></div>
+</div>
+
+<div id = "scoreButtons">
+    <div class = "row">
+      <div class = "col-xs-12 c">
+        Level 
+        <button id = "playingLevel">0</button>
+        Moves
+        <button id = "score">0</button>
+        Cancel
+        <button id = "clear">Clear</button>
+        <!--
+        <p id = "answer"></p>
+      -->
+        
+</div></div>
+</div>
+<div id = "main">
+        <div class = "row">
+          <div class = "col-xs-12 c">
+            <button id = "model"></button>
+          </div></div>
+
+          <div class = "row">
+            <div class = "col-xs-12 c">
+             <button id = "palette">Check</button>
+            </div></div>
+
+            <div class = "row">
+              <div class = "col-xs-12 c">
+                <button id = "btnRed100"></button>
+                <button id = "btnGreen100"></button>
+                <button id = "btnBlue100"></button>
+              </div></div>
+
+              <div class = "row">
+                <div class = "col-xs-12 c">
+                  <button id = "btnRed75"></button>
+                  <button id = "btnGreen75"></button>
+                  <button id = "btnBlue75"></button>
+                </div></div>
+
+              <div class = "row">
+                <div class = "col-xs-12 c">
+                  <button id = "btnRed50"></button>
+                  <button id = "btnGreen50"></button>
+                  <button id = "btnBlue50"></button>
+                </div></div>
+
+                <div class = "row">
+                  <div class = "col-xs-12 c">
+                    <button id = "btnRed25"></button>
+                    <button id = "btnGreen25"></button>
+                    <button id = "btnBlue25"></button>
+                  </div></div>
+
+                  <div class = "row">
+                    <div class = "col-xs-12 c">
+                      <button id = "btnRed0"></button>
+                      <button id = "btnGreen0"></button>
+                      <button id = "btnBlue0"></button>
+                    </div></div>
+
+                 
+                    <hr>
+                    
+
+                    <div class = "row">
+                      <div class = "col-xs-12 c">
+                        <button id = "btnRed"></button>
+                        <button id = "btnGreen"></button>
+                        <button id = "btnBlue"></button>
+                      </div></div>
+</div> <!-- main -->
+  </div> <!-- container -->
+
+  </body>
+  </html>
+
+ 
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+  $('#btnRed').prop('disabled',true);   
+  $('#btnGreen').prop('disabled',true); 
+  $('#btnBlue').prop('disabled',true);  
+    
+// colour the buttons 
+
+for (i = 0; i <= 100 ; i = i+25)
+{
+  colorRed = 'rgb(' + i + '%,0%,0%)';
+ 
+
+  colorGreen = 'rgb(0%,' + i + '%,0%)';
+ 
+
+  colorBlue = 'rgb(0%,0%,' + i + '%)';
+ 
+  
+  $('#btnRed' + i).css({'background-color': colorRed}) ;
+  $('#btnRed' + i).text(i + '%') ;
+
+  $('#btnGreen' + i).css({'background-color': colorGreen}) ;
+  $('#btnGreen' + i).text(i + '%') ;
+
+  $('#btnBlue' + i).css({'background-color': colorBlue}) ;
+  $('#btnBlue' + i).text(i + '%') ;
+ 
+}
+
+  
+    $('#gameLevels').show() ;
+    $('#main').hide() ;
+    $('#scoreButtons').hide() ;
+
+        })
+    </script>
+
+ 
+  <script type="text/javascript">
+    $(document).ready(function(){
+        $('[id^=l]').on("click", function(event) {
+
+    var t = this.id ;
+    level = parseInt(t.substring(1,3)) ;
+    clicks = 0 ; 
+ 
+// level -= 1  hide 25,50,75
+if (level == 1)
+{
+$('[id$=25]').hide() ;
+$('[id$=50]').hide() ;
+$('[id$=75]').hide() ;
+}
+// level = 2 hide 25,75
+
+if (level == 2)
+{
+$('[id$=25]').hide() ;
+$('[id$=75]').hide() ;
+}
+// level = 3 show all
+   
+ 
+    $('#playingLevel').text(level) ;
+    $('#gameLevels').hide() ;
+    $('#main').show() ;
+    $('#scoreButtons').show() ;
+
+    // M = model 
+    x = Math.floor((Math.random()*(level+1))); // number in {0,2}
+    y = Math.floor((Math.random()*(level+1))); // number in {0,2}
+    z = Math.floor((Math.random()*(level+1))); // number in {0,2}
+
+    rM = x*100/level;
+     gM = y*100/level;
+     bM=  z*100/level;
+
+     if (rM < 0 ) {rM = 0 ;}
+     if (gM < 0 ) {gM = 0 ;}
+     if (bM < 0 ) {bM = 0 ;}
+
+     // P palette
+
+     rP = 0 ;
+     gP = 0 ;
+     bP = 0 ;
+
+     colorM = "rgb(" + rM + "%,"  + gM + "%," + bM + "%)";
+     colorP = "rgb(" + rP + "%,"  + gP + "%," + bP + "%)";
+
+     $('#model').css({'background-color': colorM }) ;
+     $('#palette').css({'background-color': colorP }) ;   
+
+
+
+
+     $('#answer').text(colorM);
+     
+     $('#palette').text('Check') ;  
+         })
+       })
+   </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $('[id^=btn]').on("click", function(event) {
+
+        colorP = "rgb(" + rP + "%,"  + gP + "%," + bP + "%)";
+        
+
+        var t = this.id ;
+
+        if (t != 'btnRed' | t != 'btnGreen' | t != 'btnBlue')
+        {$('[id^=btn]').prop('disabled',false);}
+
+        $('#btnRed').prop('disabled',true);   
+  $('#btnGreen').prop('disabled',true); 
+  $('#btnBlue').prop('disabled',true); 
+        var bid = this.id ;
+        $('#'+bid).prop('disabled',true);
+
+        var cid = bid.substr(3,1) ;
+        if (cid == 'R')
+        {
+          rP = bid.substr(6,3);
+      var cR = 'rgb(' + rP + '%,0%,0%)';
+      $('#btnRed').css({'background-color':cR});
+      $('#btnRed').text(rP + '%');
+ 
+         // alert(bid + ' ' + cid + ' ' + rP) ;
+        }
+
+        if (cid == 'G')
+        {
+          gP = bid.substr(8,3);
+          var cG  = 'rgb(0%,' + gP + '%,0%)';
+          $('#btnGreen').css({'background-color':cG}) ;
+          $('#btnGreen').text(gP + '%');
+         // alert(bid + ' ' + cid + ' ' + gP) ;
+        }
+
+        if (cid == 'B')
+        {
+          bP = bid.substr(7,3);
+          cB = 'rgb(0%,0%,' + bP + '%)';
+          $('#btnBlue').css({'background-color':cB});
+          $('#btnBlue').text(bP + '%');
+         // alert(bid + ' ' + cid + ' ' + bP) ;
+        }
+
+
+
+     
+
+        colorP = "rgb(" + rP + "%,"  + gP + "%," + bP + "%)";
+        
+        $('#palette').css({'background-color': colorP }) ; 
+
+        clicks++ ;
+        $('#score').text(clicks);
+
+
+      })
+    })
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+     $('#clear').on("click", function(event) {
+
+     clicks = 0 ;
+      $('#score').text(clicks) ;
+
+      rP = 0 ;
+      gP = 0 ;
+      bP = 0 ;
+
+      colorP = "rgb(" + rP + "%,"  + gP + "%," + bP + "%)";
+        
+        $('#palette').css({'background-color': colorP }) ; 
+        
+       })
+     })
+ </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+     $('#palette').on("click", function(event) {
+         
+
+         console.log(colorP,colorM);
+
+         if (colorP == colorM)
+         {
+             alert('It matches!') ;
+         }
+         else 
+         {
+             alert('Keep trying.') ;
+         }
+
+       })
+     })
+ </script>
+

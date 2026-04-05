@@ -75,8 +75,10 @@
  
 <a href="/escape/escape.html">
     <button class="btn btn-success">Cats & Tigers</button></a>
- <a href = "files/Websites/dogs.html">Dogs</a>
- <a href = "files/Websites/coffee.html">Coffee</a>
+ <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
+<button class="btn btn-info">Sokoban </button></a>
+<a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
+
  
     <div class="row mt-3">
         <div class="col-12 text-center">

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ល្បែងផ្គុំរូបគណិតវិទ្យាបឋមសិក្សាដោយចៃដន្យ</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+
+        #puzzle-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 20px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        #clues-panel, #solution-panel {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        #clues-panel {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+        }
+        #clues-panel ol {
+            padding-left: 20px;
+            list-style-type: decimal;
+        }
+        
+        #number-tokens {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background-color: #fffacd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #ffc107;
+            min-height: 50px;
+        }
+
+        .token {
+            padding: 15px 25px;
+            background-color: #ff9800;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #position-slots-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .position-slot {
+            width: 100px;
+            height: 100px;
+            border: 3px dashed #3f51b5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f4ff;
+            border-radius: 8px;
+            color: #3f51b5;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+            position: relative;
+        }
+        
+        .position-slot:hover {
+            background-color: #e3f2fd;
+        }
+        .position-slot:has(.token) {
+            border: 3px solid #3f51b5;
+            background-color: #ffffff;
+        }
+
+        #action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #check-solution-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #check-solution-btn:hover {
+            background-color: #45a049;
+        }
+        #new-puzzle-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #new-puzzle-btn:hover {
+            background-color: #1e88e5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="main-title">ល្បែងផ្គុំរូបគណិតវិទ្យាបឋមសិក្សាដោយចៃដន្យ 🧠</h1>
+    
+    <div id="puzzle-container">
+        <div id="clues-panel">
+            <h2 id="clues-title">តម្រុយ: ប្រើគូ/សេស និង ធំជាង/តូចជាង ១០</h2>
+            <ol id="clues-list">
+                </ol>
+        </div>
+
+        <div id="solution-panel">
+            <h2 id="solution-title">ដាក់លេខ</h2>
+            
+            <div id="number-tokens">
+                </div>
+            
+            <div id="position-slots-container">
+                </div>
+
+            <div id="action-buttons">
+                <button id="check-solution-btn" class="action-btn">ពិនិត្យចម្លើយរបស់ខ្ញុំ</button>
+                <button id="new-puzzle-btn" class="action-btn">បង្កើតល្បែងផ្គុំរូបថ្មី</button>
+            </div>
+            
+            <p id="feedback-message" style="margin-top: 20px; font-weight: bold;"></p>
+        </div>
+    </div>
+
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+
+        // --- KHMER TRANSLATIONS ---
+        const KM = {
+            EVEN: "លេខគូ",
+            ODD: "លេខសេស",
+            GT_10: "ធំជាង ១០",
+            LT_10: "តូចជាង ១០",
+            LEFT: "ខាងឆ្វេង",
+            SAME_POSITION: "ស្ថិតនៅទីតាំងតែមួយជាមួយ",
+            NOT: "មិន",
+            
+            POSITIONS: {
+                "1st": "ទីតាំងទី ១",
+                "2nd": "ទីតាំងទី ២",
+                "3rd": "ទីតាំងទី ៣",
+                "4th": "ទីតាំងទី ៤"
+            },
+            MSG_CORRECT: "🎉 ដោះស្រាយល្បែងផ្គុំរូបបានហើយ! អ្នកជាម្ចាស់នៃការវិភាគ!",
+            MSG_INCORRECT: "❌ ការរៀបចំមិនត្រឹមត្រូវទេ។ សូមពិនិត្យមើលតម្រុយរបស់អ្នកឡើងវិញ។",
+            MSG_INCOMPLETE: "❌ សូមបំពេញកន្លែងដាក់លេខទាំង ៤ មុននឹងពិនិត្យ!"
+        };
+
+        // --- CONSTANTS & STATE ---
+        const MAGNITUDE_THRESHOLD = 10;
+        const POSITIONS_KEYS = ["1st", "2nd", "3rd", "4th"];
+        let currentPuzzleData = {};
+
+        // --- 1. PROPERTY CHECKERS (Helpers) ---
+        function isEven(n) { return n % 2 === 0; }
+        
+        // --- 2. GENERATION LOGIC ---
+        function generateRandomSolution(numCount = 4) {
+            const numbers = [];
+            const usedNumbers = new Set();
+            
+            while (numbers.length < numCount) {
+                let num;
+                if (numbers.length < 2) {
+                    num = Math.floor(Math.random() * 8) + 2; // 2-9 (<10)
+                } else {
+                    num = Math.floor(Math.random() * 15) + 11; // 11-25 (>10)
+                }
+                if (!usedNumbers.has(num)) {
+                    numbers.push(num);
+                    usedNumbers.add(num);
+                }
+            }
+
+            const shuffledNumbers = numbers.sort(() => 0.5 - Math.random());
+            const solution = [];
+            for (let i = 0; i < numCount; i++) {
+                const currentNumber = shuffledNumbers[i];
+                solution.push({
+                    Position: POSITIONS_KEYS[i],
+                    Number: currentNumber,
+                    Parity: isEven(currentNumber) ? KM.EVEN : KM.ODD,
+                    Magnitude: currentNumber > MAGNITUDE_THRESHOLD ? KM.GT_10 : KM.LT_10
+                });
+            }
+            return solution;
+        }
+        
+        function generateTemplatedClues(solution) {
+            const clues = [];
+            
+            const getProp = (item) => {
+                return Math.random() < 0.5 ? item.Parity : item.Magnitude;
+            };
+
+            // CLUE 1: Direct Position/Number Link (A is in position X)
+            const itemA = solution[solution.length - 1]; 
+            clues.push(`1. លេខ **${itemA.Number}** ស្ថិតនៅ${KM.POSITIONS[itemA.Position]}។`);
+
+            // CLUE 2: Direct Property/Position Link (The [Prop] is in position Y)
+            const itemB = solution[Math.floor(solution.length / 2)]; 
+            clues.push(`2. លេខដែលស្ថិតនៅ${KM.POSITIONS[itemB.Position]} គឺជា **${getProp(itemB)}**។`);
+
+            // CLUE 3: Positional Clue (A is left of B)
+            const idxC1 = 0; 
+            const idxC2 = 1; 
+            const propC1 = solution[idxC1].Magnitude;
+            const numC2 = solution[idxC2].Number;
+            clues.push(`3. លេខដែល **${propC1}** ស្ថិតនៅ **${KM.LEFT}** ជាប់នឹងលេខ **${numC2}**។`);
+
+            // CLUE 4: Associative Clue (A is in the same position as [Prop])
+            const itemD = solution[solution.length - 2]; 
+            const propD = itemD.Parity;
+            clues.push(`4. លេខ **${itemD.Number}** ${KM.SAME_POSITION}លេខដែលជា **${propD}**។`);
+
+            // CLUE 5: Exclusion Clue ([Prop] is NOT in X position)
+            const itemE = solution[1]; 
+            const excludedPos = POSITIONS_KEYS[0]; 
+            clues.push(`5. លេខដែល **${getProp(itemE)}** **${KM.NOT}** ស្ថិតនៅ${KM.POSITIONS[excludedPos]} ទេ។`);
+            
+            return clues;
+        }
+
+        function generateNewPuzzleData() {
+            const newSolution = generateRandomSolution(4);
+            const newClues = generateTemplatedClues(newSolution);
+
+            return {
+                items: {
+                    Position: POSITIONS_KEYS,
+                    Number: newSolution.map(item => item.Number),
+                },
+                solution: newSolution.map(item => ({ Position: item.Position, Number: item.Number })),
+                clues: newClues
+            };
+        }
+
+        // --- 3. GAME SETUP AND INTERACTION ---
+        function setupGame(data) {
+            currentPuzzleData = data;
+            
+            document.getElementById('clues-list').innerHTML = '';
+            document.getElementById('number-tokens').innerHTML = '';
+            document.getElementById('position-slots-container').innerHTML = '';
+            document.getElementById('feedback-message').textContent = '';
+
+            // 1. Populate Clues
+            const cluesList = document.getElementById('clues-list');
+            data.clues.forEach(clue => {
+                const li = document.createElement('li');
+                li.innerHTML = clue;
+                cluesList.appendChild(li);
+            });
+
+            // 2. Populate Tokens
+            const tokensContainer = document.getElementById('number-tokens');
+            data.items.Number.forEach(number => {
+                const token = document.createElement('div');
+                token.className = 'token';
+                token.setAttribute('draggable', 'true');
+                token.setAttribute('data-number', number);
+                token.textContent = number;
+                tokensContainer.appendChild(token);
+            });
+            
+            // 3. Populate Slots
+            const slotsContainer = document.getElementById('position-slots-container');
+            data.items.Position.forEach(position => {
+                const slot = document.createElement('div');
+                slot.className = 'position-slot';
+                slot.setAttribute('data-position', position);
+                slot.textContent = KM.POSITIONS[position]; 
+                slotsContainer.appendChild(slot);
+            });
+
+            // 4. Set up Drag and Drop Handlers
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const tokens = document.querySelectorAll('.token');
+            const slots = document.querySelectorAll('.position-slot');
+
+            tokens.forEach(token => {
+                token.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.dataset.number);
+                });
+                token.addEventListener('dragend', (e) => {
+                    if (e.target.parentElement.id === 'number-tokens') {
+                        e.target.style.position = 'relative';
+                    }
+                });
+            });
+
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const number = e.dataTransfer.getData('text/plain');
+                    const draggedToken = document.querySelector(`.token[data-number="${number}"]`);
+                    
+                    if (slot.querySelector('.token')) {
+                        const oldToken = slot.querySelector('.token');
+                        document.getElementById('number-tokens').appendChild(oldToken);
+                        oldToken.style.position = 'relative';
+                    }
+
+                    slot.innerHTML = KM.POSITIONS[slot.dataset.position]; 
+                    slot.appendChild(draggedToken);
+                    
+                    draggedToken.style.position = 'absolute';
+                    draggedToken.style.margin = 'auto';
+
+                    slot.dataset.filledNumber = number; 
+                });
+            });
+        }
+        
+        // --- 4. VALIDATION LOGIC ---
+        function checkFinalSolution(puzzleData) {
+            const positionSlots = document.querySelectorAll('.position-slot');
+            const feedback = document.getElementById('feedback-message');
+            let userAnswerNumbers = [];
+            
+            let allFilled = true;
+            positionSlots.forEach((slot) => {
+                const placedNumber = slot.dataset.filledNumber; 
+                if (!placedNumber) {
+                    allFilled = false;
+                }
+                userAnswerNumbers.push(placedNumber ? parseInt(placedNumber) : null); 
+            });
+            
+            if (!allFilled) {
+                feedback.textContent = KM.MSG_INCOMPLETE;
+                feedback.style.color = 'red';
+                return false;
+            }
+
+            let isCorrect = true;
+            for (let i = 0; i < 4; i++) {
+                const correctNumber = puzzleData.solution[i].Number;
+                const userNumber = userAnswerNumbers[i];
+                
+                if (userNumber !== correctNumber) {
+                    isCorrect = false;
+                    break; 
+                }
+            }
+            
+            if (isCorrect) {
+                feedback.textContent = KM.MSG_CORRECT;
+                feedback.style.color = 'green';
+            } else {
+                feedback.textContent = KM.MSG_INCORRECT;
+                feedback.style.color = 'red';
+            }
+
+            return isCorrect;
+        }
+
+        // Initialize game when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialData = generateNewPuzzleData();
+            setupGame(initialData);
+
+            document.getElementById('check-solution-btn').addEventListener('click', () => {
+                checkFinalSolution(currentPuzzleData); 
+            });
+            
+            document.getElementById('new-puzzle-btn').addEventListener('click', () => {
+                const newData = generateNewPuzzleData();
+                setupGame(newData);
+            });
+        });
+    </script>
+</body>
+</html>

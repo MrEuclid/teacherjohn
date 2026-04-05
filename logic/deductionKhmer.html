@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ល្បែងផ្គុំរូបគណិតវិទ្យាបឋមសិក្សាដោយចៃដន្យ</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+
+        /* --- Settings Panel --- */
+        #settings-panel {
+            background-color: #fce4ec;
+            border: 1px solid #f06292;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        #settings-panel label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        #settings-panel input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* --- Main Layout --- */
+        #puzzle-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        #clues-panel, #deduction-panel, #solution-panel {
+            padding: 15px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        #clues-panel { flex: 1.5; background-color: #e6f7ff; border: 1px solid #91d5ff; }
+        #deduction-panel { flex: 1.5; background-color: #f7f7f7; border: 1px solid #ccc; }
+        #solution-panel { flex: 1; }
+
+        /* --- Clues --- */
+        #clues-panel ol {
+            padding-left: 20px;
+        }
+        
+        /* --- Tokens and Slots --- */
+        #number-tokens {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background-color: #fffacd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #ffc107;
+            min-height: 50px;
+        }
+
+        .token {
+            padding: 15px 25px;
+            background-color: #ff9800;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        #position-slots-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .position-slot {
+            width: 100px;
+            height: 100px;
+            border: 3px dashed #3f51b5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f4ff;
+            border-radius: 8px;
+            color: #3f51b5;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+            position: relative;
+        }
+        
+        .position-slot:hover { background-color: #e3f2fd; }
+
+        /* --- Deduction Grid Styles --- */
+        #deduction-grid-container {
+            display: grid;
+            grid-template-columns: 80px repeat(4, 1fr);
+            border: 2px solid #333;
+            background-color: #eee;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .grid-header {
+            background-color: #ccc;
+            font-weight: bold;
+            padding: 8px 4px;
+            text-align: center;
+            border: 1px solid #999;
+        }
+
+        .grid-cell {
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 1.5em;
+            font-weight: bold;
+            user-select: none;
+            transition: background-color 0.1s;
+        }
+
+        .grid-cell:hover { background-color: #fff; }
+
+        .marked-x { color: red; background-color: #ffe0e0; }
+        .marked-o { color: green; background-color: #e0ffe0; }
+
+        /* --- Buttons --- */
+        #action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #check-solution-btn { background-color: #4CAF50; color: white; }
+        #new-puzzle-btn { background-color: #2196F3; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <h1 id="main-title">ល្បែងផ្គុំរូបគណិតវិទ្យាបឋមសិក្សាដោយចៃដន្យ 🧠</h1>
+    
+    <div id="settings-panel">
+        <h3>ការកំណត់កម្រិតពិបាក:</h3>
+        <div>
+            <label for="max-number">លេខអតិបរមា:</label>
+            <input type="number" id="max-number" value="25" min="15" max="99">
+        </div>
+        <div>
+            <label for="magnitude-threshold">កម្រិតប្រៀបធៀប:</label>
+            <input type="number" id="magnitude-threshold" value="10" min="5" max="30">
+        </div>
+        <p style="font-size:0.8em; color:#666; margin:0;">(ការផ្លាស់ប្តូរនឹងអនុវត្តនៅពេលចុច 'បង្កើតល្បែងផ្គុំរូបថ្មី')</p>
+    </div>
+    <div id="puzzle-container">
+        
+        <div id="clues-panel">
+            <h2 id="clues-title">តម្រុយ: ប្រើគូ/សេស និង ធំជាង/តូចជាង [Threshold]</h2>
+            <ol id="clues-list">
+                </ol>
+        </div>
+
+        <div id="deduction-panel">
+            <h2>តារាងនៃការសន្និដ្ឋាន (តាមដានលក្ខណៈសម្បត្តិ)</h2>
+            <div id="deduction-grid-container">
+                </div>
+        </div>
+
+        <div id="solution-panel">
+            <h2 id="solution-title">ដាក់លេខ</h2>
+            
+            <div id="number-tokens">
+                </div>
+            
+            <div id="position-slots-container">
+                </div>
+
+            <div id="action-buttons">
+                <button id="check-solution-btn" class="action-btn">ពិនិត្យចម្លើយរបស់ខ្ញុំ</button>
+                <button id="new-puzzle-btn" class="action-btn">បង្កើតល្បែងផ្គុំរូបថ្មី</button>
+            </div>
+            
+            <p id="feedback-message" style="margin-top: 20px; font-weight: bold;"></p>
+        </div>
+    </div>
+
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+
+        // --- KHMER TRANSLATIONS FOR LOGIC OUTPUT ---
+        const KM = {
+            EVEN: "លេខគូ",
+            ODD: "លេខសេស",
+            LEFT: "ខាងឆ្វេង",
+            SAME_POSITION: "ស្ថិតនៅទីតាំងតែមួយជាមួយ",
+            NOT: "មិន",
+            
+            POSITIONS: {
+                "1st": "ទីតាំងទី ១",
+                "2nd": "ទីតាំងទី ២",
+                "3rd": "ទីតាំងទី ៣",
+                "4th": "ទីតាំងទី ៤"
+            },
+            MSG_CORRECT: "🎉 ដោះស្រាយល្បែងផ្គុំរូបបានហើយ! អ្នកជាម្ចាស់នៃការវិភាគ!",
+            MSG_INCORRECT: "❌ ការរៀបចំមិនត្រឹមត្រូវទេ។ សូមពិនិត្យមើលតម្រុយ និងតារាងរបស់អ្នកឡើងវិញ!",
+            MSG_INCOMPLETE: "❌ សូមបំពេញកន្លែងដាក់លេខទាំង ៤ មុននឹងពិនិត្យ!",
+            SLOT_LABEL: "ទីតាំងទី"
+        };
+
+
+        // --- CONSTANTS & STATE ---
+        const POSITIONS_KEYS = ["1st", "2nd", "3rd", "4th"];
+        let currentPuzzleData = {};
+
+        // --- 0. SETTINGS RETRIEVAL ---
+        function getSettings() {
+            const maxNumInput = document.getElementById('max-number');
+            const thresholdInput = document.getElementById('magnitude-threshold');
+
+            const maxNumber = parseInt(maxNumInput ? maxNumInput.value : 25);
+            const magnitudeThreshold = parseInt(thresholdInput ? thresholdInput.value : 10);
+
+            return {
+                maxNumber: Math.max(15, maxNumber), 
+                magnitudeThreshold: Math.max(5, magnitudeThreshold) 
+            };
+        }
+
+        // --- 1. PROPERTY CHECKERS (Helpers) ---
+        function isEven(n) { return n % 2 === 0; }
+        
+        // --- 2. GENERATION LOGIC ---
+        function generateRandomSolution(numCount = 4) {
+            const settings = getSettings();
+            const MAX_NUM = settings.maxNumber;
+            const THRESHOLD = settings.magnitudeThreshold;
+
+            const numbers = [];
+            const usedNumbers = new Set();
+            
+            while (numbers.length < numCount) {
+                let num;
+                
+                if (numbers.length < 2) {
+                    num = Math.floor(Math.random() * (THRESHOLD - 1)) + 2; 
+                } else {
+                    num = Math.floor(Math.random() * (MAX_NUM - THRESHOLD)) + THRESHOLD + 1; 
+                }
+
+                if (num > 1 && num <= MAX_NUM && !usedNumbers.has(num)) {
+                    numbers.push(num);
+                    usedNumbers.add(num);
+                }
+            }
+
+            const shuffledNumbers = numbers.sort(() => 0.5 - Math.random());
+            const solution = [];
+            
+            // Generate Khmer Magnitude strings dynamically based on the current threshold
+            const gtString = `ធំជាង ${THRESHOLD}`;
+            const ltString = `តូចជាង ${THRESHOLD}`;
+
+            for (let i = 0; i < numCount; i++) {
+                const currentNumber = shuffledNumbers[i];
+                solution.push({
+                    Position: POSITIONS_KEYS[i],
+                    Number: currentNumber,
+                    Parity: isEven(currentNumber) ? KM.EVEN : KM.ODD, // Use Khmer Parity
+                    Magnitude: currentNumber > THRESHOLD ? gtString : ltString // Use Khmer Magnitude
+                });
+            }
+            return solution;
+        }
+        
+        function generateTemplatedClues(solution) {
+            // Clue generation uses the magnitude and parity strings stored in the solution object (now in Khmer)
+            const clues = [];
+            
+            const getProp = (item) => {
+                return Math.random() < 0.5 ? item.Parity : item.Magnitude;
+            };
+
+            // CLUE 1: Direct Position/Number Link
+            const itemA = solution[solution.length - 1]; 
+            clues.push(`1. លេខ **${itemA.Number}** ស្ថិតនៅ **${KM.POSITIONS[itemA.Position]}**។`);
+
+            // CLUE 2: Direct Property/Position Link
+            const itemB = solution[Math.floor(solution.length / 2)]; 
+            clues.push(`2. លេខដែលស្ថិតនៅ **${KM.POSITIONS[itemB.Position]}** គឺជា **${getProp(itemB)}**។`);
+
+            // CLUE 3: Positional Clue (A is left of B)
+            const idxC1 = 0; 
+            const idxC2 = 1; 
+            const propC1 = solution[idxC1].Magnitude;
+            const numC2 = solution[idxC2].Number;
+            clues.push(`3. លេខដែល **${propC1}** ស្ថិតនៅ **${KM.LEFT}** ជាប់នឹងលេខ **${numC2}**។`);
+
+            // CLUE 4: Associative Clue (A is in the same position as [Prop])
+            const itemD = solution[solution.length - 2]; 
+            const propD = itemD.Parity;
+            clues.push(`4. លេខ **${itemD.Number}** ${KM.SAME_POSITION} លេខដែលជា **${propD}**។`);
+
+            // CLUE 5: Exclusion Clue ([Prop] is NOT in X position)
+            const itemE = solution[1]; 
+            const excludedPos = POSITIONS_KEYS[0]; 
+            clues.push(`5. លេខដែល **${getProp(itemE)}** **${KM.NOT}** ស្ថិតនៅ ${KM.POSITIONS[excludedPos]} ទេ។`);
+            
+            return clues;
+        }
+
+        function generateNewPuzzleData() {
+            const newSolution = generateRandomSolution(4);
+            const newClues = generateTemplatedClues(newSolution);
+
+            return {
+                items: {
+                    Position: POSITIONS_KEYS,
+                    Number: newSolution.map(item => item.Number),
+                },
+                solution: newSolution.map(item => ({ Position: item.Position, Number: item.Number })),
+                clues: newClues
+            };
+        }
+
+        // --- 3. DEDUCTION GRID LOGIC ---
+
+        function getGridProperties() {
+            const settings = getSettings();
+            const THRESHOLD = settings.magnitudeThreshold;
+            return [
+                { label: KM.EVEN, type: "Parity" },
+                { label: KM.ODD, type: "Parity" },
+                { label: `ធំជាង ${THRESHOLD}`, type: "Magnitude" }, 
+                { label: `តូចជាង ${THRESHOLD}`, type: "Magnitude" }  
+            ];
+        }
+
+        function renderDeductionGrid(numbers) {
+            const container = document.getElementById('deduction-grid-container');
+            container.innerHTML = ''; 
+            const GRID_PROPERTIES = getGridProperties(); 
+
+            // --- Create Column Headers (Numbers) ---
+            container.insertAdjacentHTML('beforeend', `<div class="grid-header"># / លក្ខណៈ</div>`);
+            
+            numbers.forEach(num => {
+                container.insertAdjacentHTML('beforeend', `<div class="grid-header">${num}</div>`);
+            });
+
+            // --- Create Rows (Properties) ---
+            GRID_PROPERTIES.forEach(prop => {
+                container.insertAdjacentHTML('beforeend', `<div class="grid-header">${prop.label}</div>`);
+
+                // Data Cells
+                numbers.forEach(num => {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.setAttribute('data-number', num);
+                    cell.setAttribute('data-property', prop.label);
+                    cell.setAttribute('data-state', '');
+                    container.appendChild(cell);
+                });
+            });
+
+            attachGridClickHandler();
+        }
+
+        function attachGridClickHandler() {
+            document.querySelectorAll('.grid-cell').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    let currentState = this.getAttribute('data-state');
+                    
+                    if (currentState === "") {
+                        this.textContent = "X";
+                        this.className = "grid-cell marked-x";
+                        this.setAttribute('data-state', 'X');
+                    } else if (currentState === "X") {
+                        this.textContent = "O";
+                        this.className = "grid-cell marked-o";
+                        this.setAttribute('data-state', 'O');
+                    } else { 
+                        this.textContent = "";
+                        this.className = "grid-cell";
+                        this.setAttribute('data-state', '');
+                    }
+                });
+            });
+        }
+
+
+        // --- 4. GAME SETUP AND INTERACTION ---
+        function setupGame(data) {
+            currentPuzzleData = data;
+            
+            // Clear all dynamic sections
+            document.getElementById('clues-list').innerHTML = '';
+            document.getElementById('number-tokens').innerHTML = '';
+            document.getElementById('position-slots-container').innerHTML = '';
+            document.getElementById('feedback-message').textContent = '';
+
+            const puzzleNumbers = data.items && Array.isArray(data.items.Number) ? data.items.Number : [];
+
+            if (puzzleNumbers.length === 0) {
+                 document.getElementById('feedback-message').textContent = "ERROR: Could not generate puzzle numbers. Please check your Max Number and Comparison Threshold settings to ensure a valid range.";
+                 document.getElementById('feedback-message').style.color = 'red';
+                 return;
+            }
+            
+            // Update Clues Title with current threshold (Khmer)
+            const settings = getSettings();
+            document.getElementById('clues-title').textContent = `តម្រុយ: ប្រើគូ/សេស និង ធំជាង/តូចជាង ${settings.magnitudeThreshold}`;
+
+
+            // 1. Populate Clues
+            const cluesList = document.getElementById('clues-list');
+            data.clues.forEach(clue => {
+                const li = document.createElement('li');
+                li.innerHTML = clue;
+                cluesList.appendChild(li);
+            });
+
+            // 2. Populate Tokens
+            const tokensContainer = document.getElementById('number-tokens');
+            puzzleNumbers.forEach(number => {
+                const token = document.createElement('div');
+                token.className = 'token';
+                token.setAttribute('draggable', 'true');
+                token.setAttribute('data-number', number);
+                token.textContent = number; 
+                tokensContainer.appendChild(token);
+            });
+            
+            // 3. Populate Slots
+            const slotsContainer = document.getElementById('position-slots-container');
+            data.items.Position.forEach(position => {
+                const slot = document.createElement('div');
+                slot.className = 'position-slot';
+                slot.setAttribute('data-position', position);
+                slot.textContent = KM.POSITIONS[position]; // Use Khmer position label
+                slotsContainer.appendChild(slot);
+            });
+            
+            // 4. Render the Deduction Grid 
+            renderDeductionGrid(puzzleNumbers); 
+
+            // 5. Set up Drag and Drop Handlers
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const tokens = document.querySelectorAll('.token');
+            const slots = document.querySelectorAll('.position-slot');
+
+            tokens.forEach(token => {
+                token.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.dataset.number);
+                });
+            });
+
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const number = e.dataTransfer.getData('text/plain');
+                    const draggedToken = document.querySelector(`.token[data-number="${number}"]`);
+                    
+                    if (slot.querySelector('.token')) {
+                        const oldToken = slot.querySelector('.token');
+                        document.getElementById('number-tokens').appendChild(oldToken);
+                        oldToken.style.position = 'relative';
+                    }
+
+                    slot.innerHTML = KM.POSITIONS[slot.dataset.position]; // Restore Khmer position label
+                    slot.appendChild(draggedToken);
+                    draggedToken.style.position = 'absolute';
+                    draggedToken.style.margin = 'auto';
+
+                    slot.dataset.filledNumber = number; 
+                });
+            });
+        }
+        
+        // --- 5. VALIDATION LOGIC ---
+        function checkFinalSolution(puzzleData) {
+            const positionSlots = document.querySelectorAll('.position-slot');
+            const feedback = document.getElementById('feedback-message');
+            let userAnswerNumbers = [];
+            
+            let allFilled = true;
+            positionSlots.forEach((slot) => {
+                const placedNumber = slot.dataset.filledNumber; 
+                if (!placedNumber) {
+                    allFilled = false;
+                }
+                userAnswerNumbers.push(placedNumber ? parseInt(placedNumber) : null); 
+            });
+            
+            if (!allFilled) {
+                feedback.textContent = KM.MSG_INCOMPLETE;
+                feedback.style.color = 'red';
+                return false;
+            }
+
+            let isCorrect = true;
+            for (let i = 0; i < 4; i++) {
+                const correctNumber = puzzleData.solution[i].Number;
+                const userNumber = userAnswerNumbers[i];
+                
+                if (userNumber !== correctNumber) {
+                    isCorrect = false;
+                    break; 
+                }
+            }
+            
+            if (isCorrect) {
+                feedback.textContent = KM.MSG_CORRECT;
+                feedback.style.color = 'green';
+            } else {
+                feedback.textContent = KM.MSG_INCORRECT;
+                feedback.style.color = 'red';
+            }
+
+            return isCorrect;
+        }
+
+        // Initialize game when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialData = generateNewPuzzleData();
+            setupGame(initialData);
+
+            document.getElementById('check-solution-btn').addEventListener('click', () => {
+                checkFinalSolution(currentPuzzleData); 
+            });
+            
+            document.getElementById('new-puzzle-btn').addEventListener('click', () => {
+                const newData = generateNewPuzzleData();
+                setupGame(newData);
+            });
+        });
+    </script>
+</body>
+</html>

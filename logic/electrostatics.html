@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electrostatics: Hidden Charges</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .game-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+        
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        canvas {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+            border: 2px solid #333;
+            cursor: crosshair;
+        }
+
+        .legend-box {
+            display: inline-block;
+            width: 20px; height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        .bg-pos { background-color: #ff3366; }
+        .bg-neg { background-color: #00d2ff; }
+
+        #star-display {
+            font-size: 2rem;
+            color: #ffc107; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary fw-bold shadow-sm">
+        ← Back to Home
+    </a>
+</div>
+<div class="container game-container">
+    <div class="text-center mb-3">
+        <h1 class="text-info fw-bold mb-2">Hidden Point Charges</h1>
+        <p class="text-secondary">Deduce the locations and signs of the 3 hidden charges.</p>
+        
+        <div id="star-display" class="mb-2"></div>
+
+        <div id="success-msg" class="alert alert-success shadow-sm mx-auto" style="max-width: 400px; display: none;">
+            <strong>Brilliant Deduction!</strong> Generating new field...
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-dark text-light border-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-info border-bottom border-secondary pb-2">How to Play</h5>
+                    
+                    <p class="small text-warning mb-1"><strong>1. Fire Test Charges</strong></p>
+                    <p class="small mb-3">Click anywhere in the outer gray border to fire a positive test charge (+1q). Watch how its path curves to map the field.</p>
+                    
+                    <p class="small text-warning mb-1"><strong>2. Guess Locations</strong></p>
+                    <p class="small mb-2">Select a tool below, then click inside the grid to guess where the hidden charges are.</p>
+                    
+                    <div class="btn-group w-100 mb-3" role="group">
+                        <input type="radio" class="btn-check" name="tool" id="toolPos" autocomplete="off" checked>
+                        <label class="btn btn-outline-danger" for="toolPos">+ Positive</label>
+
+                        <input type="radio" class="btn-check" name="tool" id="toolNeg" autocomplete="off">
+                        <label class="btn btn-outline-info" for="toolNeg">- Negative</label>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button id="btn-clear-trails" class="btn btn-outline-secondary">Clear Trails</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="text-center mb-2">
+                <span class="badge bg-secondary fs-6">Charges Found: <span id="found-counter">0</span> / 3</span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="fieldCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="text-center">
+                 <button id="btn-skip" class="btn btn-sm btn-outline-secondary">Skip / Generate New Field</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('fieldCanvas');
+const ctx = canvas.getContext('2d');
+
+// Simulation Constants
+const GRID_SIZE = 50;
+const INNER_MIN = 100;
+const INNER_MAX = 400;
+const K_CONSTANT = 1500; 
+const V_INITIAL = 3;     
+const NUM_CHARGES = 3;
+
+// Game State
+let hiddenCharges = []; 
+let foundCharges = [];   // Charges correctly guessed
+let wrongGuesses = [];   // Array to handle fade-away animations {x, y, sign, time}
+let particles = [];      
+let currentTool = 1;     // 1 for Positive, -1 for Negative
+let gameActive = true;
+let totalWins = 0;
+
+$(document).ready(function() {
+    startNewGame();
+
+    // Tool Selector
+    $('#toolPos').change(function() { currentTool = 1; });
+    $('#toolNeg').change(function() { currentTool = -1; });
+
+    // Canvas Click Handler
+    $('#fieldCanvas').mousedown(function(e) {
+        if (!gameActive) return;
+
+        let rect = canvas.getBoundingClientRect();
+        let mouseX = e.clientX - rect.left;
+        let mouseY = e.clientY - rect.top;
+
+        // Check if click is in the OUTER border (Fire Test Charge)
+        if (mouseX < INNER_MIN - 25 || mouseX > INNER_MAX + 25 || mouseY < INNER_MIN - 25 || mouseY > INNER_MAX + 25) {
+            fireParticle(mouseX, mouseY);
+        } 
+        // Check if click is in the INNER grid (Place Guess)
+        else {
+            makeGuess(mouseX, mouseY);
+        }
+    });
+
+    $('#btn-clear-trails').click(() => { particles = []; });
+    $('#btn-skip').click(startNewGame);
+
+    // Start Physics Engine Loop
+    physicsLoop();
+});
+
+function startNewGame() {
+    gameActive = true;
+    hiddenCharges = [];
+    foundCharges = [];
+    wrongGuesses = [];
+    particles = [];
+    $('#success-msg').hide();
+    $('#found-counter').text('0');
+
+    // Generate random hidden charges snapping to the inner grid
+    while (hiddenCharges.length < NUM_CHARGES) {
+        let x = Math.floor(Math.random() * 7) * GRID_SIZE + INNER_MIN;
+        let y = Math.floor(Math.random() * 7) * GRID_SIZE + INNER_MIN;
+        let sign = Math.random() > 0.5 ? 1 : -1;
+
+        if (!hiddenCharges.some(c => c.x === x && c.y === y)) {
+            hiddenCharges.push({x: x, y: y, sign: sign});
+        }
+    }
+}
+
+function fireParticle(mx, my) {
+    let x, y, vx = 0, vy = 0;
+
+    let distLeft = mx;
+    let distRight = canvas.width - mx;
+    let distTop = my;
+    let distBottom = canvas.height - my;
+    
+    let minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+    if (minDist === distLeft) { x = 0; y = my; vx = V_INITIAL; }
+    else if (minDist === distRight) { x = canvas.width; y = my; vx = -V_INITIAL; }
+    else if (minDist === distTop) { x = mx; y = 0; vy = V_INITIAL; }
+    else { x = mx; y = canvas.height; vy = -V_INITIAL; }
+
+    particles.push({
+        x: x, y: y, 
+        vx: vx, vy: vy, 
+        trail: [{x: x, y: y}], 
+        active: true
+    });
+}
+
+// Instant Evaluation Logic
+function makeGuess(mx, my) {
+    // Snap to nearest grid intersection
+    let x = Math.round(mx / GRID_SIZE) * GRID_SIZE;
+    let y = Math.round(my / GRID_SIZE) * GRID_SIZE;
+
+    // Ensure it's inside the valid placement area
+    if (x < INNER_MIN || x > INNER_MAX || y < INNER_MIN || y > INNER_MAX) return;
+
+    // Ignore if already successfully found
+    if (foundCharges.some(c => c.x === x && c.y === y)) return;
+
+    // Check if correct
+    let match = hiddenCharges.find(hc => hc.x === x && hc.y === y && hc.sign === currentTool);
+
+    if (match) {
+        // Correct! Lock it in.
+        foundCharges.push(match);
+        $('#found-counter').text(foundCharges.length);
+
+        if (foundCharges.length === NUM_CHARGES) {
+            handleWin();
+        }
+    } else {
+        // Wrong! Trigger the canvas animation
+        wrongGuesses.push({x: x, y: y, sign: currentTool, time: Date.now()});
+    }
+}
+
+// --- PHYSICS & RENDER ENGINE ---
+function physicsLoop() {
+    if (gameActive) {
+        // Update Particle Physics
+        particles.forEach(p => {
+            if (!p.active) return;
+
+            let Fx = 0, Fy = 0;
+
+            hiddenCharges.forEach(hc => {
+                let dx = p.x - hc.x;
+                let dy = p.y - hc.y;
+                let distSq = dx * dx + dy * dy;
+                let dist = Math.sqrt(distSq);
+
+                if (dist < 10) {
+                    p.active = false;
+                    return;
+                }
+
+                // Coulomb's Law
+                let F = (hc.sign * K_CONSTANT) / distSq;
+                
+                Fx += F * (dx / dist);
+                Fy += F * (dy / dist);
+            });
+
+            p.vx += Fx;
+            p.vy += Fy;
+
+            // Cap maximum velocity
+            let speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+            if (speed > 10) {
+                p.vx = (p.vx / speed) * 10;
+                p.vy = (p.vy / speed) * 10;
+            }
+
+            p.x += p.vx;
+            p.y += p.vy;
+            p.trail.push({x: p.x, y: p.y});
+
+            if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                p.active = false;
+            }
+        });
+    }
+
+    renderCanvas();
+    requestAnimationFrame(physicsLoop);
+}
+
+function renderCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Draw Grid
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    for (let i = INNER_MIN; i <= INNER_MAX; i += GRID_SIZE) {
+        ctx.beginPath(); ctx.moveTo(i, INNER_MIN); ctx.lineTo(i, INNER_MAX); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(INNER_MIN, i); ctx.lineTo(INNER_MAX, i); ctx.stroke();
+    }
+
+    // 2. Draw Outer Firing Border boundary
+    ctx.strokeStyle = '#555';
+    ctx.strokeRect(INNER_MIN - 25, INNER_MIN - 25, (INNER_MAX - INNER_MIN) + 50, (INNER_MAX - INNER_MIN) + 50);
+
+    // 3. Draw Particle Trails
+    particles.forEach(p => {
+        if (p.trail.length < 2) return;
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.moveTo(p.trail[0].x, p.trail[0].y);
+        for (let i = 1; i < p.trail.length; i++) {
+            ctx.lineTo(p.trail[i].x, p.trail[i].y);
+        }
+        ctx.stroke();
+
+        if (p.active) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        }
+    });
+
+    // 4. Draw CORRECT Guesses (Locked with Glow)
+    foundCharges.forEach(g => {
+        ctx.beginPath();
+        ctx.arc(g.x, g.y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = g.sign === 1 ? '#ff3366' : '#00d2ff';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow
+        
+        ctx.fillStyle = '#121212';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(g.sign === 1 ? '+' : '-', g.x, g.y + 1);
+    });
+
+    // 5. Draw FADING WRONG Guesses (Animation loop)
+    let now = Date.now();
+    for (let i = wrongGuesses.length - 1; i >= 0; i--) {
+        let wg = wrongGuesses[i];
+        let elapsed = now - wg.time;
+        let duration = 800; // Milliseconds for fade out
+        
+        if (elapsed > duration) {
+            wrongGuesses.splice(i, 1); // Remove finished animation
+            continue;
+        }
+        
+        let progress = elapsed / duration;
+        let radius = 10 + (progress * 15); // Expands from 10 to 25
+        let alpha = 1 - progress;          // Fades from 1 to 0
+
+        ctx.beginPath();
+        ctx.arc(wg.x, wg.y, radius, 0, Math.PI * 2);
+        let rgb = wg.sign === 1 ? '255, 51, 102' : '0, 210, 255';
+        ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
+        ctx.fill();
+    }
+}
+
+// --- WIN LOGIC ---
+function handleWin() {
+    gameActive = false;
+    totalWins++;
+    $('#star-display').text('⭐'.repeat(totalWins)); 
+    
+    $('#success-msg').fadeIn();
+
+    // Observe the completed field for 4 seconds, then start new
+    setTimeout(() => {
+        $('#success-msg').fadeOut(400, startNewGame);
+    }, 4000);
+}
+</script>
+</body>
+</html>

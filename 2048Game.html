@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 - The Game</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles and overrides */
+        :root {
+            --grid-color: #bbada0;
+            --empty-tile-color: #cdc1b4;
+            --text-color: #776e65;
+            --score-bg: #bbada0;
+            --score-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf8f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .game-grid {
+            background-color: var(--grid-color);
+            padding: 12px;
+            border-radius: 6px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 450px; /* Max size for desktop view */
+            aspect-ratio: 1 / 1; /* Keep it square */
+        }
+
+        .tile-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 3px;
+            font-weight: 700;
+            transition: transform 0.1s ease-in-out;
+            user-select: none;
+            cursor: default;
+            background-color: var(--empty-tile-color);
+            font-size: 1.5rem; /* Base font size */
+        }
+        
+        /* Animation for new tiles */
+        .new-tile {
+            animation: pop-in 0.2s ease-out;
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Tile Color Mapping (JS will update background-color and color) */
+        .tile-2 { background-color: #eee4da; color: var(--text-color); font-size: 1.5rem; }
+        .tile-4 { background-color: #ede0c8; color: var(--text-color); font-size: 1.5rem; }
+        .tile-8 { background-color: #f2b179; color: #f9f6f2; font-size: 1.5rem; }
+        .tile-16 { background-color: #f59563; color: #f9f6f2; font-size: 1.5rem; }
+        .tile-32 { background-color: #f67c5f; color: #f9f6f2; font-size: 1.5rem; }
+        .tile-64 { background-color: #f65e3b; color: #f9f6f2; font-size: 1.5rem; }
+        .tile-128 { background-color: #edcf72; color: #f9f6f2; font-size: 1.2rem; }
+        .tile-256 { background-color: #edcc61; color: #f9f6f2; font-size: 1.2rem; }
+        .tile-512 { background-color: #edc850; color: #f9f6f2; font-size: 1.2rem; }
+        .tile-1024 { background-color: #edc53f; color: #f9f6f2; font-size: 1rem; }
+        .tile-2048 { background-color: #edc22e; color: #f9f6f2; font-size: 1rem; }
+        /* Larger tiles have smaller font size to fit */
+        .tile-over-2048 { background-color: #3c3a32; color: #f9f6f2; font-size: 0.8rem; }
+        
+        /* Mobile adjustments */
+        @media (min-width: 640px) {
+            .tile-2, .tile-4 { font-size: 2rem; }
+            .tile-8, .tile-16, .tile-32, .tile-64 { font-size: 2rem; }
+            .tile-128, .tile-256, .tile-512 { font-size: 1.7rem; }
+            .tile-1024, .tile-2048 { font-size: 1.4rem; }
+            .tile-over-2048 { font-size: 1rem; }
+        }
+
+        .score-board {
+            background-color: var(--score-bg);
+            color: var(--score-color);
+            padding: 8px 12px;
+            border-radius: 3px;
+            text-align: center;
+            font-weight: 700;
+            min-width: 80px;
+            line-height: 1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="game-container" class="w-full max-w-xl flex flex-col items-center">
+        <!-- Header: Title and Score -->
+        <header class="flex justify-between items-center w-full mb-6 max-w-[450px]">
+            <h1 class="text-4xl font-black text-[#776e65]">2048</h1>
+            <div class="flex space-x-2">
+                <div class="score-board">
+                    <div class="text-[0.6rem] opacity-80">SCORE</div>
+                    <div id="score" class="text-xl">0</div>
+                </div>
+                <div class="score-board">
+                    <div class="text-[0.6rem] opacity-80">BEST</div>
+                    <div id="best-score" class="text-xl">0</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Instructions and Reset -->
+        <div class="flex justify-between items-center w-full mb-4 max-w-[450px]">
+            <p class="text-sm text-[#776e65] max-w-xs">Join the tiles, get to 2048! Use arrow keys or swipe.</p>
+            <button id="restart-button" class="bg-[#8f7a66] hover:bg-[#978574] text-white font-bold py-2 px-4 rounded transition duration-200 shadow-md">
+                New Game
+            </button>
+        </div>
+
+        <!-- Game Grid Container -->
+        <div id="grid-wrapper" class="relative w-full max-w-[450px]">
+            <div id="game-grid" class="game-grid">
+                <!-- Tiles will be rendered here by JavaScript -->
+            </div>
+
+            <!-- Game Over/Win Overlay -->
+            <div id="message-overlay" class="overlay hidden rounded-md">
+                <div class="p-8 bg-white/90 rounded-xl shadow-2xl text-center">
+                    <h2 id="message-text" class="text-3xl font-bold text-[#776e65] mb-4"></h2>
+                    <button id="keep-playing-button" class="hidden bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-200 mr-2">
+                        Keep Going
+                    </button>
+                    <button id="final-restart-button" class="bg-[#8f7a66] hover:bg-[#978574] text-white font-bold py-2 px-4 rounded transition duration-200">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GRID_SIZE = 4;
+        const TILE_CONTAINER = document.getElementById('game-grid');
+        const SCORE_ELEM = document.getElementById('score');
+        const BEST_SCORE_ELEM = document.getElementById('best-score');
+        const RESTART_BUTTON = document.getElementById('restart-button');
+        const OVERLAY = document.getElementById('message-overlay');
+        const MESSAGE_TEXT = document.getElementById('message-text');
+        const KEEP_PLAYING_BUTTON = document.getElementById('keep-playing-button');
+        const FINAL_RESTART_BUTTON = document.getElementById('final-restart-button');
+
+        let board = [];
+        let score = 0;
+        let bestScore = 0;
+        let gameWon = false;
+        let newTilePosition = null; // To track the position of the tile to be animated.
+
+        // --- Utility Functions ---
+
+        /**
+         * Retrieves the best score from localStorage.
+         */
+        function loadBestScore() {
+            const storedBestScore = localStorage.getItem('2048-best-score');
+            bestScore = storedBestScore ? parseInt(storedBestScore, 10) : 0;
+            BEST_SCORE_ELEM.textContent = bestScore;
+        }
+
+        /**
+         * Updates the score on the UI and updates the best score if necessary.
+         */
+        function updateScore(points) {
+            score += points;
+            SCORE_ELEM.textContent = score;
+            if (score > bestScore) {
+                bestScore = score;
+                BEST_SCORE_ELEM.textContent = bestScore;
+                localStorage.setItem('2048-best-score', bestScore);
+            }
+        }
+
+        /**
+         * Gets the Tailwind CSS class for a given tile value.
+         * @param {number} value - The tile's number value.
+         * @returns {string} The CSS class string.
+         */
+        function getTileClass(value) {
+            if (value === 0) return '';
+            if (value <= 2048) {
+                return `tile-${value}`;
+            }
+            // For values above 2048 (4096, 8192, etc.)
+            return 'tile-over-2048';
+        }
+
+        /**
+         * Finds all empty cells (value 0) on the board.
+         * @returns {Array<{row: number, col: number}>} List of empty cell coordinates.
+         */
+        function getEmptyCells() {
+            const emptyCells = [];
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    if (board[r][c] === 0) {
+                        emptyCells.push({ row: r, col: c });
+                    }
+                }
+            }
+            return emptyCells;
+        }
+
+        /**
+         * Adds a new tile (2 or 4) randomly to an empty spot.
+         * Stores the position in newTilePosition for animation.
+         */
+        function addRandomTile() {
+            const emptyCells = getEmptyCells();
+            if (emptyCells.length === 0) return false;
+
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const value = Math.random() < 0.9 ? 2 : 4; // 90% chance for 2, 10% for 4
+            
+            board[randomCell.row][randomCell.col] = value;
+            
+            newTilePosition = randomCell; // Store position for post-draw animation
+
+            return true;
+        }
+
+        /**
+         * Renders the current state of the board to the DOM.
+         */
+        function drawBoard() {
+            TILE_CONTAINER.innerHTML = ''; // Clear previous tiles
+
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    const value = board[r][c];
+                    
+                    const tile = document.createElement('div');
+                    tile.id = `tile-${r}-${c}`;
+                    
+                    // FIX: The original code caused a SyntaxError when getTileClass(value) returned an empty string 
+                    // for value 0 (empty tiles). We add the classes separately to avoid calling .add() with an empty token.
+                    tile.classList.add('tile-container');
+                    const valueClass = getTileClass(value);
+                    if (valueClass) {
+                        tile.classList.add(valueClass);
+                    }
+                    
+                    tile.textContent = value === 0 ? '' : value;
+                    
+                    TILE_CONTAINER.appendChild(tile);
+
+                    // Apply animation to the newly created tile element if tracked
+                    if (newTilePosition && r === newTilePosition.row && c === newTilePosition.col && value !== 0) {
+                        tile.classList.add('new-tile');
+                        // Remove the class after the animation finishes
+                        setTimeout(() => {
+                            tile.classList.remove('new-tile');
+                        }, 200);
+                    }
+                }
+            }
+            newTilePosition = null; // Clear the tracker after rendering
+        }
+
+        // --- Game Logic: Sliding and Merging ---
+
+        /**
+         * Filters out zeros and returns an array of non-zero numbers.
+         * @param {number[]} row - The row or column array.
+         * @returns {number[]} Array of non-zero numbers.
+         */
+        function filterZero(row) {
+            return row.filter(num => num !== 0);
+        }
+
+        /**
+         * Slides and merges a single line (row or column).
+         * @param {number[]} line - The row or column array.
+         * @param {boolean} [isReversed=false] - Whether to process in reverse (for right/down moves).
+         * @returns {{newLine: number[], moved: boolean}} The new line and a boolean indicating if any move/merge happened.
+         */
+        function operateLine(line, isReversed = false) {
+            let originalLine = [...line];
+            
+            // 1. Filter out zeros (slide to start)
+            let nonZero = filterZero(line);
+            
+            // 2. Merge logic
+            let merged = [];
+            let i = isReversed ? nonZero.length - 1 : 0;
+            let step = isReversed ? -1 : 1;
+            
+            while (isReversed ? i >= 0 : i < nonZero.length) {
+                let current = nonZero[i];
+                let next = nonZero[i + step];
+                
+                if (current === next) {
+                    let newValue = current * 2;
+                    if (isReversed) {
+                        merged.unshift(newValue);
+                    } else {
+                        merged.push(newValue);
+                    }
+                    updateScore(newValue);
+
+                    if (newValue === 2048 && !gameWon) {
+                        gameWon = true;
+                        showOverlay('You Win!', true);
+                    }
+                    
+                    i += step * 2; // Skip the merged tile
+                } else {
+                    if (isReversed) {
+                        merged.unshift(current);
+                    } else {
+                        merged.push(current);
+                    }
+                    i += step;
+                }
+            }
+
+            // 3. Pad with zeros (slide to end)
+            while (merged.length < GRID_SIZE) {
+                if (isReversed) {
+                    merged.unshift(0);
+                } else {
+                    merged.push(0);
+                }
+            }
+            
+            // Check for change
+            const moved = JSON.stringify(originalLine) !== JSON.stringify(merged);
+            
+            return { newLine: merged, moved };
+        }
+
+        /**
+         * Main function to handle the move logic (up, down, left, right).
+         * @param {string} direction - 'left', 'right', 'up', or 'down'.
+         */
+        function move(direction) {
+            let boardChanged = false;
+            let newBoard = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));
+
+            // Left/Right movements (Row-based)
+            if (direction === 'left' || direction === 'right') {
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    const result = operateLine(board[r], direction === 'right');
+                    newBoard[r] = result.newLine;
+                    if (result.moved) boardChanged = true;
+                }
+            } 
+            // Up/Down movements (Column-based)
+            else if (direction === 'up' || direction === 'down') {
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    // Extract column into a temporary array
+                    let column = [];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        column.push(board[r][c]);
+                    }
+                    
+                    const result = operateLine(column, direction === 'down');
+                    
+                    // Put the new column back into the board
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        newBoard[r][c] = result.newLine[r];
+                    }
+                    if (result.moved) boardChanged = true;
+                }
+            }
+
+            if (boardChanged) {
+                board = newBoard;
+                addRandomTile();
+                drawBoard();
+                checkGameOver();
+            }
+        }
+
+        /**
+         * Checks if the game is over (no empty spaces AND no possible moves/merges).
+         */
+        function checkGameOver() {
+            if (getEmptyCells().length > 0) return; // Still empty spaces
+
+            // Check if any horizontal merge is possible
+            for (let r = 0; r < GRID_SIZE; r++) {
+                for (let c = 0; c < GRID_SIZE - 1; c++) {
+                    if (board[r][c] === board[r][c + 1]) return; // Merge possible
+                }
+            }
+
+            // Check if any vertical merge is possible
+            for (let c = 0; c < GRID_SIZE; c++) {
+                for (let r = 0; r < GRID_SIZE - 1; r++) {
+                    if (board[r][c] === board[r + 1][c]) return; // Merge possible
+                }
+            }
+
+            // No moves possible
+            showOverlay('Game Over!', false);
+        }
+        
+        /**
+         * Displays the game over or win overlay.
+         * @param {string} message - The text to display.
+         * @param {boolean} isWin - True if the game was won (reached 2048).
+         */
+        function showOverlay(message, isWin) {
+            MESSAGE_TEXT.textContent = message;
+            OVERLAY.classList.remove('hidden');
+
+            if (isWin && !gameWon) {
+                // If they won but want to keep playing
+                KEEP_PLAYING_BUTTON.classList.remove('hidden');
+            } else if (isWin && gameWon) {
+                 // Already won, but the overlay is just being shown again
+                KEEP_PLAYING_BUTTON.classList.add('hidden');
+            } else {
+                // Game Over (Loss)
+                KEEP_PLAYING_BUTTON.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Hides the game overlay.
+         */
+        function hideOverlay() {
+            OVERLAY.classList.add('hidden');
+        }
+
+
+        // --- Initialization and Events ---
+
+        /**
+         * Initializes or resets the game state.
+         */
+        function startGame() {
+            board = Array(GRID_SIZE).fill(0).map(() => Array(GRID_SIZE).fill(0));
+            score = 0;
+            gameWon = false;
+            SCORE_ELEM.textContent = 0;
+            hideOverlay();
+            
+            // Load best score on startup
+            loadBestScore();
+            
+            // Add the initial two tiles
+            addRandomTile();
+            addRandomTile();
+            
+            drawBoard();
+        }
+
+        /**
+         * Handles keyboard input for movement.
+         * @param {KeyboardEvent} event - The keyboard event object.
+         */
+        function handleKey(event) {
+            if (OVERLAY.classList.contains('hidden')) {
+                switch (event.key) {
+                    case 'ArrowUp':
+                    case 'w':
+                    case 'W':
+                        event.preventDefault();
+                        move('up');
+                        break;
+                    case 'ArrowDown':
+                    case 's':
+                    case 'S':
+                        event.preventDefault();
+                        move('down');
+                        break;
+                    case 'ArrowLeft':
+                    case 'a':
+                    case 'A':
+                        event.preventDefault();
+                        move('left');
+                        break;
+                    case 'ArrowRight':
+                    case 'd':
+                    case 'D':
+                        event.preventDefault();
+                        move('right');
+                        break;
+                }
+            }
+        }
+        
+        // --- Touch/Swipe Handling ---
+        let touchstartX = 0;
+        let touchendX = 0;
+        let touchstartY = 0;
+        let touchendY = 0;
+
+        function checkDirection() {
+            const deltaX = touchendX - touchstartX;
+            const deltaY = touchendY - touchstartY;
+            const threshold = 30; // Minimum distance to register a swipe
+
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
+                // Horizontal swipe
+                if (deltaX > 0) {
+                    move('right');
+                } else {
+                    move('left');
+                }
+            } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > threshold) {
+                // Vertical swipe
+                if (deltaY > 0) {
+                    move('down');
+                } else {
+                    move('up');
+                }
+            }
+        }
+
+        TILE_CONTAINER.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+            touchstartY = e.changedTouches[0].screenY;
+        }, false);
+
+        TILE_CONTAINER.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            touchendY = e.changedTouches[0].screenY;
+            if (OVERLAY.classList.contains('hidden')) {
+                checkDirection();
+            }
+        }, false);
+        // --- Event Listeners and Initial Load ---
+
+        document.addEventListener('keydown', handleKey);
+        RESTART_BUTTON.addEventListener('click', startGame);
+        FINAL_RESTART_BUTTON.addEventListener('click', startGame);
+
+        KEEP_PLAYING_BUTTON.addEventListener('click', () => {
+            gameWon = true; // Lock the win state so the button doesn't reappear right away
+            hideOverlay();
+        });
+
+        window.onload = startGame; // Start the game when the window loads
+    </script>
+</body>
+</html>

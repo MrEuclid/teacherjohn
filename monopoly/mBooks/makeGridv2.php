@@ -44,7 +44,7 @@ ORDER BY gameID, value DESC  , assets DESC, profit DESC" ;
 
 // echo "<br>" . $query . "<br>";
 $result = mysqli_query($dbServer,$query);
-include "../print_query_data_plain.php" ;
+include "../../viewPlain.php" ;
 
 
 ?>

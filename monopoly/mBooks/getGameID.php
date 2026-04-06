@@ -5,9 +5,9 @@
  include "../../connectTeacherJohn.php";
 
 
-// $studentID = $_REQUEST['studentID'];
+  $studentID = $_REQUEST['studentID'];
 
- $studentID = 4937;
+// $studentID = 4937;
  
 $output = [];
 $cnt = 0;

@@ -4,13 +4,11 @@
   <head>
  
  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  
     
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
     
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -25,7 +23,7 @@
 h1 {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
 
 
-#topline {text-align: center;}
+#topLine {text-align: center;}
 input {
     
     background-color: lightgreen; 
@@ -105,7 +103,7 @@ th {text-align: center;}
 <p id = "transID"></p>
   <div id = "topLine">
     <div class = "row text-center">
-  <div class = "col- ">
+  <div class = "col-12 ">
 <p id = "who"></p>
 <label class = "head">Assets</label>
 <p id = "assets"></p>
@@ -131,13 +129,14 @@ th {text-align: center;}
 
 <div id = "loginForm">
 <div class = "row">
-  <div class = "col- text-center">
+  <div class = "col-12 text-center">
    <h3 id = "header">mBooksv2 Login</h3>
 </div></div>
 
 <div class = "row text-center">
-  <div class = "col- ">
-  <img src = "../images/accountsImage.jpeg">
+  <div class = "col-12 text-center">
+   <img src = "../images/accountsImage.jpeg">
+  
 </div></div>
 
 
@@ -145,7 +144,7 @@ th {text-align: center;}
 
 <div class = "row">
 
-  <div class = "col- text-center">
+  <div class = "col-12 text-center">
   <input type="text" id="student" list="studentList" placeholder="Student ID">
 <datalist id="studentList"></datalist>
 
@@ -153,25 +152,7 @@ th {text-align: center;}
   </div></div>
 </div> <!--  loginform -->
 
-
-      <div id = "menu">
-
-     <div class = "row text-center">
-  <div class = "col- ">
-   <h1> Monopoly Accounts</h1>
-  </div></div>
-
-  <div class = "row text-center">
-   <div class = "col-12 text-center">
-      <button id = "Btn_receive">Get money</button>
-      <button id = "Btn_pay">Pay money</button>
-     <button  id = "showTransactions">Transactions</button>
-         <button  id = "showStatements">My Value</button>
-           <button  id = "showProfitLoss">Profit / Loss</button>  
-     <a href = "../../index.php"> <button id = "quit">Quit</button></a>
-</div></div>
-
-</div> <!-- menu -->
+<!-- menu -->
 
 <div id = "dataEntry">
 

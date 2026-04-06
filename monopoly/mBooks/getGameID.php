@@ -3,11 +3,11 @@
 // load team 
 
  include "../../connectTeacherJohn.php";
-// $studentID = 12345;
 
- $studentID = $_REQUEST['studentID'];
 
-// $studentID = 1616;
+// $studentID = $_REQUEST['studentID'];
+
+ $studentID = 4937;
  
 $output = [];
 $cnt = 0;

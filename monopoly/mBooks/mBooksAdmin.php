@@ -83,18 +83,6 @@
 </html>
 
 
-
-
-<script>
-$(document).ready(function() {
-
- $('#grid').load('makeGridGoogle.php'); // Replace with your content source
-$('#grid').show();
-$('#transactions').hide();
-
- });
-</script>
-
 <script>
 $(document).ready(function() {
      $('#summary').on('click', function()

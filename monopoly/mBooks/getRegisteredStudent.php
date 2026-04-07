@@ -23,7 +23,7 @@ else
 $query = "SELECT familyName,firstName
 			FROM studentsPIO
 			WHERE studentID = '$studentID' ";
- echo "<br>" . $query . "<br>";
+ //echo "<br>" . $query . "<br>";
 
 $result = mysqli_query($dbServer,$query);
 

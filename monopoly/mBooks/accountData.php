@@ -1,10 +1,4 @@
 
-<html>
-<head>
-
-
-</head>
-
 <?php
 
 // includes gameID and sorts by htat before sorting by value
@@ -43,17 +37,14 @@ GROUP BY mbooksJournal.studentID
 ORDER BY gameID, value DESC  , assets DESC, profit DESC" ;
 
 // echo "<br>" . $query . "<br>";
-$result = mysqli_query($dbServer,$query);
-include "../print_query_data_plain.php" ;
+// $result = mysqli_query($dbServer,$query);
+// include "../print_query_data_plain.php" ;
 
+include "make_json_from_query.php";
 
-?>
-<a href = "https://docs.google.com/spreadsheets/d/1LohhCf7kO_TvrtSqymSIl53SQ9b7zkpvjqVmE7YX5ns/edit?usp=sharing" target = "_blank">
-Results </a>
+// 3. Call the new function and echo the result
+echo getGoogleChartsJson($dbServer, $query);
 
-<?
-exit() ;
-
+exit();
 ?>
 
-</html>

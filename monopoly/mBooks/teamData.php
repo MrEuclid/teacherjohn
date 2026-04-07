@@ -23,5 +23,10 @@ ON mBooksRegistration.playerID = studentsPIO.studentID " ;
 
 include "make_json_from_query.php";
 
+
+// 3. Call the new function and echo the result
+echo getGoogleChartsJson($dbServer, $query);
+
+exit();
 ?>
 

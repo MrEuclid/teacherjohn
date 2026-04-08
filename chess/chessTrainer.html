@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Chess Opening Trainer</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 { color: #2c3e50; }
+        
+        #app-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        #menu { display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        .btn:hover { background-color: #2980b9; }
+        .btn-secondary { background-color: #95a5a6; margin-top: 15px;}
+        .btn-secondary:hover { background-color: #7f8c8d; }
+
+        #trainer-view { display: none; }
+        
+        #instruction-panel {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 0 8px 8px 0;
+        }
+
+        #error-panel {
+            color: #e74c3c;
+            font-weight: bold;
+            min-height: 24px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #board {
+            width: 100%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Chess Explorer</h1>
+
+    <div id="app-container">
+        <div id="menu">
+            <h2>Choose an Adventure:</h2>
+            <button class="btn" onclick="startLesson('italian')">The Italian Game (Play White)</button>
+            <button class="btn" onclick="startLesson('sicilian')">The Sicilian Defense (Play Black)</button>
+        </div>
+
+        <div id="trainer-view">
+            <div id="instruction-panel">Instructions will appear here.</div>
+            <div id="board"></div>
+            <div id="error-panel"></div>
+            <button class="btn btn-secondary" onclick="showMenu()" style="width: 100%;">Back to Menu</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <script>
+        // ==========================================
+        // EDIT YOUR KID-FRIENDLY CURRICULUM HERE
+        // ==========================================
+        const lessonData = {
+            "italian": {
+                orientation: 'white',
+                steps: [
+                    { 
+                        instruction: "Let's start! Move the pawn right in front of your King two squares forward to grab the middle of the board.",
+                        expectedMove: "e4", 
+                        computerResponse: "e5",
+                        errorMsg: "Oops! Try moving the pawn in front of your King (from e2 to e4)." 
+                    },
+                    { 
+                        instruction: "Great job! Now, bring your Knight out towards the middle to attack their pawn.",
+                        expectedMove: "Nf3", 
+                        computerResponse: "Nc6",
+                        errorMsg: "Not quite. Try moving your Knight to f3." 
+                    },
+                    { 
+                        instruction: "Awesome! Now move your light-squared Bishop out so your King has room to castle safely.",
+                        expectedMove: "Bc4", 
+                        computerResponse: null, // null means the lesson ends here
+                        errorMsg: "Try moving your Bishop to c4 to look at the enemy's weak spot." 
+                    }
+                ],
+                successMsg: "Fantastic! You just played the Italian Game. Your pieces are out, the middle is yours, and your King is ready to hide safely!"
+            },
+            "sicilian": {
+                orientation: 'black',
+                computerStarts: "e4", // White makes the very first move before the student
+                steps: [
+                    { 
+                        instruction: "White moved their King's pawn. Let's fight back from the side! Move your 'c' pawn two squares forward.",
+                        expectedMove: "c5", 
+                        computerResponse: "Nf3",
+                        errorMsg: "Try moving the pawn on the 'c' file two squares up." 
+                    },
+                    { 
+                        instruction: "White brought out a Knight. Let's make a little wall. Move your 'd' pawn one square forward.",
+                        expectedMove: "d6", 
+                        computerResponse: null,
+                        errorMsg: "Just one square forward with the 'd' pawn!" 
+                    }
+                ],
+                successMsg: "Amazing! You just set up the famous Sicilian Defense. You are ready for a really fun game!"
+            }
+        };
+
+        // ==========================================
+        // GAME LOGIC (No need to edit below here)
+        // ==========================================
+        let board = null;
+        let game = new Chess();
+        let currentLesson = null;
+        let currentStepIndex = 0;
+
+        const $menu = $('#menu');
+        const $trainerView = $('#trainer-view');
+        const $instruction = $('#instruction-panel');
+        const $error = $('#error-panel');
+
+        function showMenu() {
+            $trainerView.hide();
+            $menu.show();
+            if (board) board.destroy();
+        }
+
+        function startLesson(lessonKey) {
+            currentLesson = lessonData[lessonKey];
+            currentStepIndex = 0;
+            game = new Chess();
+            
+            $menu.hide();
+            $trainerView.show();
+            $error.text('');
+
+            // Setup Board Configuration
+            let config = {
+                draggable: true,
+                position: 'start',
+                orientation: currentLesson.orientation,
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd
+            };
+            board = Chessboard('board', config);
+
+            // Handle lessons where the computer plays the very first move
+            if (currentLesson.computerStarts) {
+                $instruction.text("Wait for it... the computer is making the first move!");
+                setTimeout(() => {
+                    game.move(currentLesson.computerStarts);
+                    board.position(game.fen());
+                    updateInstructions();
+                }, 800);
+            } else {
+                updateInstructions();
+            }
+        }
+
+        function updateInstructions() {
+            if (currentStepIndex < currentLesson.steps.length) {
+                $instruction.text(currentLesson.steps[currentStepIndex].instruction);
+            } else {
+                $instruction.text(currentLesson.successMsg);
+            }
+        }
+
+        // Prevent picking up pieces if the game is over or if it's the wrong color
+        function onDragStart (source, piece, position, orientation) {
+            if (game.game_over() || currentStepIndex >= currentLesson.steps.length) return false;
+
+            // Only pick up pieces for the side we are playing
+            if ((orientation === 'white' && piece.search(/^b/) !== -1) ||
+                (orientation === 'black' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+
+        // Validate the student's move
+        function onDrop (source, target) {
+            $error.text(''); // Clear previous errors
+
+            // Try to make the move in a copy of the game to see if it's legal first
+            let possibleMoves = game.moves({ verbose: true });
+            let isLegal = possibleMoves.find(m => m.from === source && m.to === target);
+            
+            if (!isLegal) return 'snapback'; // Illegal chess move
+
+            // Get the move in Standard Algebraic Notation (e.g., "e4", "Nf3")
+            let attempt = new Chess(game.fen());
+            attempt.move({ from: source, to: target, promotion: 'q' });
+            let history = attempt.history();
+            let playedMove = history[history.length - 1];
+
+            let currentStep = currentLesson.steps[currentStepIndex];
+
+            // Does it match the lesson plan?
+            if (playedMove !== currentStep.expectedMove) {
+                $error.text(currentStep.errorMsg);
+                return 'snapback';
+            }
+
+            // Move is correct! Apply it to the real game.
+            game.move({ from: source, to: target, promotion: 'q' });
+            
+            // Advance step
+            currentStepIndex++;
+
+            // Handle computer's automatic response
+            if (currentStep.computerResponse) {
+                $instruction.text("Great! Now watch the opponent...");
+                setTimeout(() => {
+                    game.move(currentStep.computerResponse);
+                    board.position(game.fen());
+                    updateInstructions();
+                }, 700);
+            } else {
+                updateInstructions();
+            }
+        }
+
+        // Update the board visually after a piece snaps to its square
+        function onSnapEnd () {
+            board.position(game.fen());
+        }
+    </script>
+</body>
+</html>

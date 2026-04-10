@@ -15,13 +15,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- bootstrap loaded from server for intranet for better loading speed -->
- <link rel="stylesheet" href="javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-  <script src="javaScript/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-    <link rel = "stylesheet" href  = "css/pioStudentsStyles.css">
+  
 
   <style>
 

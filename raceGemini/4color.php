@@ -9,9 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>4 Colour Game</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="javascript/utilities.js"></script>
 
   <style>

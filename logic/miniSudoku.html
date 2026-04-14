@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Sudoku</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            grid-template-rows: repeat(4, 60px);
+            justify-content: center;
+            margin: 20px auto;
+            border: 3px solid #333;
+            width: max-content;
+            background-color: #333;
+            gap: 1px;
+        }
+
+        .cell {
+            background-color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Thicker borders for the 2x2 quadrants */
+        .cell:nth-child(2n) {
+            border-right: 2px solid #333;
+        }
+        .cell:nth-child(n+5):nth-child(-n+8), 
+        .cell:nth-child(n+13):nth-child(-n+16) {
+            border-bottom: 2px solid #333;
+        }
+
+        /* Cell States */
+        .cell.given {
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: not-allowed;
+        }
+        .cell.selected {
+            background-color: #fffacd;
+        }
+
+        /* Buttons */
+        #numpad, #actions {
+            margin-top: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px #2e7d32;
+        }
+        button:active {
+            box-shadow: 0 0 #2e7d32;
+            transform: translateY(4px);
+        }
+        .clear-btn {
+            background-color: #f44336;
+            box-shadow: 0 4px #c62828;
+        }
+
+        /* Action Buttons Styling */
+        .action-btn {
+            background-color: #2196F3;
+            box-shadow: 0 4px #1565C0;
+            font-size: 18px;
+        }
+
+        #message {
+            margin-top: 20px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mini Sudoku!</h1>
+    
+    <div id="board"></div>
+
+    <div id="numpad">
+        <button class="num-btn">1</button>
+        <button class="num-btn">2</button>
+        <button class="num-btn">3</button>
+        <button class="num-btn">4</button>
+        <button class="clear-btn">Del</button>
+    </div>
+
+    <div id="actions">
+        <button id="check-btn" class="action-btn">Check Answer</button>
+        <button id="new-game-btn" class="action-btn">New Game</button>
+    </div>
+
+    <h2 id="message"></h2>
+
+    <script>
+        $(document).ready(function() {
+           // Replace the old puzzles array with this mathematically verified one
+const puzzles = [
+    // Puzzle 1
+    [
+        [1, 2, 3, 0],
+        [0, 4, 1, 2],
+        [2, 0, 4, 3],
+        [4, 3, 0, 1]
+    ],
+    // Puzzle 2
+    [
+        [4, 1, 0, 3],
+        [2, 0, 4, 0],
+        [0, 4, 0, 2],
+        [3, 0, 1, 4]
+    ],
+    // Puzzle 3
+    [
+        [3, 0, 0, 2],
+        [1, 0, 3, 0],
+        [0, 3, 0, 1],
+        [2, 0, 0, 3]
+    ],
+    // Puzzle 4
+    [
+        [2, 3, 0, 0],
+        [0, 1, 2, 0],
+        [0, 2, 1, 0],
+        [0, 0, 3, 2]
+    ]
+];
+
+            let selectedCell = null;
+
+            // Initialize the game on load
+            loadRandomGame();
+
+            function loadRandomGame() {
+                $('#board').empty(); // Clear existing board
+                $('#message').text(''); // Clear messages
+                selectedCell = null;
+
+                // Pick a random puzzle from our pool
+                let randomIndex = Math.floor(Math.random() * puzzles.length);
+                let startingPuzzle = puzzles[randomIndex];
+
+                // Build the board
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        let val = startingPuzzle[row][col];
+                        let cell = $('<div></div>').addClass('cell');
+                        
+                        // Store coordinates in data attributes for easy logic checking later
+                        cell.attr('data-row', row).attr('data-col', col);
+
+                        if (val !== 0) {
+                            cell.text(val).addClass('given');
+                        }
+                        
+                        $('#board').append(cell);
+                    }
+                }
+
+                // Re-attach click listeners to new cells
+                attachCellListeners();
+            }
+
+            function attachCellListeners() {
+                $('.cell').click(function() {
+                    if ($(this).hasClass('given')) return; // Prevent altering starting numbers
+
+                    $('.cell').removeClass('selected');
+                    $(this).addClass('selected');
+                    selectedCell = $(this);
+                });
+            }
+
+            // Number Pad Clicks
+            $('.num-btn').click(function() {
+                if (selectedCell !== null) {
+                    selectedCell.text($(this).text());
+                    $('#message').text(''); // Clear errors when they try a new number
+                }
+            });
+
+            // Delete Button
+            $('.clear-btn').click(function() {
+                if (selectedCell !== null) {
+                    selectedCell.text('');
+                    $('#message').text(''); 
+                }
+            });
+
+            // New Game Button
+            $('#new-game-btn').click(function() {
+                loadRandomGame();
+            });
+
+            // Verification Logic
+            $('#check-btn').click(function() {
+                verifySolution();
+            });
+
+            function verifySolution() {
+                let grid = [];
+                let isFull = true;
+                
+                // 1. Read the current board into a 2D array
+                for(let r = 0; r < 4; r++) {
+                    grid[r] = [];
+                    for(let c = 0; c < 4; c++) {
+                        let cellText = $(`.cell[data-row='${r}'][data-col='${c}']`).text();
+                        if(cellText === '') {
+                            isFull = false;
+                            grid[r][c] = 0;
+                        } else {
+                            grid[r][c] = parseInt(cellText);
+                        }
+                    }
+                }
+
+                if(!isFull) {
+                    $('#message').text("Fill in all the squares first!").css('color', '#ff9800');
+                    return;
+                }
+                
+                // 2. Helper function to check if an array has exactly 1, 2, 3, 4
+                function isGroupValid(arr) {
+                    let uniqueNumbers = new Set(arr);
+                    return uniqueNumbers.size === 4 && !uniqueNumbers.has(0);
+                }
+
+                let isCorrect = true;
+
+                // 3. Check all Rows and Columns
+                for(let i = 0; i < 4; i++) {
+                    let row = [grid[i][0], grid[i][1], grid[i][2], grid[i][3]];
+                    let col = [grid[0][i], grid[1][i], grid[2][i], grid[3][i]];
+                    
+                    if(!isGroupValid(row)) isCorrect = false;
+                    if(!isGroupValid(col)) isCorrect = false;
+                }
+
+                // 4. Check all 2x2 Blocks
+                for(let r = 0; r < 4; r += 2) {
+                    for(let c = 0; c < 4; c += 2) {
+                        let block = [
+                            grid[r][c], grid[r][c+1], 
+                            grid[r+1][c], grid[r+1][c+1]
+                        ];
+                        if(!isGroupValid(block)) isCorrect = false;
+                    }
+                }
+
+                // 5. Final Output
+                if(isCorrect) {
+                    $('#message').text("Well done, solved").css('color', '#4CAF50');
+                } else {
+                    $('#message').text("Something isn't quite right. Keep trying!").css('color', '#f44336');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

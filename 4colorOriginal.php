@@ -1,6 +1,3 @@
-<?php 
-$question = $_POST['question'];
-?>
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -12,9 +9,9 @@ $question = $_POST['question'];
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+  
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <style>
  h1 {color: blue; font-size: 2em; text-align: center; font-weight:bolder;}
@@ -59,8 +56,8 @@ li {text-align: left;}
   <ul>
     <li>Colour all of the rectangles.</li>
     <li>You can only use 4 colours.</li>
-    <li>If the sides of two rectangles touch, the recatangles must be different colors.</li>
-    <li>Rectangle that only meet a t point can be the same color.</li>
+    <li>If the sides of two rectangles touch, the recatangles must be different colours.</li>
+    <li>Rectangle that only meet at a point can be the same colour.</li>
   </ul>
 </p>
 <p id = "report"></p>

@@ -286,7 +286,7 @@ Electrostatics</button></a>
 <a href = "logic/numberMystery.html"><button class= "btn btn-success" title = "Find the unknown number.">Find the number</button></a>
 <a href="2048Game.html" ><button class="btn btn-primary">2048</button></a>
 <a href = "fiveColours/fiveColours.html" target ="_blank"><button class = "btn btn-primary">Five colours</button></a>
- 
+<a href = "logic/miniSudoku.html" target ="_blank"><button class = "btn btn-primary">Mini Sudoku 4x4</button></a>
 </div></div>
 
         </div>

@@ -37,7 +37,6 @@
             user-select: none;
         }
 
-        /* Thicker borders for the 2x2 quadrants */
         .cell:nth-child(2n) {
             border-right: 2px solid #333;
         }
@@ -46,7 +45,6 @@
             border-bottom: 2px solid #333;
         }
 
-        /* Cell States */
         .cell.given {
             background-color: #e0e0e0;
             color: #333;
@@ -56,7 +54,6 @@
             background-color: #fffacd;
         }
 
-        /* Buttons */
         #numpad, #actions {
             margin-top: 20px;
         }
@@ -79,8 +76,6 @@
             background-color: #f44336;
             box-shadow: 0 4px #c62828;
         }
-
-        /* Action Buttons Styling */
         .action-btn {
             background-color: #2196F3;
             box-shadow: 0 4px #1565C0;
@@ -116,59 +111,154 @@
 
     <script>
         $(document).ready(function() {
-           // Replace the old puzzles array with this mathematically verified one
-const puzzles = [
-    // Puzzle 1
-    [
-        [1, 2, 3, 0],
-        [0, 4, 1, 2],
-        [2, 0, 4, 3],
-        [4, 3, 0, 1]
-    ],
-    // Puzzle 2
-    [
-        [4, 1, 0, 3],
-        [2, 0, 4, 0],
-        [0, 4, 0, 2],
-        [3, 0, 1, 4]
-    ],
-    // Puzzle 3
-    [
-        [3, 0, 0, 2],
-        [1, 0, 3, 0],
-        [0, 3, 0, 1],
-        [2, 0, 0, 3]
-    ],
-    // Puzzle 4
-    [
-        [2, 3, 0, 0],
-        [0, 1, 2, 0],
-        [0, 2, 1, 0],
-        [0, 0, 3, 2]
-    ]
-];
+            // 1. The full, mathematically verified starting puzzles
+            const puzzles = [
+                [
+                    [1, 2, 3, 0],
+                    [0, 4, 1, 2],
+                    [2, 0, 4, 3],
+                    [4, 3, 0, 1]
+                ],
+                [
+                    [4, 1, 0, 3],
+                    [2, 0, 4, 0],
+                    [0, 4, 0, 2],
+                    [3, 0, 1, 4]
+                ],
+                [
+                    [3, 0, 0, 2],
+                    [1, 0, 3, 0],
+                    [0, 3, 0, 1],
+                    [2, 0, 0, 3]
+                ],
+                [
+                    [2, 3, 0, 0],
+                    [0, 1, 2, 0],
+                    [0, 2, 1, 0],
+                    [0, 0, 3, 2]
+                ]
+            ];
 
             let selectedCell = null;
 
-            // Initialize the game on load
-            loadRandomGame();
+            // Level definitions (Number of blanks to remove)
+            const LEVEL_1_BLANKS = 6;  // 10 clues remain
+            const LEVEL_2_BLANKS = 8;  // 8 clues remain
+            const LEVEL_3_BLANKS = 12; // 4 clues remain (Hardest possible)
 
-            function loadRandomGame() {
-                $('#board').empty(); // Clear existing board
-                $('#message').text(''); // Clear messages
+            // Initialize the game on load (Starts at Level 1 by default)
+            loadRandomGame(1);
+
+            // ==========================================
+            // PUZZLE GENERATOR & SOLVER LOGIC
+            // ==========================================
+            function generateLevelPuzzle(fullGrid, blanksNeeded) {
+                let puzzle = [];
+                let maxAttempts = 50; 
+
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    puzzle = JSON.parse(JSON.stringify(fullGrid)); 
+                    let removedCount = 0;
+                    
+                    let cells = [];
+                    for (let r = 0; r < 4; r++) {
+                        for (let c = 0; c < 4; c++) {
+                            cells.push({row: r, col: c});
+                        }
+                    }
+                    
+                    cells.sort(() => Math.random() - 0.5);
+
+                    for (let i = 0; i < cells.length; i++) {
+                        let r = cells[i].row;
+                        let c = cells[i].col;
+
+                        let backupValue = puzzle[r][c]; 
+                        puzzle[r][c] = 0;               
+
+                        let solutions = countSolutions(puzzle);
+
+                        if (solutions === 1) {
+                            removedCount++;
+                            if (removedCount === blanksNeeded) {
+                                return puzzle; 
+                            }
+                        } else {
+                            puzzle[r][c] = backupValue;
+                        }
+                    }
+                }
+                
+                console.log("Could not reach exact blank target, returning closest puzzle.");
+                return puzzle; 
+            }
+
+            function countSolutions(grid) {
+                let emptySpot = findEmptyCell(grid);
+                if (!emptySpot) return 1; 
+
+                let r = emptySpot[0];
+                let c = emptySpot[1];
+                let solutionCount = 0;
+
+                for (let num = 1; num <= 4; num++) {
+                    if (isSafe(grid, r, c, num)) {
+                        grid[r][c] = num;                     
+                        solutionCount += countSolutions(grid); 
+                        grid[r][c] = 0;                       
+                    }
+                }
+                return solutionCount;
+            }
+
+            function findEmptyCell(grid) {
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 4; c++) {
+                        if (grid[r][c] === 0) return [r, c];
+                    }
+                }
+                return null; 
+            }
+
+            function isSafe(grid, row, col, num) {
+                for (let i = 0; i < 4; i++) {
+                    if (grid[row][i] === num) return false;
+                    if (grid[i][col] === num) return false;
+                }
+
+                let startRow = Math.floor(row / 2) * 2;
+                let startCol = Math.floor(col / 2) * 2;
+                for (let r = startRow; r < startRow + 2; r++) {
+                    for (let c = startCol; c < startCol + 2; c++) {
+                        if (grid[r][c] === num) return false;
+                    }
+                }
+
+                return true; 
+            }
+
+            // ==========================================
+            // UI AND INTERACTION LOGIC
+            // ==========================================
+            function loadRandomGame(difficultyLevel) {
+                $('#board').empty(); 
+                $('#message').text(''); 
                 selectedCell = null;
 
-                // Pick a random puzzle from our pool
                 let randomIndex = Math.floor(Math.random() * puzzles.length);
-                let startingPuzzle = puzzles[randomIndex];
+                let fullStartingPuzzle = puzzles[randomIndex];
 
-                // Build the board
+                let blanksNeeded = LEVEL_1_BLANKS; 
+                if (difficultyLevel === 2) blanksNeeded = LEVEL_2_BLANKS;
+                if (difficultyLevel === 3) blanksNeeded = LEVEL_3_BLANKS;
+
+                let gameGrid = generateLevelPuzzle(fullStartingPuzzle, blanksNeeded);
+
                 for (let row = 0; row < 4; row++) {
                     for (let col = 0; col < 4; col++) {
-                        let val = startingPuzzle[row][col];
+                        let val = gameGrid[row][col];
                         let cell = $('<div></div>').addClass('cell');
                         
-                        // Store coordinates in data attributes for easy logic checking later
                         cell.attr('data-row', row).attr('data-col', col);
 
                         if (val !== 0) {
@@ -179,13 +269,12 @@ const puzzles = [
                     }
                 }
 
-                // Re-attach click listeners to new cells
                 attachCellListeners();
             }
 
             function attachCellListeners() {
                 $('.cell').click(function() {
-                    if ($(this).hasClass('given')) return; // Prevent altering starting numbers
+                    if ($(this).hasClass('given')) return; 
 
                     $('.cell').removeClass('selected');
                     $(this).addClass('selected');
@@ -193,15 +282,13 @@ const puzzles = [
                 });
             }
 
-            // Number Pad Clicks
             $('.num-btn').click(function() {
                 if (selectedCell !== null) {
                     selectedCell.text($(this).text());
-                    $('#message').text(''); // Clear errors when they try a new number
+                    $('#message').text(''); 
                 }
             });
 
-            // Delete Button
             $('.clear-btn').click(function() {
                 if (selectedCell !== null) {
                     selectedCell.text('');
@@ -209,12 +296,10 @@ const puzzles = [
                 }
             });
 
-            // New Game Button
             $('#new-game-btn').click(function() {
-                loadRandomGame();
+                loadRandomGame(1); // Currently defaults to level 1
             });
 
-            // Verification Logic
             $('#check-btn').click(function() {
                 verifySolution();
             });
@@ -223,7 +308,6 @@ const puzzles = [
                 let grid = [];
                 let isFull = true;
                 
-                // 1. Read the current board into a 2D array
                 for(let r = 0; r < 4; r++) {
                     grid[r] = [];
                     for(let c = 0; c < 4; c++) {
@@ -242,7 +326,6 @@ const puzzles = [
                     return;
                 }
                 
-                // 2. Helper function to check if an array has exactly 1, 2, 3, 4
                 function isGroupValid(arr) {
                     let uniqueNumbers = new Set(arr);
                     return uniqueNumbers.size === 4 && !uniqueNumbers.has(0);
@@ -250,7 +333,6 @@ const puzzles = [
 
                 let isCorrect = true;
 
-                // 3. Check all Rows and Columns
                 for(let i = 0; i < 4; i++) {
                     let row = [grid[i][0], grid[i][1], grid[i][2], grid[i][3]];
                     let col = [grid[0][i], grid[1][i], grid[2][i], grid[3][i]];
@@ -259,7 +341,6 @@ const puzzles = [
                     if(!isGroupValid(col)) isCorrect = false;
                 }
 
-                // 4. Check all 2x2 Blocks
                 for(let r = 0; r < 4; r += 2) {
                     for(let c = 0; c < 4; c += 2) {
                         let block = [
@@ -270,7 +351,6 @@ const puzzles = [
                     }
                 }
 
-                // 5. Final Output
                 if(isCorrect) {
                     $('#message').text("Well done, solved").css('color', '#4CAF50');
                 } else {

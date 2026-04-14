@@ -14,6 +14,34 @@
             background-color: #f0f8ff;
         }
 
+        /* --- New Dashboard Styling --- */
+        #dashboard {
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            width: max-content;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .lvl-btn {
+            background-color: #9c27b0; /* Purple for levels */
+            box-shadow: 0 4px #7b1fa2;
+        }
+        .lvl-btn.active {
+            background-color: #ff9800; /* Highlight active level */
+            box-shadow: 0 4px #f57c00;
+            transform: translateY(2px); /* Makes it look 'pressed' */
+        }
+
+        #star-tracker {
+            font-size: 28px;
+            margin-top: 10px;
+            color: #ffd700; /* Gold */
+            text-shadow: 1px 1px 2px #d4af37;
+        }
+        /* ----------------------------- */
+
         #board {
             display: grid;
             grid-template-columns: repeat(4, 60px);
@@ -92,6 +120,15 @@
 
     <h1>Mini Sudoku!</h1>
     
+    <div id="dashboard">
+        <div id="level-select">
+            <button class="lvl-btn active" data-level="1">Level 1</button>
+            <button class="lvl-btn" data-level="2">Level 2</button>
+            <button class="lvl-btn" data-level="3">Level 3</button>
+        </div>
+        <div id="star-tracker">☆☆☆☆☆</div>
+    </div>
+    
     <div id="board"></div>
 
     <div id="numpad">
@@ -111,147 +148,74 @@
 
     <script>
         $(document).ready(function() {
-            // 1. The full, mathematically verified starting puzzles
             const puzzles = [
-                [
-                    [1, 2, 3, 0],
-                    [0, 4, 1, 2],
-                    [2, 0, 4, 3],
-                    [4, 3, 0, 1]
-                ],
-                [
-                    [4, 1, 0, 3],
-                    [2, 0, 4, 0],
-                    [0, 4, 0, 2],
-                    [3, 0, 1, 4]
-                ],
-                [
-                    [3, 0, 0, 2],
-                    [1, 0, 3, 0],
-                    [0, 3, 0, 1],
-                    [2, 0, 0, 3]
-                ],
-                [
-                    [2, 3, 0, 0],
-                    [0, 1, 2, 0],
-                    [0, 2, 1, 0],
-                    [0, 0, 3, 2]
-                ]
+                [[1, 2, 3, 0], [0, 4, 1, 2], [2, 0, 4, 3], [4, 3, 0, 1]],
+                [[4, 1, 0, 3], [2, 0, 4, 0], [0, 4, 0, 2], [3, 0, 1, 4]],
+                [[3, 0, 0, 2], [1, 0, 3, 0], [0, 3, 0, 1], [2, 0, 0, 3]],
+                [[2, 3, 0, 0], [0, 1, 2, 0], [0, 2, 1, 0], [0, 0, 3, 2]]
             ];
 
+            // --- Game State Variables ---
             let selectedCell = null;
+            let currentLevel = 1;
+            const GAMES_PER_LEVEL = 5;
+            let progress = { 1: 0, 2: 0, 3: 0 }; 
+            let currentPuzzleSolved = false; // Prevents clicking 'Check' multiple times for extra points
 
-            // Level definitions (Number of blanks to remove)
-            const LEVEL_1_BLANKS = 6;  // 10 clues remain
-            const LEVEL_2_BLANKS = 8;  // 8 clues remain
-            const LEVEL_3_BLANKS = 12; // 4 clues remain (Hardest possible)
+            const LEVEL_BLANKS = {
+                1: 6,  // Level 1: 6 blanks
+                2: 8,  // Level 2: 8 blanks
+                3: 12  // Level 3: 12 blanks
+            };
 
-            // Initialize the game on load (Starts at Level 1 by default)
-            loadRandomGame(1);
-
-            // ==========================================
-            // PUZZLE GENERATOR & SOLVER LOGIC
-            // ==========================================
-            function generateLevelPuzzle(fullGrid, blanksNeeded) {
-                let puzzle = [];
-                let maxAttempts = 50; 
-
-                for (let attempt = 0; attempt < maxAttempts; attempt++) {
-                    puzzle = JSON.parse(JSON.stringify(fullGrid)); 
-                    let removedCount = 0;
-                    
-                    let cells = [];
-                    for (let r = 0; r < 4; r++) {
-                        for (let c = 0; c < 4; c++) {
-                            cells.push({row: r, col: c});
-                        }
-                    }
-                    
-                    cells.sort(() => Math.random() - 0.5);
-
-                    for (let i = 0; i < cells.length; i++) {
-                        let r = cells[i].row;
-                        let c = cells[i].col;
-
-                        let backupValue = puzzle[r][c]; 
-                        puzzle[r][c] = 0;               
-
-                        let solutions = countSolutions(puzzle);
-
-                        if (solutions === 1) {
-                            removedCount++;
-                            if (removedCount === blanksNeeded) {
-                                return puzzle; 
-                            }
-                        } else {
-                            puzzle[r][c] = backupValue;
-                        }
-                    }
-                }
-                
-                console.log("Could not reach exact blank target, returning closest puzzle.");
-                return puzzle; 
-            }
-
-            function countSolutions(grid) {
-                let emptySpot = findEmptyCell(grid);
-                if (!emptySpot) return 1; 
-
-                let r = emptySpot[0];
-                let c = emptySpot[1];
-                let solutionCount = 0;
-
-                for (let num = 1; num <= 4; num++) {
-                    if (isSafe(grid, r, c, num)) {
-                        grid[r][c] = num;                     
-                        solutionCount += countSolutions(grid); 
-                        grid[r][c] = 0;                       
-                    }
-                }
-                return solutionCount;
-            }
-
-            function findEmptyCell(grid) {
-                for (let r = 0; r < 4; r++) {
-                    for (let c = 0; c < 4; c++) {
-                        if (grid[r][c] === 0) return [r, c];
-                    }
-                }
-                return null; 
-            }
-
-            function isSafe(grid, row, col, num) {
-                for (let i = 0; i < 4; i++) {
-                    if (grid[row][i] === num) return false;
-                    if (grid[i][col] === num) return false;
-                }
-
-                let startRow = Math.floor(row / 2) * 2;
-                let startCol = Math.floor(col / 2) * 2;
-                for (let r = startRow; r < startRow + 2; r++) {
-                    for (let c = startCol; c < startCol + 2; c++) {
-                        if (grid[r][c] === num) return false;
-                    }
-                }
-
-                return true; 
-            }
+            // Initialize the game
+            updateDashboard();
+            loadRandomGame();
 
             // ==========================================
-            // UI AND INTERACTION LOGIC
+            // UI AND DASHBOARD LOGIC
             // ==========================================
-            function loadRandomGame(difficultyLevel) {
+            
+            function updateDashboard() {
+                // Highlight current level button
+                $('.lvl-btn').removeClass('active');
+                $(`.lvl-btn[data-level='${currentLevel}']`).addClass('active');
+
+                // Draw Stars
+                let stars = progress[currentLevel];
+                let starString = "";
+                for(let i = 0; i < GAMES_PER_LEVEL; i++) {
+                    if (i < stars) starString += "⭐"; // Filled star
+                    else starString += "☆";          // Empty star
+                }
+                $('#star-tracker').text(starString);
+            }
+
+            $('.lvl-btn').click(function() {
+                currentLevel = parseInt($(this).attr('data-level'));
+                updateDashboard();
+                loadRandomGame();
+            });
+
+            $('#new-game-btn').click(function() {
+                loadRandomGame();
+            });
+
+
+            // ==========================================
+            // BOARD GENERATION LOGIC
+            // ==========================================
+
+            function loadRandomGame() {
                 $('#board').empty(); 
                 $('#message').text(''); 
                 selectedCell = null;
+                currentPuzzleSolved = false; // Reset the win flag for the new puzzle
 
                 let randomIndex = Math.floor(Math.random() * puzzles.length);
                 let fullStartingPuzzle = puzzles[randomIndex];
 
-                let blanksNeeded = LEVEL_1_BLANKS; 
-                if (difficultyLevel === 2) blanksNeeded = LEVEL_2_BLANKS;
-                if (difficultyLevel === 3) blanksNeeded = LEVEL_3_BLANKS;
-
+                let blanksNeeded = LEVEL_BLANKS[currentLevel];
                 let gameGrid = generateLevelPuzzle(fullStartingPuzzle, blanksNeeded);
 
                 for (let row = 0; row < 4; row++) {
@@ -268,13 +232,13 @@
                         $('#board').append(cell);
                     }
                 }
-
                 attachCellListeners();
             }
 
             function attachCellListeners() {
                 $('.cell').click(function() {
                     if ($(this).hasClass('given')) return; 
+                    if (currentPuzzleSolved) return; // Lock board if solved
 
                     $('.cell').removeClass('selected');
                     $(this).addClass('selected');
@@ -283,24 +247,25 @@
             }
 
             $('.num-btn').click(function() {
-                if (selectedCell !== null) {
+                if (selectedCell !== null && !currentPuzzleSolved) {
                     selectedCell.text($(this).text());
                     $('#message').text(''); 
                 }
             });
 
             $('.clear-btn').click(function() {
-                if (selectedCell !== null) {
+                if (selectedCell !== null && !currentPuzzleSolved) {
                     selectedCell.text('');
                     $('#message').text(''); 
                 }
             });
 
-            $('#new-game-btn').click(function() {
-                loadRandomGame(1); // Currently defaults to level 1
-            });
+            // ==========================================
+            // VERIFICATION AND PROGRESS LOGIC
+            // ==========================================
 
             $('#check-btn').click(function() {
+                if (currentPuzzleSolved) return; // Prevent re-checking an already solved puzzle
                 verifySolution();
             });
 
@@ -336,26 +301,104 @@
                 for(let i = 0; i < 4; i++) {
                     let row = [grid[i][0], grid[i][1], grid[i][2], grid[i][3]];
                     let col = [grid[0][i], grid[1][i], grid[2][i], grid[3][i]];
-                    
                     if(!isGroupValid(row)) isCorrect = false;
                     if(!isGroupValid(col)) isCorrect = false;
                 }
 
                 for(let r = 0; r < 4; r += 2) {
                     for(let c = 0; c < 4; c += 2) {
-                        let block = [
-                            grid[r][c], grid[r][c+1], 
-                            grid[r+1][c], grid[r+1][c+1]
-                        ];
+                        let block = [grid[r][c], grid[r][c+1], grid[r+1][c], grid[r+1][c+1]];
                         if(!isGroupValid(block)) isCorrect = false;
                     }
                 }
 
                 if(isCorrect) {
-                    $('#message').text("Well done, solved").css('color', '#4CAF50');
+                    currentPuzzleSolved = true;
+                    $('.cell').removeClass('selected'); // Clear highlight
+                    
+                    if (progress[currentLevel] < GAMES_PER_LEVEL) {
+                        progress[currentLevel]++;
+                        updateDashboard();
+                    }
+
+                    if (progress[currentLevel] === GAMES_PER_LEVEL) {
+                        $('#message').text(`Level ${currentLevel} Complete! Incredible!`).css('color', '#9c27b0');
+                    } else {
+                        $('#message').text("Well done, solved").css('color', '#4CAF50');
+                    }
                 } else {
                     $('#message').text("Something isn't quite right. Keep trying!").css('color', '#f44336');
                 }
+            }
+
+            // ==========================================
+            // BACKTRACKING SOLVER (DO NOT MODIFY)
+            // ==========================================
+            function generateLevelPuzzle(fullGrid, blanksNeeded) {
+                let puzzle = [];
+                let maxAttempts = 50; 
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    puzzle = JSON.parse(JSON.stringify(fullGrid)); 
+                    let removedCount = 0;
+                    let cells = [];
+                    for (let r = 0; r < 4; r++) {
+                        for (let c = 0; c < 4; c++) { cells.push({row: r, col: c}); }
+                    }
+                    cells.sort(() => Math.random() - 0.5);
+
+                    for (let i = 0; i < cells.length; i++) {
+                        let r = cells[i].row;
+                        let c = cells[i].col;
+                        let backupValue = puzzle[r][c]; 
+                        puzzle[r][c] = 0;               
+                        let solutions = countSolutions(puzzle);
+
+                        if (solutions === 1) {
+                            removedCount++;
+                            if (removedCount === blanksNeeded) return puzzle; 
+                        } else {
+                            puzzle[r][c] = backupValue;
+                        }
+                    }
+                }
+                return puzzle; 
+            }
+
+            function countSolutions(grid) {
+                let emptySpot = findEmptyCell(grid);
+                if (!emptySpot) return 1; 
+                let r = emptySpot[0]; let c = emptySpot[1];
+                let solutionCount = 0;
+                for (let num = 1; num <= 4; num++) {
+                    if (isSafe(grid, r, c, num)) {
+                        grid[r][c] = num;                     
+                        solutionCount += countSolutions(grid); 
+                        grid[r][c] = 0;                       
+                    }
+                }
+                return solutionCount;
+            }
+
+            function findEmptyCell(grid) {
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 4; c++) { if (grid[r][c] === 0) return [r, c]; }
+                }
+                return null; 
+            }
+
+            function isSafe(grid, row, col, num) {
+                for (let i = 0; i < 4; i++) {
+                    if (grid[row][i] === num) return false;
+                    if (grid[i][col] === num) return false;
+                }
+                let startRow = Math.floor(row / 2) * 2;
+                let startCol = Math.floor(col / 2) * 2;
+                for (let r = startRow; r < startRow + 2; r++) {
+                    for (let c = startCol; c < startCol + 2; c++) {
+                        if (grid[r][c] === num) return false;
+                    }
+                }
+                return true; 
             }
         });
     </script>

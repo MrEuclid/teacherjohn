@@ -68,14 +68,14 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "hangman/hangman.html"><button class = "btn btm sm btn-info">Find the word</button></a>
+  <a href = "hangman/hangman.html"><button class = "btn btm sm btn-info">Find the word (G5 - G6)</button></a>
 
   <a href = "translate/translatev2.html">
     <button class = "btn btm sm btn-info">Translation HS</button></a>
  <a href="/greenLight/greenLightApp.html"><button class="btn btn-success">Greenlight app</button></a> 
  
-<a href="/escape/escape.html">
-    <button class="btn btn-success">Cats & Tigers</button></a>
+<a href="/words/indexWords.php">
+    <button class="btn btn-success">Word game (G3- G4)</button></a>
  <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
 <button class="btn btn-info">Sokoban </button></a>
 <a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>

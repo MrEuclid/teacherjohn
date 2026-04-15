@@ -68,7 +68,7 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "words/indexWords.php"><button class = "btn btm sm btn-info">Word game</button></a>
+  <a href = "hangman.html"><button class = "btn btm sm btn-info">Find the word</button></a>
 
   <a href = "translate/translatev2.html">
     <button class = "btn btm sm btn-info">Translation HS</button></a>

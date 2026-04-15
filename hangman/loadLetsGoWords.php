@@ -2,8 +2,9 @@
 
 include "../connectTeacherJohn.php" ;
 
-// $wordLength = $_POST['wordLength'] ;
- $wordLength = 5 ;
+ $wordLength = $_POST['wordLength'] ;
+// $wordLength = 5 ;
+
 
 function uniqueCharacters($str)
 {
@@ -26,29 +27,25 @@ function uniqueCharacters($str)
     return true;
 }
 
-
-
-$query = "SELECT DISTINCT UPPER(word) AS word  FROM 5Letters  WHERE CHAR_LENGTH(word) = '$wordLength' ORDER BY word " ;
-$result = mysqli_query($dbServer,$query);
+$noDupLetters = false ;
+while (!$noDupLetters)
+{
+$query = "SELECT DISTINCT UPPER(word) AS word  FROM spellingWords 
+WHERE  CHAR_LENGTH(word) = '$wordLength' 
+AND word NOT IN ('SPAIN', 'EGYPT', 'KOREA', 'PARIS','ITALY')
+ORDER BY RAND() LIMIT 1";
 
 // echo "<br>" . $query . "<br>" ;
+$result = mysqli_query($dbServer,$query);
+$data = mysqli_fetch_row($result);
+$output = $data[0];
+$output = trim($output);
 
-$output = [] ;
-$i = 0 ;
-while ($data = mysqli_fetch_assoc($result))
-
-{
-    $word = $data["word"]  ;
-   if (uniqueCharacters($word))
-    {
-        $output[$i] = $word  ;
-        $i++ ;
-       // echo $i . ' ' . $word .'<br>' ;
-    }
+$noDupLetters = uniqueCharacters($output);
+// echo $output . " " . $noDupLetters . "<br>";
 
 }
-
- echo json_encode($output) ;
+ echo $output ;
 
 
 mysqli_close($dbServer) ;

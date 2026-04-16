@@ -1,5 +1,5 @@
 <?php
-// 1. Use the local session workaround
+// 1. Session Setup (Must match index.php exactly!)
 $session_path = __DIR__ . '/sessions';
 if (!is_dir($session_path)) {
     mkdir($session_path, 0777, true);
@@ -7,7 +7,25 @@ if (!is_dir($session_path)) {
 session_save_path($session_path);
 session_start();
 
-// 2. Security Check: Are they logged in?
+// 2. Catch Dynamic Wins from the URL
+if (!isset($_SESSION['solved'])) {
+    $_SESSION['solved'] = array_fill(1, 10, 0); 
+}
+
+if (isset($_GET['win'])) {
+    $puzzle_won = (int)$_GET['win']; 
+    
+    // Ensure it's a valid puzzle number before saving
+    if ($puzzle_won >= 1 && $puzzle_won <= 10) {
+        $_SESSION['solved'][$puzzle_won] = 1; 
+    }
+    
+    // Redirect immediately to clean the URL (removes the ?win= part so refreshing doesn't cause issues)
+    header("Location: dashboard.php");
+    exit();
+}
+
+// 3. Security Check: Are they logged in?
 if (!isset($_SESSION['team_name']) || empty($_SESSION['team_name'])) {
     // Kick them back to the start if no team name is found
     header("Location: index.php");
@@ -17,7 +35,7 @@ if (!isset($_SESSION['team_name']) || empty($_SESSION['team_name'])) {
 $team_name = htmlspecialchars($_SESSION['team_name']);
 $solved_data = $_SESSION['solved'];
 
-// 3. Game Logic: Figure out what is unlocked
+// 4. Game Logic: Figure out what is unlocked
 $puzzle1_solved = ($solved_data[1] == 1);
 
 // Check if puzzles 1 through 9 are all solved to unlock 10
@@ -132,7 +150,7 @@ $progress_percent = ($total_solved / 10) * 100;
     
     <div class="row mt-5">
         <div class="col-12 text-center">
-            <a href="index.php?reset=1" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to reset your team data? This will delete all progress!');">Restart Entire Game (Testing Only)</a>
+            <a href="index.php?reset=1" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to reset your team data? This will delete all progress!');">Restart Entire Game</a>
         </div>
     </div>
 

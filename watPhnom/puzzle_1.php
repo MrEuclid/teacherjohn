@@ -1,5 +1,5 @@
 <?php 
- // FIXED: Changed default from 'Puzzle 1' to 1 so the dashboard recognizes it
+ // Use the dynamic question ID, default to 1 if missing
  $question = isset($_POST['question']) ? $_POST['question'] : 1;
 ?>
 
@@ -8,7 +8,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Race to Wat Phnom - Puzzle 1</title>
+  <title>Race to Wat Phnom - Puzzle <?php echo htmlspecialchars($question); ?></title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,13 +23,12 @@
   </script>   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
   
-  <script src="/raceGemini/javascript/utilities.js"></script>
+  <script src="javascript/utilities.js"></script>
   <script src="wat.js"></script>  
 
   <style>
     .game-container { text-align: center; margin-top: 20px; padding-bottom: 30px; }
     
-    /* Beautiful rounded image styling */
     .landmark-img { 
         max-width: 100%; 
         height: auto; 
@@ -41,7 +40,6 @@
         border: 3px solid #dee2e6;
     }
 
-    /* Target number styling */
     .target-box {
         font-size: 3em;
         font-weight: bold;
@@ -49,7 +47,6 @@
         margin: 15px 0;
     }
 
-    /* Input styling */
     .prime-input { 
         width: 100px; 
         height: 60px;
@@ -97,6 +94,7 @@
   </div>
 
   <script type="text/javascript">
+    // This dynamically pulls the puzzle number from PHP!
     var questionID = '<?php echo $question; ?>';
     
     // Puzzle Data
@@ -104,7 +102,7 @@
     var locDesc = "A place where students study, learn and achieve!";  
     var questionText = "Find two prime numbers that add up to the target number below:";
     
-    // Generate a random EVEN number between 52 and 198 to guarantee it can be solved with two primes
+    // Generate a random EVEN number between 52 and 198
     var targetNumber = (Math.floor(Math.random() * 74) + 26) * 2;
 
     $(document).ready(function() {
@@ -144,21 +142,15 @@
             var solution = answerA + answerB;
 
             if (solution === targetNumber) {
-                // Success Measure
-                // FIXED: Added a button to let the user return to the dashboard!
-                $('#feedback-1').html('<span class="text-success fs-3">⭐ Correct! Well done! ⭐</span><br><a href="dashboard.php" class="btn btn-success mt-3 fw-bold">🔙 Return to Dashboard</a>');
-                
+                // 1. Show the success message
+                $('#feedback-1').html('<span class="text-success fs-3">⭐ Correct! Well done! ⭐<br><small class="text-muted">Redirecting to dashboard...</small></span>');
                 $('#input-1a, #input-1b').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
-                $(this).hide(); // Hide check button on success
+                $(this).hide(); // Hide check button
                 
-                // Trigger Dashboard Logic
-                if (typeof handleCorrectAnswer === "function") {
-                    handleCorrectAnswer();
-                } else if (typeof processWin === "function") {
-                    processWin(questionID);
-                } else {
-                    console.log("Puzzle Solved!"); 
-                }
+                // 2. FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+                setTimeout(function() {
+                    window.location.href = "dashboard.php?win=" + questionID;
+                }, 2000);
             } else {
                 // Failure Measure
                 $('#feedback-1').html('<span class="text-danger">That adds up to ' + solution + '. Try again!</span>');

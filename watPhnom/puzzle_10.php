@@ -1,5 +1,5 @@
 <?php 
- $question = isset($_POST['question']) ? $_POST['question'] : 'Puzzle 10';
+ $question = isset($_POST['question']) ? $_POST['question'] : '10';
 
 include "../connectTeacherJohn.php";
 

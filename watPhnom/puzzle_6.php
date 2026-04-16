@@ -1,5 +1,5 @@
 <?php 
- $question = isset($_POST['question']) ? $_POST['question'] : 'Puzzle 6';
+ $question = isset($_POST['question']) ? $_POST['question'] : '6';
 ?>
 
 <?php

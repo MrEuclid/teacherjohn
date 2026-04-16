@@ -315,8 +315,8 @@ Electrostatics</button></a>
     <a href =  "translate/translatev2.html" target = "_blank"><button class = "btn btn-success" title = "Translation Khmer to English">Translation</button>
 
       
-      <a href =  "raceGemini/login.php" target = "_blank"><button class = "btn btn-info" title = "Maths contests">Maths </button>   
-competitions</a>
+      <a href =  "raceGemini/login.php" target = "_blank">
+        <button class = "btn btn-info" title = "Maths contests">Maths Contests</button> </a>
 
        <a href =  "maths/24GameCompetition.html" target = "_blank"><button class = "btn btn-primary" title = "24 Game competition">24 Game</button></a>
 

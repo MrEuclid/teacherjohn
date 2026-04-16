@@ -23,7 +23,7 @@
   </script>   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
   
-  <script src="javascript/utilities.js"></script>
+  <script src="/raceGemini/javascript/utilities.js"></script>
   <script src="wat.js"></script>  
 
   <style>

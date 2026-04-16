@@ -1,0 +1,9 @@
+The algorithm in itself is very simple. Let's assume that Alice wants to establish a shared secret with Bob.
+
+Alice and Bob agree on a prime number, p, and a base, g, in advance. For our example, let's assume that p=23 and g=5.
+Alice chooses a secret integer a whose value is 6 and computes A = g^a mod p. In this example, A has the value of 8.
+Bob chooses a secret integer b whose value is 15 and computes B = g^b mod p. In this example, B has the value of 19.
+Alice sends A to Bob and Bob sends B to Alice.
+To obtain the shared secret, Alice computes s = B^a mod p. In this example, Alice obtains the value of s=2
+To obtain the shared secret, Bob computes s = A^b mod p. In this example, Bob obtains the value of s=2.
+The algorithm is secure because the values of a and b, which are required to derive s are not transmitted across the wire at all.

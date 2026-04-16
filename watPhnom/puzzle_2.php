@@ -22,7 +22,7 @@
   </script>   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
   
-  <script src="javascript/utilities.js"></script>
+  <script src="/raceGemini/javascript/utilities.js"></script>
   <script src="wat.js"></script>  
 </head>
 <body>
@@ -59,8 +59,10 @@
       </div>
     </div>
   </div> 
-  
   <script type="text/javascript">
+  // FIX 1: Define the questionID variable dynamically from PHP!
+  var questionID = '<?php echo $question; ?>';
+
   $(document).ready(function(){  
 
       // 1. GUARANTEED HTML LOADING 
@@ -121,32 +123,24 @@
           
           var solution = answerX * answerY;
 
-          // Check if their product equals the target AND both are prime
-          if ((answerX * answerY === m) && isPrime(answerX) && isPrime(answerY)) {
+          // FIX 2 & 3: Cleaned up the if/else logic and changed IDs to '2'
+          if (solution === m) {
+              // Success Measure
+              $('#comment-2').html('<span class="text-success fs-3">⭐ Correct! ' + m + ' = ' + answerX + ' × ' + answerY + ' ⭐<br><small class="text-muted">Redirecting to dashboard...</small></span>');
               
-              $('#comment-2').html('<span class="text-success fs-3">⭐ Correct! ' + m + ' = ' + answerX + ' × ' + answerY + ' ⭐</span>');
-              
-              if (typeof solved !== 'undefined') {
-                  solved[2] = 1;
-              }
-              
-            
-              
-              if (typeof displayUnsolved === "function") {
-                  displayUnsolved();
-              }
-              
-              // Lock inputs and hide button on win
               $('#input-2a, #input-2b').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
-              $(this).hide();
+              $(this).hide(); // Hide check button
               
-              // Competition Dashboard Trigger
-              if (typeof processWin === "function") {
-                  processWin('Puzzle 2');
-              }
-              
+              // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
+
           } else { 
+              // Failure Measure
               $('#comment-2').html('<span class="text-danger">That equals ' + solution + '. Keep trying!</span>');
+              
+              // Shake effect on wrong answer
               $('#input-2a, #input-2b').animate({marginLeft: '-10px'}, 100).animate({marginLeft: '10px'}, 100).animate({marginLeft: '0'}, 100);
           }
       });

@@ -312,11 +312,17 @@ Electrostatics</button></a>
         <a href =  "twoPlayerGames/countDown/countDownWords.html" target = "_blank"><button class = "btn btn-info" title = "Race to make words">Spelling</button>
 
        
-    <a href =  "translate/translatev2.html" target = "_blank"><button class = "btn btn-success" title = "TRanslation Khmer to English">Translation</button>
+    <a href =  "translate/translatev2.html" target = "_blank"><button class = "btn btn-success" title = "Translation Khmer to English">Translation</button>
 
       
-      <a href =  "raceGemini/login.php" target = "_blank"><button class = "btn btn-danger" title = "G12 Maths contest">Senior Maths</button>   
+      <a href =  "raceGemini/login.php" target = "_blank"><button class = "btn btn-info" title = "Maths contests">Maths </button>   
+competitions</a>
 
+       <a href =  "maths/24GameCompetition.html" target = "_blank"><button class = "btn btn-primary" title = "24 Game competition">24 Game</button></a>
+
+       <a href =  "maths/greenLightHSX+New.php" target = "_blank"><button class = "btn btn-success" title = "Green light hard competition">Green light hard</button></a>
+
+       <a href =  "maths/greenLightMultiply3x3New.php" target = "_blank"><button class = "btn btn-warning" title = "Green light multiplication competition">Green light multiplication</button></a>
   </div></div>
         </div>
       </div>

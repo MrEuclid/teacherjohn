@@ -123,32 +123,32 @@ $result = $stmt->get_result();
                 <label class="me-2 fw-bold text-muted">Viewing:</label>
                 <select name="view_class" class="form-select me-2" onchange="this.form.submit()">
                     <option value="ALL" <?php if($viewClass == 'ALL') echo 'selected'; ?>>All Classes</option>
-                    <option value="10A" <?php if($viewClass == '10A') echo 'selected'; ?>>10A</option>
-                    <option value="10B" <?php if($viewClass == '10B') echo 'selected'; ?>>10B</option>
-                    <option value="11A" <?php if($viewClass == '11A') echo 'selected'; ?>>11A</option>
-                    <option value="11B" <?php if($viewClass == '11B') echo 'selected'; ?>>11B</option>
-                    <option value="12A" <?php if($viewClass == '12A') echo 'selected'; ?>>12A</option>
-                    <option value="12B" <?php if($viewClass == '12B') echo 'selected'; ?>>12B</option>
+                    <option value="10A" <?php if($viewClass == 'G10A') echo 'selected'; ?>>G10A</option>
+                    <option value="10B" <?php if($viewClass == 'G10B') echo 'selected'; ?>>G10B</option>
+                    <option value="11A" <?php if($viewClass == 'G11A') echo 'selected'; ?>>G11A</option>
+                    <option value="11B" <?php if($viewClass == 'G11B') echo 'selected'; ?>>G11B</option>
+                    <option value="12A" <?php if($viewClass == 'G12A') echo 'selected'; ?>>G12A</option>
+                    <option value="12B" <?php if($viewClass == 'G12B') echo 'selected'; ?>>G12B</option>
                 </select><select name="class_clear" class="form-select w-25 me-3 border-danger" required>
     <option value="" disabled selected>Select class to clear...</option>
     <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
     
-    <option value="7A">7A</option>
-    <option value="7B">7B</option>
-    <option value="7C">7C</option>
-    <option value="8A">8A</option>
-    <option value="8B">8B</option>
-    <option value="8C">8C</option>
-    <option value="9A">9A</option>
-    <option value="9B">9B</option>
-    <option value="9C">9C</option>
+    <option value="G7A">G7A</option>
+    <option value="G7B">G7B</option>
+    <option value="G7C">G7C</option>
+    <option value="G8A">G8A</option>
+    <option value="G8B">G8B</option>
+    <option value="G8C">G8C</option>
+    <option value="G9A">G9A</option>
+    <option value="G9B">G9B</option>
+    <option value="G9C">G9C</option>
 
-    <option value="10A">10A</option>
-    <option value="10B">10B</option>
-    <option value="11A">11A</option>
-    <option value="11B">11B</option>
-    <option value="12A">12A</option>
-    <option value="12B">12B</option>
+    <option value="G10A">G10A</option>
+    <option value="G10B">G10B</option>
+    <option value="G11A">G11A</option>
+    <option value="G11B">G11B</option>
+    <option value="G12A">G12A</option>
+    <option value="G12B">G12B</option>
 </select>
                 <a href="leaderboardGemini.php?view_class=<?php echo htmlspecialchars($viewClass); ?>" class="btn btn-outline-primary">🔄 Refresh</a>
             </form>
@@ -201,22 +201,22 @@ $result = $stmt->get_result();
     <option value="" disabled selected>Select class to clear...</option>
     <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
     
-    <option value="7A">7A</option>
-    <option value="7B">7B</option>
-    <option value="7C">7C</option>
-    <option value="8A">8A</option>
-    <option value="8B">8B</option>
-    <option value="8C">8C</option>
-    <option value="9A">9A</option>
-    <option value="9B">9B</option>
-    <option value="9C">9C</option>
+    <option value="G7A">G7A</option>
+    <option value="G7B">G7B</option>
+    <option value="G7C">G7C</option>
+    <option value="G8A">G8A</option>
+    <option value="G8B">G8B</option>
+    <option value="G8C">G8C</option>
+    <option value="G9A">G9A</option>
+    <option value="G9B">G9B</option>
+    <option value="G9C">G9C</option>
 
-    <option value="10A">10A</option>
-    <option value="10B">10B</option>
-    <option value="11A">11A</option>
-    <option value="11B">11B</option>
-    <option value="12A">12A</option>
-    <option value="12B">12B</option>
+    <option value="G10A">G10A</option>
+    <option value="G10B">G10B</option>
+    <option value="G11A">G11A</option>
+    <option value="G11B">G11B</option>
+    <option value="G12A">G12A</option>
+    <option value="G12B">G12B</option>
 </select>
             <button type="submit" class="btn btn-success">Download CSV</button>
         </form>
@@ -230,12 +230,22 @@ $result = $stmt->get_result();
                 <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
                     <option value="" disabled selected>Select class to clear...</option>
                     <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
-                    <option value="10A">10A</option>
-                    <option value="10B">10B</option>
-                    <option value="11A">11A</option>
-                    <option value="11B">11B</option>
-                    <option value="12A">12A</option>
-                    <option value="12B">12B</option>
+                   <option value="G7A">G7A</option>
+    <option value="G7B">G7B</option>
+    <option value="G7C">G7C</option>
+    <option value="G8A">G8A</option>
+    <option value="G8B">G8B</option>
+    <option value="G8C">G8C</option>
+    <option value="G9A">G9A</option>
+    <option value="G9B">G9B</option>
+    <option value="G9C">G9C</option>
+
+    <option value="G10A">G10A</option>
+    <option value="G10B">G10B</option>
+    <option value="G11A">G11A</option>
+    <option value="G11B">G11B</option>
+    <option value="G12A">G12A</option>
+    <option value="G12B">G12B</option>
                 </select>
 
                 <input type="password" name="teacherPassword" class="form-control w-25 me-3 border-danger" placeholder="Enter Password" required>

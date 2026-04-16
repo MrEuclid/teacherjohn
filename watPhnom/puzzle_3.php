@@ -2,6 +2,8 @@
  $question = isset($_POST['question']) ? $_POST['question'] : '3';
 ?>
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,7 +60,8 @@
   
   <script type="text/javascript">
   $(document).ready(function(){  
-
+  // FIX 1: Define the questionID variable dynamically from PHP!
+  var questionID = '<?php echo $question; ?>';
       // 1. HTML SETUP
 
       var solved = false ;
@@ -121,9 +124,10 @@
               $('#input-3a').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide();
               
-              if (typeof processWin === "function") {
-                  processWin(questionID); // Dynamically sends the correct ID
-              }
+           // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
           } else { 
               // FAILURE

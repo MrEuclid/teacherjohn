@@ -91,24 +91,7 @@ $progress_percent = ($total_solved / 10) * 100;
             $btn_class = 'btn-locked disabled';
             $icon = '🔒';
             $link = '#';
-if (solution === targetNumber) {
-                // Success Measure
-                // FIXED: Added a button to let the user return to the dashboard!
-                $('#feedback-1').html('<span class="text-success fs-3">⭐ Correct! Well done! ⭐</span><br><a href="dashboard.php" class="btn btn-success mt-3 fw-bold">🔙 Return to Dashboard</a>');
-                
-                $('#input-1a, #input-1b').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
-                $(this).hide(); // Hide check button on success
-                
-                // Trigger Dashboard Logic
-                if (typeof handleCorrectAnswer === "function") {
-                    handleCorrectAnswer();
-                } else if (typeof processWin === "function") {
-                    processWin(questionID);
-                } else {
-                    // Removed the annoying alert in favor of the button above
-                    console.log("Puzzle Solved!"); 
-                }
-            }
+
             // Check if solved
             if ($solved_data[$i] == 1) {
                 $status = 'completed';

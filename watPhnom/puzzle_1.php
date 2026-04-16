@@ -1,5 +1,6 @@
 <?php 
- $question = isset($_POST['question']) ? $_POST['question'] : '1';
+ // FIXED: Changed default from 'Puzzle 1' to 1 so the dashboard recognizes it
+ $question = isset($_POST['question']) ? $_POST['question'] : 1;
 ?>
 
 <!DOCTYPE html>
@@ -144,7 +145,9 @@
 
             if (solution === targetNumber) {
                 // Success Measure
-                $('#feedback-1').html('<span class="text-success fs-3">⭐ Correct! Well done! ⭐</span>');
+                // FIXED: Added a button to let the user return to the dashboard!
+                $('#feedback-1').html('<span class="text-success fs-3">⭐ Correct! Well done! ⭐</span><br><a href="dashboard.php" class="btn btn-success mt-3 fw-bold">🔙 Return to Dashboard</a>');
+                
                 $('#input-1a, #input-1b').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
                 $(this).hide(); // Hide check button on success
                 
@@ -154,7 +157,7 @@
                 } else if (typeof processWin === "function") {
                     processWin(questionID);
                 } else {
-                    setTimeout(() => alert("Puzzle Solved!"), 500);
+                    console.log("Puzzle Solved!"); 
                 }
             } else {
                 // Failure Measure

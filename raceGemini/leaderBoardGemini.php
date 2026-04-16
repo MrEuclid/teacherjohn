@@ -5,7 +5,8 @@ require_once '../connectTeacherJohn.php';
 
 // --- HANDLE CSV DOWNLOAD REQUEST ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'download_csv') {
-    $classSelect = $_POST['class_select'];
+    // FIXED: Ensure this matches the name in the HTML form below
+    $classSelect = $_POST['class_select'] ?? 'ALL'; 
     
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=MathsComp_Results_' . $classSelect . '_' . date('Y-m-d') . '.csv');
@@ -119,38 +120,26 @@ $result = $stmt->get_result();
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary fw-bold m-0">🏆 Live Leaderboard</h2>
             
-            <form method="GET" action="leaderboardGemini.php" class="d-flex align-items-center m-0">
+            <form method="GET" action="leaderBoardGemini.php" class="d-flex align-items-center m-0">
                 <label class="me-2 fw-bold text-muted">Viewing:</label>
                 <select name="view_class" class="form-select me-2" onchange="this.form.submit()">
                     <option value="ALL" <?php if($viewClass == 'ALL') echo 'selected'; ?>>All Classes</option>
-                    <option value="10A" <?php if($viewClass == 'G10A') echo 'selected'; ?>>G10A</option>
-                    <option value="10B" <?php if($viewClass == 'G10B') echo 'selected'; ?>>G10B</option>
-                    <option value="11A" <?php if($viewClass == 'G11A') echo 'selected'; ?>>G11A</option>
-                    <option value="11B" <?php if($viewClass == 'G11B') echo 'selected'; ?>>G11B</option>
-                    <option value="12A" <?php if($viewClass == 'G12A') echo 'selected'; ?>>G12A</option>
-                    <option value="12B" <?php if($viewClass == 'G12B') echo 'selected'; ?>>G12B</option>
-                </select><select name="class_clear" class="form-select w-25 me-3 border-danger" required>
-    <option value="" disabled selected>Select class to clear...</option>
-    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
-    
-    <option value="G7A">G7A</option>
-    <option value="G7B">G7B</option>
-    <option value="G7C">G7C</option>
-    <option value="G8A">G8A</option>
-    <option value="G8B">G8B</option>
-    <option value="G8C">G8C</option>
-    <option value="G9A">G9A</option>
-    <option value="G9B">G9B</option>
-    <option value="G9C">G9C</option>
-
-    <option value="G10A">G10A</option>
-    <option value="G10B">G10B</option>
-    <option value="G11A">G11A</option>
-    <option value="G11B">G11B</option>
-    <option value="G12A">G12A</option>
-    <option value="G12B">G12B</option>
-</select>
-                <a href="leaderboardGemini.php?view_class=<?php echo htmlspecialchars($viewClass); ?>" class="btn btn-outline-primary">🔄 Refresh</a>
+                    <option value="7A" <?php if($viewClass == '7A') echo 'selected'; ?>>G7A</option>
+                    <option value="7B" <?php if($viewClass == '7B') echo 'selected'; ?>>G7B</option>
+                    <option value="7C" <?php if($viewClass == '7C') echo 'selected'; ?>>G7C</option>
+                    <option value="8A" <?php if($viewClass == '8A') echo 'selected'; ?>>G8A</option>
+                    <option value="8B" <?php if($viewClass == '8B') echo 'selected'; ?>>G8B</option>
+                    <option value="8C" <?php if($viewClass == '8C') echo 'selected'; ?>>G8C</option>
+                    <option value="9A" <?php if($viewClass == '9A') echo 'selected'; ?>>G9A</option>
+                    <option value="9B" <?php if($viewClass == '9B') echo 'selected'; ?>>G9B</option>
+                    <option value="10A" <?php if($viewClass == '10A') echo 'selected'; ?>>G10A</option>
+                    <option value="10B" <?php if($viewClass == '10B') echo 'selected'; ?>>G10B</option>
+                    <option value="11A" <?php if($viewClass == '11A') echo 'selected'; ?>>G11A</option>
+                    <option value="11B" <?php if($viewClass == '11B') echo 'selected'; ?>>G11B</option>
+                    <option value="12A" <?php if($viewClass == '12A') echo 'selected'; ?>>G12A</option>
+                    <option value="12B" <?php if($viewClass == '12B') echo 'selected'; ?>>G12B</option>
+                </select>
+                <a href="leaderBoardGemini.php?view_class=<?php echo htmlspecialchars($viewClass); ?>" class="btn btn-outline-primary">🔄 Refresh</a>
             </form>
         </div>
         
@@ -195,57 +184,53 @@ $result = $stmt->get_result();
         
         <h5 class="text-success">📥 Export Results</h5>
         <p class="text-muted small">Download a CSV spreadsheet of the final standings.</p>
-        <form method="POST" action="leaderboardGemini.php" target="_blank" class="d-flex align-items-center mb-4">
+        <form method="POST" action="leaderBoardGemini.php" target="_blank" class="d-flex align-items-center mb-4">
             <input type="hidden" name="action" value="download_csv">
-           <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
-    <option value="" disabled selected>Select class to clear...</option>
-    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
-    
-    <option value="G7A">G7A</option>
-    <option value="G7B">G7B</option>
-    <option value="G7C">G7C</option>
-    <option value="G8A">G8A</option>
-    <option value="G8B">G8B</option>
-    <option value="G8C">G8C</option>
-    <option value="G9A">G9A</option>
-    <option value="G9B">G9B</option>
-    <option value="G9C">G9C</option>
-
-    <option value="G10A">G10A</option>
-    <option value="G10B">G10B</option>
-    <option value="G11A">G11A</option>
-    <option value="G11B">G11B</option>
-    <option value="G12A">G12A</option>
-    <option value="G12B">G12B</option>
-</select>
+            <select name="class_select" class="form-select w-25 me-3 border-success" required>
+                <option value="" disabled selected>Select class to download...</option>
+                <option value="ALL" class="fw-bold text-success">ALL CLASSES</option>
+                <option value="7A">G7A</option>
+                <option value="7B">G7B</option>
+                <option value="7C">G7C</option>
+                <option value="8A">G8A</option>
+                <option value="8B">G8B</option>
+                <option value="8C">G8C</option>
+                <option value="9A">G9A</option>
+                <option value="9B">G9B</option>
+                <option value="9C">G9C</option>
+                <option value="10A">G10A</option>
+                <option value="10B">G10B</option>
+                <option value="11A">G11A</option>
+                <option value="11B">G11B</option>
+                <option value="12A">G12A</option>
+                <option value="12B">G12B</option>
+            </select>
             <button type="submit" class="btn btn-success">Download CSV</button>
         </form>
 
         <div class="danger-zone">
             <h5 class="text-danger">⚠️ Danger Zone: Clear Database</h5>
             <p class="text-muted small">Select a class to wipe their teams and scores to prepare for the next period.</p>
-            <form method="POST" action="leaderboardGemini.php" class="d-flex align-items-center" onsubmit="return confirm('Are you sure you want to delete this data? Did you download the CSV first?');">
+            <form method="POST" action="leaderBoardGemini.php" class="d-flex align-items-center" onsubmit="return confirm('Are you sure you want to delete this data? Did you download the CSV first?');">
                 <input type="hidden" name="action" value="clear">
-                
                 <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
                     <option value="" disabled selected>Select class to clear...</option>
                     <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
-                   <option value="G7A">G7A</option>
-    <option value="G7B">G7B</option>
-    <option value="G7C">G7C</option>
-    <option value="G8A">G8A</option>
-    <option value="G8B">G8B</option>
-    <option value="G8C">G8C</option>
-    <option value="G9A">G9A</option>
-    <option value="G9B">G9B</option>
-    <option value="G9C">G9C</option>
-
-    <option value="G10A">G10A</option>
-    <option value="G10B">G10B</option>
-    <option value="G11A">G11A</option>
-    <option value="G11B">G11B</option>
-    <option value="G12A">G12A</option>
-    <option value="G12B">G12B</option>
+                    <option value="7A">G7A</option>
+                    <option value="7B">G7B</option>
+                    <option value="7C">G7C</option>
+                    <option value="8A">G8A</option>
+                    <option value="8B">G8B</option>
+                    <option value="8C">G8C</option>
+                    <option value="9A">G9A</option>
+                    <option value="9B">G9B</option>
+                    <option value="9C">G9C</option>
+                    <option value="10A">G10A</option>
+                    <option value="10B">G10B</option>
+                    <option value="11A">G11A</option>
+                    <option value="11B">G11B</option>
+                    <option value="12A">G12A</option>
+                    <option value="12B">G12B</option>
                 </select>
 
                 <input type="password" name="teacherPassword" class="form-control w-25 me-3 border-danger" placeholder="Enter Password" required>

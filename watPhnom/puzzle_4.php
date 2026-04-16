@@ -66,11 +66,12 @@
   
   <script type="text/javascript">
   $(document).ready(function(){  
-
+ // FIX 1: Define the questionID variable dynamically from PHP!
+   questionID = '<?php echo $question; ?>';
       // 1. GUARANTEED HTML LOADING 
       // We do this first so a math error doesn't break the UI
 
-
+console.log("Question ID:", questionID);
   var y = getRandomInt(20,30);
   var x = getRandomInt(30,40);
   z = x*x - y*y ;
@@ -160,10 +161,10 @@
               $('#input-4a, #input-4b').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide();
               
-              // Competition Dashboard Trigger
-              if (typeof processWin === "function") {
-                  processWin('Puzzle 4');
-              }
+         // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
           } else { 
               $('#comment-4').html('<span class="text-danger">That equals ' + solution + '. Keep trying!</span>');

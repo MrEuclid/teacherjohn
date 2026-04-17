@@ -54,8 +54,10 @@ $word = $data[0] ;
             <label id="label-7a" class="fs-2 fw-bold"></label>
             <input id="input-7a" type="text" class="form-control fw-bold" style="width: 150px; height: 60px; font-size: 1.8em; text-align: center; background-color: lightgreen; border: 2px solid #198754; border-radius: 10px; color: #000;" placeholder="n = ?">
             <input id="hiddenN" type="hidden"> 
-            <button id="check-btn" class="btn btn-primary btn-lg px-4 fw-bold shadow-sm" style="height: 60px;">Check Answer</button>
-          </div>
+<div class="d-flex justify-content-center gap-3">
+    <a href="dashboard.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold shadow-sm">Cancel</a>
+    <button id="check-1" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
+</div>          </div>
 
           <div id="comment-7" class="mt-4 fs-4 fw-bold"></div>
           
@@ -85,17 +87,17 @@ $word = $data[0] ;
 
 
  
-var p = getRandomInt(10,20) ;
+var p = getRandomInt(100,500) ;
 if (p % 2 != 0){p = p + 1 ;}
 
 
 
-var q = getRandomInt(10,20) ;
+var q = getRandomInt(100,500) ;
  if (q % 2 != 0){q = q + 1 ;}
 
 
 
-var r = getRandomInt(10,20) ;
+var r = getRandomInt(10,500) ;
  if (r % 2 != 0){r = r + 1 ; }
 
 
@@ -105,7 +107,7 @@ var b = (r - c) / 2 ;
 var a = p - b ;
 var n = a + b + c ;
 
- console.log(7,a,b,c,n);
+  console.log(7,a,b,c,n);
 
 // alert(' A + B + C = ' + n) ;
 

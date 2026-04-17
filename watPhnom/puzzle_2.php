@@ -50,8 +50,10 @@
             <input id="hidden2Y" type="hidden">
           </div>
 
-          <button id="check-btn" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check Answer</button>
-
+<div class="d-flex justify-content-center gap-3">
+    <a href="dashboard.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold shadow-sm">Cancel</a>
+    <button id="check-1" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
+</div>
           <div id="comment-2" class="mt-4 fs-4 fw-bold"></div>
           
           <div id="visited" class="mt-4"></div>
@@ -96,7 +98,7 @@
           n2 = getRandomInt(n1 + 1, 75);
           prime2 = isPrime(n2);
       }
-
+console.log(n1,n2);
       var m = n1 * n2;
       
       $('#hidden2X').val(n1);

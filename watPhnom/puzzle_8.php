@@ -47,8 +47,10 @@
             <label id="label-8a" class="fs-2 fw-bold"></label>
             <input id="input-8a" type="text" class="form-control fw-bold" style="width: 150px; height: 60px; font-size: 1.8em; text-align: center; background-color: lightgreen; border: 2px solid #198754; border-radius: 10px; color: #000;" placeholder="?">
             <input id="hiddenN" type="hidden"> 
-            <button id="check-btn" class="btn btn-primary btn-lg px-4 fw-bold shadow-sm" style="height: 60px;">Check Answer</button>
-          </div>
+<div class="d-flex justify-content-center gap-3">
+    <a href="dashboard.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold shadow-sm">Cancel</a>
+    <button id="check-1" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
+</div>          </div>
 
           <div id="comment-8" class="mt-4 fs-4 fw-bold"></div>
           

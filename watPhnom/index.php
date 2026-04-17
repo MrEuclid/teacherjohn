@@ -13,13 +13,23 @@ session_save_path($session_path);
 // 4. NOW start the session
 session_start();
 
+// --- NEW FIX: Handle the Restart/Reset signal ---
+if (isset($_GET['reset']) && $_GET['reset'] == '1') {
+    // Destroy all session data
+    session_unset();
+    session_destroy();
+    
+    // Redirect to a clean URL (removes the ?reset=1)
+    header("Location: index.php");
+    exit();
+}
+// ------------------------------------------------
+
 // If the team has already registered, send them straight back to the dashboard
 if (isset($_SESSION['team_name'])) {
     header("Location: dashboard.php");
     exit();
 }
-
-// ... (The rest of your index.php code remains exactly the same below this)
 
 // Handle the form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['team_name'])) {
@@ -38,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['team_name'])) {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -46,8 +46,10 @@
   <input id="input-3a" type="number" class="form-control" style="width: 120px; height: 60px; font-size: 1.8em; text-align: center; background-color: lightgreen; border: 2px solid #198754; border-radius: 10px;" placeholder="">
   <input id="hidden3Val" type="hidden">
 
-  <button id="check-btn" class="btn btn-primary btn-lg fw-bold shadow-sm" style="height: 60px;">Check Answer</button>
-
+<div class="d-flex justify-content-center gap-3">
+    <a href="dashboard.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold shadow-sm">Cancel</a>
+    <button id="check-1" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
+</div>
 </div>
 
           <div id="comment-3" class="mt-4 fs-4 fw-bold"></div>

@@ -105,7 +105,7 @@ var b = (r - c) / 2 ;
 var a = p - b ;
 var n = a + b + c ;
 
-// console.log(7,a,b,c,n);
+ console.log(7,a,b,c,n);
 
 // alert(' A + B + C = ' + n) ;
 
@@ -178,17 +178,19 @@ $('#label-7a').text('A + B + C = ')
               $('#input-7a').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide(); // Hide the check button
               
-              var questionID = '<?php echo $question; ?>';
-              if (typeof processWin === "function") {
-                  processWin(questionID);
-              }
+            var questionID = '<?php echo $question; ?>';
+            // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
          } else {
             // Calculate what their guess actually equals
             const userResult = Math.pow(2, guessN) - 1;
 
             // FAILURE - Show their calculated value
-            $('#comment-7').html(`<span class="text-danger">Incorrect! $2^{${guessN}} - 1 = ${userResult.toLocaleString()}$. Keep trying!</span>`);
+            $('#comment-7').html(`<span class="text-danger">
+            Incorrect!  Keep trying!</span>`);
             
             // Tell MathJax to render the new math equation in the comment box
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, "comment-6"]);

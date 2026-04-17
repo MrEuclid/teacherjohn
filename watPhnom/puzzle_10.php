@@ -186,10 +186,11 @@ $codeWord = $data[0] ;
               $('[id^="input-10"]').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide(); 
               
-              var questionID = '<?php echo $question; ?>';
-              if (typeof processWin === "function") {
-                  processWin(questionID);
-              }
+               var questionID = '<?php echo $question; ?>';
+            // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
          } else {
             // FAILURE

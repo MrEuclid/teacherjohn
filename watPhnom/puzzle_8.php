@@ -145,10 +145,11 @@ console.log(8,m,n, parseInt(m+n));
               $('#input-8a').prop('disabled', true).css({"background-color": "lightgreen", "color": "black"});
               $(this).hide(); // Hide the check button
               
-              var questionID = '<?php echo $question; ?>';
-              if (typeof processWin === "function") {
-                  processWin(questionID);
-              }
+               var questionID = '<?php echo $question; ?>';
+            // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
          } else {
             // Calculate what their guess actually equals

@@ -132,9 +132,10 @@ $word = $data[0] ;
               $(this).hide(); // Hide the check button
               
               var questionID = '<?php echo $question; ?>';
-              if (typeof processWin === "function") {
-                  processWin(questionID);
-              }
+            // FORCE the browser to send the DYNAMIC win signal after a 2-second delay
+              setTimeout(function() {
+                  window.location.href = "dashboard.php?win=" + questionID;
+              }, 2000);
               
          } else {
             // Calculate what their guess actually equals

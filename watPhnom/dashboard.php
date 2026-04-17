@@ -90,7 +90,7 @@ $progress_percent = ($total_solved / 10) * 100;
     <div class="row mb-4">
         <div class="col-12 text-center">
             <h1 class="fw-bold text-primary">Team: <span class="text-dark"><?php echo $team_name; ?></span></h1>
-            <p class="fs-5 text-muted">Solve puzzles to reach the top of Wat Phnom!</p>
+            <p class="fs-5 text-muted">Solve puzzles to reach the Wat Phnom!</p>
             
             <div class="progress mt-3 mx-auto" style="height: 25px; max-width: 600px; border-radius: 15px; background-color: #e9ecef;">
                 <div class="progress-bar bg-success progress-bar-striped progress-bar-animated fs-6 fw-bold" role="progressbar" style="width: <?php echo $progress_percent; ?>%;">

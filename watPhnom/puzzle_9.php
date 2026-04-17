@@ -53,7 +53,7 @@
               
 <div class="d-flex justify-content-center gap-3">
     <a href="dashboard.php" class="btn btn-outline-secondary btn-lg px-4 fw-bold shadow-sm">Cancel</a>
-    <button id="check-1" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
+    <button id="check-btn" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">Check</button>
 </div>          </div>
 
           <div id="comment-9" class="mt-4 fs-4 fw-bold"></div>

@@ -183,13 +183,13 @@ button {margin: 0.5em;}
 
     <a href = "maths/triangle.php" target = "_blank"><button class = "btn btn-success" title = "Three equations">3 equations</button></a> 
 
-    <a href = "maths/pyramidGame3v2.html" target = "_blank"><button class = "btn btn-info" title = "Pyramid numbers - easy.">Pyramids - eaasy</button></a> 
+    <a href = "maths/pyramidGame3v2.html" target = "_blank"><button class = "btn btn-info" title = "Pyramid numbers - easy.">Pyramids - easy</button></a> 
 
 <a href = "maths/egyptianGemini2.html" target = "_blank"><button class = "btn btn-primary" title = "Fractions have a numerator of one. Use them to make another fraction.">Egyptian 2</button></a>
 <a href = "maths/egyptianGemini3.html" target = "_blank"><button class = "btn btn-success" title = "It is harder to work with 3 fractions.">Egyptian 3</button></a>
 <a href = "factorGame/factorGameJSv4.html"><button class = "btn btn-primary" title = "Get a high score by choosing the factors in the correct way.">Factor game (intro)</button></a> 
 
-<a href = "maths/dragons/dragons.html" target = "_blank"><button class = "btn btn-primary" title = "sPercentages, fractions and decimal">Dragons</button>
+<a href = "maths/dragons/dragons.html" target = "_blank"><button class = "btn btn-primary" title = "Percentages, fractions and decimal">Dragons</button>
 
 
 
@@ -283,7 +283,7 @@ Electrostatics</button></a>
 <a href = "logic/pigout/pigoutv4.html" target = "_blank"><button class = "btn btn-primary">Don't be Greedy</button></a> 
 <a href = "logic/sevenSegGamev2.php" target = "_blank"><button class = "btn btn-primary">Seven Segment</button></a> 
 <a href = "logic/eleusis.html"><button class = "btn btn-warning" title = "A game of logic where you nneed to find the secret rule.">Eleusis</button></a> 
-<a href = "logic/numberMystery.html"><button class= "btn btn-success" title = "Find the unknown number.">Find the number</button></a>
+<a href = "logic/numberDetective.html"><button class= "btn btn-success" title = "Find the unknown number.">Find the number</button></a>
 <a href="2048Game.html" ><button class="btn btn-primary">2048</button></a>
 <a href = "fiveColours/fiveColours.html" target ="_blank"><button class = "btn btn-primary">Five colours</button></a>
 <a href = "logic/miniSudoku.html" target ="_blank"><button class = "btn btn-primary">Mini Sudoku 4x4</button></a>

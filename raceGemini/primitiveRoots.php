@@ -131,7 +131,7 @@ p.parameter  {
       <div class = "row">
       <div class = "col-12 text-center">
 
-    <h1>Find x and y</h1>
+    <h1>Solve the equation</h1>
 
  
  
@@ -381,45 +381,6 @@ MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1"]);
     }
 </script>
 
-<script type="text/javascript">
-    
-    function makeQuestion2(primes)
-
-
-    {
- {
-// need a prime number and the primitive roots for that prime.
-// then randomly select a primitve root
-// select a random number < n -1
-// generate a = g^x mod p
-
-
-        // get p from primes 
-        let l = primes.length -1; 
-        let n = getRandomInt(1,l);
-        let p = primes[n];
-        console.log(l,n,p);
-       
-        let primitiveRoots = getPrimitiveRoots(p);
-        l = primitiveRoots.length -1;
-        n = getRandomInt(0,l);
-        let g = primitiveRoots[n];
-        console.log("primitive roots",primitiveRoots,n,g);
-        let x = getRandomInt(1,p-2);
-        let a = powerMod(g,x,p);
-        expr = '$ x^3 $' `; 
-;
-        $('#equation2').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
-        
-        
-        return a;
-       
-       
-    }
-
-    }
-</script>
 
 
 <script type="text/javascript">
@@ -430,10 +391,10 @@ MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1"]);
 
 primes = makePrimes(17);      
 answer[1] = makeQuestion1(primes) ;
-answer[2] = makeQuestion2(primes) ;
 
-checkAnswer(2);
-console.log(answer);
+
+checkAnswer(1);
+console.log("Answer", answer);
 
 
 

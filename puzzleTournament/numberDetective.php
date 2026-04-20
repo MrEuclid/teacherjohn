@@ -1,6 +1,6 @@
 <?php 
  // Use the dynamic question ID, default to 3 (or whatever number this puzzle is!)
- $question = isset($_POST['question']) ? $_POST['question'] : 3;
+ $question = isset($_POST['question']) ? $_POST['question'] : 4;
 ?>
 <!DOCTYPE html>
 <html lang="en">

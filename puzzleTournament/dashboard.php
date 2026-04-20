@@ -64,55 +64,63 @@ function getPuzzleState($num, $solvedArray) {
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            /* Replace with an actual drawing or image of the Wat Phnom path */
             background-image: url('images/watPhnomMap.jpg'); 
             background-size: cover;
-            background-color: #e2e8f0; /* Fallback color */
+            background-color: #e2e8f0; 
             aspect-ratio: 4/5; 
             border-radius: 1rem;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             border: 4px solid #cbd5e1;
         }
 
-        /* Base styles for the map pins */
+        /* Base styles for the image thumbnails */
         .map-pin {
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 60px; /* Slightly larger to show off the images */
+            height: 60px;
             border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
+            
+            /* Optional: Keeps the numbers visible over the image, remove if you only want the picture */
+            color: white;
             font-weight: bold;
-            font-size: 1.25rem;
-            transform: translate(-50%, -50%);
-            transition: all 0.2s;
-            text-decoration: none;
+            font-size: 1.5rem;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* The three states */
+        /* The three states utilizing CSS Filters */
         .locked {
-            background-color: #94a3b8; /* Gray */
-            color: white;
+            filter: grayscale(100%) brightness(60%);
+            border: 3px solid #64748b;
             cursor: not-allowed;
-            opacity: 0.8;
-            border: 2px solid #64748b;
         }
         
         .unlocked {
-            background-color: #3b82f6; /* Blue */
-            color: white;
-            border: 4px solid #bfdbfe;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            filter: grayscale(0%) brightness(100%);
+            border: 4px solid #3b82f6; /* Blue border to indicate active */
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
             animation: pulse 2s infinite;
             z-index: 10;
         }
 
         .completed {
-            background-color: #10b981; /* Green */
-            color: white;
-            border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            filter: grayscale(0%) brightness(100%);
+            border: 4px solid #10b981; /* Green border for completed */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            /* Optional overlay to show a checkmark effect could go here */
+        }
+
+        /* Make the finale pin stand out more */
+        .finale-pin {
+            width: 85px;
+            height: 85px;
         }
 
         @keyframes pulse {
@@ -142,21 +150,21 @@ function getPuzzleState($num, $solvedArray) {
     <div class="map-container">
         
         <?php $state1 = getPuzzleState(1, $solved); ?>
-        <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" style="bottom: 10%; left: 20%;" title="Tower of Hanoi">1</a>
+        <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" style="bottom: 10%; left: 20%; background-image: url('images/independence_monument.jpg');" title="Tower of Hanoi">1</a>
 
         <?php $state2 = getPuzzleState(2, $solved); ?>
-        <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" style="bottom: 25%; left: 50%;" title="Logic Lab">2</a>
+        <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" style="bottom: 25%; left: 50%; background-image: url('images/central_market.jpg');" title="Logic Lab">2</a>
 
         <?php $state3 = getPuzzleState(3, $solved); ?>
-        <a href="4color..php" class="map-pin <?php echo $state3; ?>" style="bottom: 40%; left: 80%;" title="4 Colour Map">3</a>
+        <a href="4color..php" class="map-pin <?php echo $state3; ?>" style="bottom: 40%; left: 80%; background-image: url('images/royal_palace.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
-        <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" style="bottom: 55%; left: 60%;" title="Gridlock">4</a>
+        <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" style="bottom: 55%; left: 60%; background-image: url('images/naga_world.jpg');" title="Gridlock">4</a>
 
         <?php $state10 = getPuzzleState(10, $solved); ?>
         <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
-           class="map-pin <?php echo $state10; ?>" 
-           style="top: 5%; left: 50%; width: 65px; height: 65px; font-size: 1.5rem;"
+           class="map-pin finale-pin <?php echo $state10; ?>" 
+           style="top: 5%; left: 50%; background-image: url('images/wat_phnom_thumb.jpg');"
            title="Wat Phnom Finale"
            onclick="<?php echo $state10 === 'locked' ? 'alert(\'You must complete Puzzles 1-9 to unlock Wat Phnom!\'); return false;' : ''; ?>">
            10

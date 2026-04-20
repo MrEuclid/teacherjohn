@@ -110,7 +110,7 @@ th {text-align: center;}
 <p id = "transID"></p>
   <div id = "topLine">
     <div class = "row text-center">
-  <div class = "col- ">
+  <div class = "col-12 ">
 <p id = "who"></p>
 <label class = "head">Assets</label>
 <p id = "assets"></p>
@@ -135,8 +135,11 @@ th {text-align: center;}
 
 
 <div id = "loginForm">
-<div class = "row">
-  <div class = "col- text-center">
+<div class = "row text-center">
+   <div class = "col-12 text-center">
+      <h1>mBooks v2</h1>
+   </div></div>
+  <div class = "col-12 text-center">
    <h3 id = "header">mBooksv2 Login</h3>
 </div></div>
 

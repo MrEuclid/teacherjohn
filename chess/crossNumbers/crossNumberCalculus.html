@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calculus Practice Quiz</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+
+    <style>
+        body { background-color: #f8f9fa; }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .quiz-input {
+            width: 100px;
+            height: 60px;
+            border: 2px solid #dee2e6;
+            background-color: #e0f7fa;
+            text-align: center;
+            font-size: 1.8em; 
+            font-weight: bold;
+            color: #000; 
+            outline: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .quiz-input:focus {
+            background-color: #fff9c4;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+        }
+        .question-row {
+            transition: all 0.2s ease;
+        }
+        .question-row:hover {
+            background-color: #f8f9fa !important;
+        }
+        #star-display {
+            font-size: 2.5rem;
+            color: #ffc107; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            min-height: 50px; 
+        }
+        #success-msg {
+            display: none;
+        }
+    </style>
+</head>
+<body class="py-5">
+
+<div class="container">
+    <div class="quiz-container">
+        
+        <div class="text-center mb-4">
+            <h1 class="display-5 text-primary fw-bold">Calculus Practice</h1>
+            <p class="lead text-secondary">Differentiation, Integration & The Chain Rule</p>
+            
+            <div id="star-display" class="mb-2"></div>
+
+            <div class="alert alert-info d-inline-block">
+                <strong>Instructions:</strong> Evaluate each expression to find the integer answer.
+            </div>
+            <br>
+            <div id="success-msg" class="alert alert-success shadow-sm mx-auto mt-2" style="max-width: 400px; display: none;">
+                <strong>Correct!</strong> Perfect score. Generating a new set...
+            </div>
+        </div>
+
+        <div id="question-list" class="mt-4">
+            </div>
+
+        <div class="text-end mt-4">
+             <button id="skip-btn" class="btn btn-outline-secondary btn-lg shadow-sm">Skip / Generate New Set</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let totalWins = 0;
+let quizActive = true;
+const QUESTIONS_PER_ROUND = 6;
+
+// --- CALCULUS GENERATOR LOGIC ---
+
+function generateCalculusClue(target) {
+    const type = Math.floor(Math.random() * 7); 
+    let questionStr = "";
+
+    if (type === 0) {
+        let k = Math.floor(Math.random() * 4) + 1; 
+        let a = Math.floor(Math.random() * 5) + 1; 
+        let b = target - (2 * a * k);
+        let poly = `${a > 1 ? a : ''}x^2`;
+        if (b > 0) poly += ` + ${b}x`; else if (b < 0) poly += ` - ${Math.abs(b)}x`;
+        questionStr = `If $f(x) = ${poly}$, find $f'(${k})$`;
+    }
+    else if (type === 1) {
+        let k = Math.floor(Math.random() * 3) + 2; 
+        let A = target - (3 * k * k);
+        let poly = `x^3`;
+        if (A > 0) poly += ` + ${A}x`; else if (A < 0) poly += ` - ${Math.abs(A)}x`;
+        questionStr = `If $f(x) = ${poly}$, find $f'(${k})$`;
+    }
+    else if (type === 2) {
+        let k = 2; 
+        if (target % 5 === 0) k = 5;
+        else if (target % 2 !== 0) k = 1; 
+        let C = (target - (k * k)) / k;
+        let integrand = `2x`;
+        if (C > 0) integrand += ` + ${C}`; else if (C < 0) integrand += ` - ${Math.abs(C)}`;
+        questionStr = `Evaluate $\\int_{0}^{${k}} (${integrand}) \\, dx$`;
+    }
+    else if (type === 3) {
+        let width = 1;
+        if (target % 2 === 0) width = 2;
+        if (target % 3 === 0) width = 3;
+        let C = target / width;
+        let start = Math.floor(Math.random() * 3);
+        let end = start + width;
+        questionStr = `Evaluate $\\int_{${start}}^{${end}} ${C} \\, dx$`;
+    }
+    else if (type === 4) {
+        let C = target - 2;
+        let D = -1 - C;
+        let poly = `x^2`;
+        if (C > 0) poly += ` + ${C}x`; else if (C < 0) poly += ` - ${Math.abs(C)}x`;
+        if (D > 0) poly += ` + ${D}`; else if (D < 0) poly += ` - ${Math.abs(D)}`;
+        questionStr = `If $f(x) = e^{${poly}}$, find $f'(1)$`;
+    }
+    else if (type === 5) {
+        let A = Math.floor(Math.random() * 4) + 2; 
+        let B = (2 * target) - (2 * A);
+        let C = 1 - A - B;
+        let poly = `${A}x^2`;
+        if (B > 0) poly += ` + ${B}x`; else if (B < 0) poly += ` - ${Math.abs(B)}x`;
+        if (C > 0) poly += ` + ${C}`; else if (C < 0) poly += ` - ${Math.abs(C)}`;
+        questionStr = `If $f(x) = \\sqrt{${poly}}$, find $f'(1)$`;
+    }
+    else {
+        let A = Math.floor(Math.random() * 4) + 2; 
+        let B = target - (2 * A);
+        let C = 1 - A - B;
+        let poly = `${A}x^2`;
+        if (B > 0) poly += ` + ${B}x`; else if (B < 0) poly += ` - ${Math.abs(B)}x`;
+        if (C > 0) poly += ` + ${C}`; else if (C < 0) poly += ` - ${Math.abs(C)}`;
+        questionStr = `If $f(x) = \\ln(${poly})$, find $f'(1)$`;
+    }
+
+    return questionStr;
+}
+
+
+// --- MAIN LOOP ---
+
+function generateNewQuiz() {
+    quizActive = true;
+    $('#success-msg').hide();
+    $('#question-list').empty();
+
+    for (let i = 1; i <= QUESTIONS_PER_ROUND; i++) {
+        // Pick a clean, small target answer between 1 and 25
+        let target = Math.floor(Math.random() * 25) + 1; 
+        let clue = generateCalculusClue(target);
+
+        // Build the horizontal row for each question
+        let rowHtml = `
+            <div class="d-flex align-items-center mb-3 p-3 border rounded shadow-sm bg-white question-row">
+                <div class="me-4 fw-bold fs-4 text-primary">${i}.</div>
+                <div class="flex-grow-1 fs-4">${clue}</div>
+                <div>
+                    <input type="text" class="quiz-input form-control" data-answer="${target}" />
+                </div>
+            </div>
+        `;
+        $('#question-list').append(rowHtml);
+    }
+
+    // Render MathJax and attach listeners
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    $('.quiz-input').on('input keyup', checkWinCondition);
+}
+
+// --- VALIDATION LOGIC ---
+
+function checkWinCondition() {
+    if (!quizActive) return;
+
+    let allFilled = true;
+    let allCorrect = true;
+
+    $('.quiz-input').each(function() {
+        let expected = $(this).attr('data-answer');
+        let val = $(this).val().trim(); // Trim spaces just in case
+
+        if (val === "") { 
+            allFilled = false; 
+            $(this).css('background-color', '#e0f7fa'); // Default blue
+        } 
+        else if (parseInt(val) !== parseInt(expected)) { 
+            allCorrect = false; 
+            $(this).css('background-color', '#ffcdd2'); // Red tint
+        } 
+        else { 
+            $(this).css('background-color', '#c8e6c9'); // Green tint
+        }
+    });
+    
+    // Win Condition Met
+    if (allFilled && allCorrect) {
+        quizActive = false; // Lock game to stop multiple triggers
+        
+        // Add a Star
+        totalWins++;
+        $('#star-display').text('⭐'.repeat(totalWins)); 
+
+        $('#success-msg').fadeIn();
+        
+        // Wait 3 seconds, fade out success msg, generate next quiz
+        setTimeout(() => {
+            $('#success-msg').fadeOut(400, function() {
+                generateNewQuiz();
+            });
+        }, 3000);
+    }
+}
+
+// --- INITIALIZATION ---
+$(document).ready(function() {
+    generateNewQuiz(); 
+    $('#skip-btn').click(generateNewQuiz);
+});
+</script>
+</body>
+</html>

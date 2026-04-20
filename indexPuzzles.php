@@ -80,7 +80,7 @@ button {margin: 0.5em;}
 
   <a href = "/scrabble/scrabble.html" target="_blank"><button title = "Build words on a grid. A simple version of Scrabble. Grade 5+." class = "btn btn-success">Word builder</button></a>
 <a href = "../countDown/secretWord.html" target = "_blank"><button title = "Wordle game - hard G11 - G12" class = "btn btn-danger" >Secret Word</button></a> 
-<a href = "hangman.html" arget="_blank"><button class = "btn btn-primary" title = "Hangman type game - guess the letters to find the word. G4-G5+" >Find the word</button></a>
+<a href = "/hangman/hangman.html" target="_blank"><button class = "btn btn-primary" title = "Hangman type game - guess the letters to find the word. G4-G5+" >Find the word</button></a>
 <a href = "englishIPad/indexWords.php"><button class = "btn btn-info" title = "Move the letters to make a word. G3 - G4">Words</button></a>
 
 <a href = "race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-primary" title = "Simple crosswords based on Let's Go">Crosswords</button></a>

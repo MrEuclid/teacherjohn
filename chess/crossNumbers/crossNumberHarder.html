@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Advanced Algebra Cross-Number Challenge</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .puzzle-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .grid-cell {
+            width: 60px; 
+            height: 60px;
+            position: relative;
+            background-color: #212529; /* Default to black square */
+        }
+        .grid-input {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #dee2e6;
+            background-color: #e0f7fa;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #000;
+            outline: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .grid-input:focus {
+            background-color: #fff9c4;
+            border: 2px solid #0d6efd;
+            z-index: 5;
+        }
+        .superscript {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: #495057;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .clue-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .clue-list p {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .variable-box {
+            background-color: #e9ecef;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #0d6efd;
+        }
+        #star-display {
+            font-size: 2rem;
+            color: #ffc107; /* Bootstrap Warning Color (Gold) */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            min-height: 40px; /* Prevents layout jump when first star appears */
+        }
+        #success-msg {
+            display: none;
+        }
+    </style>
+</head>
+<body class="py-5">
+<a href="/index.php" style="position: absolute; top: 10px; left: 10px; z-index: 999;" class="btn btn-dark btn-sm opacity-75">
+← Home
+</a>
+<div class="container">
+    <div class="puzzle-container">
+        
+        <div class="text-center mb-4">
+            <h1 class="display-5 text-primary fw-bold">Algebra Cross-Number</h1>
+            <p class="lead text-secondary">Level 2: Solving for Unknowns</p>
+            
+            <div class="my-3">
+                <div id="variable-display" class="variable-box shadow-sm">
+                    </div>
+            </div>
+
+            <div id="star-display" class="mb-2"></div>
+
+            <div class="alert alert-info d-inline-block">
+                <strong>Instructions:</strong> Solve each equation for <strong>$n$</strong> to find the number for the grid.
+            </div>
+            <br>
+            <div id="success-msg" class="alert alert-success shadow-sm mx-auto mt-2" style="max-width: 400px; display: none;">
+                <strong>Success!</strong> All answers are correct. Generating new puzzle...
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-5 mb-4 d-flex justify-content-center">
+                <div id="puzzle-grid" style="display: grid; grid-template-columns: repeat(5, 60px); gap: 2px; background: #212529; padding: 2px; border: 2px solid #212529;">
+                    </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="text-primary border-bottom pb-2">Across</h4>
+                        <div id="clues-across" class="clue-list"></div>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-primary border-bottom pb-2">Down</h4>
+                        <div id="clues-down" class="clue-list"></div>
+                    </div>
+                </div>
+                <div class="text-end mt-3">
+                     <button id="skip-btn" class="btn btn-outline-secondary btn-sm">Skip / New Puzzle</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// --- CONFIGURATION ---
+const gridTemplates = [
+    // Template 1 (Classic Cross)
+    [
+        ['W','W','W','W','B'],
+        ['W','B','W','B','W'],
+        ['W','W','W','W','W'],
+        ['W','B','W','B','W'],
+        ['B','W','W','W','W']
+    ],
+    // Template 2 (The Block)
+    [
+        ['W','W','W','B','W'],
+        ['W','W','W','B','W'],
+        ['W','W','W','W','W'],
+        ['W','B','W','W','W'],
+        ['W','B','W','W','W']
+    ],
+    // Template 3 (Corners)
+    [
+        ['B','W','W','W','B'],
+        ['W','W','W','W','W'],
+        ['W','W','W','W','W'],
+        ['W','W','W','W','W'],
+        ['B','W','W','W','B']
+    ]
+];
+
+let X_VAL, Y_VAL;
+let totalWins = 0;
+let puzzleActive = true;
+
+// --- CORE FUNCTIONS ---
+
+// 1. Generate Algebraic Equations Solving for 'n' (Updated for complex radicals)
+function generateEquation(target) {
+    const templateType = Math.floor(Math.random() * 5);
+    let C, equationStr, sign;
+
+    if (templateType === 0) {
+        // Radical Eq: sqrt(n +/- C) = y
+        // Logic: n +/- C = y^2
+        let ySq = Y_VAL * Y_VAL;
+        C = target - ySq; 
+        sign = C >= 0 ? '-' : '+';
+        equationStr = `\\sqrt{n ${sign} ${Math.abs(C)}} = y`;
+        
+    } else if (templateType === 1) {
+        // Linear Eq: 3n - x = 2n +/- C
+        // Logic: n = x +/- C
+        C = target - X_VAL;
+        sign = C >= 0 ? '+' : '-';
+        equationStr = `3n - x = 2n ${sign} ${Math.abs(C)}`;
+        
+    } else if (templateType === 2) {
+        // Product inside Radical: sqrt(xn +/- C) = y
+        // Logic: x*n +/- C = y^2
+        let ySq = Y_VAL * Y_VAL;
+        C = (X_VAL * target) - ySq;
+        sign = C >= 0 ? '-' : '+';
+        equationStr = `\\sqrt{xn ${sign} ${Math.abs(C)}} = y`;
+        
+    } else if (templateType === 3) {
+        // Cube Root Eq: cbrt(n +/- C) = k 
+        // Logic: n +/- C = k^3
+        let k = Math.floor(Math.random() * 4) + 2; // Random small integer (2, 3, 4, or 5)
+        let kCb = k * k * k;
+        C = target - kCb;
+        sign = C >= 0 ? '-' : '+';
+        equationStr = `\\sqrt[3]{n ${sign} ${Math.abs(C)}} = ${k}`;
+        
+    } else {
+        // Rational Eq: (n +/- C) / x = y
+        // Logic: n +/- C = xy
+        let xy = X_VAL * Y_VAL;
+        C = target - xy; 
+        sign = C >= 0 ? '-' : '+';
+        equationStr = `\\frac{n ${sign} ${Math.abs(C)}}{x} = y`;
+    }
+
+    return `$ ${equationStr} $`;
+}
+
+// 2. Main Game Loop
+function generateNewPuzzle() {
+    // A. Reset UI and flags
+    puzzleActive = true;
+    $('#success-msg').hide();
+    
+    // B. Randomize Variables (Higher range for Level 2)
+    X_VAL = Math.floor(Math.random() * 20) + 5; // 5 to 25
+    Y_VAL = Math.floor(Math.random() * 20) + 5; 
+    if(X_VAL === Y_VAL) Y_VAL++; 
+
+    $('#variable-display').html(`x = ${X_VAL} &nbsp;&nbsp;|&nbsp;&nbsp; y = ${Y_VAL}`);
+
+    // C. Pick Grid & Fill Answers
+    let layout = gridTemplates[Math.floor(Math.random() * gridTemplates.length)];
+    let gridAnswers = [];
+    $('#puzzle-grid').empty();
+
+    // Fill grid with random digits 1-9
+    for (let r = 0; r < 5; r++) {
+        gridAnswers[r] = [];
+        for (let c = 0; c < 5; c++) {
+            if (layout[r][c] === 'W') {
+                gridAnswers[r][c] = Math.floor(Math.random() * 9) + 1; 
+            } else {
+                gridAnswers[r][c] = null;
+            }
+        }
+    }
+
+    // D. Extract Words (Standard Crossword Logic)
+    let targetsAcross = [];
+    let targetsDown = [];
+    let clueNum = 1;
+
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            if (gridAnswers[r][c] !== null) {
+                // Check if this cell starts a word
+                let isAcrossStart = (c === 0 || gridAnswers[r][c-1] === null) && (c < 4 && gridAnswers[r][c+1] !== null);
+                let isDownStart = (r === 0 || gridAnswers[r-1][c] === null) && (r < 4 && gridAnswers[r+1][c] !== null);
+                
+                let numbered = false;
+
+                // Build Across Word
+                if (isAcrossStart) {
+                    numbered = true;
+                    let numStr = "";
+                    let col = c;
+                    while(col < 5 && gridAnswers[r][col] !== null) {
+                        numStr += gridAnswers[r][col];
+                        col++;
+                    }
+                    targetsAcross.push({ id: clueNum, target: parseInt(numStr) });
+                }
+
+                // Build Down Word
+                if (isDownStart) {
+                    numbered = true;
+                    let numStr = "";
+                    let row = r;
+                    while(row < 5 && gridAnswers[row][c] !== null) {
+                        numStr += gridAnswers[row][c];
+                        row++;
+                    }
+                    targetsDown.push({ id: clueNum, target: parseInt(numStr) });
+                }
+
+                // Render Cell
+                let label = numbered ? `<div class="superscript">${clueNum}</div>` : '';
+                $('#puzzle-grid').append(`
+                    <div class="grid-cell">
+                        ${label}
+                        <input type="text" class="grid-input" maxlength="1" data-answer="${gridAnswers[r][c]}" />
+                    </div>
+                `);
+
+                if (numbered) clueNum++;
+            } else {
+                // Render Black Square
+                $('#puzzle-grid').append(`<div class="grid-cell"></div>`);
+            }
+        }
+    }
+
+    // E. Generate Clues & Update UI
+    $('#clues-across, #clues-down').empty();
+    
+    targetsAcross.forEach(item => {
+        $('#clues-across').append(`<p><strong>${item.id}.</strong> ${generateEquation(item.target)}</p>`);
+    });
+
+    targetsDown.forEach(item => {
+        $('#clues-down').append(`<p><strong>${item.id}.</strong> ${generateEquation(item.target)}</p>`);
+    });
+
+    // F. Re-render Math
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+    // G. Attach Listeners
+    $('.grid-input').on('input keyup', checkWinCondition);
+}
+
+// 3. Validation Logic
+function checkWinCondition() {
+    if (!puzzleActive) return;
+
+    let allFilled = true;
+    let allCorrect = true;
+
+    $('.grid-input').each(function() {
+        let expected = $(this).attr('data-answer');
+        let val = $(this).val();
+
+        if (val === "") {
+            allFilled = false;
+            $(this).css('background-color', '#e0f7fa');
+        } else if (val !== expected) {
+            allCorrect = false;
+            $(this).css('background-color', '#ffcdd2'); // Red tint for wrong
+        } else {
+            $(this).css('background-color', '#c8e6c9'); // Green tint for right
+        }
+    });
+
+    if (allFilled && allCorrect) {
+        puzzleActive = false; // Lock game to stop multiple triggers
+        
+        // Add a Star
+        totalWins++;
+        $('#star-display').text('⭐'.repeat(totalWins)); 
+
+        $('#success-msg').fadeIn();
+        
+        // Wait 3 seconds, fade out msg, generate next puzzle
+        setTimeout(() => {
+            $('#success-msg').fadeOut(400, function() {
+                generateNewPuzzle();
+            });
+        }, 3000);
+    }
+}
+
+// --- INITIALIZATION ---
+$(document).ready(function() {
+    generateNewPuzzle(); 
+    $('#skip-btn').click(generateNewPuzzle);
+});
+
+</script>
+</body>
+</html>

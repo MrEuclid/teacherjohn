@@ -1,5 +1,6 @@
 The algorithm in itself is very simple. Let's assume that Alice wants to establish a shared secret with Bob.
 
+
 Alice and Bob agree on a prime number, p, and a base, g, in advance. For our example, let's assume that p=23 and g=5.
 Alice chooses a secret integer a whose value is 6 and computes A = g^a mod p. In this example, A has the value of 8.
 Bob chooses a secret integer b whose value is 15 and computes B = g^b mod p. In this example, B has the value of 19.

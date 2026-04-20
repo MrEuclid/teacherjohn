@@ -150,16 +150,20 @@ function getPuzzleState($num, $solvedArray) {
     <div class="map-container">
         
         <?php $state1 = getPuzzleState(1, $solved); ?>
-        <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" style="bottom: 10%; left: 20%; background-image: url('images/independence_monument.jpg');" title="Tower of Hanoi">1</a>
+        <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" 
+        style="bottom: 10%; left: 20%; background-image: url('images/moto.jpg');" title="Tower of Hanoi">1</a>
 
         <?php $state2 = getPuzzleState(2, $solved); ?>
-        <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" style="bottom: 25%; left: 50%; background-image: url('images/central_market.jpg');" title="Logic Lab">2</a>
+        <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" 
+        style="bottom: 25%; left: 50%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
 
         <?php $state3 = getPuzzleState(3, $solved); ?>
-        <a href="4color..php" class="map-pin <?php echo $state3; ?>" style="bottom: 40%; left: 80%; background-image: url('images/royal_palace.jpg');" title="4 Colour Map">3</a>
+        <a href="4color..php" class="map-pin <?php echo $state3; ?>" 
+        style="bottom: 40%; left: 80%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
-        <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" style="bottom: 55%; left: 60%; background-image: url('images/naga_world.jpg');" title="Gridlock">4</a>
+        <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
+        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Gridlock">4</a>
 
         <?php $state10 = getPuzzleState(10, $solved); ?>
         <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 

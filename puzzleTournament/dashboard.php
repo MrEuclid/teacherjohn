@@ -8,11 +8,24 @@ if (!isset($_SESSION['team_name'])) {
     exit();
 }
 
+// Catch the Switch Team / Logout Request
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['switch_team'])) {
+    // Unset all session variables
+    $_SESSION = array();
+    // Destroy the session completely
+    session_destroy();
+    // Send them back to the start page
+    header("Location: index.php");
+    exit();
+}
+
+// Catch the Reset Request (Your existing code)
+// ...
 // Catch the Reset Request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reset_tournament'])) {
     $_SESSION['solved'] = array(
         1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 
-        6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0
+        6 => 0, 7 => 0, 8 => 0, 9 => 0
     );
     // Refresh the page to clear the POST data
     header("Location: dashboard.php");
@@ -35,15 +48,15 @@ function getPuzzleState($num, $solvedArray) {
         return 'completed';
     }
 
-    // Special logic for the final puzzle (Node 10)
-    if ($num == 10) {
+    // Special logic for the final puzzle (Node 9)
+    if ($num == 9) {
         $solvedCount = 0;
-        for ($i = 1; $i <= 9; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             if ($solvedArray[$i] == 1) {
                 $solvedCount++;
             }
         }
-        return ($solvedCount == 9) ? 'unlocked' : 'locked';
+       return ($solvedCount == 8) ? 'unlocked' : 'locked';
     }
 
     // Puzzles 1-9 are always unlocked if not completed
@@ -110,12 +123,13 @@ function getPuzzleState($num, $solvedArray) {
             z-index: 10;
         }
 
-        .completed {
-            filter: grayscale(0%) brightness(100%);
-            border: 4px solid #10b981; /* Green border for completed */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            /* Optional overlay to show a checkmark effect could go here */
-        }
+      .completed {
+    background-color: #10b981; /* Green */
+    color: yellow;
+    border: 2px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: default; /* Tells the browser not to show the 'clickable' finger pointer */
+}
 
         /* Make the finale pin stand out more */
         .finale-pin {
@@ -132,15 +146,29 @@ function getPuzzleState($num, $solvedArray) {
 </head>
 <body class="bg-slate-100 p-6 relative min-h-screen">
 
-    <form method="POST" action="dashboard.php" class="absolute top-4 right-4 md:top-8 md:right-8" onsubmit="return confirm('Are you sure you want to reset all progress? This will lock all completed puzzles.');">
-        <input type="hidden" name="reset_tournament" value="1">
-        <button type="submit" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-rose-200 shadow-sm flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Reset Progress
-        </button>
-    </form>
+ <div class="absolute top-4 right-4 md:top-8 md:right-8 flex flex-col gap-2 z-50">
+        
+        <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to reset all progress? This will lock all completed puzzles.');">
+            <input type="hidden" name="reset_tournament" value="1">
+            <button type="submit" class="w-full bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-rose-200 shadow-sm flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Progress
+            </button>
+        </form>
+
+        <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to switch teams? You will need to enter a new team name.');">
+            <input type="hidden" name="switch_team" value="1">
+            <button type="submit" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-slate-300 shadow-sm flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Switch Team
+            </button>
+        </form>
+        
+    </div>
 
     <div class="max-w-4xl mx-auto mb-8 text-center pt-8 md:pt-0">
         <h1 class="text-4xl font-black text-indigo-900">Team: <?php echo $team; ?></h1>
@@ -151,27 +179,47 @@ function getPuzzleState($num, $solvedArray) {
         
         <?php $state1 = getPuzzleState(1, $solved); ?>
         <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" 
-        style="bottom: 10%; left: 20%; background-image: url('images/moto.jpg');" title="Tower of Hanoi">1</a>
+        style="bottom: 10%; left: 20%; background-image: url('images/moto.jpg');" title="Tower of Hanoi">
+        
+        1</a>
 
         <?php $state2 = getPuzzleState(2, $solved); ?>
         <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" 
-        style="bottom: 25%; left: 50%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
+        style="bottom: 20%; left: 30%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
 
         <?php $state3 = getPuzzleState(3, $solved); ?>
-        <a href="4color..php" class="map-pin <?php echo $state3; ?>" 
-        style="bottom: 40%; left: 80%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
+        <a href="4color.php" class="map-pin <?php echo $state3; ?>" 
+        style="bottom: 30%; left: 40%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
         <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
-        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Gridlock">4</a>
+        style="bottom: 40%; left: 50%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
 
-        <?php $state10 = getPuzzleState(10, $solved); ?>
-        <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
-           class="map-pin finale-pin <?php echo $state10; ?>" 
-           style="top: 5%; left: 50%; background-image: url('images/wat_phnom_thumb.jpg');"
+        <?php $state5 = getPuzzleState(5, $solved); ?>
+        <a href="miniSudoku.php" class="map-pin <?php echo $state5; ?>" 
+        style="bottom: 50%; left: 60%; background-image: url('images/phsar_thmei.jpg');" title="Solve the sudoku">5</a>
+
+
+        <?php $state6 = getPuzzleState(6, $solved); ?>
+        <a href="sevenSegment.php" class="map-pin <?php echo $state6; ?>" 
+        style="bottom: 60%; left: 50%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
+
+        <?php $state7 = getPuzzleState(7, $solved); ?>
+        <a href="pentominoes.php" class="map-pin <?php echo $state7; ?>" 
+        style="bottom: 70%; left: 40%; background-image: url('images/independenceMonument.jpg');" title="Solve it">7</a>
+
+        <?php $state8 = getPuzzleState(8, $solved); ?>
+        <a href="4Colours.php" class="map-pin <?php echo $state8; ?>" 
+        style="bottom: 80%; left: 50%; background-image: url('images/watPhnom.jpg');" title="5 colour puzzle">8</a>
+  
+  
+        <?php $state9 = getPuzzleState(9, $solved); ?>
+        <a href="<?php echo $state9 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
+           class="map-pin finale-pin <?php echo $state9; ?>" 
+           style="top: 5%; left: 50%; background-image: url('images/buddha.jpg');"
            title="Wat Phnom Finale"
-           onclick="<?php echo $state10 === 'locked' ? 'alert(\'You must complete Puzzles 1-9 to unlock Wat Phnom!\'); return false;' : ''; ?>">
-           10
+           onclick="<?php echo $state9 === 'locked' ? 'alert(\'You must complete Puzzles 1-8 to unlock Wat Phnom!\'); return false;' : ''; ?>">
+           9
         </a>
 
     </div>

@@ -79,4 +79,116 @@ if (!isset($_SESSION['team_name'])) {
 
     <script type="text/javascript">
         // The 4 colours (plus the default uncoloured white state)
-        const colors = ['white', '#f4
+        const colors = ['white', '#f43f5e', '#10b981', '#3b82f6', '#f59e0b']; // Slate, Rose, Emerald, Blue, Amber
+        
+        let regions = [];
+
+        function initRegions() {
+            // This map features a K4 graph core.
+            // This mathematically GUARANTEES that exactly 4 colours are required to solve it.
+            regions = [
+                // Inner Core (K4 Graph)
+                { id: 0, path: new Path2D('M 200 140 L 140 220 L 260 220 Z'), color: 'white', neighbours: [1, 2, 3] },
+                { id: 1, path: new Path2D('M 200 140 L 200 50 L 80 260 L 140 220 Z'), color: 'white', neighbours: [0, 2, 3, 4] },
+                { id: 2, path: new Path2D('M 200 140 L 260 220 L 320 260 L 200 50 Z'), color: 'white', neighbours: [0, 1, 3, 5] },
+                { id: 3, path: new Path2D('M 140 220 L 80 260 L 200 310 L 320 260 L 260 220 Z'), color: 'white', neighbours: [0, 1, 2, 6, 7] },
+                
+                // Outer Shell
+                { id: 4, path: new Path2D('M 200 50 L 200 10 L 20 150 L 80 260 Z'), color: 'white', neighbours: [1, 5, 6] },
+                { id: 5, path: new Path2D('M 200 50 L 320 260 L 380 150 L 200 10 Z'), color: 'white', neighbours: [2, 4, 7] },
+                { id: 6, path: new Path2D('M 80 260 L 20 150 L 100 380 L 200 380 L 200 310 Z'), color: 'white', neighbours: [3, 4, 7] },
+                { id: 7, path: new Path2D('M 200 310 L 200 380 L 300 380 L 380 150 L 320 260 Z'), color: 'white', neighbours: [3, 5, 6] }
+            ];
+        }
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const feedbackDiv = document.getElementById('feedback');
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#334155'; // Slate-700
+            ctx.lineJoin = 'round';
+
+            regions.forEach(r => {
+                ctx.fillStyle = r.color;
+                ctx.fill(r.path);
+                ctx.stroke(r.path);
+            });
+        }
+
+        function checkWinCondition() {
+            let filledCount = 0;
+            let conflictCount = 0;
+
+            for (let i = 0; i < regions.length; i++) {
+                if (regions[i].color !== 'white') {
+                    filledCount++;
+                }
+
+                // Check against neighbours for rule violations
+                for (let j = 0; j < regions[i].neighbours.length; j++) {
+                    let nIdx = regions[i].neighbours[j];
+                    if (regions[i].color !== 'white' && regions[i].color === regions[nIdx].color) {
+                        conflictCount++;
+                    }
+                }
+            }
+
+            if (conflictCount > 0) {
+                feedbackDiv.innerHTML = '<span class="text-rose-500 font-bold text-xl">Careful! Touching regions share a colour.</span>';
+            } else if (filledCount < regions.length) {
+                feedbackDiv.innerHTML = '<span class="text-indigo-600 font-bold text-xl">Looking good! Keep going...</span>';
+            } else {
+                // Map is full and has 0 conflicts!
+                feedbackDiv.innerHTML = '<span class="text-green-500 font-black text-2xl tracking-wide">⭐ Map Solved! ⭐</span>';
+                
+                // Disable further clicking
+                canvas.style.pointerEvents = 'none'; 
+                
+                // Trigger the Tournament Victory Modal
+                setTimeout(() => {
+                    document.getElementById('winModal').classList.remove('hidden');
+                }, 400);
+            }
+        }
+
+        // Handle clicks to cycle colours
+        canvas.addEventListener('mousedown', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
+
+            for (let i = 0; i < regions.length; i++) {
+                if (ctx.isPointInPath(regions[i].path, x, y)) {
+                    let currentColorIndex = colors.indexOf(regions[i].color);
+                    let nextColorIndex = (currentColorIndex + 1) % colors.length;
+                    
+                    regions[i].color = colors[nextColorIndex];
+                    drawMap();
+                    checkWinCondition();
+                    break; // Stop checking paths once we found the clicked one
+                }
+            }
+        });
+
+        // Reset Map logic
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            initRegions();
+            drawMap();
+            canvas.style.pointerEvents = 'auto';
+            feedbackDiv.innerHTML = '<span class="text-indigo-600 font-bold text-xl">Fill all regions to win.</span>';
+        });
+
+        // Kickoff
+        document.addEventListener('DOMContentLoaded', function() {
+            initRegions();
+            drawMap();
+        });
+    </script>
+</body>
+</html>

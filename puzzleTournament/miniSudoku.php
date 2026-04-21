@@ -113,7 +113,7 @@ if (!isset($_SESSION['team_name'])) {
             <p class="text-slate-500 mb-8 font-bold leading-tight">Your logic is flawless. Puzzle 5 is unlocked!</p>
             
             <form action="dashboard.php" method="POST">
-                <input type="hidden" name="puzzle_solved" value="4">
+                <input type="hidden" name="puzzle_solved" value="5">
                 <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-green-200 uppercase tracking-widest">
                     Continue to Map
                 </button>

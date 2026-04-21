@@ -1,4 +1,5 @@
 <?php
+session_save_path(__DIR__ . '/sessions');
 session_start();
 
 // Ensure the participant is registered/logged in via the dashboard session
@@ -155,12 +156,10 @@ $team_identifier = isset($_SESSION['team_name']) ? $_SESSION['team_name'] : 'Gue
             <h3>Well done, solved!</h3>
             <p>You have successfully deduced the mystery number. The puzzle lock has been cleared.</p>
             
-            <form id="victoryForm" action="dashboard.php" method="POST">
-                <input type="hidden" name="puzzle_id" value="number_detective">
-                <input type="hidden" name="team_id" value="<?php echo htmlspecialchars($team_identifier); ?>">
-                <input type="hidden" name="status" value="completed">
-                <button type="submit">Return to Map</button>
-            </form>
+           <form id="victoryForm" action="dashboard.php" method="POST">
+    <input type="hidden" name="puzzle_solved" value="4">
+    <button type="submit">Return to Map</button>
+</form>
         </div>
     </div>
 

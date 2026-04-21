@@ -166,7 +166,7 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
         <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
-        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Gridlock">4</a>
+        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
 
         <?php $state10 = getPuzzleState(10, $solved); ?>
         <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 

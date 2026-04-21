@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['team_name'])) {
     // Save the team name safely
     $_SESSION['team_name'] = htmlspecialchars(trim($_POST['team_name']));
     
-    // Initialize their progress: Puzzles 1 through 10 are set to 0 (unsolved)
+    // Initialize their progress: Puzzles 1 through 9 are set to 0 (unsolved)
     $_SESSION['solved'] = array(
         1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 
-        6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0
+        6 => 0, 7 => 0, 8 => 0, 9 => 0
     );
     
     // Send them to the game dashboard

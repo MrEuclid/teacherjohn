@@ -12,7 +12,7 @@ if (!isset($_SESSION['team_name'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reset_tournament'])) {
     $_SESSION['solved'] = array(
         1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 
-        6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0
+        6 => 0, 7 => 0, 8 => 0, 9 => 0
     );
     // Refresh the page to clear the POST data
     header("Location: dashboard.php");
@@ -35,15 +35,15 @@ function getPuzzleState($num, $solvedArray) {
         return 'completed';
     }
 
-    // Special logic for the final puzzle (Node 10)
-    if ($num == 10) {
+    // Special logic for the final puzzle (Node 9)
+    if ($num == 9) {
         $solvedCount = 0;
-        for ($i = 1; $i <= 9; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             if ($solvedArray[$i] == 1) {
                 $solvedCount++;
             }
         }
-        return ($solvedCount == 9) ? 'unlocked' : 'locked';
+       return ($solvedCount == 8) ? 'unlocked' : 'locked';
     }
 
     // Puzzles 1-9 are always unlocked if not completed
@@ -175,15 +175,24 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state6 = getPuzzleState(6, $solved); ?>
         <a href="sevenSegment.php" class="map-pin <?php echo $state6; ?>" 
-        style="bottom: 50%; left: 60%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
+        style="bottom: 60%; left: 60%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
 
-        <?php $state10 = getPuzzleState(10, $solved); ?>
-        <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
-           class="map-pin finale-pin <?php echo $state10; ?>" 
-           style="top: 5%; left: 50%; background-image: url('images/wat_phnom_thumb.jpg');"
+        <?php $state7 = getPuzzleState(7, $solved); ?>
+        <a href="pentominoes.php" class="map-pin <?php echo $state7; ?>" 
+        style="bottom: 60%; left: 40%; background-image: url('images/independenceMonument.jpg');" title="Solve it">7</a>
+
+        <?php $state8 = getPuzzleState(8, $solved); ?>
+        <a href="4Colours.php" class="map-pin <?php echo $state8; ?>" 
+        style="bottom: 80%; left: 50%; background-image: url('images/watPhnom.jpg');" title="5 colour puzzle">8</a>
+  
+  
+        <?php $state9 = getPuzzleState(9, $solved); ?>
+        <a href="<?php echo $state9 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
+           class="map-pin finale-pin <?php echo $state9; ?>" 
+           style="top: 5%; left: 50%; background-image: url('images/buddha.jpg');"
            title="Wat Phnom Finale"
-           onclick="<?php echo $state10 === 'locked' ? 'alert(\'You must complete Puzzles 1-9 to unlock Wat Phnom!\'); return false;' : ''; ?>">
-           10
+           onclick="<?php echo $state9 === 'locked' ? 'alert(\'You must complete Puzzles 1-8 to unlock Wat Phnom!\'); return false;' : ''; ?>">
+           9
         </a>
 
     </div>

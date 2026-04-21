@@ -170,8 +170,7 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state5 = getPuzzleState(5, $solved); ?>
         <a href="miniSudoku.php" class="map-pin <?php echo $state5; ?>" 
-        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" 
-        title="Solve the sudoku">5</a>
+        style="bottom: 70%; left: 40%; background-image: url('images/phsar_thmei.jpg');" title="Solve the sudoku">5</a>
 
 
         <?php $state10 = getPuzzleState(10, $solved); ?>

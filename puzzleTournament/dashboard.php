@@ -158,20 +158,24 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state2 = getPuzzleState(2, $solved); ?>
         <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" 
-        style="bottom: 25%; left: 50%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
+        style="bottom: 20%; left: 30%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
 
         <?php $state3 = getPuzzleState(3, $solved); ?>
         <a href="4color.php" class="map-pin <?php echo $state3; ?>" 
-        style="bottom: 40%; left: 80%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
+        style="bottom: 30%; left: 40%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
         <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
-        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
+        style="bottom: 40%; left: 50%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
 
         <?php $state5 = getPuzzleState(5, $solved); ?>
         <a href="miniSudoku.php" class="map-pin <?php echo $state5; ?>" 
-        style="bottom: 70%; left: 40%; background-image: url('images/phsar_thmei.jpg');" title="Solve the sudoku">5</a>
+        style="bottom: 50%; left: 60%; background-image: url('images/phsar_thmei.jpg');" title="Solve the sudoku">5</a>
 
+
+        <?php $state6 = getPuzzleState(6, $solved); ?>
+        <a href="sevenSegment.php" class="map-pin <?php echo $state6; ?>" 
+        style="bottom: 50%; left: 60%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
 
         <?php $state10 = getPuzzleState(10, $solved); ?>
         <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 

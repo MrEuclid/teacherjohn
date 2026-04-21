@@ -168,6 +168,12 @@ function getPuzzleState($num, $solvedArray) {
         <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
         style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
 
+        <?php $state5 = getPuzzleState(5, $solved); ?>
+        <a href="miniSudoku.php" class="map-pin <?php echo $state5; ?>" 
+        style="bottom: 55%; left: 60%; background-image: url('images/silverPagoda.jpg');" 
+        title="Solve the sudoku">5</a>
+
+
         <?php $state10 = getPuzzleState(10, $solved); ?>
         <a href="<?php echo $state10 === 'locked' ? '#' : 'hanoi_2.php'; ?>" 
            class="map-pin finale-pin <?php echo $state10; ?>" 

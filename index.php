@@ -43,8 +43,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 c">
-            <a href="/monopoly/adminMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly Admin</button></a>
-            <a href="/monopoly/indexMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly login</button></a>
+            <a href="/monopoly/mBooks/mBooksAdmin.php" target="_blank"><button class="btn btn-warning">mBooks Admin</button></a>
+            <a href="/monopoly/mBooks/mBooksv2.php" target="_blank"><button class="btn btn-warning">mBooks login</button></a>
             <a href="/askTheAudience/indexTeacher.php" target="_blank"><button class="btn btn-info">Teacher</button></a> 
             <a href="/askTheAudience/indexStudent.php" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>

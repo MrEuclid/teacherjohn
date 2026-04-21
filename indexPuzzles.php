@@ -323,7 +323,9 @@ Electrostatics</button></a>
        <a href =  "maths/greenLightHSX+New.php" target = "_blank"><button class = "btn btn-success" title = "Green light hard competition">Green light hard</button></a>
 
        <a href =  "maths/greenLightMultiply3x3New.php" target = "_blank"><button class = "btn btn-warning" title = "Green light multiplication competition">Green light multiplication</button></a>
-  </div></div>
+       <a href =  "puzzleTournament/index.php" target = "_blank"><button class = "btn btn-warning" title = "Puzzle Tournament">Puzzle Tournament</button></a>
+  
+      </div></div>
         </div>
       </div>
     </div>

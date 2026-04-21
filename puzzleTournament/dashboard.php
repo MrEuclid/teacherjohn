@@ -110,12 +110,13 @@ function getPuzzleState($num, $solvedArray) {
             z-index: 10;
         }
 
-        .completed {
-            filter: grayscale(0%) brightness(100%);
-            border: 4px solid #10b981; /* Green border for completed */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            /* Optional overlay to show a checkmark effect could go here */
-        }
+      .completed {
+    background-color: #10b981; /* Green */
+    color: yellow;
+    border: 2px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: default; /* Tells the browser not to show the 'clickable' finger pointer */
+}
 
         /* Make the finale pin stand out more */
         .finale-pin {
@@ -151,14 +152,16 @@ function getPuzzleState($num, $solvedArray) {
         
         <?php $state1 = getPuzzleState(1, $solved); ?>
         <a href="hanoi_1.php" class="map-pin <?php echo $state1; ?>" 
-        style="bottom: 10%; left: 20%; background-image: url('images/moto.jpg');" title="Tower of Hanoi">1</a>
+        style="bottom: 10%; left: 20%; background-image: url('images/moto.jpg');" title="Tower of Hanoi">
+        
+        1</a>
 
         <?php $state2 = getPuzzleState(2, $solved); ?>
         <a href="4Objects.php" class="map-pin <?php echo $state2; ?>" 
         style="bottom: 25%; left: 50%; background-image: url('images/aeonMall.jpg');" title="Logic Lab">2</a>
 
         <?php $state3 = getPuzzleState(3, $solved); ?>
-        <a href="4color..php" class="map-pin <?php echo $state3; ?>" 
+        <a href="4color.php" class="map-pin <?php echo $state3; ?>" 
         style="bottom: 40%; left: 80%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>

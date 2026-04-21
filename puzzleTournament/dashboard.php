@@ -202,7 +202,7 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state6 = getPuzzleState(6, $solved); ?>
         <a href="sevenSegment.php" class="map-pin <?php echo $state6; ?>" 
-        style="bottom: 60%; left: 60%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
+        style="bottom: 60%; left: 50%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
 
         <?php $state7 = getPuzzleState(7, $solved); ?>
         <a href="pentominoes.php" class="map-pin <?php echo $state7; ?>" 

@@ -19,6 +19,8 @@ if (isset($_SESSION['team_name'])) {
     exit();
 }
 
+
+
 // ... (The rest of your index.php code remains exactly the same below this)
 
 // Handle the form submission

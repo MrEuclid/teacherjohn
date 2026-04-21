@@ -8,6 +8,19 @@ if (!isset($_SESSION['team_name'])) {
     exit();
 }
 
+// Catch the Switch Team / Logout Request
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['switch_team'])) {
+    // Unset all session variables
+    $_SESSION = array();
+    // Destroy the session completely
+    session_destroy();
+    // Send them back to the start page
+    header("Location: index.php");
+    exit();
+}
+
+// Catch the Reset Request (Your existing code)
+// ...
 // Catch the Reset Request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reset_tournament'])) {
     $_SESSION['solved'] = array(
@@ -133,15 +146,29 @@ function getPuzzleState($num, $solvedArray) {
 </head>
 <body class="bg-slate-100 p-6 relative min-h-screen">
 
-    <form method="POST" action="dashboard.php" class="absolute top-4 right-4 md:top-8 md:right-8" onsubmit="return confirm('Are you sure you want to reset all progress? This will lock all completed puzzles.');">
-        <input type="hidden" name="reset_tournament" value="1">
-        <button type="submit" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-rose-200 shadow-sm flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Reset Progress
-        </button>
-    </form>
+ <div class="absolute top-4 right-4 md:top-8 md:right-8 flex flex-col gap-2 z-50">
+        
+        <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to reset all progress? This will lock all completed puzzles.');">
+            <input type="hidden" name="reset_tournament" value="1">
+            <button type="submit" class="w-full bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-rose-200 shadow-sm flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset Progress
+            </button>
+        </form>
+
+        <form method="POST" action="dashboard.php" onsubmit="return confirm('Are you sure you want to switch teams? You will need to enter a new team name.');">
+            <input type="hidden" name="switch_team" value="1">
+            <button type="submit" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-slate-300 shadow-sm flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Switch Team
+            </button>
+        </form>
+        
+    </div>
 
     <div class="max-w-4xl mx-auto mb-8 text-center pt-8 md:pt-0">
         <h1 class="text-4xl font-black text-indigo-900">Team: <?php echo $team; ?></h1>

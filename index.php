@@ -79,8 +79,9 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
  <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
 <button class="btn btn-info">Sokoban </button></a>
 <a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
+<a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
+ <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
 
- 
     <div class="row mt-3">
         <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

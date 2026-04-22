@@ -1,6 +1,16 @@
 <?php
+
 // Secure the page - ensure they have registered a team
+session_save_path(__DIR__ . '/sessions');
 session_start();
+
+if (!isset($_SESSION['team_name'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Secure the page - ensure they have registered a team
+
 
 if (!isset($_SESSION['team_name'])) {
     header("Location: index.php");

@@ -193,7 +193,7 @@ function getPuzzleState($num, $solvedArray) {
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
         <a href="lightsOut.php" class="map-pin <?php echo $state4; ?>" 
-        style="bottom: 40%; left: 50%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
+        style="bottom: 40%; left: 50%; background-image: url('images/silverPagoda.jpg');" title="Make it light">4</a>
 
         <?php $state5 = getPuzzleState(5, $solved); ?>
         <a href="miniSudoku.php" class="map-pin <?php echo $state5; ?>" 

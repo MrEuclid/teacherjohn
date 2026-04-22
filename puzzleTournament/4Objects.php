@@ -123,7 +123,7 @@ if (!isset($_SESSION['team_name'])) {
         <div class="bg-white rounded-[3rem] p-10 max-w-sm w-full text-center shadow-2xl border-[12px] border-green-400">
             <div class="text-6xl mb-4">🏆</div>
             <h2 class="text-4xl font-black text-slate-800 mb-2">BRILLIANT!</h2>
-            <p class="text-slate-500 mb-8 font-bold leading-tight">You solved the logic grid. Puzzle 3 is now unlocked!</p>
+            <p class="text-slate-500 mb-8 font-bold leading-tight">You solved the logic grid. Puzzle 2 is now unlocked!</p>
             
             <form action="dashboard.php" method="POST">
                 <input type="hidden" name="puzzle_solved" value="2">

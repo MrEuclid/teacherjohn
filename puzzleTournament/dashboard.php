@@ -192,7 +192,7 @@ function getPuzzleState($num, $solvedArray) {
         style="bottom: 30%; left: 40%; background-image: url('images/sisowatQuay.jpg');" title="4 Colour Map">3</a>
 
         <?php $state4 = getPuzzleState(4, $solved); ?>
-        <a href="numberDetective.php" class="map-pin <?php echo $state4; ?>" 
+        <a href="lightsOut.php" class="map-pin <?php echo $state4; ?>" 
         style="bottom: 40%; left: 50%; background-image: url('images/silverPagoda.jpg');" title="Find the number">4</a>
 
         <?php $state5 = getPuzzleState(5, $solved); ?>

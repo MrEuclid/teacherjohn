@@ -205,7 +205,7 @@ function getPuzzleState($num, $solvedArray) {
         style="bottom: 60%; left: 50%; background-image: url('images/wat_ounalom.jpg');" title="Turn the lights on">6</a>
 
         <?php $state7 = getPuzzleState(7, $solved); ?>
-        <a href="pentominoes.php" class="map-pin <?php echo $state7; ?>" 
+        <a href="pentominoes4.php" class="map-pin <?php echo $state7; ?>" 
         style="bottom: 70%; left: 40%; background-image: url('images/independenceMonument.jpg');" title="Solve it">7</a>
 
         <?php $state8 = getPuzzleState(8, $solved); ?>

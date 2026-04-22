@@ -30,8 +30,8 @@ if (!isset($_SESSION['team_name'])) {
 </div>
     <div class="max-w-4xl mx-auto bg-white rounded-[2rem] shadow-2xl p-6 md:p-10 border-b-8 border-indigo-200">
         <div class="text-center mb-8">
-            <h1 class="text-5xl font-black text-indigo-600 mb-2 tracking-tight">Puzzle 1: Tower of Hanoi</h1>
-            <p class="text-slate-500 font-bold text-lg">Move the stack in exactly 7 moves to pass!</p>
+            <h1 class="text-5xl font-black text-indigo-600 mb-2 tracking-tight">Puzzle 9: Tower of Hanoi</h1>
+            <p class="text-slate-500 font-bold text-lg">Move the stack to the end in exactly 15 moves to pass!</p>
         </div>
 
         <div class="flex flex-wrap justify-center gap-6 mb-10 bg-indigo-100/50 p-6 rounded-3xl border-2 border-indigo-100">
@@ -67,9 +67,9 @@ if (!isset($_SESSION['team_name'])) {
             <p class="text-slate-500 mb-8 font-bold leading-tight">You solved it in exactly 15 moves. You have finished the contest!</p>
             
             <form action="dashboard.php" method="POST">
-                <input type="hidden" name="puzzle_solved" value="1">
+                <input type="hidden" name="puzzle_solved" value="9">
                 <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl transition-all shadow-xl shadow-green-200 uppercase tracking-widest">
-                    Continue to Map
+                    You have finished the journey!
                 </button>
             </form>
         </div>

@@ -276,7 +276,7 @@ Electrostatics</button></a>
 <a href = "logic/zebra3Objects.html" ><button class = "btn btn-info">3 objects</button></a>
 <a href = "logic/zebra4Objects.html"><button class = "btn btn-primary">4 objects</button></a>
 <a href = "logic/numberDetective.html" ><button class = "btn btn-warning">Number detective</button></a>
-<a href = "logic/make15.html" target = "_blank"><button class = "btn btn-primary">Make 15</button></a> 
+<a href = "magicSquares/magicSquares.html" target = "_blank"><button class = "btn btn-primary">Make 15</button></a> 
 <a href = "logic/colourGame.html" target="_blank"><button class = "btn btn-info">Colour Game</button></a> 
 <a href = "logic/lightsOut.html" target = "_blank"><button class = "btn btn-primary">Lights Out</button></a> 
 <a href = "logic/21Game.html" target = "_blank"><button class = "btn btn-primary">29 Game</button></a> 

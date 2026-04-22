@@ -209,7 +209,7 @@ function getPuzzleState($num, $solvedArray) {
         style="bottom: 70%; left: 40%; background-image: url('images/independenceMonument.jpg');" title="Solve it">7</a>
 
         <?php $state8 = getPuzzleState(8, $solved); ?>
-        <a href="4Colours.php" class="map-pin <?php echo $state8; ?>" 
+        <a href="5Colours.php" class="map-pin <?php echo $state8; ?>" 
         style="bottom: 80%; left: 50%; background-image: url('images/watPhnom.jpg');" title="5 colour puzzle">8</a>
   
   

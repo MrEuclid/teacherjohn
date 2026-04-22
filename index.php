@@ -72,7 +72,7 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
 
   <a href = "translate/translatev2.html">
     <button class = "btn btm sm btn-info">Translation HS</button></a>
- <a href="/greenLight/greenLightApp.html"><button class="btn btn-success">Greenlight app</button></a> 
+ <a href="puzzleTournament/index.php"><button class="btn btn-success">Puzzle Journey</button></a> 
  
 <a href="/words/indexWords.php">
     <button class="btn btn-success">Word game (G3- G4)</button></a>

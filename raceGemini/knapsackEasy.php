@@ -168,7 +168,7 @@ $(document).ready(function(){
        question = '<?php echo $question; ?>' ;
 p = [];
 numbers = [];
-max = 73 ;
+max = 41 ;
 numbers = makePrimes(max);
 numbersOriginal = numbers.slice();
 shuffle(numbers);

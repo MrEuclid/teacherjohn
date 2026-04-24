@@ -1,11 +1,8 @@
 <?php
+session_save_path(sys_get_temp_dir());
 session_start();
 
-
-$server = 'localhost' ;
-$username = 'teacherj_euclid';
-$password = 'puthisastra2024' ;
-$database = 'teacherj_temple' ;
+require_once '../connectTeacherJohn.php'; 
 
 
 
@@ -45,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['teamName'] = $teamName;
                 $_SESSION['classCode'] = $row['classCode'];
                 $_SESSION['startTime'] = $row['startTime'];
-                header("Location: indexMathsSeniorComp.php");
+                header("Location: indexMathsComp.php");
                 exit();
             }
         } else {
@@ -56,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['teamName'] = $teamName;
                 $_SESSION['classCode'] = $classCode;
                 $_SESSION['startTime'] = $currentTime;
-                header("Location: indexMathsSeniorComp.php");
+                header("Location: indexMathsComp.php");
                 exit();
             } else {
                 $error_message = "An error occurred setting up your team. Try a different name.";
@@ -101,9 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="mb-4">
                 <label for="classCode" class="form-label">Select Class</label>
-              <select name="class_clear" class="form-select w-25 me-3 border-danger" required>
-    <option value="" disabled selected>Select class to clear...</option>
-    <option value="ALL" class="fw-bold text-danger">ALL CLASSES (Wipe Entire Database)</option>
+              <select name="classCode" class="form-select w-25 me-3 border-danger" required>
+    <option value="" disabled selected>Select class</option>
+  
     
     <option value="7A">7A</option>
     <option value="7B">7B</option>

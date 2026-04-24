@@ -149,7 +149,7 @@ var points = 0;
      //   $('#ex1').text(question);
       
        
-        var expr = '$ ab + cd  ' + ' = ' + n + '$'  ;
+        var expr = ' ab + cd  ' + ' = ' + n   + '<br> a = ' + a + ' and c = ' + c ;
         $('#equations').html(expr);
          MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equations" ]);
         answer = n
@@ -182,7 +182,7 @@ for (let i = 0; i < l -1  ; i++)
 }
 $('#possibles').append(numbersOriginal[l-1] + ")");
 p = makeQuestion();
-alert(p);
+// alert(p);
 answer = [];
 answer[1] = p;
 checkAnswer(1);

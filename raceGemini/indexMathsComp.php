@@ -100,6 +100,11 @@ if ($timeRemaining < 0) {
         
         <div class="col-md-7 mb-4">
             <h4 class="mb-3">Current Problem</h4>
+            <div id="exit-container" class="mb-3 text-end" style="display: none;">
+    <button id="btn-exit-question" class="btn btn-outline-danger fw-bold shadow-sm">
+        ← Exit Question / Back to Menu
+    </button>
+</div>
             <div id="play" class="p-3">
                 <div class="d-flex align-items-center justify-content-center" style="min-height: 350px;">
                     <div class="text-center">
@@ -141,7 +146,17 @@ if ($timeRemaining < 0) {
     var timeRemaining = <?php echo $timeRemaining; ?>;
     var competitionDuration = <?php echo $duration; ?>;
     console.log("Grade",lockedGrade);
+// --- Exit Question Button Logic ---
+$('#btn-exit-question').click(function() {
+    // 1. Wipe the play area clean
+    $('#play').html('<div class="text-center mt-5"><h3 class="text-muted">Select a question from the menu to begin.</h3></div>');
     
+    // 2. Hide the exit button again
+    $('#exit-container').hide();
+    
+    // (Optional) If you have any variables tracking the active question ID, reset them here:
+    // currentQuestionId = null; 
+});
     $(document).ready(function() {
         // 1. AUTO-FILTER QUESTIONS (Locks them into their grade)
         $('.q-btn').hide(); // Hide all
@@ -210,6 +225,7 @@ if ($timeRemaining < 0) {
             var fileToLoad = $(this).data('file');
             activeQuestionPoints = parseInt($(this).data('points'));
             activeQuestionId = $(this).attr('id');
+            $('#exit-container').show();
 
             $('#play').load(fileToLoad, function(response, status, xhr) {
                 if (status == "error") {

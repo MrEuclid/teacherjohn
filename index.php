@@ -43,8 +43,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 c">
-            <a href="/monopoly/adminMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly Admin</button></a>
-            <a href="/monopoly/indexMonopoly.php" target="_blank"><button class="btn btn-warning">Monopoly login</button></a>
+            <a href="/monopoly/mBooks/mBooksAdmin.php" target="_blank"><button class="btn btn-warning">mBooks Admin</button></a>
+            <a href="/monopoly/mBooks/mbooksv2.php" target="_blank"><button class="btn btn-warning">mBooks login</button></a>
             <a href="/askTheAudience/indexTeacher.php" target="_blank"><button class="btn btn-info">Teacher</button></a> 
             <a href="/askTheAudience/indexStudent.php" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
@@ -72,15 +72,16 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
 
   <a href = "translate/translatev2.html">
     <button class = "btn btm sm btn-info">Translation HS</button></a>
- <a href="/greenLight/greenLightApp.html"><button class="btn btn-success">Greenlight app</button></a> 
+ <a href="puzzleTournament/index.php"><button class="btn btn-success">Puzzle Journey</button></a> 
  
 <a href="/words/indexWords.php">
     <button class="btn btn-success">Word game (G3- G4)</button></a>
  <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
 <button class="btn btn-info">Sokoban </button></a>
 <a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
+<a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
+ <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
 
- 
     <div class="row mt-3">
         <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

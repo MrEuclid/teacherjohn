@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    
+  <link rel = "stylesheet" href = "css/mathsTestStyles.css">
+  <link rel="stylesheet" href="javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>   
+
+ <script type="text/javascript">
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+</script>
+
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+ 
+
+
+<style type="text/css">
+  p {text-align: left;
+margin-left: 10% ;
+margin-right: 10% ;
+font-family: sans-serif;
+font-size: 12pt ;
+font-style: normal;
+font-weight:normal;}
+
+#stars {
+    font-size: 36pt; color:blue ;
+}
+
+.c {text-align: center;
+margin-right: auto;
+margin-left: auto;
+margin: 0 ;}
+
+
+
+
+.on  {  padding: 40px 20px; width: 100px ; height = 100px ; margin-bottom: 1px ; background-color: white ; 
+background:  url("images/lightBulb.png") ;
+}
+.off {  padding: 40px 20px; width: 100px ; height = 100px ; margin-bottom: 1px ; background-color: red ; } 
+
+
+
+
+
+</style>
+
+ </head>
+ <body> 
+<input id = "total" type = "hidden" readonly="true" value="0">
+
+
+<div class = "container-fluid">
+<div class = "row">
+  <div class = "col-sm-12 c">
+    
+    <h1>    <img src = "images/lightBulb.png">Turn on the Lights    <img src = "images/lightBulb.png"></h2>
+  </div></div>
+
+<div class = "row">
+
+  <div class = "col-sm-12 c">
+
+ 
+<a href = "lightsOut.html">
+    <button id = "newGame" class="btn btn-success btn-lg">New</button>
+</a>    
+    <button id = "level-1" class="btn btn-primary btn-lg">Easy</button>
+    <button id = "level-2" class="btn btn-warning btn-lg">Medium</button>
+    <button id = "level-3" class="btn btn-danger btn-lg">Hard</button>
+    <button id = "level-4" class="btn btn-primary btn-lg">Extreme</button>
+
+    <a href = "index.php">
+    <button id = "clear" class="btn btn-info">End</button>
+    
+  </a>
+  </div>
+
+</div>
+<div class = "row">
+   <div class = "col-sm-12 c">
+   <br><br>
+   <p id = "grid" class = "c"></p>
+   </div></div>
+
+<div class = "row">
+   <div class = "col-sm-12 c">
+  
+   </div></div>
+
+<div class = "row">
+   <div class = "col-sm-12 c">
+    
+  </div></div>
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+    <br>
+   </div></div>
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+  
+
+</div></div>
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+    
+   </div></div>
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+   <h3 id = "words" class = "c">Click the squares to turn on all the lights</h3>
+   <h1 class = "c">Think..Think..Think</h1>
+  </div>
+</div>
+
+</div> <!-- container -->
+
+</body>
+
+
+</html>
+
+
+
+<script type="text/javascript">
+  
+   $(document).ready(function(){
+
+  // declaration of variables
+
+
+
+  cells = [] ; // stores button ids 
+ $('#words').hide() ;
+     
+   })
+
+   $('#level-2').hide() ;
+   $('#level-3').hide() ;
+   $('#level-4').hide() ; 
+  </script> 
+
+
+
+<script type="text/javascript">
+  
+   function checkFinished(n) 
+
+   {
+     var finito = true ;
+     var cnt = 0 ; // for line break
+for (var y = 0 ; y <= max ; y++)  
+{
+
+  for (var x = 0 ; x <= max ; x++)
+
+{
+  var z = parseInt(10*y+x);
+  var id = 'light-' +z ;
+  var myClass = $('#' + id).attr("class");
+  if (myClass == 'on') {cnt++ ;} else {finito = false ;}
+ 
+ }
+}
+
+ // alert('finito ' + finito) ;   
+
+ return finito ;
+   }
+    
+  </script> 
+
+<script type="text/javascript">
+
+// makes and style a button btn-n where n is a whole number 
+  
+  function createButton(nButton) {
+
+
+    var $btn = $('<button  />', {
+     type: 'button',
+      text: nButton,
+      class: 'off',
+      id: 'light-'+nButton,
+      
+
+           });
+    // alert('Button = ' + $btn.text());
+        return $btn;
+  }
+
+
+
+</script>
+
+<script type="text/javascript">
+  
+   $(document).ready(function(){
+ 
+     $('[id^=level]').on('click', function(){
+
+      
+    $('#words').show() ;
+
+    completed = false ;
+    
+      var level = this.id ;
+       max = level.substr(6,1);
+  //   alert("max = " + max);
+$('#grid').text('') ;
+var cnt = 0 ;
+     var cnt = 0 ; // for line break
+for (var y = 0 ; y <= max ; y++)  
+{
+
+  for (var x = 0 ; x <= max ; x++)
+
+{
+  var z = parseInt(10*y+x);
+
+cells[cnt] = z ;
+cnt++ ;
+ // alert('Making ' + z) ;
+$("p#grid").append(createButton(z)) ;
+}
+
+        $('p#grid').append('<br>') ; 
+
+}
+
+
+
+     })
+   })
+    
+  </script> 
+
+  <script type="text/javascript">
+    
+function switchLights(bClass,bX,bY) // b = button
+
+{
+
+var bID = 10*bY + bX ;
+bID = parseInt(bID) ;
+var fullID = 'light-' + bID ;
+
+
+
+var bClass = $('#' + fullID).attr("class") ;
+
+// alert('switching ' + fullID + ' class = ' + bClass + ' (x,y) ' + bX + ' ' + bY) ;
+if (bClass == 'off')
+  {$('#' + fullID).removeClass("off");
+  $('#' + fullID).addClass("on"); 
+// alert('Switched ' + fullID + 'on');
+}
+
+if (bClass == 'on')
+  {$('#' + fullID).removeClass("on");
+  $('#' + fullID).addClass("off"); 
+// alert('Switched ' + fullID + 'off') ;
+}
+
+
+  }
+  </script>  
+
+<script type="text/javascript">
+  
+   $(document).on("click", '[id^=light]', function(event) {
+
+// when id is changed after dom load binding must occur after document load for click to work
+var myID = this.id ; 
+
+ // alert(myID) ;     
+// toggle class
+var myClass = $(this).attr("class");
+
+// $('[id^=light]').attr("disabled",true) ;
+ $('[id^=light]').prop('disabled', true);
+ setTimeout(function() {
+       $('[id^=light]').prop('disabled', false);
+ }, 2000);
+
+
+
+
+// alert("Class = " + myClass + "ID = " + myID + 'Max = ' + max);
+ //  alert(cells) ;
+//$('[id^=light]').attr("disabled",false) ;
+
+completed = false ;
+
+if (myClass == 'off')
+  {
+ 
+    $(this).removeClass("off");
+    $(this).addClass("on") ;
+}
+
+if (myClass == 'on')
+  {
+ 
+    $(this).removeClass("on");
+  $(this).addClass("off");
+ 
+   }
+
+ 
+myID = parseInt(myID.substr(6,2)) ;
+
+// switch neighbours  
+// 0 is top left (0,0)
+// max,max is bottom right
+// get x,y position 
+
+var x = myID % 10 ;
+var y = Math.floor(myID/10);
+
+// alert("(x,y) = " + x + ' ' + y + ' max = ' + max) ;
+
+// 4 neighbours NSEW
+
+// N x,y-1
+
+newY = y - 1 ;
+newX = x ;
+if (newX >= 0 & newY >=0 & newX <= max & newY <= max)
+{switchLights(myClass,newX,newY)}
+
+
+// S x,y+1
+
+newY = y + 1 ;
+newX = x ;
+if (newX >= 0 & newY >=0 & newX <= max & newY <= max)
+{switchLights(myClass,newX,newY)}
+
+// E x+1,y
+
+newY = y  ;
+newX = x + 1;
+if (newX >= 0 & newY >=0 & newX <= max & newY <= max)
+{switchLights(myClass,newX,newY)}
+
+// W x-1,y
+
+newY = y ;
+newX = x - 1 ;
+if (newX >= 0 & newY >=0 & newX <= max & newY <= max)
+{switchLights(myClass,newX,newY)}
+
+
+completed = checkFinished(max) ;
+
+
+
+
+ if (completed)
+  {
+var m = parseInt(max) + 1  ;    
+var l = '#level-'+m ; 
+     
+
+$(l).show() ;
+alert('Good') ;
+
+for (var i = 1; i <= 5; i++)
+ { $('[id^=light]').fadeOut(1000) ;
+  $('[id^=light]').fadeIn(1000) ; }
+}
+
+
+
+
+
+
+     })
+
+
+
+
+  </script> 
+
+
+
+
+
+
+

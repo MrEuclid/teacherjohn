@@ -1,7 +1,16 @@
 <?php
+
 // Secure the page - ensure they have registered a team
 session_save_path(__DIR__ . '/sessions');
 session_start();
+
+if (!isset($_SESSION['team_name'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Secure the page - ensure they have registered a team
+
 
 if (!isset($_SESSION['team_name'])) {
     header("Location: index.php");
@@ -50,19 +59,13 @@ if (!isset($_SESSION['team_name'])) {
         #btn5 { top: 46px; left: 14px; } /* Top Left */
         #btn6 { top: 136px; left: 40px; } /* Middle */
         
-        /* Decimal Point */
-        #btn7 { 
-            top: 252px; left: 154px; width: 20px; height: 20px; 
-            border-radius: 50%; position: absolute; cursor: pointer; transition: all 0.2s; 
-        }
-
         /* On/Off States */
         .on { 
-            background-color: #ef4444; /* Bright Red */
-            box-shadow: 0 0 15px #ef4444, inset 0 0 5px rgba(255,255,255,0.5); 
+            background-color: #22c55e; /* Bright Green */
+            box-shadow: 0 0 15px #22c55e, inset 0 0 5px rgba(255,255,255,0.5); 
             z-index: 10;
         }
-        .on:hover { background-color: #f87171; }
+        .on:hover { background-color: #4ade80; }
         
         .off { 
             background-color: #1e293b; /* Dimmed Slate */
@@ -81,10 +84,10 @@ if (!isset($_SESSION['team_name'])) {
 
     <div class="max-w-4xl mx-auto w-full bg-white p-6 md:p-10 rounded-[2rem] shadow-2xl border-b-8 border-indigo-200 text-center">
         <header class="mb-8">
-            <h1 class="text-5xl font-black text-indigo-600 mb-2 tracking-tight">Puzzle 5: Power Surge</h1>
+            <h1 class="text-5xl font-black text-indigo-600 mb-2 tracking-tight">Puzzle 6: Power Surge</h1>
             <p class="text-slate-500 font-bold text-lg max-w-2xl mx-auto">
                 Restore full power to the LED panel.<br>
-                <span class="text-rose-500 font-black uppercase tracking-wide text-sm">Rule:</span> Clicking a segment toggles its power, but it also toggles its connected neighbors! Turn ALL segments RED to win.
+                <span class="text-rose-500 font-black uppercase tracking-wide text-sm">Rule:</span> Clicking a segment toggles its power, but it also toggles its connected neighbors! Turn ALL segments GREEN to win.
             </p>
         </header>
 
@@ -102,7 +105,6 @@ if (!isset($_SESSION['team_name'])) {
                 <div id="btn4" class="seg-v off" onclick="handleSegmentClick(4)"></div>
                 <div id="btn5" class="seg-v off" onclick="handleSegmentClick(5)"></div>
                 <div id="btn6" class="seg-h off" onclick="handleSegmentClick(6)"></div>
-                <div id="btn7" class="off" onclick="handleSegmentClick(7)"></div>
             </div>
             
             <button onclick="initGame()" class="bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 rounded-xl font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-lg shadow-rose-200">
@@ -115,7 +117,7 @@ if (!isset($_SESSION['team_name'])) {
         <div class="bg-white rounded-[3rem] p-10 max-w-sm w-full text-center shadow-2xl border-[12px] border-green-400">
             <div class="text-6xl mb-4">🏆</div>
             <h2 class="text-4xl font-black text-slate-800 mb-2">POWER ON!</h2>
-            <p class="text-slate-500 mb-8 font-bold leading-tight">You successfully restored the circuit. Puzzle 6 is unlocked!</p>
+            <p class="text-slate-500 mb-8 font-bold leading-tight">You successfully restored the circuit. Puzzle 7 is unlocked!</p>
             
             <form action="dashboard.php" method="POST">
                 <input type="hidden" name="puzzle_solved" value="6">
@@ -127,19 +129,18 @@ if (!isset($_SESSION['team_name'])) {
     </div>
 
     <script>
-        // The hardware connections (matches original logic)
+        // The hardware connections (matches original logic, minus the decimal point)
         const connections = [
             [1, 5, 6],          // 0 (Top)
             [0, 2, 6],          // 1 (Top Right)
-            [1, 3, 6, 7],       // 2 (Bottom Right)
+            [1, 3, 6],          // 2 (Bottom Right)
             [2, 4, 6],          // 3 (Bottom)
             [3, 5, 6],          // 4 (Bottom Left)
             [0, 4, 6],          // 5 (Top Left)
-            [0, 1, 2, 3, 4, 5], // 6 (Middle)
-            [2]                 // 7 (Decimal Point)
+            [0, 1, 2, 3, 4, 5]  // 6 (Middle)
         ];
 
-        let states = Array(8).fill(1); // 1 = ON, 0 = OFF
+        let states = Array(7).fill(1); // 1 = ON, 0 = OFF
         let moveCount = 0;
         let gameActive = true;
 
@@ -149,12 +150,12 @@ if (!isset($_SESSION['team_name'])) {
             document.getElementById('moveCount').textContent = moveCount;
             
             // Step 1: Start with all lights ON (the win condition)
-            states = Array(8).fill(1);
+            states = Array(7).fill(1);
             
             // Step 2: Simulate 4 random clicks to scramble it (Level 2 logic)
             let scrambleClicks = 0;
             while(scrambleClicks < 4) {
-                 let r = Math.floor(Math.random() * 8);
+                 let r = Math.floor(Math.random() * 7);
                  toggleSegment(r, false); // false = don't count as a user move
                  scrambleClicks++;
             }
@@ -203,7 +204,7 @@ if (!isset($_SESSION['team_name'])) {
         }
 
         function renderVisuals() {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 7; i++) {
                 const el = document.getElementById(`btn${i}`);
                 if (states[i] === 1) {
                     el.classList.remove('off');

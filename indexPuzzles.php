@@ -226,19 +226,19 @@ button {margin: 0.5em;}
     <button class = "btn btn-success">
     24 - Extreme</button></a> 
 
-<a href = "maths/crossNumberGemini.html" target="_blank"><button class = "btn btn-primary">Crossnumber G6 - G7</button></a>
+<a href = "crossNumber/crossNumberGemini.html" target="_blank"><button class = "btn btn-primary">Crossnumber G6 - G7</button></a>
 
-<a href = "maths/crossNumberHarder.html" target="_blank"><button class = "btn btn-success">Crossnumber G8 - G9</button></a>
+<a href = "crossNumber/crossNumberHarder.html" target="_blank"><button class = "btn btn-success">Crossnumber G8 - G9</button></a>
 
-<a href = "maths/crossNumberHarder.html" target="_blank"><button class = "btn btn-success">Crossnumber G9 - G10</button></a>
+<a href = "crossNumber/crossNumberHarder.html" target="_blank"><button class = "btn btn-success">Crossnumber G9 - G10</button></a>
 
-<a href = "maths/crossNumberFractions.html" target="_blank"><button class = "btn btn-warning">Crossnumber G10 - G11</button></a>
+<a href = "crossNumber/crossNumberFractions.html" target="_blank"><button class = "btn btn-warning">Crossnumber G10 - G11</button></a>
 
-<a href = "maths/crossNumberFractionsHarder.html" target="_blank"><button class = "btn btn-warning">Crossnumbers G11 - G12</button></a>
+<a href = "crossNumber/crossNumberFractionsHarder.html" target="_blank"><button class = "btn btn-warning">Crossnumbers G11 - G12</button></a>
 
-<a href = "maths/crossNumberCalculus.html" target="_blank"><button class = "btn btn-danger">Crossnumbers Calculus</button></a>
+<a href = "crossNumber/crossNumberCalculus.html" target="_blank"><button class = "btn btn-danger">Crossnumbers Calculus</button></a>
 
-<a href = "maths/crossnumber5x5.php" target="_blank"><button class = "btn btn-primary">Crossnumbers</button></a>
+<a href = "crossNumber/crossnumber5x5.php" target="_blank"><button class = "btn btn-primary">Crossnumbers</button></a>
 
   </div></div>
 

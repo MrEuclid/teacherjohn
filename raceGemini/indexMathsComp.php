@@ -29,7 +29,7 @@ $startTime = $_SESSION['startTime'];
 $grade = preg_replace('/[^0-9]/', '', $classCode);
 
 // 3. CALCULATE TIMER: 45 minutes = 2700 seconds
-$duration = 45 * 60;
+$duration = 60 * 60;
 $elapsed = time() - $startTime;
 $timeRemaining = $duration - $elapsed;
 

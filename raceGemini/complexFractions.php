@@ -185,7 +185,7 @@ input {
 </div>
 </div></div>
 
-
+<!--
  <div class = "row">
       <div class = "col- c">
     <div id = "ex4">
@@ -194,7 +194,7 @@ input {
 <button id = "check4">Check 4</button>
 </div>
 </div></div>
-
+-->
 
 </div>
 
@@ -378,15 +378,15 @@ answer[2] = ans;
 ans = makeQuestion3(z1,z2,z3,z4) ;
 answer[3] = ans;
 
-ans = makeQuestion4(z1,z2,z3,z4) ;
-answer[4] = ans;
+// ans = makeQuestion4(z1,z2,z3,z4) ;
+// answer[4] = ans;
 
 
 console.log("answers", answer);
 correct = 0 ; // number correct;
 points = 0 ;
 
-checkAnswer(4);
+checkAnswer(3);
   })
 
 

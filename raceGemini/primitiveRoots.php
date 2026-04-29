@@ -349,12 +349,16 @@ console.log(getPrimitiveRoots(7)); // Output: [3, 5]
         // Wrap the whole string in $ tags and use \\bmod for the modulo operator
 var expr = '$' + g + '^x \\bmod ' + p + ' = ' + a + ', \\; x = $';
 
+
+
+
+
 console.log(expr);
 $('#equation1').html(expr);
 MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1"]);
         
         
-        return a;
+        return x;
        
        
     }
@@ -373,7 +377,7 @@ answer[1] = makeQuestion1(primes) ;
 
 
 checkAnswer(1);
-console.log("Answer", answer);
+// console.log("Answer", answer);
 
 
 

@@ -14,6 +14,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Population';
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.com/libraries/mathjs"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
  <link rel="stylesheet" href="raceGeminiStyles.css">
 
@@ -142,14 +143,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Population';
 </body>
 </html>
 
-<script>
-// 1. GLOBAL VARIABLES (Must be defined cleanly)
-var answer = [];
-var correct = 0;
-var points = 0;
-// Global variables for canvas
 
-</script>
 
 
 <script type="text/javascript">
@@ -168,7 +162,7 @@ p0 = randomInteger(10,50);
 r = randomInteger(1,5)/10;
     expr = "$P(t) = " + p0 + "e^" + "{" + r + "t} $";
   $('#equation').html(expr);
-       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "pellian" ]);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 console.log(expr,p0,r);
 parameters = [p0,r];
 return parameters;
@@ -207,7 +201,7 @@ return parameters;
      var expr = "How many fish will there be after 1 year?";
   
         $('#equation2').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
         e = 2.71828;
         t = 12;
        x2 = p0*e**(r*t);
@@ -231,7 +225,7 @@ return parameters;
    expr += 'Use $ t = log(\\frac{' + p + '}{' + p0 + '} ) \\div '+ r + '$' ;
   
         $('#equation3').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
         e = 2.71828;
      
        x3 = (Math.log(p/p0))/r;
@@ -261,7 +255,7 @@ p0 = randomInteger(10,50);
 r = randomInteger(1,5)/10;
 expr = "$P(t) = " + p0 + "e^" + "{" + r + "t} $";
 $('#equation').html(expr);
-       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "pellian" ]);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 console.log(expr,p0,r);
 parameters = [p0,r];
 //parameters = makeEquation();
@@ -273,13 +267,26 @@ answer[2] = makeQuestion2() ;
 answer[3] = makeQuestion3() ;
 //answer[4] = makeQuestion4() ;
 
-checkAnswer(3);
+
+
+// alert(answer);
+correct = 0 ; // number correct;
+points = 0 ;
 
 console.log(answer);
-
+console.log(roots);
+  })
 
 
 </script>
+
+
+
+
+
+
+
+
 
 
 

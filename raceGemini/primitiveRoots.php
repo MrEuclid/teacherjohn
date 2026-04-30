@@ -14,7 +14,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Primes';
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.com/libraries/mathjs"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> <link rel="stylesheet" href="raceGeminiStyles.css">
 
 <script src="javascript/utilities.js"></script>

@@ -381,7 +381,7 @@ answer[3] = answer3;
 
 checkAnswer(3);
 
-console.log(answer);
+// console.log(answer);
 })
 </script> 
 

@@ -196,8 +196,8 @@ answer[2] = y;
 answer[3] = z;
 
 checkAnswer(3);
-console.log(p);
-console.log(answer);
+//console.log(p);
+//console.log(answer);
 }) 
 </script>
 

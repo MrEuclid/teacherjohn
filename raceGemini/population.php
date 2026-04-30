@@ -271,8 +271,8 @@ answer[3] = makeQuestion3() ;
 correct = 0 ; // number correct;
 points = 0 ;
 checkAnswer(3)
-console.log(answer);
-console.log(roots);
+// console.log(answer);
+// console.log(roots);
   })
 
 

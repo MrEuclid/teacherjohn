@@ -348,6 +348,17 @@ var points = 0;
     }
 </script>
 
+
+
+<script>
+// 1. GLOBAL VARIABLES (Must be defined cleanly)
+var answer = [];
+var correct = 0;
+var points = 0;
+// Global variables for canvas
+
+</script>
+
 <script type="text/javascript">
   
     $(document).ready(function(){
@@ -371,7 +382,7 @@ answer[3] = makeQuestion3(a,b,c,d) ;
 answer[4] = makeQuestion4(a,b,c,d) ;
 
 
-
+  console.log(answer);
 
 // get values of a,b,c,d - global
 

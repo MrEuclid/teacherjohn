@@ -239,39 +239,11 @@
       
       // Use round2DP from utilities.js if it exists, otherwise use fallback
       answer[4] = typeof round2DP === "function" ? round2DP(avg) : fallbackRound2DP(avg);
-      checkAnswer[4];
       console.log("Answers calculated: ", answer);
+            checkAnswer(4);
+
     }
-
-    // 4. CLICK HANDLERS
-    $(document).ready(function() {
-      
     
-
-      $('[id^=check]').on('click', function() {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-        var guess = $('#solution' + qNumber).val();
-
-        if (guess == answer[qNumber]) {
-          $('#solution' + qNumber).prop('disabled', true).css({"background-color":"lightgreen", "color":"black"});
-          $('#' + clicked).hide();
-          points += 2;
-          
-          if (points == 8) {
-            if (typeof handleCorrectAnswer === "function") {
-              handleCorrectAnswer();
-            } else if (typeof processWin === "function") {
-              processWin(questionID);
-            } else {
-              alert("Great job! You answered all questions correctly.");
-            }
-          }
-        } else {
-          alert("Keep trying!");
-        }
-      });
-    });
   </script>
 </body>
 </html>

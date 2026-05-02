@@ -231,35 +231,8 @@
         if(d[i][2] >= 18) { adultDonuts += d[i][1]; }
       }
       answer[4] = adultDonuts;
+      checkAnswer(4);
     }
-
-    $(document).ready(function() {
-      $('[id^=check]').on('click', function() {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-        var guess = $('#solution' + qNumber).val();
-
-        if (guess == answer[qNumber]) {
-          $('#solution' + qNumber).prop('disabled', true).css({"background-color":"lightgreen","color":"black"});
-          $('#' + clicked).hide();
-          
-          points += 2;
-          
-          if (points == 8) {
-            // Updated to use the correct function name from indexMathsComp.php
-            if (typeof handleCorrectAnswer === "function") {
-              handleCorrectAnswer();
-            } else if (typeof processWin === "function") {
-              processWin(questionID);
-            } else {
-              alert("Great job! You answered all questions correctly.");
-            }
-          }
-        } else {
-          alert("Keep trying!");
-        }
-      });
-    });
   </script>
 </body>
 </html>

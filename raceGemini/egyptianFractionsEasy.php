@@ -1,7 +1,7 @@
 <?php 
 
- $question = isset($_POST['question']) ? $_POST['question'] : '';
-// line intersecting a parabola at AB, find the length of AB
+ $question = isset($_POST['question']) ? $_POST['question'] : '2 fractions';
+// Easy egyptian fractions
 ?>
 
 <!DOCTYPE html>

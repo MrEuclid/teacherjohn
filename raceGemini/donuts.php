@@ -111,8 +111,10 @@
 
   </div> <script type="text/javascript">
     // Global variables accessible by both Google Charts and jQuery
+    
     var d = [];
     var answer = [];
+    var correct = 0;
     var points = 0;
     var questionID = '<?php echo $question; ?>';
 

@@ -8,13 +8,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sort Fractions Challenge</title>
+
+  <!-- 1. Main jQuery MUST come first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- 2. jQuery UI comes second (this is what provides the .sortable() function) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<!-- 3. Touch Punch comes last (this makes dragging work on iPads/mobile screens) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -115,7 +119,7 @@
     // Generate the game board
     function initGame() {
         // The list of prime numbers from your original code
-        var primes = [7, 11, 13, 17, 19, 23, 29, 31];
+        var primes = [7, 11, 13, 17, 19, 23, 29, 31,37,];
         var allFractions = [];
         
         // Generate all valid proper fractions (numerator is strictly less than denominator)
@@ -157,8 +161,14 @@
         $('#check-btn').prop('disabled', false).show();
         $('#sortable').sortable('enable');
         
-        // Render MathJax
-        typesetMath();
+     // --- THE UPDATED FIX ---
+        // A 150ms delay forces the main thread to finish painting the DOM 
+        // before MathJax attempts to read the new tags.
+        setTimeout(function() {
+            if (typeof MathJax !== 'undefined' && MathJax.Hub) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "sortable"]);
+            }
+        }, 150);
     }
 
     $(document).ready(function() {

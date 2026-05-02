@@ -124,17 +124,22 @@ while ($row = $result->fetch_assoc()) {
 
         <div class="col-md-5">
             
-            <div class="card mb-3 border-dark">
-                <div class="card-header bg-dark text-white py-2">Quick Calculator</div>
-                <div class="card-body py-2">
-                    <div class="input-group mb-2 mt-2">
-                        <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12**2 - 1">
-                        <button class="btn btn-secondary" id="btn-calc">Calculate</button>
-                    </div>
-                    <div id="calc-result" class="alert alert-light border text-center mb-2" style="min-height: 45px; font-size: 1.2rem; font-weight: bold; color: #0d6efd;">
-                    </div>
-                </div>
-            </div>
+           <div class="card mb-3 border-dark">
+    <div class="card-header bg-dark text-white py-2">Quick Calculator</div>
+    <div class="card-body py-2">
+        <div class="input-group mb-2 mt-2">
+            <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12**2 - 1">
+            <button class="btn btn-secondary" id="btn-calc">Calculate</button>
+        </div>
+        <div id="calc-result" class="alert alert-light border text-center mb-2" style="min-height: 45px; font-size: 1.2rem; font-weight: bold; color: #0d6efd;">
+        </div>
+        <!-- NEW ACTION BUTTONS -->
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-danger w-50 fw-bold" id="btn-calc-clear">Clear</button>
+            <button class="btn btn-sm btn-outline-primary w-50 fw-bold" id="btn-calc-copy">Ans ⤴</button>
+        </div>
+    </div>
+</div>
 
             <?php include 'questions.html'; ?>
             
@@ -266,6 +271,21 @@ $('#btn-exit-question').click(function() {
         });
 
         $('#calc-expr').keypress(function(e) {
+            // Quick Calculator: Clear Button
+        $('#btn-calc-clear').click(function() {
+            $('#calc-expr').val('').focus();
+            $('#calc-result').text('');
+        });
+
+        // Quick Calculator: Copy Answer Button
+        $('#btn-calc-copy').click(function() {
+            var ans = $('#calc-result').text().trim();
+            // Only copy if the result is an actual number (prevents copying "Syntax Error")
+            if (ans !== "" && !isNaN(ans)) {
+                // Puts the answer into the input box and focuses the cursor so they can immediately type "+ 5"
+                $('#calc-expr').val(ans).focus(); 
+            }
+        });
             if(e.which == 13) { $('#btn-calc').click(); }
         });
     });

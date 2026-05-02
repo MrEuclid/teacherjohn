@@ -102,9 +102,11 @@
     // Global tracking variables
     var points = 0;
     var answer = [];
+    var correct = 0;
     var dt; // DataTable instance
     var questionID = '<?php echo $question; ?>';
-
+  // Kick off the chart drawing process
+      loadGoogleCharts();
     // Fallback rounding function in case utilities.js doesn't load it
     function fallbackRound2DP(num) {
       return Math.round((num + Number.EPSILON) * 100) / 100;
@@ -244,8 +246,7 @@
     // 4. CLICK HANDLERS
     $(document).ready(function() {
       
-      // Kick off the chart drawing process
-      loadGoogleCharts();
+    
 
       $('[id^=check]').on('click', function() {
         var clicked = this.id;

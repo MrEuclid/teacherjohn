@@ -31,22 +31,23 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 <link rel="stylesheet" href="raceGeminiStyles.css">
 
 <script src="javascript/utilities.js"></script>
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+    
+    
+     <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+     });
+      </script>   
+      
+    <script type="text/javascript">
+     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+      </script>
+      
+      <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
  
-<script src="javascript/utilities.js"></script>
- 
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+</script> 
 
 <title>4 Questions Calculus</title>
 

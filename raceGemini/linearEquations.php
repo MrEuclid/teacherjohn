@@ -139,7 +139,7 @@
         let m = x * (x + 1);
 
         // Added (x > 0) so the student knows to ignore the negative root!
-        let expr = '\\( x(x+1) = ' + m + ' \\) &nbsp;&nbsp; \\text{(where } x > 0 \\text{)}';
+      let expr = '$x(x+1) = ' + m + ' \\quad \\text{(where } x > 0 \\text{)}$';
         return { equation: expr, solution: x };
     }
 

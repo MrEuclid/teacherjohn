@@ -242,4 +242,30 @@ $result = $stmt->get_result();
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 </body>
+<script>
+    // Set the refresh interval in milliseconds (5000ms = 5 seconds)
+    const refreshInterval = 5000;
+
+    setInterval(function() {
+        // Get the current URL (this preserves any selected ?view_class filter)
+        const currentUrl = window.location.href;
+
+        // Fetch the page in the background
+        fetch(currentUrl)
+            .then(response => response.text())
+            .then(html => {
+                // Parse the returned HTML string into a temporary document
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Extract the new table body from the background fetch
+                const newTbody = doc.querySelector('table tbody').innerHTML;
+
+                // Replace the current table body on the live page with the new one
+                document.querySelector('table tbody').innerHTML = newTbody;
+            })
+            .catch(error => console.error('Error fetching live leaderboard updates:', error));
+            
+    }, refreshInterval);
+</script>
 </html>

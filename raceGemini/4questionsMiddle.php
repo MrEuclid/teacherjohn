@@ -127,7 +127,7 @@
         var x = m * a; 
      
         // Format: x/y = a/b and x + y = z
-        var expr = '\\( \\frac{x}{y} = \\frac{' + a + '}{' + b + '} \\) &nbsp;&nbsp; \\text{and} &nbsp;&nbsp; \\( x + y = ' + z + ' \\)';
+        var expr = '\\( \\frac{x}{y} = \\frac{' + a + '}{' + b + '} \\) &nbsp;&nbsp; and &nbsp;&nbsp; \\( x + y = ' + z + ' \\)';
         return { equation: expr, solution: x };
     }
 
@@ -137,7 +137,7 @@
        var s = +(n/2)*(n+1);
 
        // Format: (x/2)(x + 1) = s
-       var expr = '\\( \\frac{x}{2} (x + 1) = ' + s + ' \\) &nbsp;&nbsp; \\text{(where } x > 0 \\text{)}';
+       var expr = '\\( \\frac{x}{2} (x + 1) = ' + s + ' \\) &nbsp;&nbsp; and x > 0 ';
        return { equation: expr, solution: n };
     }
 

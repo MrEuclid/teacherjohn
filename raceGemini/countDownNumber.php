@@ -174,11 +174,10 @@
         }
         
         let finalTarget = sim[0];
-        
-        // Ensure the target isn't too trivial (like 2)
-        if (finalTarget > 5 && finalTarget < 30) {
-            return generatePuzzle();
-        }
+      // Ensure the target is between 10 and 30
+if (finalTarget < 10 || finalTarget > 30) {
+    return generatePuzzle();
+}
         
         return { target: finalTarget, numbers: nums };
     }

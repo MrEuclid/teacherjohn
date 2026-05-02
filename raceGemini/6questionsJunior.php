@@ -140,13 +140,11 @@ input {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
+  
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "co-12 text-center"> 
+        <h1>Solve the equations </h1>
 
     <h1>Solve the equations </h1>
 
@@ -158,7 +156,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 ">
     <div id = "ex1">
 <label id = "equation1"></label>
 <input id = "solution1">
@@ -169,7 +167,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 ">
     <div id = "ex2">
 <label id = "equation2"></label>
 <input id = "solution2">
@@ -180,7 +178,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 ">
     <div id = "ex3">
 <label id = "equation3"></label>
 <input id = "solution3">
@@ -189,14 +187,7 @@ input {
 </div></div>
 
 
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
+ 
 
 
 
@@ -408,36 +399,6 @@ console.log("q3",a,b,sum,m,z,x);
 </script>
 
 
-<script>
-
-    function makeQuestion4()
-
-
-    {
-
-     // TRIANGULAR NUMBERS, GIVEN S FIND n
-
-       var n = randomInteger(10,25) ;
-
-       var s = +(n/2)*(n+1);
-
-       console.log(n,s);
-
-       var term = '$ \\frac{x}{2} (x +1) = ' + s + ' , x > 0, x =  $' ;
-       
-     
-
-        $('#equation4').html(term);
-         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation4" ]);
-
-     
-      
-        return n;
-
-
-    }
-</script>
-
 <script type="text/javascript">
   
     $(document).ready(function(){
@@ -452,12 +413,12 @@ answer = [];
 answer[1] = makeQuestion1() ;
 answer[2] = makeQuestion2() ;
 answer[3] = makeQuestion3() ;
-answer[4] = makeQuestion4() ;
+
 
 correct = 0 ; // number correct;
 points = 0 ;
 
-checkAnswer(4);
+checkAnswer(3);
 
 console.log(answer);
   })

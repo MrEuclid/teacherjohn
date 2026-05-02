@@ -3,19 +3,8 @@ session_save_path(sys_get_temp_dir());
 session_start();
 
 require_once '../connectTeacherJohn.php'; 
-// Connect to the database
 
-// Fetch all questions this team has already solved
-$solved_questions = [];
-$stmt = $dbServer->prepare("SELECT questionTitle FROM results WHERE teamName = ?");
-$stmt->bind_param("s", $teamName);
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $solved_questions[] = $row['questionTitle'];
-}
-
-// 1. SECURITY: Redirect to login if they haven't logged in
+// 1. SECURITY & DEFINE VARIABLES FIRST (This must happen before the query)
 if (!isset($_SESSION['teamName'])) {
     header("Location: login.php");
     exit();
@@ -25,7 +14,7 @@ $teamName = $_SESSION['teamName'];
 $classCode = $_SESSION['classCode']; // e.g., '10A'
 $startTime = $_SESSION['startTime'];
 
-// 2. EXTRACT GRADE: Strips all letters, turning '10A' -> '10', '7A' -> '7', or 'G8B' -> '8'
+// 2. EXTRACT GRADE: Strips all letters
 $grade = preg_replace('/[^0-9]/', '', $classCode);
 
 // 3. CALCULATE TIMER: 45 minutes = 2700 seconds
@@ -37,7 +26,23 @@ $timeRemaining = $duration - $elapsed;
 if ($timeRemaining < 0) {
     $timeRemaining = 0;
 }
+
+// 4. FETCH SOLVED QUESTIONS & CALCULATE SCORE
+$solved_questions = [];
+$currentTotalScore = 0; // Initialize a variable to track the score
+
+// We now select both questionTitle and points from the results table
+$stmt = $dbServer->prepare("SELECT questionTitle, points FROM results WHERE teamName = ?");
+$stmt->bind_param("s", $teamName);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $solved_questions[] = $row['questionTitle'];
+    $currentTotalScore += (int)$row['points']; // Add each solved question's points to the total
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -92,8 +97,7 @@ if ($timeRemaining < 0) {
         <span class="navbar-brand mb-0 h1">Maths Comp - Class <?php echo $classCode; ?></span>
         <div class="d-flex align-items-center">
             <div class="stat-box">Team: <span id="teamName"><?php echo htmlspecialchars($teamName); ?></span></div>
-            <div class="stat-box">Score: <span id="totalScore">0</span></div>
-            <div class="timer-box" id="timerDisplay">--:--</div>
+<div class="stat-box">Score: <span id="totalScore"><?php echo $currentTotalScore; ?></span></div>            <div class="timer-box" id="timerDisplay">--:--</div>
         </div>
     </div>
 </nav>

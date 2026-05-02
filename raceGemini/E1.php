@@ -1,5 +1,5 @@
 <?php 
-$question = $_POST['question'];
+$question = isset($_POST['question']) ? $_POST['question'] : 'E1 equations';
 
 ?>
 
@@ -9,11 +9,14 @@ $question = $_POST['question'];
   <head>
  
  
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
-    
+ 
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -21,30 +24,9 @@ $question = $_POST['question'];
       tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
     });
   </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+  <script src="javascript/utilities.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-
-<link rel="stylesheet" href="../css/templeStyles.css">
-<link rel="stylesheet" href="../css/newTempleStyles.css">
-<link rel="stylesheet" href="race2024.css">
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
 
 <title>Find x,y</title>
 
@@ -68,13 +50,9 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h1>Find the numbers x and y</h1>
     <h3>x and y are whole numbers.</h3>
@@ -83,7 +61,7 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col- 12 text-center">
 
 <p id = "equations"></p>
 
@@ -91,11 +69,17 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
 
  <div class = "row">
-      <div class = "col- 12 c">
+      <div class = "col-12 text-center">
 
-        <label>x  = </label><input id = "answerx">
-         <label>y  = </label><input id = "answery">
-         <button id = "check" >Check</button>
+        <label>x  = </label><input id = "solution1">    
+        <button id = "check1" >Check</button>
+</div></div>
+       
+     
+ <div class = "row">
+      <div class = "col-12 text-center">  
+        <label>y  = </label><input id = "solution2">
+         <button id = "check2" >Check</button>
 
 </div></div>
 
@@ -138,9 +122,9 @@ console.log(expr,x,y,z1,z2);
 
 
 
-answer = [x,y];
-console.log(answer);
-      return answer;
+ans = [x,y];
+console.log(ans);
+      return ans  ;
 
 
 
@@ -151,73 +135,46 @@ console.log(answer);
 <script type="text/javascript">
   
     $(document).ready(function(){
-   
+     var points = 0;
+    var answer = [];
+    var correct = 0;
     question = '<?php echo $question; ?>' ;
 // points = question.substr(-1);
 // calculate points on exit
 // $('#cancel').text("Exit");
 
-answer = [];
+a = [];
 
-answers = makeEquations();
-x = answers[0];
-y = answers[1];
+answer = makeEquations();
 
-
+checkAnswer(2)
 console.log(answer);
   })
 
+// 1. Declare the answer array OUTSIDE the ready function so utilities.js can see it globally
+var answer = [];
+ var correct = 0;
+ var points = 0;
+$(document).ready(function(){
+   
+   
+    var question = '<?php echo $question; ?>';
 
+    // 2. Grab the generated x and y from your function
+    var generatedValues = makeEquations();
+
+    // 3. Manually map x to index 1, and y to index 2 so they match check1 and check2
+    answer[1] = generatedValues[0]; // This is 'x'
+    answer[2] = generatedValues[1]; // This is 'y'
+
+    // Initialize the checkAnswer utility for 2 questions
+    checkAnswer(2);
+    
+    console.log("Answers mapped for utilities.js: ", answer);
+});
 </script>
 
 
-
-
-<script type="text/javascript">
-  
-    $(document).ready(function(){
-    $('#check').on('click', function()
-    {
-
-var answerx = parseInt($('#answerx').val()) ;
-var answery = parseInt($('#answery').val()) ;
-//alert(answer) ;
-if (answerx == x & answery == y)
-{
-
-
-      $('#playingArea').hide();
-      $('#numPad').hide() ;
-      $('#send').hide();
-      $('#clear').hide();
-
-// alert("You found the numbers");
-// processWin(questionID);
-    
-     $('#play').empty().show();
- //    $('#q15').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
-     
-processWin(questionID);
-   console.log("processing ",questionID);
-
-
-    
-  
-
-}
-
-else 
-{
-    alert('Keep trying!');
-}
-  
-
-
-  })
-  })
-
-
-</script>
 
 
 

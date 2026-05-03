@@ -247,14 +247,15 @@ while ($row = $result->fetch_assoc()) {
             $(this).removeClass('btn-light').addClass('btn-primary');
         });
 
-        // 4. QUICK CALCULATOR LOGIC
+      // 4. QUICK CALCULATOR LOGIC
         $('#btn-calc').click(function() {
             var expr = $('#calc-expr').val().trim();
             if (expr === "") { $('#calc-result').text(""); return; }
             try {
-                if (/[^0-9()*+\-\/ .\^]+/.test(expr)) {
+                // ADDED % TO THE REGEX WHITELIST BELOW
+                if (/[^0-9()*+\-\/ .\^%]+/.test(expr)) {
                     $('#calc-result').html('<span class="text-danger fs-6">Error: Invalid characters</span>');
-                    return;
+                     return;
                 }
                 var safeExpr = expr.replace(/\^/g, '**');
                 var result = new Function('return ' + safeExpr)();
@@ -267,7 +268,6 @@ while ($row = $result->fetch_assoc()) {
                 $('#calc-result').html('<span class="text-danger fs-6">Syntax Error</span>');
             }
         });
-
         $('#calc-expr').keypress(function(e) {
             if(e.which == 13) { $('#btn-calc').click(); }
         });

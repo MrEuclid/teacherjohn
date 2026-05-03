@@ -128,7 +128,7 @@ while ($row = $result->fetch_assoc()) {
                 <div class="card-header bg-dark text-white py-2">Quick Calculator</div>
                 <div class="card-body py-2">
                     <div class="input-group mb-2 mt-2">
-                        <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12**2 - 1">
+                        <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12^2 - 1">
                         <button class="btn btn-secondary" id="btn-calc">Calculate</button>
                     </div>
                     <div id="calc-result" class="alert alert-light border text-center mb-2" style="min-height: 45px; font-size: 1.2rem; font-weight: bold; color: #0d6efd;">

@@ -43,7 +43,6 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +96,8 @@ while ($row = $result->fetch_assoc()) {
         <span class="navbar-brand mb-0 h1">Maths Comp - Class <?php echo $classCode; ?></span>
         <div class="d-flex align-items-center">
             <div class="stat-box">Team: <span id="teamName"><?php echo htmlspecialchars($teamName); ?></span></div>
-<div class="stat-box">Score: <span id="totalScore"><?php echo $currentTotalScore; ?></span></div>            <div class="timer-box" id="timerDisplay">--:--</div>
+            <div class="stat-box">Score: <span id="totalScore"><?php echo $currentTotalScore; ?></span></div>            
+            <div class="timer-box" id="timerDisplay">--:--</div>
         </div>
     </div>
 </nav>
@@ -108,10 +108,10 @@ while ($row = $result->fetch_assoc()) {
         <div class="col-md-7 mb-4">
             <h4 class="mb-3">Current Problem</h4>
             <div id="exit-container" class="mb-3 text-end" style="display: none;">
-    <button id="btn-exit-question" class="btn btn-outline-danger fw-bold shadow-sm">
-        ← Exit Question / Back to Menu
-    </button>
-</div>
+                <button id="btn-exit-question" class="btn btn-outline-danger fw-bold shadow-sm">
+                    ← Exit Question / Back to Menu
+                </button>
+            </div>
             <div id="play" class="p-3">
                 <div class="d-flex align-items-center justify-content-center" style="min-height: 350px;">
                     <div class="text-center">
@@ -124,22 +124,22 @@ while ($row = $result->fetch_assoc()) {
 
         <div class="col-md-5">
             
-           <div class="card mb-3 border-dark">
-    <div class="card-header bg-dark text-white py-2">Quick Calculator</div>
-    <div class="card-body py-2">
-        <div class="input-group mb-2 mt-2">
-            <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12**2 - 1">
-            <button class="btn btn-secondary" id="btn-calc">Calculate</button>
-        </div>
-        <div id="calc-result" class="alert alert-light border text-center mb-2" style="min-height: 45px; font-size: 1.2rem; font-weight: bold; color: #0d6efd;">
-        </div>
-        <!-- NEW ACTION BUTTONS -->
-        <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-danger w-50 fw-bold" id="btn-calc-clear">Clear</button>
-            <button class="btn btn-sm btn-outline-primary w-50 fw-bold" id="btn-calc-copy">Ans ⤴</button>
-        </div>
-    </div>
-</div>
+            <div class="card mb-3 border-dark">
+                <div class="card-header bg-dark text-white py-2">Quick Calculator</div>
+                <div class="card-body py-2">
+                    <div class="input-group mb-2 mt-2">
+                        <input type="text" id="calc-expr" class="form-control" placeholder="e.g. 4*12**2 - 1">
+                        <button class="btn btn-secondary" id="btn-calc">Calculate</button>
+                    </div>
+                    <div id="calc-result" class="alert alert-light border text-center mb-2" style="min-height: 45px; font-size: 1.2rem; font-weight: bold; color: #0d6efd;">
+                    </div>
+                    <!-- NEW ACTION BUTTONS -->
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-danger w-50 fw-bold" id="btn-calc-clear">Clear</button>
+                        <button class="btn btn-sm btn-outline-primary w-50 fw-bold" id="btn-calc-copy">Ans ⤴</button>
+                    </div>
+                </div>
+            </div>
 
             <?php include 'questions.html'; ?>
             
@@ -147,7 +147,6 @@ while ($row = $result->fetch_assoc()) {
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // Global tracking variables
     var activeQuestionId = "";
@@ -158,17 +157,16 @@ while ($row = $result->fetch_assoc()) {
     var timeRemaining = <?php echo $timeRemaining; ?>;
     var competitionDuration = <?php echo $duration; ?>;
     console.log("Grade",lockedGrade);
-// --- Exit Question Button Logic ---
-$('#btn-exit-question').click(function() {
-    // 1. Wipe the play area clean
-    $('#play').html('<div class="text-center mt-5"><h3 class="text-muted">Select a question from the menu to begin.</h3></div>');
-    
-    // 2. Hide the exit button again
-    $('#exit-container').hide();
-    
-    // (Optional) If you have any variables tracking the active question ID, reset them here:
-    // currentQuestionId = null; 
-});
+
+    // --- Exit Question Button Logic ---
+    $('#btn-exit-question').click(function() {
+        // 1. Wipe the play area clean
+        $('#play').html('<div class="text-center mt-5"><h3 class="text-muted">Select a question from the menu to begin.</h3></div>');
+        
+        // 2. Hide the exit button again
+        $('#exit-container').hide();
+    });
+
     $(document).ready(function() {
         // 1. AUTO-FILTER QUESTIONS (Locks them into their grade)
         $('.q-btn').hide(); // Hide all
@@ -271,7 +269,10 @@ $('#btn-exit-question').click(function() {
         });
 
         $('#calc-expr').keypress(function(e) {
-            // Quick Calculator: Clear Button
+            if(e.which == 13) { $('#btn-calc').click(); }
+        });
+
+        // Quick Calculator: Clear Button
         $('#btn-calc-clear').click(function() {
             $('#calc-expr').val('').focus();
             $('#calc-result').text('');
@@ -282,13 +283,11 @@ $('#btn-exit-question').click(function() {
             var ans = $('#calc-result').text().trim();
             // Only copy if the result is an actual number (prevents copying "Syntax Error")
             if (ans !== "" && !isNaN(ans)) {
-                // Puts the answer into the input box and focuses the cursor so they can immediately type "+ 5"
                 $('#calc-expr').val(ans).focus(); 
             }
         });
-            if(e.which == 13) { $('#btn-calc').click(); }
-        });
-    });
+
+    }); // <-- END OF $(document).ready()
 
     // 5. TRIGGERED WHEN QUESTION IS SOLVED
     function handleCorrectAnswer() {

@@ -74,10 +74,10 @@ target = "_blank"><button class = "btn btn-info" >mBooks Admin</button></a>
  
 <a href="/words/indexWords.php">
     <button class="btn btn-success">Word game (G3- G4)</button></a>
-    <!--
+    
  <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
 <button class="btn btn-info">Sokoban </button></a>
--->
+
 <a href="logic/make15.html" target = "_blank"><button class="btn btn-primary">Make 15</button></a>
 <a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>

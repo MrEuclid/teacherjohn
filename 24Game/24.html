@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The 24 Challenge | Mastery Levelled</title>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; padding-bottom: 50px; user-select: none; }
+        
+        /* Level Navigation */
+        .level-nav { background: #212529; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 30px; }
+        .nav-btn { font-weight: bold; margin: 0 5px; min-width: 130px; border-width: 2px; transition: 0.3s; }
+        .nav-btn.active { background-color: #ffc107; color: #000; border-color: #ffc107; }
+        
+        /* Mastery / Disabled State */
+        .nav-btn.mastered { background-color: #6c757d !important; color: #adb5bd !important; border-color: #495057 !important; cursor: not-allowed; opacity: 0.6; }
+
+        .game-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 650px; margin: 0 auto; border: 1px solid #dee2e6; }
+        
+        .equation-bar { background: #e9ecef; border-radius: 12px; min-height: 80px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; color: #0d6efd; border: 2px dashed #adb5bd; }
+
+        .num-tile { width: 85px; height: 85px; font-size: 2.2rem; font-weight: 900; border-radius: 15px; border: none; background: #fff; box-shadow: 0 6px 0 #dee2e6, 0 8px 15px rgba(0,0,0,0.1); transition: 0.1s; color: #212529; }
+        .num-tile:active { transform: translateY(4px); box-shadow: 0 2px 0 #dee2e6; }
+        .num-tile.used { opacity: 0.1; pointer-events: none; }
+
+        .op-btn { width: 70px; height: 70px; font-size: 2rem; font-weight: bold; border-radius: 50%; border: none; background: #6c757d; color: white; transition: 0.2s; box-shadow: 0 4px 0 #495057; }
+        .op-btn.active-op { background: #0dcaf0; box-shadow: 0 4px 0 #0aa3c2; }
+
+        /* Progress Tracker */
+        .star-tracker { font-size: 2.2rem; color: #dee2e6; letter-spacing: 5px; margin-bottom: 10px; }
+        .star-filled { color: #ffc107; text-shadow: 0 0 8px rgba(255,193,7,0.6); }
+        .mastery-count { font-size: 0.9rem; font-weight: bold; color: #6c757d; margin-top: 5px; }
+    </style>
+</head>
+<body>
+   <div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary">
+        ← Back to Home
+    </a>
+</div>
+<nav class="level-nav d-flex justify-content-center" id="difficultyContainer">
+    <button class="btn btn-outline-warning nav-btn" data-level="easy">EASY</button>
+    <button class="btn btn-outline-warning nav-btn" data-level="medium">MEDIUM</button>
+    <button class="btn btn-outline-warning nav-btn" data-level="hard">HARD</button>
+</nav>
+
+<div class="container text-center">
+    <div class="star-tracker" id="starTracker">☆☆☆☆☆☆</div>
+    <div class="mastery-count" id="countLabel">0 / 6 PUZZLES SOLVED</div>
+    
+    <div class="game-card mt-3">
+        <h4 id="levelLabel" class="text-muted fw-bold mb-3 small text-uppercase">LEVEL: EASY</h4>
+        <div class="equation-bar" id="display">?</div>
+
+        <div class="row g-3 justify-content-center mb-4" id="numberArea"></div>
+
+        <div class="d-flex justify-content-center gap-3 mb-4">
+            <button class="op-btn" data-op="+">+</button>
+            <button class="op-btn" data-op="-">-</button>
+            <button class="op-btn" data-op="*">×</button>
+            <button class="op-btn" data-op="/">÷</button>
+        </div>
+
+        <div id="successOverlay" class="alert alert-success border-2 py-4" style="display:none;">
+            <h2 class="fw-bold mb-3">⭐ CORRECT! ⭐</h2>
+            <p id="masteryMsg" class="fw-bold text-success" style="display:none;">Level Mastered! Moving to next difficulty...</p>
+            <button id="btnNext" class="btn btn-success btn-lg fw-bold px-5">NEXT PUZZLE</button>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button id="btnClear" class="btn btn-warning flex-grow-1 fw-bold py-3">CLEAR GRID</button>
+            <button id="btnNew" class="btn btn-outline-secondary fw-bold px-3">SKIP</button>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    let currentLevel = "easy";
+    let masteryData = { easy: 0, medium: 0, hard: 0 };
+    const MASTERY_LIMIT = 6;
+    
+    let originalNums = [];
+    let currentNums = [];
+    let activeVal = null;
+    let activeOp = null;
+    let lastIdx = null;
+
+    const puzzleBank = {
+        easy: [[1,2,3,4], [2,2,5,5], [6,6,6,6], [4,4,4,4], [2,4,6,8], [3,3,3,3], [1,5,9,9], [8,8,4,4]],
+        medium: [[1,4,5,6], [2,3,4,6], [3,5,7,9], [1,3,4,6], [2,2,4,8], [2,5,5,10], [12,2,1,1]],
+        hard: [[3,3,8,8], [1,5,5,5], [4,4,10,10], [5,5,5,1], [6,9,9,10], [2,3,10,10]]
+    };
+
+    function initGame(newSet = true) {
+        if (newSet) {
+            let bank = puzzleBank[currentLevel];
+            originalNums = [...bank[Math.floor(Math.random() * bank.length)]];
+        }
+        
+        currentNums = [...originalNums];
+        activeVal = null; activeOp = null;
+        
+        $('#display').text("?");
+        $('#successOverlay, #masteryMsg').hide();
+        $('.op-btn').removeClass('active-op');
+        $('#numberArea, .op-btn, #btnClear, #btnNew').show();
+        
+        updateNavButtons();
+        updateStars();
+        renderUI();
+    }
+
+    function renderUI() {
+        $('#numberArea').empty();
+        currentNums.forEach((num, idx) => {
+            $('#numberArea').append(`<div class="col-3"><button class="num-tile w-100" data-idx="${idx}" data-val="${num}">${num}</button></div>`);
+        });
+
+        $('.num-tile').click(function() {
+            let val = parseFloat($(this).data('val'));
+            let idx = $(this).data('idx');
+            if (activeVal === null) {
+                activeVal = val; lastIdx = idx;
+                $(this).addClass('used');
+                $('#display').text(val);
+            } else if (activeOp !== null) {
+                let res = 0;
+                if (activeOp === '+') res = activeVal + val;
+                if (activeOp === '-') res = activeVal - val;
+                if (activeOp === '*') res = activeVal * val;
+                if (activeOp === '/') res = activeVal / val;
+                res = Math.round(res * 100) / 100;
+                currentNums.splice(Math.max(lastIdx, idx), 1);
+                currentNums.splice(Math.min(lastIdx, idx), 1);
+                currentNums.push(res);
+                activeVal = null; activeOp = null;
+                $('.op-btn').removeClass('active-op');
+                $('#display').text(res);
+                if (currentNums.length === 1) {
+                    if (Math.abs(currentNums[0] - 24) < 0.1) handleWin();
+                    else { alert("Result: " + currentNums[0] + ". Try again!"); initGame(false); }
+                } else renderUI();
+            }
+        });
+    }
+
+    function handleWin() {
+        masteryData[currentLevel]++;
+        updateStars();
+        updateNavButtons();
+        
+        $('#numberArea, .op-btn, #btnClear, #btnNew').hide();
+        $('#successOverlay').fadeIn();
+
+        if (masteryData[currentLevel] >= MASTERY_LIMIT) {
+            $('#masteryMsg').show();
+        }
+    }
+
+    function updateNavButtons() {
+        $('.nav-btn').each(function() {
+            let lvl = $(this).data('level');
+            $(this).removeClass('active mastered').prop('disabled', false);
+            if (masteryData[lvl] >= MASTERY_LIMIT) {
+                $(this).addClass('mastered').prop('disabled', true).html(lvl.toUpperCase() + " ✅");
+            }
+            if (lvl === currentLevel) $(this).addClass('active');
+        });
+    }
+
+    function updateStars() {
+        let count = masteryData[currentLevel];
+        let html = "";
+        for(let i=1; i<=MASTERY_LIMIT; i++) {
+            html += (i <= count) ? "<span class='star-filled'>★</span>" : "☆";
+        }
+        $('#starTracker').html(html);
+        $('#countLabel').text(count + " / " + MASTERY_LIMIT + " PUZZLES SOLVED");
+    }
+
+    $('.op-btn').click(function() {
+        if (activeVal !== null) {
+            activeOp = $(this).data('op');
+            $('.op-btn').removeClass('active-op');
+            $(this).addClass('active-op');
+        }
+    });
+
+    $('.nav-btn').click(function() {
+        if ($(this).hasClass('mastered')) return;
+        currentLevel = $(this).data('level');
+        $('#levelLabel').text("LEVEL: " + currentLevel);
+        initGame(true);
+    });
+
+    $('#btnClear').click(() => initGame(false));
+    $('#btnNew').click(() => initGame(true));
+    
+    $('#btnNext').click(() => {
+        if (masteryData[currentLevel] >= MASTERY_LIMIT) {
+            if (currentLevel === 'easy') currentLevel = 'medium';
+            else if (currentLevel === 'medium') currentLevel = 'hard';
+            $('#levelLabel').text("LEVEL: " + currentLevel);
+        }
+        initGame(true);
+    });
+
+    initGame(true);
+});
+</script>
+</body>
+</html>

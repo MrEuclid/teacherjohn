@@ -156,73 +156,72 @@ button {margin: 0.5em;}
          
  <div class = "col-12 text-center">
 
-    <a href = "maths/functionMachine.html" target="_blank"><button class = "btn btn-success" title = "Function machine">Functions</button></a>
+    <a href = "functionMachine/functionMachine.html" target="_blank"><button class = "btn btn-success" title = "Function machine">Functions</button></a>
 
 
-  <a href = "maths/guru.php?level=1" target="_blank"><button class = "btn btn-success" title = "solve all the equations on the grid.">Equations</button></a>
+  <a href = "guru/guru.php?level=1" target="_blank"><button class = "btn btn-success" title = "solve all the equations on the grid.">Equations</button></a>
 
 
-<a href = "maths/guru9.php" target="_blank"><button class = "btn btn-info" title = "Addition problems on a grid">Addition</button></a>
-<a href = "maths/guru9Negative.php" target="_blank"><button class = "btn btn-primary" title = "subtract numbers to solve the puzzles.">Subtraction</button></a>
-<a href = "maths/fractionPuzzle.html?level=1" target="_blank"><button class = "btn btn-success" title = "Practice adding fractions (not easy).">Add fractions</button></a>
-<a href = "maths/guruSquares.php" target="_blank"><button class = "btn btn-success" title = "Solve equations usibg only square numbers.">Square numbers</button></a>
-   <a href = "maths/primeAddition.html" target="_blank"><button class = "btn btn-info" title = "Find 2 numbers to get teh answer.">Add 2 numbers</button></a>  
-    <a href = "maths/primeMultiply.html" target="_blank"><button  class = "btn btn-primary" title=  "Multiply 2 numbers to get the answer">Multiply 2 numbers</button></a>  
-    <a href = "maths/primeSubtraction.html" target="_blank"><button class = "btn btn-primary" title = "Test your subtraction skills.">Subtract 2 numbers</button></a>  
-  <a href = "maths/primeDivide.html" target="_blank"><button class = "btn btn-success" title = "Find the two factors of the number." >Factors</button></a>  
+<a href = "guru/guru9.php" target="_blank"><button class = "btn btn-info" title = "Addition problems on a grid">Addition</button></a>
+<a href = "guru/guru9Negative.php" target="_blank"><button class = "btn btn-primary" title = "subtract numbers to solve the puzzles.">Subtraction</button></a>
+<a href = "guru/fractionPuzzle.html?level=1" target="_blank"><button class = "btn btn-success" title = "Practice adding fractions (not easy).">Add fractions</button></a>
+<a href = "guru/guruSquares.php" target="_blank"><button class = "btn btn-success" title = "Solve equations usibg only square numbers.">Square numbers</button></a>
+   <a href = "guru/primeAddition.html" target="_blank"><button class = "btn btn-info" title = "Find 2 numbers to get teh answer.">Add 2 numbers</button></a>  
+    <a href = "guru/primeMultiply.html" target="_blank"><button  class = "btn btn-primary" title=  "Multiply 2 numbers to get the answer">Multiply 2 numbers</button></a>  
+    <a href = "guru/primeSubtraction.html" target="_blank"><button class = "btn btn-primary" title = "Test your subtraction skills.">Subtract 2 numbers</button></a>  
+  <a href = "guru/primeDivide.html" target="_blank"><button class = "btn btn-success" title = "Find the two factors of the number." >Factors</button></a>  
 
-<a href = "maths/guru9Negative.php" target="_blank"><button class = "btn btn-success" title = "Work with negative numbers."> Subtraction Negative numbers</button></a>
- <a href = "maths/2048Game.html" target = "_blank"><button class = "btn btn-success" tile = "fun gaeme for one player. Make the numbers bigger and bigger.">2048 game</button></a>
- <a href = "maths/gemini24.html" target = "_blank"><button class = "btn btn-primary" title = "you always have to make 24.">24 Gemini</button></a>
-  <a href = "maths/four_fours.html" target = "_blank"><button class = "btn btn-success" title = "Use only 4s to make the numbers.">Four 4s</button></a> 
+<a href = "guru/guru9Negative.php" target="_blank"><button class = "btn btn-success" title = "Work with negative numbers."> Subtraction Negative numbers</button></a>
+ <a href = "guru/2048Game.html" target = "_blank"><button class = "btn btn-success" tile = "fun gaeme for one player. Make the numbers bigger and bigger.">2048 game</button></a>
+ <a href = "guru/gemini24.html" target = "_blank"><button class = "btn btn-primary" title = "you always have to make 24.">24 Gemini</button></a>
+  <a href = "guru/four_fours.html" target = "_blank"><button class = "btn btn-success" title = "Use only 4s to make the numbers.">Four 4s</button></a> 
 
-  <a href = "maths/pyramidGame3v2.html" target = "_blank"><button class = "btn btn-info" title = "Pyramid numbers - easy.">Pyramids - easy</button></a> 
-   <a href = "maths/pyramidGame4v1.html" target = "_blank"><button class = "btn btn-primary" title = "Pyramid numbers - easy.">Pyramids - harder</button></a> 
+  <a href = "pyramidGame/pyramidGame3v2.html" target = "_blank"><button class = "btn btn-info" title = "Pyramid numbers - easy.">Pyramids - easy</button></a> 
+   <a href = "pyramidGame/pyramidGame4v1.html" target = "_blank"><button class = "btn btn-primary" title = "Pyramid numbers - easy.">Pyramids - harder</button></a> 
 
 
 
     <a href = "maths/triangle.php" target = "_blank"><button class = "btn btn-success" title = "Three equations">3 equations</button></a> 
 
-    <a href = "maths/pyramidGame3v2.html" target = "_blank"><button class = "btn btn-info" title = "Pyramid numbers - easy.">Pyramids - easy</button></a> 
 
-<a href = "maths/egyptianGemini2.html" target = "_blank"><button class = "btn btn-primary" title = "Fractions have a numerator of one. Use them to make another fraction.">Egyptian 2</button></a>
-<a href = "maths/egyptianGemini3.html" target = "_blank"><button class = "btn btn-success" title = "It is harder to work with 3 fractions.">Egyptian 3</button></a>
+<a href = "egyptian/egyptianGemini2.html" target = "_blank"><button class = "btn btn-primary" title = "Fractions have a numerator of one. Use them to make another fraction.">Egyptian 2</button></a>
+<a href = "egyptian/egyptianGemini3.html" target = "_blank"><button class = "btn btn-success" title = "It is harder to work with 3 fractions.">Egyptian 3</button></a>
 <a href = "factorGame/factorGameJSv4.html"><button class = "btn btn-primary" title = "Get a high score by choosing the factors in the correct way.">Factor game (intro)</button></a> 
 
-<a href = "maths/dragons/dragons.html" target = "_blank"><button class = "btn btn-primary" title = "Percentages, fractions and decimal">Dragons</button>
+<a href = "dragons/dragons/dragons.html" target = "_blank"><button class = "btn btn-primary" title = "Percentages, fractions and decimal">Dragons</button>
 
 
 
-<a href = "mathstwoPlayerGames/decimalFractionPercent.php" target = "_blank"><button class = "btn btn-primary" title = "sPercentages, fractions and decimal">Percentages</button>
+<a href = "decimalsPercentages/decimalFractionPercent.php" target = "_blank"><button class = "btn btn-primary" title = "sPercentages, fractions and decimal">Percentages</button>
 
-<a href = "maths/greenLightAdd3x3New.php" target = "_blank"><button class = "btn btn-primary" title = "Calculate (+) to turn the lights green.">Lights + easy</button></a> 
-<a href = "maths/greenLightMultiply2x2New.php" target = "_blank"><button class = "btn btn-primary" title = "Calculate (x) to turn the lights green.">Lights x easy</button></a> 
+<a href = "greenLight/greenLightAdd3x3New.php" target = "_blank"><button class = "btn btn-primary" title = "Calculate (+) to turn the lights green.">Lights + easy</button></a> 
+<a href = "greenLight/greenLightMultiply2x2New.php" target = "_blank"><button class = "btn btn-primary" title = "Calculate (x) to turn the lights green.">Lights x easy</button></a> 
 
-<a href = "maths/escapev6.html" target = "_blank"><button class = "btn btn-primary" title = "Free the cats by doing all the calculations.">Cats</button></a> 
-<a href = "maths/escapev7.html" target = "_blank"><button class = "btn btn-primary"  title = "Free the ctigers by doing some difficult calculations.">Tigers</button></a> 
-<a href = "maths/greenLightMultiply3x3New.php" target = "_blank"><button class = "btn btn-primary" ttile = "Make the lights green (hard)">Lights x hard</button></a> 
-<a href = "maths/greenLightSquares2x2New.php"><button class = "btn btn-primary">a<sup>2</sup> + b<sup>2</sup></button></a> 
-<a href = "maths/24GameEasy.html" target = "_blank"><button class = "btn btn-primary">$4 \times 5 + 4 = 24 $</button></a> 
-<a href = "maths/24GameMedium.html" target = "_blank"><button class = "btn btn-primary"> $ 12 \div 2 \times 3+6 = 24 $</button></a> 
-<a href = "maths/24GameExtremev2.html" target = "_blank"><button class = "btn btn-primary"> 24 Game - Hard</button></a> 
-<a href = "maths/greenLightHSX+New.php" target = "_blank"><button class = "btn btn-primary" titlee = "Turn the lights green with some difficult calculations.">Lights a+b+ab</button></a> 
+<a href = "escape/escapev6.html" target = "_blank"><button class = "btn btn-primary" title = "Free the cats by doing all the calculations.">Cats</button></a> 
+<a href = "escape/escapev7.html" target = "_blank"><button class = "btn btn-primary"  title = "Free the ctigers by doing some difficult calculations.">Tigers</button></a> 
+<a href = "greenLight/greenLightMultiply3x3New.php" target = "_blank"><button class = "btn btn-primary" ttile = "Make the lights green (hard)">Lights x hard</button></a> 
+<a href = "greenLight/greenLightSquares2x2New.php"><button class = "btn btn-primary">a<sup>2</sup> + b<sup>2</sup></button></a> 
+<a href = "24Game/24GameEasy.html" target = "_blank"><button class = "btn btn-primary">$4 \times 5 + 4 = 24 $</button></a> 
+<a href = "24Game/24GameMedium.html" target = "_blank"><button class = "btn btn-primary"> $ 12 \div 2 \times 3+6 = 24 $</button></a> 
+<a href = "24Game/24GameExtremev2.html" target = "_blank"><button class = "btn btn-primary"> 24 Game - Hard</button></a> 
+<a href = "greenLight/greenLightHSX+New.php" target = "_blank"><button class = "btn btn-primary" titlee = "Turn the lights green with some difficult calculations.">Lights a+b+ab</button></a> 
 
 
-<a href = "maths/greenLightMultiply3x3New.php" target = "_blank">
+<a href = "greenLight/greenLightMultiply3x3New.php" target = "_blank">
 <button id = "primaryMultiplication" class="btn btn-warning">Green light HS</button></a>
-<a href = "maths/24GameEasy.html" target = "_blank"><button class = "btn btn-info">24 - Easy</button></a> 
-<a href = "maths/24GameMedium.html" target = "_blank"><button class = "btn btn-primary">24 - Medium </button>
-<a href = "maths/greenLightSquares2x2New.php" target = "_blank"><button id = "secondarySquares" class="btn btn-danger">Green light squares</sup></button>
+<a href = "24Game/24GameEasy.html" target = "_blank"><button class = "btn btn-info">24 - Easy</button></a> 
+<a href = "24Game/24GameMedium.html" target = "_blank"><button class = "btn btn-primary">24 - Medium </button>
+<a href = "greenLight/greenLightSquares2x2New.php" target = "_blank"><button id = "secondarySquares" class="btn btn-danger">Green light squares</sup></button>
 </a>
-<a href = "maths/greenLightHSX+New.php" target = "_blank">
+<a href = "greenLight/greenLightHSX+New.php" target = "_blank">
 <button id = "secondaryQuadratic" class="btn btn-success">Green light hard</button></a>
 
- <a href = "maths/24GameHardv2.html" target = "_blank">
+ <a href = "24Game/24GameHardv2.html" target = "_blank">
     <button class = "btn btn-primary">
     24 - Hard</button></a> 
 
 
-        <a href = "maths/24GameExtremev2.html" target = "_blank">
+        <a href = "24Game/24GameExtremev2.html" target = "_blank">
     <button class = "btn btn-success">
     24 - Extreme</button></a> 
 

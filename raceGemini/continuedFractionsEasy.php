@@ -44,7 +44,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Continued fraction
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
   
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
 
 <title>Continued fractions</title>
 
@@ -211,7 +211,7 @@ ans.unshift(0);
 console.log("ans",ans);
 answer[1] = ans[1];
 answer[2] = ans[2];
-console.log("answer ",answer);
+// console.log("answer ",answer);
 checkAnswer(2);
 })
 

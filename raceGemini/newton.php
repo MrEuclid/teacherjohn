@@ -234,7 +234,7 @@ answer[2] = makeQuestion2(t,T) ;
 
 
 
-console.log(answer);
+ // console.log(answer);
 
 checkAnswer(2);
 

@@ -233,5 +233,5 @@ for (var i = 0 ; i <= 4 ; i++)
 
 answer[1] = c;
 checkAnswer(1);
-console.log(answer);
+// console.log(answer);
   })

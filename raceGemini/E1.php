@@ -148,7 +148,7 @@ a = [];
 answer = makeEquations();
 
 checkAnswer(2)
-console.log(answer);
+// console.log(answer);
   })
 
 // 1. Declare the answer array OUTSIDE the ready function so utilities.js can see it globally
@@ -170,7 +170,7 @@ $(document).ready(function(){
     // Initialize the checkAnswer utility for 2 questions
     checkAnswer(2);
     
-    console.log("Answers mapped for utilities.js: ", answer);
+  //  console.log("Answers mapped for utilities.js: ", answer);
 });
 </script>
 

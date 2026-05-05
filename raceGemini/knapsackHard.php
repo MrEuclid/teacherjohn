@@ -27,29 +27,6 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Knapsack hard';
     });
   </script>   
   
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-
-<link rel="stylesheet" href="race2024.css">
-<script src="javascript/utilities.js">
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
-
 <title>Knapsack easy</title>
 
 <style>
@@ -186,7 +163,7 @@ p = makeQuestion();
 answer = [];
 answer[1] = p;
 checkAnswer(1);
-console.log(answer);
+// console.log(answer);
 }) 
 </script>
 

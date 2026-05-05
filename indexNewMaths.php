@@ -67,7 +67,7 @@
        <a href="dragons/dragons.html"><button class="btn btn-primary ">Dragons</button></a>
         <a href="escape/escape.html"><button class="btn btn-primary">Escape</button></a>
      <a href="jimmyGame/jimmyMath.html"><button class="btn btn-primary">Jimmy Gemini</button></a>
-      <a href="decimalFractionPercent.php"><button class="btn btn-primary">Percent</button></a>
+      <a href="decimalsPercentages/decimals.html"><button class="btn btn-primary">Percent</button></a>
 <a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
 </div>
 </div> 
@@ -105,6 +105,8 @@
 </div>
 
         <div class="math-grid">
+                  <a href="functionMachine/functionMachine.html"><button class="btn btn-danger">Func. Machine</button></a>
+
                <a href="crossNumber/crossNumberCalxulus"><button class="btn btn-danger">Crossnumber</button></a>
                      <a href="crossNumber/crossNumberFractionsHarder"><button class="btn btn-success">Crossnumber fractions</button></a>
         </div>

@@ -126,15 +126,11 @@ input {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
-    <h1>fibonaccinumbers</h1>
+    <h1>Fibonacci Numbers</h1>
 
     <h2 id = "data">1,1,2,3,5,8,13,21,...</h2>
     <h3>T(n) = T(n-1) + T(n-2) and S(n)  =  T(n+2) - 1 </h3>
@@ -145,50 +141,43 @@ input {
   -->  
   
 </div></div>
+<div class="row mb-4">
+    
+    <!-- Question 1 -->
+    <div class="col-12 col-md-6 text-center mb-4">
+        <div id="ex1">
+            <label id="equation1"></label>
+            <input id="solution1">
+            <button id="check1">Check 1</button>
+        </div>
+    </div>
 
+    <!-- Question 2 -->
+    <div class="col-12 col-md-6 text-center mb-4">
+        <div id="ex2">
+            <label id="equation2"></label>
+            <input id="solution2">
+            <button id="check2">Check 2</button>
+        </div>
+    </div>
 
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
+    <!-- Question 3 -->
+    <div class="col-12 col-md-6 text-center mb-4">
+        <div id="ex3">
+            <label id="equation3"></label>
+            <input id="solution3">
+            <button id="check3">Check 3</button>
+        </div>
+    </div>
 
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
+    <!-- Question 4 -->
+    <div class="col-12 col-md-6 text-center mb-4">
+        <div id="ex4">
+            <label id="equation4"></label>
+            <input id="solution4">
+            <button id="check4">Check 4</button>
+        </div>
+    </div>
 
 
 
@@ -401,49 +390,6 @@ console.log(answer);
 
 
 
-
-
-
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-        alert("Checking " + qNumber);
-
-        var guess = $('#solution' + qNumber).val() ;
-      //  alert(guess + ' ' + qNumber + ' ' + answer[qNumber]);
-        if (guess == answer[qNumber])
-        {
-            alert("Correct");
-            $('#solution' + qNumber).prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            points = points + 3 ;
-
-            if (points == 12)
-
-            {
-
-                alert("You have solved " + points/3 + " equations!");
-                alert("Processing win " + questionID + " with " + points + " pts");
-                processWin(questionID);
-                console.log("processing ",questionID);
-
-            }
-        }
-
-        else
-
-        {
-            alert("Keep trying")
-        }
-})
-})
 
 </script>
 

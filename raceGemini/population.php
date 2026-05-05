@@ -220,7 +220,7 @@ return parameters;
     {
         p = randomInteger(5,10)*100;
     var expr = "How many <strong>full</strong> months before there are  " + p + " fish in the lake?";
-   expr += 'Use $ t = log(\\frac{' + p + '}{' + p0 + '} ) \\div '+ r + '$' ;
+ //  expr += 'Use $ t = log(\\frac{' + p + '}{' + p0 + '} ) \\div '+ r + '$' ;
   
         $('#equation3').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);

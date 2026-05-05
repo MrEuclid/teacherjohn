@@ -377,7 +377,7 @@ answer[1] = makeQuestion1(primes) ;
 
 
 checkAnswer(1);
-// console.log("Answer", answer);
+ console.log("Answer", answer);
 
 
 

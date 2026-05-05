@@ -251,11 +251,8 @@ Electrostatics</button></a>
       <a href =  "raceGemini/login.php" target = "_blank">
         <button class = "btn btn-info" title = "Maths contests">Maths Contests</button> </a>
 
-       <a href =  "maths/24GameCompetition.html" target = "_blank"><button class = "btn btn-primary" title = "24 Game competition">24 Game</button></a>
 
-       <a href =  "maths/greenLightHSX+New.php" target = "_blank"><button class = "btn btn-success" title = "Green light hard competition">Green light hard</button></a>
 
-       <a href =  "maths/greenLightMultiply3x3New.php" target = "_blank"><button class = "btn btn-warning" title = "Green light multiplication competition">Green light multiplication</button></a>
        
        <a href =  "puzzleTournament/index.php" target = "_blank"><button class = "btn btn-info" title = "Puzzle Tournament">Puzzle Tournament</button></a>
   

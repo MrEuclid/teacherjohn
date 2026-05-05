@@ -11,9 +11,9 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Fraction';
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-  <!-- Single, correct import for Math.js -->
+  <!-- Single, correct import for Math.js
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-  
+-->
   <script src="javascript/utilities.js"></script>
 
   <title>Complex fractions 2</title>

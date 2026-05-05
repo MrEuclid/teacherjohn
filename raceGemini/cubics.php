@@ -30,7 +30,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Cubic equation';
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
 
 
 
@@ -46,7 +46,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Cubic equation';
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
   
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
 
 <title>Functions</title>
 
@@ -322,8 +322,8 @@ answer[3] = makeQuestion3() ;
 
 
 checkAnswer(3);
-console.log(answer);
-console.log(roots);
+// console.log(answer);
+// console.log(roots);
   })
 
 

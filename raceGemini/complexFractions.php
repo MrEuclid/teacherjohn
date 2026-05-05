@@ -179,7 +179,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Fraction';
         answer[2] = makeQuestion2(z1,z2,z3,z4);
         answer[3] = makeQuestion3(z1,z2,z3,z4);
 
-        console.log("answers", answer);
+     //   console.log("answers", answer);
         
         correct = 0; 
         points = 0;

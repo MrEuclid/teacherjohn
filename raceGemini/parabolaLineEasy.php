@@ -22,9 +22,7 @@
   </script>   
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
 
-  <link rel="stylesheet" href="../css/templeStyles.css">
-  <link rel="stylesheet" href="../css/newTempleStyles.css">
-  <link rel="stylesheet" href="race2024.css">
+ 
   <script src="javascript/utilities.js"></script>
 
   <title>Line and parabola</title>
@@ -232,7 +230,7 @@ $(document).ready(function(){
 
   // FIX: Properly place the answer into the array without destroying the array
   answer[1] = makeQuestion1();
-  console.log("Answer array is now:", answer);
+ // console.log("Answer array is now:", answer);
   checkAnswer(1);
 });
 </script> 

@@ -28,7 +28,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Challenge'
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
 
 <link rel="stylesheet" href="raceGeminiStyles.css">
 <script src="javascript/utilities.js"></script>
@@ -45,7 +45,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Challenge'
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
   
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
 
 <title>complex numbers</title>
 
@@ -338,7 +338,7 @@ ans = makeQuestion4(z1,z2) ;
 answer[4] = ans;
 
 
-console.log(answer);
+//console.log(answer);
 checkAnswer(4);
 
 

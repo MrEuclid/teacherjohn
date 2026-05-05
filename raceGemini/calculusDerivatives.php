@@ -26,7 +26,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
 
 <link rel="stylesheet" href="raceGeminiStyles.css">
 
@@ -45,7 +45,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
      MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
       </script>
       
-      <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+  
  
 </script> 
 
@@ -477,7 +477,7 @@ answer[4] = makeQuestion4() ;
 
 
 checkAnswer(4);
-console.log(answer);
+// console.log(answer);
   })
 
 

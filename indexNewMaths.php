@@ -55,14 +55,14 @@
 <div class="math-grid">
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
-    <a href="24Game/24.html.html"><button class="btn btn-info">24 game</button></a>
+    <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
 </div>
 
 <div class = "row text-center">
     <p class = "h2">G5 - G6</p>
 </div>
 <div class="math-grid">
-        <a href="24Game/24.html.html"><button class="btn btn-primary">24 game</button></a>
+        <a href="24Game/24.html"><button class="btn btn-primary">24 game</button></a>
 
        <a href="dragons/dragons.html"><button class="btn btn-primary ">Dragons</button></a>
         <a href="escape/escape.html"><button class="btn btn-primary">Escape</button></a>

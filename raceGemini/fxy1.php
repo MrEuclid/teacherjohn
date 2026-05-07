@@ -1,5 +1,5 @@
 <?php 
-$question = isset($_POST['question']) ? $_POST['question'] : 'functions 1 G9';
+$question = isset($_POST['question']) ? $_POST['question'] : 'fxy 1 G9';
 ?>
 
 <!DOCTYPE html>
@@ -51,11 +51,11 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'functions 1 G9';
 
 
     <div class = "row">
-      <div class = "col-sm-12 c">
-
+      <div class = "col-12 text-center">
+<div id = "functions">
 <h4> $ f(x) = x^3 -x^2 + 4 $ </h4>
-    <h4>$ g(x,y) = x^2- xy + y^2$</h4>
- 
+    <h4> $ g(x,y) = x^2- xy + y^2 $</h4>
+ </div>
  <h1>Answer these questions</h1>
 </div></div>
 
@@ -265,7 +265,7 @@ var answer = parseInt(x**3 -x*x + 4);
 
 
       $('#equation2').html(expr);
-       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
 console.log(expr,x,answer);
 console.log(expr);
       return answer;
@@ -332,6 +332,7 @@ var points = 0;
   
     $(document).ready(function(){
    
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "functions" ]); 
     question = '<?php echo $question; ?>' ;
 // points = question.substr(-1);
 // calculate points on exit

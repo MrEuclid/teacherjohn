@@ -61,114 +61,63 @@ input {
 
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
 
     <h4 id = "equation"></h4>
   
  
  <h2>Solve f(x) = 0, that is, find x so that f(x) = 0</h2>
- <h3>There will be two answers for each equation. Answers to 2dp</h3>
+ <h3>Find the biggest answer for each equation. Answers to 2dp</h3>
 </div></div>
 
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex1"></div>
+<div class="row align-items-center mb-4">
+    <div class="col-8">   
+        <label id="equation1" class="fw-bold fs-5"></label>
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation1"></label>
-</div>
-
-    <div class = "col-2">   
-<input id = "solution1a">
-</div>
-
-   <div class = "col-2">   
- <input id = "solution1b">
-</div>
-
- <div class = "col-2"> 
-<button id = "check1">Check 1</button>
-</div>
-</div>
-
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex2"></div>
+    <div class="col-2">   
+        <input id="solution1" class="form-control" placeholder="Answer">
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation2"></label>
-</div>
-
-    <div class = "col-2">   
-<input id = "solution2a">
-</div>
-
-   <div class = "col-2">   
- <input id = "solution2b">
-</div>
-
- <div class = "col-2"> 
-<button id = "check2">Check 2</button>
-</div>
-</div>
-
-
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex3"></div>
+    <div class="col-2"> 
+        <button id="check1" class="btn btn-outline-primary w-100 fw-bold">Check 1</button>
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation3"></label>
 </div>
 
-    <div class = "col-2">   
-<input id = "solution3a">
-</div>
-
-   <div class = "col-2">   
- <input id = "solution3b">
-</div>
-
- <div class = "col-2"> 
-<button id = "check3">Check 3</button>
-</div>
-</div>
-
-<div class = "row">
-</div></div>
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex4"></div>
+<div class="row align-items-center mb-4">
+    <div class="col-8">   
+        <label id="equation2" class="fw-bold fs-5"></label>
     </div>
-    
-    <div class = "col-3">   
-<label id = "equation4"></label>
+    <div class="col-2">   
+        <input id="solution2" class="form-control" placeholder="Answer">
+    </div>
+    <div class="col-2"> 
+        <button id="check2" class="btn btn-outline-primary w-100 fw-bold">Check 2</button>
+    </div>
 </div>
 
-    <div class = "col-2">   
-<input id = "solution4a">
+<div class="row align-items-center mb-4">
+    <div class="col-8 text-left">   
+        <label id="equation3" class="fw-bold fs-5"></label>
+    </div>
+    <div class="col-2">   
+        <input id="solution3" class="form-control" placeholder="Answer">
+    </div>
+    <div class="col-2"> 
+        <button id="check3" class="btn btn-outline-primary w-100 fw-bold">Check 3</button>
+    </div>
 </div>
 
-   <div class = "col-2">   
- <input id = "solution4b">
+<div class="row align-items-center mb-4">
+    <div class="col-8">   
+        <label id="equation4" class="fw-bold fs-5"></label>
+    </div>
+    <div class="col-2">   
+        <input id="solution4" class="form-control" placeholder="Answer">
+    </div>
+    <div class="col-2"> 
+        <button id="check4" class="btn btn-outline-primary w-100 fw-bold">Check 4</button>
+    </div>
 </div>
-
- <div class = "col-2"> 
-<button id = "check4">Check 4</button>
-</div>
-</div>
-
 
 <!--
  <div class = "row justify-content-evenly">
@@ -230,7 +179,8 @@ n = randomInteger(2,7);
         x1 = -a/2;
         x1 = round2DP(x1);
         x2 = -b;
-        return [x1,x2];
+        const largest = Math.max(x1, x2);
+        return largest;
         
     }
 </script>
@@ -277,7 +227,9 @@ else
         x1 = a/n;
         x1 = round2DP(x1);
         x2 = b;
-        return [x1,x2];
+                const largest = Math.max(x1, x2);
+        return largest;
+
         
     }
 
@@ -330,7 +282,8 @@ else
         x1 = -a/n;
         x1 = round2DP(x1);
         x2 = b;
-        return [x1,x2];
+        const largest = Math.max(x1, x2);
+        return largest;
         
     }
 
@@ -383,7 +336,8 @@ else
         x1 = round2DP(x1);
         x2 = b/q;
         x2 = round2DP(x2);
-        return [-x1,-x2];
+        const largest = Math.max(x1, x2);
+        return largest;
         
     }
 
@@ -423,61 +377,6 @@ console.log(answer);
 
   })
 
-
-</script>
-
-
-
-
-
-
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-      //  alert("Checking " + qNumber);
-
-         var guess1 = $('#solution' + qNumber + 'a').val() ;
-         var guess2 = $('#solution' + qNumber + 'b').val() ;
-            guess1 = parseFloat(guess1);
-            guess2 = parseFloat(guess2);
-         var sum = +answer[qNumber][0] + answer[qNumber][1];
-         var prod = answer[qNumber][0] *answer[qNumber][1] ;
-         console.log(sum,prod,guess1,guess2);
-        if (+guess1 + guess2 == sum & guess1*guess2 == prod)
-        {
-           // alert("Correct");
-    $('#solution' + qNumber + 'a').prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-    $('#solution' + qNumber + 'b').prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            
-            points = parseInt(points +2);
-            console.log("points", points,clicked,qNumber);
-            if (points == 8)
-
-            {
-
-            //    alert("You have solved " + points/3 + " equations!");
-alert("Processing win " + questionID + " with " + points + " pts");
-processWin(questionID);
-    console.log("processing ",questionID);
-
-            }
-        }
-
-        else
-
-        {
-            alert("keep trying")
-        }
-})
-})
 
 </script>
 

@@ -338,6 +338,23 @@ while ($row = $result->fetch_assoc()) {
             }
         });
     }
+
+// --- Anti-Cheat: Prevent Tab Switching or Minimizing ---
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        // The student has switched tabs, minimized the browser, or opened another app
+        alert("Warning: You left the competition window! Your session has been interrupted and you are being returned to the login screen.");
+        
+        // Kick them back to the login page
+        window.location.href = "login.php"; 
+    }
+});
+
+// Optional: Also catch if they click outside the browser window (like onto a desktop app)
+window.addEventListener("blur", function() {
+    alert("Warning: You clicked outside the competition window! You are being returned to the login screen.");
+    window.location.href = "login.php";
+});
 </script>
 
 </body>

@@ -89,7 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php echo $error_message; ?>
             </div>
         <?php endif; ?>
-
+<?php if (isset($_GET['kicked']) && $_GET['kicked'] == 1): ?>
+    <div class="alert alert-danger fw-bold text-center mt-3 shadow-sm" role="alert">
+        ⚠️ Warning: You left the competition window! Your session was interrupted. Please log in again to continue.
+    </div>
+<?php endif; ?>
         <form method="POST" action="login.php">
             <div class="mb-3">
                 <label for="teamName" class="form-label">Team Name</label>

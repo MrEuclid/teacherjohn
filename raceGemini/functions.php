@@ -275,7 +275,7 @@ correct = 0 ; // number correct;
 points = 0 ;
 
 console.log(answer);
-checkanswer(2)
+checkAnswer(2)
   })
 
 

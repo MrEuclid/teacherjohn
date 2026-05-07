@@ -29,7 +29,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
     });
   </script>   
   
-  <title>Functions</title>
+  <title>Functions G10</title>
 
  
   
@@ -37,7 +37,6 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 
 <script src="javascript/utilities.js"></script>
    
-<title>Functions</title>
 
 <style>
 

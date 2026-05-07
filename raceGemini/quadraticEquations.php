@@ -1,6 +1,5 @@
 <?php 
-$question = $_POST['question'];
-?>
+$question = isset($_POST['question']) ? $_POST['question'] : 'quadratics G9';
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,10 +7,18 @@ $question = $_POST['question'];
   <head>
  
  
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+
+ <link rel="stylesheet" href="raceGeminiStyles.css">
+
+<script src="javascript/utilities.js"></script>
+    
     
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -20,30 +27,9 @@ $question = $_POST['question'];
       tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
     });
   </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-
-<link rel="stylesheet" href="../css/templeStyles.css">
-<link rel="stylesheet" href="../css/newTempleStyles.css">
-<link rel="stylesheet" href="../race2024.css">
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
   
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+<link rel="stylesheet" href="raceGeminiStyles.css">
 
 <title>Quadratics</title>
 
@@ -485,6 +471,15 @@ x2 = -x2;
     }
 </script>
 
+<script>
+// 1. GLOBAL VARIABLES (Must be defined cleanly)
+var answer = [];
+var correct = 0;
+var points = 0;
+// Global variables for canvas
+
+</script>
+
 <script type="text/javascript">
   
     $(document).ready(function(){
@@ -503,7 +498,7 @@ answer[3] = makeQuestion3() ;
 
 correct = 0 ; // number correct;
 points = 0 ;
-
+checkAnswer(3);
 console.log(answer);
   })
 
@@ -511,61 +506,6 @@ console.log(answer);
 </script>
 
 
-
-
-
-
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-      //  alert("Checking " + qNumber);
-
-        var guess1 = $('#solution' + qNumber).val() ;
-
-        if (qNumber == 3)
-            {
-                guess = parseFloat(guess1);
-                guess = +guess.toFixed(2);  // + to change from string to number
-             //   alert(guess + ' ' + guess1);
-                $('#solution3').text(guess);
-    }
-    else {guess = guess1;}
-        if (guess == answer[qNumber])
-        {
-           // alert("Correct");
-            $('#solution' + qNumber).prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            
-            points = parseInt(points + 3);
-            console.log("points", points,clicked,qNumber,total);
-            if (points == 9)
-
-            {
-
-            //    alert("You have solved " + points/3 + " equations!");
-// alert("Processing win " + questionID + " with " + points + " pts");
-processWin(questionID);
-    console.log("processing ",questionID);
-
-            }
-        }
-
-        else
-
-        {
-            alert("keep trying")
-        }
-})
-})
-
-</script>
 
 
 

@@ -141,9 +141,10 @@ p.parameter  {
   <div class = "row">
       <div class = "col-12 text-center">
 <h2>
-     <p>n = axb where a and b are prime numbers.</n>
-   <p>C = P<sup>e</sup> mod n and P = C<sup>d</sup> mod n </p>
-    <p>m = (a-1)(b-1) and e x d = 1 mod m</p>
+     <p>n = axb where a and b are prime numbers.</p>
+     <p>m = (a-1)(b-1) </p>
+   <p>C = P<sup>e</sup> mod n </p>
+    
 </h2>
 </div></div>
 

@@ -863,7 +863,7 @@ console.log(studentID,comment,amount,accountCode,linked);
 let cash = parseInt($('#money').text().replace(/[^0-9.-]+/g,""));
 console.log(cash,amount,amount + cash);
 let balance = amount + cash;
-alert(balance);
+//alert(balance);
 let transactionStr = formatCurrency(amount) + ' ' +
                       acc + ' ' +
                       comment + ' ' + otherParty;
@@ -875,9 +875,10 @@ $('#note').val('');
 $('#amount').val('');
 $('#dataEntry').hide();
 $('#transactions').show();
-$('#players').val('');
-alert("Updating journal " + transactionStr);
-let updated = writeTransaction(studentID,comment,amount,accountCode,linked);
+$('#players').val('')
+if (balance < 0)
+  {alert("You don't have enough money for this transaction!");}
+else {let updated = writeTransaction(studentID,comment,amount,accountCode,linked);}
 // let data = analysis(studentID);
 
 //  $('#Btn_pay').css({"background-color":"lightgreen" , "color":"blue"});

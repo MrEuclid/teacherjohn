@@ -860,8 +860,10 @@ else
 } //else
 console.log(studentID,comment,amount,accountCode,linked);
 // check balances here before writing to journal
-let cash = parseInt($('#cash').text().replace(/[^0-9.-]+/g,""));
-console.log(cash,amount,amount - cash);
+let cash = parseInt($('#money').text().replace(/[^0-9.-]+/g,""));
+console.log(cash,amount,amount + cash);
+let balance = amount + cash;
+alert(balance);
 let transactionStr = formatCurrency(amount) + ' ' +
                       acc + ' ' +
                       comment + ' ' + otherParty;

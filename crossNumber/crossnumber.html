@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="javaScript/bootStrap/bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
+<link rel="stylesheet" href="css/templeStyles.css">
+<link rel="stylesheet" href="css/newTempleStyles.css">
+ 
+
+
+    <meta charset="utf-8">
+    
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title>Cram - 4</title>
+
+<style type="text/css">
+
+  [id^=grd] {
+              width: 6vw ; 
+              height: 6vw; 
+              background-color: grey;
+              border-width: 0.2em;
+              border-color: yellow;
+              margin-left: 0;
+              margin-right: 0;
+              padding: 0px;
+
+            }
+
+  #stkRed {  width: 3vw ; 
+              height: 3vw ; 
+              background-color: red;}
+
+   #stkBlue {  width: 3vw ; 
+              height: 3vw ; 
+              background-color: blue;}
+
+  #scoreRed {background-color: red; color:yellow; font-size: 2vw; font-weight: bolder; width: 6vw ; 
+              height: 6vw ; margin:0.5em}
+  #scoreBlue {background-color: blue; color:yellow; font-size: 2vw; font-weight: bolder; width: 6vw ; 
+              height: 6vw ; margin:0.5em}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+   <div class  = "container-fluid">
+      <div class = "row">
+        <div class = "col-sm-12 c">
+   <h1><img id = "pio1" src = "images/PioLogo.png" width = "50px" height = "50px">
+Cram - 4 Game
+   <img id = "pio2" src = "images/PioLogo.png" width = "50px" height = "50px">
+ </h1>
+</div></div>
+<div class = "row">
+  <div class = "col-sm-12 c">
+<a href="index.php" >
+
+     <button class="btn btn-info btn-sm">Home</button>
+     </a>
+
+  <a href="cram4.html" >
+      
+        <button class="btn btn-info btn-sm">New</button>
+     </a>
+  </div></div>
+
+<!-- top left = (0,) and bottom right = (3,3)  -->
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "stkRed"></button>
+ <button id = "scoreRed">0</button>
+  <button id = "scoreBlue">0</button>
+  <button id = "stkBlue">
+</div></div>
+<div class = "row">
+<!-- grd-row-column -->
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "grd11"></button>
+   <button id = "grd12"></button>
+    <button id = "grd13"></button>
+     <button id = "grd14"></button>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "grd21"></button>
+   <button id = "grd22"></button>
+    <button id = "grd23"></button>
+     <button id = "grd24"></button>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "grd31"></button>
+   <button id = "grd32"></button>
+    <button id = "grd33"></button>
+     <button id = "grd34"></button>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "grd41"></button>
+   <button id = "grd42"></button>
+    <button id = "grd43"></button>
+     <button id = "grd44"></button>
+</div></div>
+
+
+  
+</div> <!-- container -->
+  
+</body>
+</html>
+
+<script>
+
+  function showNeighbours(place)
+
+  // highlights squares which are neighbours to the last move
+  // and are not occupied.
+
+  {
+
+    $("[id^=grd]").prop('disabled',true) ; // disable grid
+    console.log(place) ;
+    neighbourCount = 0 ;
+    neighbours = [] ;
+    var x = parseInt(place.substr(3,1));
+    var y = parseInt(place.substr(4,1));
+    console.log(place , x, y,row[x][y]);
+    console.log(row);
+    var ycoord = parseInt(y-1);
+    if (row[x][ycoord] == 0)
+    {
+      $('#grd'+x+ycoord).css("background-color","yellow").prop('disabled',false);
+      text1 = x.toString();
+      text2 = ycoord.toString();
+      neighbours.push(text1+text2);
+      neighbourCount++;
+    }
+
+    var ycoord = parseInt(y+1);
+    if (row[x][ycoord] == 0)
+    {
+      $('#grd'+x+ycoord).css("background-color","yellow").prop('disabled',false);
+      text1 = x.toString();
+      text2 = ycoord.toString();
+      neighbours.push(text1+text2);
+      neighbourCount++;
+    }
+
+    var xcoord = parseInt(x-1);
+    if (row[xcoord][y] == 0)
+    {
+      $('#grd'+xcoord+y).css("background-color","yellow").prop('disabled',false);
+      text1 = xcoord.toString();
+      text2 = y.toString();
+      neighbours.push(text1+text2);
+      neighbourCount++;
+    }
+
+    var xcoord = parseInt(x+1);
+    if (row[xcoord][y] == 0)
+    {
+      $('#grd'+xcoord+y).css("background-color","yellow").prop('disabled',false);
+      text1 = xcoord.toString();
+      text2 = y.toString();
+      neighbours.push(text1+text2);
+      neighbourCount++;
+    }
+console.log("neighbours",neighbours);
+    return neighbourCount;
+
+  }
+
+
+</script>
+
+
+
+
+<script>
+  function newGame()
+  {
+ 
+    moves = [] ;
+
+  // set places[x,y] = 0 
+  // enable all squares
+
+  for (var r = 0 ; r <= rows + 1; r++)
+  {
+    for (var c = 0 ; c <= columns + 1; c++)
+    {
+  
+      // center
+      if (r > 0 & r <= columns & c > 0 & c <= columns)
+      {
+        row[r][c] = 0 ;
+        $('#grd'+r+c).css("background-color","grey").prop('disabled',false);
+      }
+      // borders 
+      else
+      {
+      row[0][c] = 1;
+      row[r][0] = 1 ; 
+      }
+  
+
+
+ 
+  }
+  }
+
+console.log("start",row);
+/*
+if(currentMove == "red")
+   {
+    currentMove = "blue" ;
+    $('#stkRed').prop('disabled',true).hide();
+    $('#stkBlue').prop('disabled',false).show();
+    }
+  else
+   {
+     currentMove = "red";
+     $('#stkBlue').prop('disabled',true).hide();
+    $('#stkRed').prop('disabled',false).show();
+     }
+*/
+
+}
+
+</script>
+
+
+
+<script>
+function initialise()
+{
+
+
+  var toss = Math.random();
+  console.log(toss) ;
+  if (toss >= 0.5)
+  {
+  $('#stkBlue').prop('disabled',true).hide();
+  blueStick = 0;
+  redStick = 1 ;
+ firstMove = "red" ;
+ currentMove = firstMove;
+  }
+  else
+  {
+    $('#stkRed').prop('disabled',true).hide();
+  blueStick = 1;
+  redStick = 0 ;
+ firstMove = "blue" ;
+  }
+
+  $('#next').hide() ;
+  $('#cancel').hide() ;
+
+  currentMove = firstMove ;
+
+
+}
+
+</script>
+
+
+
+<script>
+  function resetGrid()
+  {
+     for (var r = 0 ; r <= rows; r++)
+    {
+      for (var c = 0 ; c <= columns ; c++)
+      {
+      if (row[r][c] == 0 )     // col,row
+  
+        {$('#grd' + r + c).prop('disabled',false);}
+    
+    else
+    {$('#grd' + r + c).prop('disabled',true);}
+    
+    
+  
+  }
+  }
+  }
+  
+    </script>
+
+
+<script> 
+
+$(document).ready(function(){
+
+   moves = [] ;
+   neighbours = [] ;
+   redScore = 0 ;
+   blueScore = 0 ;
+  rows = 4 ;
+  columns = 4;
+
+  grdClicks = 0 ; // counter for making one move which requires two clicks
+
+  console.log("starting") ;
+
+  row = [];
+ var rlimit = parseInt(rows + 1);
+ var climit = parseInt(columns + 1);
+for (var r = 0; r <= rlimit; r++) 
+{
+row[r] = [];
+}
+
+for (var r = 0 ; r <= rlimit; r++)
+{
+  for (var c = 0 ; c <= climit ; c++)
+  {
+    if (r <= rows & c <= columns & r >  0 & c > 0)
+    {row[r][c] = 0 ;
+    $('#grd'+r+c).css("background-color","grey").prop('disabled',false);}
+
+    else
+
+      { row[r][c] = 1; }
+}
+}
+// alert(row) ;
+
+  console.log(rows,columns) ;
+  
+   console.log(row) ;
+
+initialise() ;
+
+    })
+
+</script> 
+
+<script>
+
+function countNeighbours(place)
+// highlights squares which are neighbours to the last move
+// and are not occupied.
+
+{
+
+
+  // console.log("Checking ",place) ;
+  neighbourCount = 0 ;
+
+  var x = parseInt(place.substr(3,1));
+  var y = parseInt(place.substr(4,1));
+
+  var ycoord = parseInt(y-1);
+  if (row[x][ycoord] == 0)
+  {
+  neighbourCount++;
+  }
+
+  var ycoord = parseInt(y+1);
+  if (row[x][ycoord] == 0)
+  {
+    neighbourCount++;
+  }
+
+  var xcoord = parseInt(x-1);
+  if (row[xcoord][y] == 0)
+  {
+    neighbourCount++;
+  }
+
+  var xcoord = parseInt(x+1);
+  if (row[xcoord][y] == 0)
+  {
+    neighbourCount++;
+  }
+
+// console.log("neighbours total ",neighbourCount);
+
+if (neighbourCount > 0){neighbourCount = 1;}
+  return neighbourCount;
+
+}
+
+</script>
+
+<script>
+
+function checkWin()
+{
+//  alert("Seeing who won");
+  // need to count neighbours of remaining squares
+  // if count = 0 then currentMove has won
+var haveNeighbours = 0 ;
+
+for (var r = 1 ; r <= rows ; r++)
+{
+    for (var c = 1 ; c <= columns ; c++)
+    {
+      if (row[r][c] != 1 )
+      {haveNeighbours = haveNeighbours + countNeighbours('grd' + r + c) ;}
+    }
+  }
+  console.log(moves);
+// alert(haveNeighbours + " cells have neighbours " ) ;
+if (haveNeighbours == 0 & moves.length < 16)
+{
+  if(currentMove == "red") {redScore++; $('#scoreRed').text(redScore);}
+  if(currentMove == "blue") {blueScore++; $('#scoreBlue').text(blueScore);}  
+  alert(currentMove + " wins!") ;
+}
+if (haveNeighbours == 0 & moves.length == 16)
+{
+  alert("its a draw") ;
+}
+
+if (haveNeighbours == 0) {newGame() ; }
+
+}
+
+</script>
+
+<script> 
+
+  $(document).ready(function(){
+      $('[id^=grd]').click(function(){
+  var location = this.id;
+  grdClicks++ ;
+moves.push(location) ;  // record moves
+  if(grdClicks == 1)
+  {
+ // alert("Location = " + location + "click# " + grdClicks);
+  var r = parseInt(location.substr(3,1));
+  var c = parseInt(location.substr(4,1));
+  row[r][c] = 1
+  console.log(row);
+  $('#' + location).css("background-color",currentMove);
+  
+var n = showNeighbours(location) ;
+console.log("neighbours = " + n) ;
+
+  }
+
+  if (grdClicks == 2)
+  {
+    var l = moves.length;
+    var lastMove = moves[l-2] ;
+    var r = parseInt(lastMove.substr(3,1));
+  var c = parseInt(lastMove.substr(4,1));
+ //   alert ("hitting neighbour" + location + " from " + lastMove);
+   row[r][c] = 1 ;
+   $('#grd'+r+c).css("back-ground",currentMove);
+// colour hit neighbour 
+
+var r = parseInt(location.substr(3,1));
+  var c = parseInt(location.substr(4,1));
+  row[r][c] = 1
+  console.log(row);
+  $('#' + location).css("background-color",currentMove);
+
+  // put other neighbours to grey
+  // find r+c
+ text1 = r.toString() ;
+ text2 = c.toString() ;
+
+  var indexClicked = neighbours.indexOf(text1 + text2);
+  console.log("index",indexClicked);
+ neighbours.splice(indexClicked, 1);
+  console.log("removed",neighbours) ;
+
+  for (var i = 0 ; i < neighbours.length  ; i++)
+  {
+    $('#grd' + neighbours[i]).css("background-color","grey") ;
+  }
+var outcome = checkWin();
+grdClicks = 0 ;
+console.log("clicks ",grdClicks,currentMove);
+console.log(row);
+   if(currentMove == "red")
+   {
+    currentMove = "blue" ;
+    $('#stkRed').prop('disabled',true).hide();
+    $('#stkBlue').prop('disabled',false).show();
+    }
+  else
+   {
+     currentMove = "red";
+     $('#stkBlue').prop('disabled',true).hide();
+    $('#stkRed').prop('disabled',false).show();
+     }
+
+  
+
+   resetGrid() ;
+    grdClicks = 0 ;
+  }
+  
+ 
+      });
+  });
+  </script> 
+

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Interactive Algebra Cross-Number</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX","output/HTML-CSS"],
+            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
+
+    <style>
+        .grid-cell {
+            width: 55px; 
+            height: 55px;
+            position: relative;
+        }
+        .black-square {
+            background-color: #212529;
+            border: 1px solid #000;
+        }
+        .grid-input {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #000;
+            background-color: #e0f7fa;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #000;
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+        .grid-input:focus {
+            background-color: #fff9c4;
+            border: 2px solid #0d6efd;
+        }
+        .superscript {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            font-size: 0.6em;
+            font-weight: bold;
+            color: #333;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .clue-list p {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+        #success-msg {
+            display: none;
+        }
+        #star-display {
+            font-size: 2rem;
+            color: #ffc107; /* Bootstrap Warning Color (Gold) */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            min-height: 40px; /* Prevents layout jump when first star appears */
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+<a href="/index.php" style="position: absolute; top: 10px; left: 10px; z-index: 999;" class="btn btn-dark btn-sm opacity-75">
+← Home
+</a>
+    </div>
+<div class="container my-5">
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <h1 class="text-primary">Cross-Number Challenge</h1>
+            <h4 id="variable-display" class="text-danger my-3"></h4>
+            
+            <div id="star-display" class="mb-2"></div>
+            
+            <div id="success-msg" class="alert alert-success shadow-sm" style="display: none;">
+                <strong>Correct!</strong> Great job. Generating the next puzzle...
+            </div>
+            <br>
+            <button id="skip-btn" class="btn btn-secondary btn-sm mt-2">Skip / Generate New</button>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-auto">
+            <div id="puzzle-grid" style="display: grid; grid-template-columns: repeat(5, 55px); gap: 2px; background: #000; padding: 2px;">
+                </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="text-primary border-bottom pb-2">Across</h3>
+            <div id="clues-across" class="clue-list mt-3"></div>
+        </div>
+        <div class="col-md-6">
+            <h3 class="text-primary border-bottom pb-2">Down</h3>
+            <div id="clues-down" class="clue-list mt-3"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const gridTemplates = [
+    [
+        ['W','W','W','W','B'],
+        ['W','W','W','W','B'],
+        ['W','W','W','W','W'],
+        ['B','B','B','W','W'],
+        ['B','B','B','W','W']
+    ],
+    [
+        ['W','W','W','B','W'],
+        ['W','W','W','B','W'],
+        ['W','W','W','W','W'],
+        ['W','B','W','W','W'],
+        ['W','B','W','W','W']
+    ],
+    [
+        ['B','B','W','W','W'],
+        ['W','W','W','W','W'],
+        ['W','W','W','W','W'],
+        ['W','W','W','W','W'],
+        ['W','W','W','B','B']
+    ]
+];
+
+let X_VAL, Y_VAL, Z_VAL;
+let totalWins = 0; 
+let puzzleActive = true; 
+
+// Generate a random integer between -10 and 10, excluding 0
+function getRandomIntNonZero() {
+    let val = 0;
+    while (val === 0) {
+        val = Math.floor(Math.random() * 21) - 10; 
+    }
+    return val;
+}
+
+function generateFormula(target) {
+    const templateType = Math.floor(Math.random() * 4);
+    let A = Math.floor(Math.random() * 4) + 1; 
+    let B = Math.floor(Math.random() * 4) + 1; 
+    let C_coeff = Math.floor(Math.random() * 4) + 1;
+    let D, formulaStr;
+
+    if (templateType === 0) {
+        D = target - (A * X_VAL + B * Y_VAL + C_coeff * Z_VAL);
+        formulaStr = `${A > 1 ? A : ''}x + ${B > 1 ? B : ''}y + ${C_coeff > 1 ? C_coeff : ''}z`;
+    } else if (templateType === 1) {
+        D = target - (X_VAL * X_VAL + B * Y_VAL + C_coeff * Z_VAL);
+        formulaStr = `x^2 + ${B > 1 ? B : ''}y + ${C_coeff > 1 ? C_coeff : ''}z`;
+    } else if (templateType === 2) {
+        D = target - (A * Y_VAL * Y_VAL - B * X_VAL + C_coeff * Z_VAL);
+        formulaStr = `${A > 1 ? A : ''}y^2 - ${B > 1 ? B : ''}x + ${C_coeff > 1 ? C_coeff : ''}z`;
+    } else {
+        D = target - (Z_VAL * Z_VAL - A * X_VAL - B * Y_VAL);
+        formulaStr = `z^2 - ${A > 1 ? A : ''}x - ${B > 1 ? B : ''}y`;
+    }
+
+    if (D > 0) formulaStr += ` + ${D}`;
+    else if (D < 0) formulaStr += ` - ${Math.abs(D)}`;
+
+    return `$ ${formulaStr} $`;
+}
+
+function generateNewPuzzle() {
+    puzzleActive = true; 
+    $('#success-msg').hide(); 
+
+    // Generate variables between -10 and 10, ensuring they are unique and non-zero
+    X_VAL = getRandomIntNonZero();
+    do { Y_VAL = getRandomIntNonZero(); } while (Y_VAL === X_VAL);
+    do { Z_VAL = getRandomIntNonZero(); } while (Z_VAL === X_VAL || Z_VAL === Y_VAL);
+    
+    $('#variable-display').html(`Evaluate variables where: <strong>x = ${X_VAL}</strong>, <strong>y = ${Y_VAL}</strong>, and <strong>z = ${Z_VAL}</strong>`);
+
+    let layout = gridTemplates[Math.floor(Math.random() * gridTemplates.length)];
+    let gridAnswers = [];
+    $('#puzzle-grid').empty();
+
+    for (let r = 0; r < 5; r++) {
+        gridAnswers[r] = [];
+        for (let c = 0; c < 5; c++) {
+            if (layout[r][c] === 'W') {
+                gridAnswers[r][c] = Math.floor(Math.random() * 9) + 1; 
+            } else {
+                gridAnswers[r][c] = null;
+            }
+        }
+    }
+
+    let targetsAcross = [];
+    let targetsDown = [];
+    let clueNum = 1;
+
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            if (gridAnswers[r][c] !== null) {
+                let isAcrossStart = (c === 0 || gridAnswers[r][c-1] === null) && (c < 4 && gridAnswers[r][c+1] !== null);
+                let isDownStart = (r === 0 || gridAnswers[r-1][c] === null) && (r < 4 && gridAnswers[r+1][c] !== null);
+                
+                let numbered = false;
+
+                if (isAcrossStart) {
+                    numbered = true;
+                    let numStr = "";
+                    let col = c;
+                    while(col < 5 && gridAnswers[r][col] !== null) {
+                        numStr += gridAnswers[r][col];
+                        col++;
+                    }
+                    targetsAcross.push({ id: clueNum, target: parseInt(numStr) });
+                }
+
+                if (isDownStart) {
+                    numbered = true;
+                    let numStr = "";
+                    let row = r;
+                    while(row < 5 && gridAnswers[row][c] !== null) {
+                        numStr += gridAnswers[row][c];
+                        row++;
+                    }
+                    targetsDown.push({ id: clueNum, target: parseInt(numStr) });
+                }
+
+                let label = numbered ? `<div class="superscript">${clueNum}</div>` : '';
+                $('#puzzle-grid').append(`
+                    <div class="grid-cell">
+                        ${label}
+                        <input type="text" class="grid-input" maxlength="1" data-answer="${gridAnswers[r][c]}" />
+                    </div>
+                `);
+
+                if (numbered) clueNum++;
+            } else {
+                $('#puzzle-grid').append(`<div class="grid-cell black-square"></div>`);
+            }
+        }
+    }
+
+    $('#clues-across, #clues-down').empty();
+    
+    targetsAcross.forEach(item => {
+        $('#clues-across').append(`<p><strong>${item.id}.</strong> ${generateFormula(item.target)}</p>`);
+    });
+
+    targetsDown.forEach(item => {
+        $('#clues-down').append(`<p><strong>${item.id}.</strong> ${generateFormula(item.target)}</p>`);
+    });
+
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+    $('.grid-input').on('input', checkWinCondition);
+}
+
+function checkWinCondition() {
+    if (!puzzleActive) return;
+
+    let allFilled = true;
+    let allCorrect = true;
+
+    $('.grid-input').each(function() {
+        let expected = $(this).attr('data-answer');
+        let val = $(this).val();
+
+        if (val === "") {
+            allFilled = false;
+            $(this).css('background-color', '#e0f7fa'); // Default blue
+        } else if (val !== expected) {
+            allCorrect = false;
+            $(this).css('background-color', '#ffcdd2'); // Red for incorrect
+        } else {
+            $(this).css('background-color', '#c8e6c9'); // Green for correct
+        }
+    });
+
+    if (allFilled && allCorrect) {
+        puzzleActive = false; 
+        
+        totalWins++;
+        $('#star-display').text('⭐'.repeat(totalWins)); 
+
+        $('#success-msg').fadeIn();
+        
+        setTimeout(() => {
+            $('#success-msg').fadeOut(400, function() {
+                generateNewPuzzle();
+            });
+        }, 2500);
+    }
+}
+
+$(document).ready(function() {
+    generateNewPuzzle(); 
+
+    $('#skip-btn').click(function() {
+        generateNewPuzzle();
+    });
+});
+</script>
+</body>
+</html>

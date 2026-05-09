@@ -2,7 +2,7 @@
 
 // load team 
 
- include "../connectTeacherJohn.php";
+ include "../../connectTeacherJohn.php";
 
 
  $id = $_POST['id'];

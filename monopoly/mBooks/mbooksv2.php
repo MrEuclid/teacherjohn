@@ -859,7 +859,9 @@ else
 } // if receive 
 } //else
 console.log(studentID,comment,amount,accountCode,linked);
-
+// check balances here before writing to journal
+let cash = parseInt($('#cash').text().replace(/[^0-9.-]+/g,""));
+console.log(cash,amount,amount - cash);
 let transactionStr = formatCurrency(amount) + ' ' +
                       acc + ' ' +
                       comment + ' ' + otherParty;

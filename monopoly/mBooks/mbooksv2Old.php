@@ -24,162 +24,367 @@
 
 <style type="text/css">
   body {
-    display: none; /* JS handles revealing the body */
-    background-color: #f8f9fa; /* Light gray background */
+    display: none;
+}
+
+h1 {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
+
+
+#topline {text-align: center;}
+input {
+    
+    background-color: lightgreen; 
+    text-align: center;
+    height:3em;
+    width: 8em;
+    color:black;
+    font-weight: bold;
+    margin:1em;
+   
+}
+
+#note {
+
+ 
+    text-align: left;
+    height:2em;
+    width: 24em;
+ 
+}
+
+#assets,#liabilities ,#equity, #income, #expenses, #profit,#value
+  {
+    font-weight: bolder;
+    color:green;
+    font-size: 1em;
+
   }
 
-  /* Keep essential financial colors */
-  .positive { color: #198754 !important; font-weight: bold; }
-  .negative { color: #dc3545 !important; font-weight: bold; }
-  .zeto { color: #212529 !important; }
+.accountValue {font-size: 1.2em; font-weight: bold;}
+.subLabel {font-size: 1.4em; font-weight: bolder;}
 
-  /* Keep table styling */
-  td, th { border-color: #0d6efd; border-width: 2px; }
-  th { text-align: center; background-color: #e9ecef; }
-  
-  #transactionStr { color: #0d6efd; font-weight: bolder; font-size: 1.2rem; margin: 1.5rem 0; }
-  #error { font-weight: bold; margin-top: 10px; }
+.highlight {color:white; background-color:blue;}
+label {inset-block: font-weight:bolder; color:black; margin-right: 1em;}
 
-  /* Dashboard Header Text */
-  .head { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; color: #6c757d; margin-bottom: 0;}
-  #assets, #liabilities, #equity, #income, #expenses, #profit, #money, #who {
-      font-weight: bolder;
-      color: #198754;
-      font-size: 1.2rem;
-      margin-bottom: 0;
-  }
-  #who { color: #0d6efd; }
-</style>
+input { background-color: lightgreen; 
+    text-align: center;
+    height:2em;
+    width: 8em;
+    color:black;
+    font-weight: bold;
+    margin:1em;
+}
+
+p {display:inline-block; font-size: 1em;margin:right:1em}
+
+ .positive {color:green;}
+  .negative {color:red;}
+  .zeto {color:black;}
+
+#submitAccount {background-color: lightblue; color: black; width: 4em;}
+
+#error {color:red;}
+
+.head {font-size: 1em; font-weight: bold;}
+
+#transactions {color:black; font-size: 1em ;}
+
+td,th {border-color: blue; border-width: 0.2em;}
+th {text-align: center;}
+
+#transactionStr {color:blue; font-weight: bolder; font-size: 1.2em; margin:2em;}
+  </style>
 
   </head>
- <body>
-  <div class="d-none">
-      <p id="person">X</p>
-      <p id="gameID">0</p>
-      <p id="studentID">9999</p>
-      <p id="otherParty">Y</p>
-      <p id="transID"></p>
+  <body>
+
+      <div class  = "container-fluid">
+     
+
+   <a href = "makeGridv2.php" target = "_blank" >Leader board</a>
+&nbsp; &nbsp; 
+<p id = "person">X</p>
+<p id = "gameID">0</p>
+<p id = "studentID">9999</p>
+<p id = "otherParty">Y</p>
+<p id = "transID"></p>
+  <div id = "topLine">
+    <div class = "row text-center">
+  <div class = "col-12 ">
+<p id = "who"></p>
+<label class = "head">Assets</label>
+<p id = "assets"></p>
+<label class = "head">Liabilities</label>
+<p id = "liabilities"></p>
+<label class = "head">Capital</label>
+<p id = "equity"></p>
+<label class = "head">Income</label>
+<p id = "income"></p>
+<label class = "head">Expenses</label>
+<p id = "expenses"></p>
+<label class = "head">Profit</label>
+<p id = "profit"></p>
+
+<label class = "head">Cash</label>
+<p id = "money">$0</p>
+</div></div>
+
+
+
+</div> <!-- topLine -->
+
+
+<div id = "loginForm">
+<div class = "row text-center">
+   <div class = "col-12 text-center">
+      <h1>mBooks v2</h1>
+   </div></div>
+  <div class = "col-12 text-center">
+   <h3 id = "header">mBooksv2 Login</h3>
+</div></div>
+
+<div class = "row text-center">
+  <div class = "col- ">
+  <img src = "../images/accountsImage.jpeg">
+</div></div>
+
+
+
+
+<div class = "row">
+
+  <div class = "col- text-center">
+  <input type="text" id="student" list="studentList" placeholder="Student ID">
+<datalist id="studentList"></datalist>
+
+    <button id = "submit" class = "btn btn-info btn-lg">Register</button>
+  </div></div>
+</div> <!--  loginform -->
+
+
+      <div id = "menu">
+
+     <div class = "row text-center">
+  <div class = "col- ">
+   <h1> Monopoly Accounts</h1>
+  </div></div>
+
+  <div class = "row text-center">
+   <div class = "col-12 text-center">
+      <button id = "Btn_receive">Get money</button>
+      <button id = "Btn_pay">Pay money</button>
+     <button  id = "showTransactions">Transactions</button>
+         <button  id = "showStatements">My Value</button>
+           <button  id = "showProfitLoss">Profit / Loss</button>  
+     <a href = "https://teacherjohn.org/index.php"> <button id = "quit">Quit</button></a>
+</div></div>
+
+</div> <!-- menu -->
+
+<div id = "dataEntry">
+
+  <div class = "row justify-content-center">
+        <div class = "col-4 "></div>
+    <div class = "col-8 text-left">
+      <label>Note</label><input id = "note" type = "text">
+    </div></div>
+
+     <div class = "row justify-content-center">
+        <div class = "col-4 "></div>
+    <div class = "col-8 text-left">
+        <label>Other player</label>
+          <select id="players" >
+    <option>Choose the player</option>
+</select>
+    </div></div> 
+
+ <div class = "row justify-content-center">
+   <div class = "col-4 "></div>
+    <div class = "col-8 text-left">
+      <label>Amount</label><input id = "amount" type = "number" min="100" max = "15000">
+    </div></div>
+
+ <div class = "row justify-content-center">
+    <div class = "col-4 "></div>
+    <div class = "col-4 text-left">
+             <select id="accounts" >
+    <option>Choose the account</option>
+</select>
+</div>
+
+
+    <div class = "col-4 text-left">
+
+<button type = "submit" id = "submitAccount" >Go</button>
+  </div></div>
+
+
+ <div class = "row justify-content-center">
+    <div class = "col-12 text-center">
+      <p id = "error"></p>
+  </div></div>
+
+</div> <!-- data entry -->
+
+
+
+  <div id = "performance">
+
+   <div class = "row text-left">
+ <div class = "col-4 text-left">
+      <h2 class = "stmtHeading">Income</h2>
+    </div>
+     <div class = "col-4 text-left">
+    <h2 class = "stmtHeading">Expenses</h2>
+    </div> 
+     <div class = "col-4 text-left">
+    <h2 class = "stmtHeading">Profit</h2>
+    </div> </div>
+
+      <div class = "row">
+ <div class = "col-2 text-left">
+      <h3 id = "receiveRentHeading" class = "subLabel">Receive rent</h3>
+    </div>
+     <div class = "col-2 text-left">
+      <p id = "receiveRentValue" class = accountValue></p>
+    </div> 
+ <div class = "col-2 text-left">
+      <h3 id = "payRentHeading" class = "subLabel">Pay rent</h3>
+    </div>
+     <div class = "col-4 text-left">
+      <p id = "payRentValue" class = accountValue></p>
+    </div> </div>
+
+
+  <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "passGoHeading" class = "subLabel">Pass Go</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "passGoValue" class = "accountValue"></h3></div>
+             <div class = "col-2 text-left">
+      <h2 id = "taxHeading" class = "subLabel">Tax</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "taxValue" class = "accountValue"></h3>
+    </div></div>
+
+      <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "otherIncomeHeading" class = "subLabel">Other income</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "otherIncomeValue" class = "accountValue"></h3></div>
+             <div class = "col-2 text-left">
+      <h2 id = "otherExpensesHeading" class = "subLabel">Other expense</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "otherExpensesValue" class = "accountValue"></h3>
+    </div></div>
+
+  <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "totalIncomeHeading" class = "total">Total</h2>
+    </div>
+     <div class = "col-4 text-left">
+         <h3 id = "totalIncome" class = "accountValue"></h3>
+    </div>
+
+  <div class = "col-2 text-left">
+         <h3 id = "totalExpenses" class = "accountValue"></h3>
+    </div>
+
+      <div class = "col-2 text-left">
+         <h3 id = "profitTotal" class = "accountValue"></h3>
+    </div></div>
+
+
+</div> <!-- performance -->
+<div id = "reverseTransaction">
+   <div class = "row justify-content-center">
+    <div class = "col-12 text-center">
+     <p id = "transactionStr"></p>
+     <button id = "reverse" class = "btn btn-sm btn-info">Reverse</button>
+  </div></div>
+</div>
+
+   <div class = "row justify-content-center">
+    <div class = "col-12 text-center">
+      <p id = "transactions"></p>
+  </div></div>
+ 
+ 
+
+  <div id = "statements">
+
+
+   <div class = "row text-left">
+ <div class = "col-4 text-left">
+      <h2 class = "stmtHeading">Assets</h2>
+    </div>
+     <div class = "col-4 text-left">
+    <h2 class = "stmtHeading">Liabilities</h2>
+    </div> 
+     <div class = "col-4 text-left">
+    <h2 class = "stmtHeading">Value</h2>
+    </div> 
   </div>
 
-  <div class="container py-4">
-      
-      <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="text-success fw-bold m-0">Monopoly Accounts</h2>
-          <a href="makeGridv2.php" target="_blank" class="btn btn-outline-primary shadow-sm">🏆 Leaderboard</a>
-      </div>
+      <div class = "row">
+ <div class = "col-2 text-left">
+      <h3 id = "cashHeading" class = "subLabel">Cash</h3>
+    </div>
+     <div class = "col-2 text-left">
+      <p id = "cashValue" class = accountValue></p>
+    </div> 
+ <div class = "col-2 text-left">
+      <h3 id = "loansHeading" class = "subLabel">Loans</h3>
+    </div>
+     <div class = "col-4 text-left">
+      <p id = "loansValue" class = accountValue></p>
+    </div> </div>
 
-      <div id="topLine" class="card shadow-sm mb-4 border-success">
-          <div class="card-body">
-              <div class="row text-center align-items-center">
-                  <div class="col"><label class="head">Player</label><p id="who"></p></div>
-                  <div class="col border-start"><label class="head">Assets</label><p id="assets"></p></div>
-                  <div class="col border-start"><label class="head">Liabilities</label><p id="liabilities"></p></div>
-                  <div class="col border-start"><label class="head">Capital</label><p id="equity"></p></div>
-                  <div class="col border-start"><label class="head">Income</label><p id="income"></p></div>
-                  <div class="col border-start"><label class="head">Expenses</label><p id="expenses"></p></div>
-                  <div class="col border-start"><label class="head">Profit</label><p id="profit"></p></div>
-                  <div class="col border-start bg-light rounded"><label class="head text-dark">Cash</label><p id="money">$0</p></div>
-              </div>
-          </div>
-      </div>
 
-      <div id="loginForm" class="row justify-content-center mb-5">
-          <div class="col-md-6 col-lg-5">
-              <div class="card shadow text-center border-0">
-                  <div class="card-header bg-success text-white">
-                      <h3 class="m-0" id="header">mBooks v2 Login</h3>
-                  </div>
-                  <div class="card-body p-4">
-                      <img src="../images/accountsImage.jpeg" class="img-fluid rounded mb-4" alt="Accounts" style="max-height: 200px;">
-                      <div class="input-group input-group-lg mb-3">
-                          <input type="text" id="student" list="studentList" class="form-control text-center" placeholder="Enter Student ID">
-                          <datalist id="studentList"></datalist>
-                      </div>
-                      <button id="submit" class="btn btn-primary btn-lg w-100 fw-bold">Register / Login</button>
-                  </div>
-              </div>
-          </div>
-      </div>
+  <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "landHeading" class = "subLabel">Land</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "landValue" class = "accountValue"></h3>
+    </div></div>
 
-      <div id="menu" class="card shadow-sm mb-4 border-0">
-          <div class="card-body text-center p-4">
-              <h4 class="mb-4 text-muted">What would you like to do?</h4>
-              <div class="d-flex flex-wrap justify-content-center gap-3">
-                  <button id="Btn_receive" class="btn btn-success btn-lg px-4 shadow-sm">⬇️ Get Money</button>
-                  <button id="Btn_pay" class="btn btn-danger btn-lg px-4 shadow-sm">⬆️ Pay Money</button>
-                  <button id="showTransactions" class="btn btn-info btn-lg px-4 text-white shadow-sm">📋 Transactions</button>
-                  <button id="showStatements" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>
-                  <button id="showProfitLoss" class="btn btn-warning btn-lg px-4 shadow-sm">⚖️ Profit / Loss</button>
-                  <a href="https://teacherjohn.org/index.php" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
-              </div>
-          </div>
-      </div>
+      <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "buildingHeading" class = "subLabel">Buildings</h2>
+    </div>
+     <div class = "col-2 text-left">
+         <h3 id = "buildingsValue" class = "accountValue"></h3>
+    </div></div>
 
-      <div id="dataEntry" class="row justify-content-center mb-5">
-          <div class="col-md-8 col-lg-6">
-              <div class="card shadow border-0">
-                  <div class="card-header bg-primary text-white">
-                      <h5 class="m-0">New Transaction</h5>
-                  </div>
-                  <div class="card-body p-4">
-                      
-                      <div class="mb-3">
-                          <label class="form-label fw-bold">Note / Description</label>
-                          <input id="note" type="text" class="form-control form-control-lg" placeholder="e.g. Rent for Boardwalk">
-                      </div>
+  <div class = "row">
+     <div class = "col-2 text-left">
+      <h2 id = "totalHeading" class = "total">Total</h2>
+    </div>
+     <div class = "col-4 text-left">
+         <h3 id = "totalAssets" class = "accountValue"></h3>
+    </div>
 
-                      <div class="mb-3">
-                          <label class="form-label fw-bold">Other Player</label>
-                          <select id="players" class="form-select form-select-lg">
-                              <option>Choose the player...</option>
-                          </select>
-                      </div>
+  <div class = "col-2 text-left">
+         <h3 id = "totalLiabilities" class = "accountValue"></h3>
+    </div>
 
-                      <div class="mb-4">
-                          <label class="form-label fw-bold">Amount ($)</label>
-                          <input id="amount" type="number" min="100" max="15000" class="form-control form-control-lg text-success fw-bold" placeholder="0">
-                      </div>
-
-                      <div class="row align-items-end">
-                          <div class="col-8">
-                              <label class="form-label fw-bold">Account</label>
-                              <select id="accounts" class="form-select form-select-lg">
-                                  <option>Choose the account...</option>
-                              </select>
-                          </div>
-                          <div class="col-4">
-                              <button type="submit" id="submitAccount" class="btn btn-primary btn-lg w-100 fw-bold">Submit</button>
-                          </div>
-                      </div>
-
-                      <div class="text-center mt-3">
-                          <p id="error" class="text-danger"></p>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div id="performance" class="card shadow-sm mb-4 p-4 border-0">
-          <div class="row border-bottom pb-2 mb-3">
-              <div class="col-4"><h4 class="text-primary fw-bold m-0">Income</h4></div>
-              <div class="col-4"><h4 class="text-danger fw-bold m-0">Expenses</h4></div>
-              <div class="col-4"><h4 class="text-success fw-bold m-0">Profit</h4></div>
-          </div>
-          <div class="row mb-2">
-              <div class="col-2"><span id="receiveRentHeading" class="fw-bold text-muted">Receive rent</span></div>
-              <div class="col-2"><span id="receiveRentValue" class="fw-bold fs-5 text-success"></span></div>
-              <div class="col-2"><span id="payRentHeading" class="fw-bold text-muted">Pay rent</span></div>
-              <div class="col-4"><span id="payRentValue" class="fw-bold fs-5 text-danger"></span></div>
-          </div>
-          <div class="row mb-2">
-              <div class="col-2"><span id="passGoHeading" class="fw-bold text-muted">Pass Go</span></div>
-              <div class="col-2"><span id="passGoValue" class="fw-bold fs-5 text-success"></span></div>
-              <div class="col-2"><span id="taxHeading" class="fw-bold text-muted">Tax</span></div>
-              <div class="col-2"><span id="taxValue" class="fw-bold fs-5 text-danger"></span></div>
-          </div>
-          </div>
+      <div class = "col-2 text-left">
+         <h3 id = "equityTotal" class = "accountValue"></h3>
+    </div>
   </div>
+
+
+</div> <!-- statementss -->
+
+<div id = "chart_div"></div>
+
+</div> <!-- container -->
+  </body>
 </html>
 
 <script type="text/javascript">

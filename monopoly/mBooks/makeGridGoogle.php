@@ -1,112 +1,99 @@
 <html>
   <head>
+    <title>Visualization</title>
+    <style>
+      #gameID { margin: 2em; }
+      .customHeader { text-align: center; color: white; background-color: blue; }
+      .customTableCell { text-align: left; }
+    </style>
 
-
-  <style>
-  #gameID {margin:2em;}
-  .customHeader {text-align: center; color:white;background-color: blue;}
-.customTableCell {text-align: left;}
- 
-  </style>
-      <title>Visualization</title>
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script type="text/javascript">
-  
-    // Load the Visualization API and the piechart package.
-  google.charts.load("current", {
-        packages : [ "corechart","table" ]
-    });
-      
+      // Load the Visualization API and the required packages.
+      google.charts.load("current", { packages: ["corechart", "table", "controls"] });
+      google.charts.setOnLoadCallback(initDashboard);
 
+      // Declare these globally so they aren't destroyed and recreated on every refresh
+      var dashboard;
+      var categoryFilterGame;
+      var chartTable;
+      var formatter;
 
-     function drawDashboard() {
+      function initDashboard() {
+        // 1. Create the dashboard
+        dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
 
-      var cssClassNames = {'headerRow': 'bigAndBold', 'tableCell': 'content'};
- 
-      var jsonData = $.ajax({
+        // 2. Create the category filter
+        categoryFilterGame = new google.visualization.ControlWrapper({
+          controlType: 'CategoryFilter',
+          containerId: 'gameID',
+          options: {
+            filterColumnLabel: 'gameID',
+            ui: {
+              label: 'Filter by gameID:',
+              multiselect: true,
+              width: 300,
+            }
+          }
+        });
+
+        // 3. Create the table view
+        chartTable = new google.visualization.ChartWrapper({
+          chartType: 'Table',
+          containerId: 'chart_table',
+          options: {
+            title: 'Accounts',
+            cssClassNames: {
+              headerCell: 'customHeader',
+              tableCell: 'customTableCell'
+            },
+            width: 1200,
+          }
+        });
+
+        // 4. Initialize the number formatter
+        formatter = new google.visualization.NumberFormat({ pattern: '####' });
+
+        // 5. Bind the filter to the table
+        dashboard.bind(categoryFilterGame, chartTable);
+
+        // 6. Fetch initial data and draw the dashboard immediately
+        fetchDataAndDraw();
+
+        // 7. Set Interval to auto-refresh every 30 seconds (30000 milliseconds)
+        setInterval(fetchDataAndDraw, 30000);
+      }
+
+      function fetchDataAndDraw() {
+        // Asynchronous AJAX call
+        $.ajax({
           url: "accountData.php",
           dataType: "json",
-          async: false
-          }).responseText;
-  // Sample data
-   var data = new google.visualization.DataTable(jsonData);
- 
-var formatter = new google.visualization.NumberFormat(
-    {pattern: '####'});
-  
-  
- // formatter.format(view,0);
+          success: function(jsonData) {
+            // Convert the fetched JSON into a Google DataTable
+            var data = new google.visualization.DataTable(jsonData);
 
-  formatter.format(data,1);  
-  // Create a dashboard
-  var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
+            // Format the second column (index 1)
+            formatter.format(data, 1);
 
-  // Create a category filter for Product
-  var categoryFilterGame = new google.visualization.ControlWrapper({
-    controlType: 'CategoryFilter',
-    containerId: 'gameID',
-    options: {
-      filterColumnLabel: 'gameID',
-      ui: {
-        label: 'Filter by gameID:',
-        multiselect: true,
-        'width':300,
+            // Redraw the dashboard with the fresh data.
+            // Because the dashboard instance already exists, the filter selection is preserved!
+            dashboard.draw(data);
+          },
+          error: function(err) {
+            console.error("Error fetching background data for dashboard update: ", err);
+          }
+        });
       }
-    }
-  });
-
-  
-
-  // Create a table view
-  var table = new google.visualization.Table(document.getElementById('chart_table'));
-
-  // Create a chart view (pie chart in this example)
-  var chartTable = new google.visualization.ChartWrapper({
-    chartType: 'Table',
-    containerId: 'chart_table',
-    options: {
-      'title': 'Accounts',
-      'cssClassNames': {
-        headerCell: 'customHeader',
-        tableCell: 'customTableCell'
-      },
-    
-      'width': 1200,
-    
-    }
-  });
-
-
- 
-
-  // Bind the filter to the data table
-  // categoryFilter.setDataTable(data);
-
-  // Bind the data table to both table and chart views
-  dashboard.bind(categoryFilterGame, chartTable);
-
-  // Draw the dashboard
-  dashboard.draw(data);
-}
-
     </script>
-
   </head>
 
   <body>
-   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {packages: ['table', 'corechart', 'controls']});
-      google.charts.setOnLoadCallback(drawDashboard);
-    </script>
-</head>
-<body>
-  <h1>Monopoly Accounts</h1>
-  <div id="dashboard">
-  <div id="gameID"></div>
-  <div id = "chart_table"></div>
-  </div>
-</body>
+    <div id="dashboard">
+      <div id="gameID"></div>
+      <div id="chart_table"></div>
+    </div>
+  </body>
 </html>

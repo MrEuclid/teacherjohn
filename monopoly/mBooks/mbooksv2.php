@@ -65,7 +65,7 @@
       
       <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="text-success fw-bold m-0">Monopoly Accounts</h2>
-          <a href="makeGridv2.php" target="_blank" class="btn btn-outline-primary shadow-sm">🏆 Leaderboard</a>
+          <a href="makeGridGoogle.php" target="_blank" class="btn btn-outline-primary shadow-sm">🏆 Leaderboard</a>
       </div>
 
       <div id="topLine" class="card shadow-sm mb-4 border-success">

@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
- 
+<head>
+  
  
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,179 +18,262 @@
                 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
    
+    <style type="text/css">
+        body {
+            display: none; /* JS handles revealing the body */
+            background-color: #f8f9fa; /* Light gray background */
+        }
 
-<title>MBooks v2</title>
+        /* Centers and styles the generated tables */
+        #transactions table, #statement table {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto; /* This forces the table to the center */
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        #transactions th, #statement th {
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px;
+        }
+        
+        #transactions td, #statement td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+        
+        /* Highlight row on hover to make it obvious it is clickable */
+        #transactions tr:hover {
+            background-color: #e2e3e5;
+            cursor: pointer;
+        }
 
-<style type="text/css">
-  body {
-    display: none; /* JS handles revealing the body */
-    background-color: #f8f9fa; /* Light gray background */
-  }
+        /* Keep essential financial colors */
+        .positive { color: #198754 !important; font-weight: bold; }
+        .negative { color: #dc3545 !important; font-weight: bold; }
+        .zeto { color: #212529 !important; }
 
-  /* Keep essential financial colors */
-  .positive { color: #198754 !important; font-weight: bold; }
-  .negative { color: #dc3545 !important; font-weight: bold; }
-  .zeto { color: #212529 !important; }
+        /* Keep table styling */
+        td, th { border-color: #0d6efd; border-width: 2px; }
+        th { text-align: center; background-color: #e9ecef; }
+        
+        #transactionStr { color: #0d6efd; font-weight: bolder; font-size: 1.2rem; margin: 1.5rem 0; }
+        #error { font-weight: bold; margin-top: 10px; }
 
-  /* Keep table styling */
-  td, th { border-color: #0d6efd; border-width: 2px; }
-  th { text-align: center; background-color: #e9ecef; }
-  
-  #transactionStr { color: #0d6efd; font-weight: bolder; font-size: 1.2rem; margin: 1.5rem 0; }
-  #error { font-weight: bold; margin-top: 10px; }
+        /* Dashboard Header Text */
+        .head { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; color: #6c757d; margin-bottom: 0;}
+        #assets, #liabilities, #equity, #income, #expenses, #profit, #money, #who {
+            font-weight: bolder;
+            color: #198754;
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+        #who { color: #0d6efd; }
+    </style>
+</head>
+<body>
+    <!-- Hidden Game Data -->
+    <div class="d-none">
+        <p id="person">X</p>
+        <p id="gameID">0</p>
+        <p id="studentID">9999</p>
+        <p id="otherParty">Y</p>
+        <p id="transID"></p>
+    </div>
 
-  /* Dashboard Header Text */
-  .head { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; color: #6c757d; margin-bottom: 0;}
-  #assets, #liabilities, #equity, #income, #expenses, #profit, #money, #who {
-      font-weight: bolder;
-      color: #198754;
-      font-size: 1.2rem;
-      margin-bottom: 0;
-  }
-  #who { color: #0d6efd; }
-</style>
+    <!-- Main Container -->
+    <div class="container py-4">
+        
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-success fw-bold m-0">Monopoly Accounts</h2>
+            <a href="makeGridGoogle.php" target="_blank" class="btn btn-outline-primary shadow-sm">🏆 Leaderboard</a>
+        </div>
 
-  </head>
- <body>
-  <div class="d-none">
-      <p id="person">X</p>
-      <p id="gameID">0</p>
-      <p id="studentID">9999</p>
-      <p id="otherParty">Y</p>
-      <p id="transID"></p>
-  </div>
+        <!-- Dashboard Top Line -->
+        <div id="topLine" class="card shadow-sm mb-4 border-success">
+            <div class="card-body">
+                <div class="row text-center align-items-center">
+                    <div class="col"><label class="head">Player</label><p id="who"></p></div>
+                    <div class="col border-start"><label class="head">Assets</label><p id="assets"></p></div>
+                    <div class="col border-start"><label class="head">Liabilities</label><p id="liabilities"></p></div>
+                    <div class="col border-start"><label class="head">Capital</label><p id="equity"></p></div>
+                    <div class="col border-start"><label class="head">Income</label><p id="income"></p></div>
+                    <div class="col border-start"><label class="head">Expenses</label><p id="expenses"></p></div>
+                    <div class="col border-start"><label class="head">Profit</label><p id="profit"></p></div>
+                    <div class="col border-start bg-light rounded"><label class="head text-dark">Cash</label><p id="money">$0</p></div>
+                </div>
+            </div>
+        </div>
 
-  <div class="container py-4">
-      
-      <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="text-success fw-bold m-0">Monopoly Accounts</h2>
-          <a href="makeGridGoogle.php" target="_blank" class="btn btn-outline-primary shadow-sm">🏆 Leaderboard</a>
-      </div>
+        <!-- Login Form -->
+        <div id="loginForm" class="row justify-content-center mb-5">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow text-center border-0">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="m-0" id="header">mBooks v2 Login</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <img src="../images/accountsImage.jpeg" class="img-fluid rounded mb-4" alt="Accounts" style="max-height: 200px;">
+                        <div class="input-group input-group-lg mb-3">
+                            <input type="text" id="student" list="studentList" class="form-control text-center" placeholder="Enter Student ID">
+                            <datalist id="studentList"></datalist>
+                        </div>
+                        <button id="submit" class="btn btn-primary btn-lg w-100 fw-bold">Register / Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <div id="topLine" class="card shadow-sm mb-4 border-success">
-          <div class="card-body">
-              <div class="row text-center align-items-center">
-                  <div class="col"><label class="head">Player</label><p id="who"></p></div>
-                  <div class="col border-start"><label class="head">Assets</label><p id="assets"></p></div>
-                  <div class="col border-start"><label class="head">Liabilities</label><p id="liabilities"></p></div>
-                  <div class="col border-start"><label class="head">Capital</label><p id="equity"></p></div>
-                  <div class="col border-start"><label class="head">Income</label><p id="income"></p></div>
-                  <div class="col border-start"><label class="head">Expenses</label><p id="expenses"></p></div>
-                  <div class="col border-start"><label class="head">Profit</label><p id="profit"></p></div>
-                  <div class="col border-start bg-light rounded"><label class="head text-dark">Cash</label><p id="money">$0</p></div>
-              </div>
-          </div>
-      </div>
+        <!-- Action Menu -->
+        <div id="menu" class="card shadow-sm mb-4 border-0">
+            <div class="card-body text-center p-4">
+                <h4 class="mb-4 text-muted">What would you like to do?</h4>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <button id="Btn_receive" class="btn btn-success btn-lg px-4 shadow-sm">⬇️ Get Money</button>
+                    <button id="Btn_pay" class="btn btn-danger btn-lg px-4 shadow-sm">⬆️ Pay Money</button>
+                    <button id="showTransactions" class="btn btn-info btn-lg px-4 text-white shadow-sm">📋 Transactions</button>
+                    <button id="showStatements" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>    
+                     <button  id = "showProfitLoss" class="btn btn-warning btn-lg px-4 shadow-sm">Profit / Loss</button>              
+                    <a href="[https://teacherjohn.org/index.php](https://teacherjohn.org/index.php)" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
+                </div>
+            </div>
+        </div>
 
-      <div id="loginForm" class="row justify-content-center mb-5">
-          <div class="col-md-6 col-lg-5">
-              <div class="card shadow text-center border-0">
-                  <div class="card-header bg-success text-white">
-                      <h3 class="m-0" id="header">mBooks v2 Login</h3>
-                  </div>
-                  <div class="card-body p-4">
-                      <img src="../images/accountsImage.jpeg" class="img-fluid rounded mb-4" alt="Accounts" style="max-height: 200px;">
-                      <div class="input-group input-group-lg mb-3">
-                          <input type="text" id="student" list="studentList" class="form-control text-center" placeholder="Enter Student ID">
-                          <datalist id="studentList"></datalist>
-                      </div>
-                      <button id="submit" class="btn btn-primary btn-lg w-100 fw-bold">Register / Login</button>
-                  </div>
-              </div>
-          </div>
-      </div>
+        <!-- Data Entry Form -->
+        <div id="dataEntry" class="row justify-content-center mb-5">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="m-0">New Transaction</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Note / Description</label>
+                            <input id="note" type="text" class="form-control form-control-lg" placeholder="e.g. Rent for Boardwalk">
+                        </div>
 
-      <div id="menu" class="card shadow-sm mb-4 border-0">
-          <div class="card-body text-center p-4">
-              <h4 class="mb-4 text-muted">What would you like to do?</h4>
-              <div class="d-flex flex-wrap justify-content-center gap-3">
-                  <button id="Btn_receive" class="btn btn-success btn-lg px-4 shadow-sm">⬇️ Get Money</button>
-                  <button id="Btn_pay" class="btn btn-danger btn-lg px-4 shadow-sm">⬆️ Pay Money</button>
-                  <button id="showTransactions" class="btn btn-info btn-lg px-4 text-white shadow-sm">📋 Transactions</button>
-                  <button id="showStatement" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>
-                  <button id="showProfitLoss" class="btn btn-warning btn-lg px-4 shadow-sm">⚖️ Profit / Loss</button>
-                  <a href="https://teacherjohn.org/index.php" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
-              </div>
-          </div>
-      </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Other Player</label>
+                            <select id="players" class="form-select form-select-lg">
+                                <option>Choose the player...</option>
+                            </select>
+                        </div>
 
-      <div id="dataEntry" class="row justify-content-center mb-5">
-          <div class="col-md-8 col-lg-6">
-              <div class="card shadow border-0">
-                  <div class="card-header bg-primary text-white">
-                      <h5 class="m-0">New Transaction</h5>
-                  </div>
-                  <div class="card-body p-4">
-                      
-                      <div class="mb-3">
-                          <label class="form-label fw-bold">Note / Description</label>
-                          <input id="note" type="text" class="form-control form-control-lg" placeholder="e.g. Rent for Boardwalk">
-                      </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Amount ($)</label>
+                            <input id="amount" type="number" min="100" max="15000" class="form-control form-control-lg text-success fw-bold" placeholder="0">
+                        </div>
 
-                      <div class="mb-3">
-                          <label class="form-label fw-bold">Other Player</label>
-                          <select id="players" class="form-select form-select-lg">
-                              <option>Choose the player...</option>
-                          </select>
-                      </div>
+                        <div class="row align-items-end">
+                            <div class="col-8">
+                                <label class="form-label fw-bold">Account</label>
+                                <select id="accounts" class="form-select form-select-lg">
+                                    <option>Choose the account...</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" id="submitAccount" class="btn btn-primary btn-lg w-100 fw-bold">Submit</button>
+                            </div>
+                        </div>
 
-                      <div class="mb-4">
-                          <label class="form-label fw-bold">Amount ($)</label>
-                          <input id="amount" type="number" min="100" max="15000" class="form-control form-control-lg text-success fw-bold" placeholder="0">
-                      </div>
+                        <div class="text-center mt-3">
+                            <p id="error" class="text-danger"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                      <div class="row align-items-end">
-                          <div class="col-8">
-                              <label class="form-label fw-bold">Account</label>
-                              <select id="accounts" class="form-select form-select-lg">
-                                  <option>Choose the account...</option>
-                              </select>
-                          </div>
-                          <div class="col-4">
-                              <button type="submit" id="submitAccount" class="btn btn-primary btn-lg w-100 fw-bold">Submit</button>
-                          </div>
-                      </div>
+        <!-- Performance Stats -->
+        <div id="performance" class="card shadow-sm mb-4 p-4 border-0">
+            <div class="row border-bottom pb-2 mb-3">
+                <div class="col-4"><h4 class="text-primary fw-bold m-0">Income</h4></div>
+                <div class="col-4"><h4 class="text-danger fw-bold m-0">Expenses</h4></div>
+                <div class="col-4"><h4 class="text-success fw-bold m-0">Profit</h4></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2"><span id="receiveRentHeading" class="fw-bold text-muted">Receive rent</span></div>
+                <div class="col-2"><span id="receiveRentValue" class="fw-bold fs-5 text-success"></span></div>
+                <div class="col-2"><span id="payRentHeading" class="fw-bold text-muted">Pay rent</span></div>
+                <div class="col-4"><span id="payRentValue" class="fw-bold fs-5 text-danger"></span></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-2"><span id="passGoHeading" class="fw-bold text-muted">Pass Go</span></div>
+                <div class="col-2"><span id="passGoValue" class="fw-bold fs-5 text-success"></span></div>
+                <div class="col-2"><span id="taxHeading" class="fw-bold text-muted">Tax</span></div>
+                <div class="col-2"><span id="taxValue" class="fw-bold fs-5 text-danger"></span></div>
+            </div>
+        </div>
 
-                      <div class="text-center mt-3">
-                          <p id="error" class="text-danger"></p>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+        <!-- Reverse Transaction Button -->
+        <div class="text-center mt-3">
+            <button id="reverseTransaction" class="btn btn-danger btn-lg shadow fw-bold mb-3" style="display: none;">
+                ⚠️ Reverse Selected Transaction
+            </button>
+        </div>
 
-      <div id="performance" class="card shadow-sm mb-4 p-4 border-0">
-          <div class="row border-bottom pb-2 mb-3">
-              <div class="col-4"><h4 class="text-primary fw-bold m-0">Income</h4></div>
-              <div class="col-4"><h4 class="text-danger fw-bold m-0">Expenses</h4></div>
-              <div class="col-4"><h4 class="text-success fw-bold m-0">Profit</h4></div>
-          </div>
-          <div class="row mb-2">
-              <div class="col-2"><span id="receiveRentHeading" class="fw-bold text-muted">Receive rent</span></div>
-              <div class="col-2"><span id="receiveRentValue" class="fw-bold fs-5 text-success"></span></div>
-              <div class="col-2"><span id="payRentHeading" class="fw-bold text-muted">Pay rent</span></div>
-              <div class="col-4"><span id="payRentValue" class="fw-bold fs-5 text-danger"></span></div>
-          </div>
-          <div class="row mb-2">
-              <div class="col-2"><span id="passGoHeading" class="fw-bold text-muted">Pass Go</span></div>
-              <div class="col-2"><span id="passGoValue" class="fw-bold fs-5 text-success"></span></div>
-              <div class="col-2"><span id="taxHeading" class="fw-bold text-muted">Tax</span></div>
-              <div class="col-2"><span id="taxValue" class="fw-bold fs-5 text-danger"></span></div>
-          </div>
-          </div>
-  </div>
-<div id="transactions" class="mt-4 table-responsive">
-          </div>
+        <!-- Transactions Table Area -->
+        <div id="transactions" class="mt-4 table-responsive"></div>
 
-      <div id="statements" class="mt-4 table-responsive">
-          </div>
+        <!-- Financial Statements -->
+        <div id="statement" class="mt-4" style="display: none;">
+            <div class="card shadow-sm border-0 p-4">
+                <h3 class="text-primary mb-4 border-bottom pb-2 fw-bold">Statement of Financial Position</h3>
 
-      <div class="card shadow-sm mb-5 p-4 border-0">
-          <div id="chart_div" style="width: 100%; min-height: 400px;">
-              </div>
-      </div>
+                <div class="row">
+                    <!-- Assets Column -->
+                    <div class="col-md-6 mb-4 px-4">
+                        <h4 class="text-success border-bottom pb-2">Assets</h4>
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="fw-bold text-muted fs-5">Cash</span>
+                            <span id="cashValue" class="fw-bold fs-5 text-dark">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-muted fs-5">Land / Properties</span>
+                            <span id="landValue" class="fw-bold fs-5 text-dark">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-muted fs-5">Buildings</span>
+                            <span id="buildingsValue" class="fw-bold fs-5 text-dark">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                            <strong class="fs-4">Total Assets</strong>
+                            <strong id="totalAssets" class="text-success fs-3">$0</strong>
+                        </div>
+                    </div>
 
-  </div> ```
+                    <!-- Liabilities & Equity Column -->
+                    <div class="col-md-6 mb-4 px-4 border-start">
+                        <h4 class="text-danger border-bottom pb-2">Liabilities</h4>
+                        <div class="d-flex justify-content-between mb-2 mt-3">
+                            <span class="fw-bold text-muted fs-5">Loans</span>
+                            <span id="loansValue" class="fw-bold fs-5 text-dark">$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 pt-3 border-top mb-5">
+                            <strong class="fs-4">Total Liabilities</strong>
+                            <strong id="totalLiabilities" class="text-danger fs-3">$0</strong>
+                        </div>
+
+                        <h4 class="text-info border-bottom pb-2 mt-4">Equity (Net Worth)</h4>
+                        <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                            <strong class="fs-4">Total Equity</strong>
+                            <strong id="equityTotal" class="text-info fs-3">$0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Charts Area -->
+        <div class="card shadow-sm mb-5 p-4 border-0">
+            <div id="chart_div" style="width: 100%; min-height: 400px;"></div>
+        </div>
+
+    </div> 
+</body>
 </html>
 
 <script type="text/javascript">
@@ -279,7 +361,7 @@ formatter = new Intl.NumberFormat('en-US', {
      $('#student').focus();
      $('#showStatement').hide();
      $('#showTransactions').hide();
-     $('#statements').hide();
+     $('#statement').hide();
      $('#transactions').hide();
      $('#performance').hide();
 
@@ -308,7 +390,7 @@ let stats = [];
     //alert(message + " to " + recipient);
 
       stats = JSON.parse(data);
-      console.log(stats);
+      console.log("stats", stats);
       
 let csh = formatCurrency(stats.cash);
 $('#cash').text(csh);
@@ -362,7 +444,7 @@ return stats;
   clicked = this.id;
 $('#dataEntry').show();
 $('#transactions').hide();
-$('#statements').hide();
+$('#statement').hide();
 $('#performance').hide();
 action = clicked.substring(4);
 // alert(this.id + ' ' + action);
@@ -521,7 +603,7 @@ $('#reports').show();
 
 $(document).ready(function(){
 
-// load sites into dropdown
+// load sites into dropdown<button id="showStatements" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>
 let action = 'all' ;
 $.ajax({
   url: 'loadCOA.php',
@@ -552,6 +634,8 @@ alert("Failure coa " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
 
 })
 </script>
+
+
 
 <script type="text/javascript">
   function writeTransaction(studentID,comment,amount,accountCode,linked)
@@ -742,7 +826,7 @@ else {let updated = writeTransaction(studentID,comment,amount,accountCode,linked
 
 $('#performance').show();
 $('#transactions').hide();
-$('#statements').hide();$("#dataEntry").hide();
+$('#statement').hide();$("#dataEntry").hide();
 
 
      $.ajax({
@@ -810,10 +894,10 @@ $('#profit').text(formatCurrency(profit));
 <script type="text/javascript">
   
     $(document).ready(function(){
-    $('#showStatement').on('click', function()
+    $('#showStatements').on('click', function()
 {
 
-$('#statements').show();
+$('#statement').show();
 $('#transactions').hide();
 $('#performance').hide();
 $("#dataEntry").hide();
@@ -908,7 +992,7 @@ $('table').attr('id', 'transTable');
 
 {
   
-  $('#statements').hide();
+  $('#statement').hide();
 $('#transactions').show();
 $('#performance').hide();
 $("#dataEntry").hide();
@@ -1047,12 +1131,12 @@ rowValueStr = rowValues[0] + '*' + rowValues[2] + '*' +  rowValues[3] + '*' +  r
 
 <script>
     $(document).ready(function(){
-    $('#reverse').on('click', function()
+    $('#reverseTransaction').on('click', function()
 {
 alert(this.id); 
 let id = $('#transID').text();
 id = parseInt(id);
-
+console.log("Transaction ID:", id);
    
       $.ajax({
   url: "reverseTransaction.php",

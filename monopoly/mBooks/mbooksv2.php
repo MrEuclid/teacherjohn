@@ -108,7 +108,7 @@
                   <button id="Btn_receive" class="btn btn-success btn-lg px-4 shadow-sm">⬇️ Get Money</button>
                   <button id="Btn_pay" class="btn btn-danger btn-lg px-4 shadow-sm">⬆️ Pay Money</button>
                   <button id="showTransactions" class="btn btn-info btn-lg px-4 text-white shadow-sm">📋 Transactions</button>
-                  <button id="showStatements" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>
+                  <button id="showStatement" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>
                   <button id="showProfitLoss" class="btn btn-warning btn-lg px-4 shadow-sm">⚖️ Profit / Loss</button>
                   <a href="https://teacherjohn.org/index.php" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
               </div>
@@ -180,6 +180,18 @@
           </div>
           </div>
   </div>
+<div id="transactions" class="mt-4 table-responsive">
+          </div>
+
+      <div id="statements" class="mt-4 table-responsive">
+          </div>
+
+      <div class="card shadow-sm mb-5 p-4 border-0">
+          <div id="chart_div" style="width: 100%; min-height: 400px;">
+              </div>
+      </div>
+
+  </div> ```
 </html>
 
 <script type="text/javascript">
@@ -265,7 +277,7 @@ formatter = new Intl.NumberFormat('en-US', {
      $('#menu').hide();
      $('#dataEntry').hide();
      $('#student').focus();
-     $('#showStatements').hide();
+     $('#showStatement').hide();
      $('#showTransactions').hide();
      $('#statements').hide();
      $('#transactions').hide();
@@ -492,7 +504,7 @@ console.log(i,data[i]);
     
     $('#who').text(studentID);
 $('#loginForm').hide();
-$('#showStatements').show();
+$('#showStatement').show();
 $('#showTransactions').show();
 $('#menu').show();
 $('#reports').show();
@@ -798,7 +810,7 @@ $('#profit').text(formatCurrency(profit));
 <script type="text/javascript">
   
     $(document).ready(function(){
-    $('#showStatements').on('click', function()
+    $('#showStatement').on('click', function()
 {
 
 $('#statements').show();

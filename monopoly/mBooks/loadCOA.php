@@ -33,7 +33,7 @@ if ($action == 'receive')
 				FROM mbooksCOA
 				WHERE substr(code,3,1) <> 0
 				AND code <> '101'
-				AND substr(code,1,1) IN (1,4)  " ;  // allow for selling real estate
+				AND substr(code,1,1) IN (1,2,4)  " ;  // allow for selling real estate
 
 }
 //   echo "<br>" . $query . "<br>";

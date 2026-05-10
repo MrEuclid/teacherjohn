@@ -137,7 +137,7 @@
                     <button id="showTransactions" class="btn btn-info btn-lg px-4 text-white shadow-sm">📋 Transactions</button>
                     <button id="showStatements" class="btn btn-primary btn-lg px-4 shadow-sm">📊 My Value</button>    
                      <button  id = "showProfitLoss" class="btn btn-warning btn-lg px-4 shadow-sm">Profit / Loss</button>              
-                    <a href="[https://teacherjohn.org/index.php](https://teacherjohn.org/index.php)" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
+                    <a href="../../index.php" class="btn btn-outline-secondary btn-lg px-4">Quit</a>
                 </div>
             </div>
         </div>
@@ -187,7 +187,75 @@
             </div>
         </div>
 
-        <!-- Performance Stats -->
+
+<div id="performance" class="card shadow-sm mb-4 p-4 border-0">
+    <h3 class="text-primary mb-4 border-bottom pb-2 fw-bold">Statement of Financial Performance</h3>
+
+    <div class="row">
+        <!-- Income Column -->
+        <div class="col-md-4 mb-4 px-3">
+            <h4 class="text-success border-bottom pb-2">Income</h4>
+            
+            <div class="d-flex justify-content-between mb-2 mt-3">
+                <span id="receiveRentHeading" class="fw-bold text-muted">Receive rent</span>
+                <span id="receiveRentValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-2">
+                <span id="passGoHeading" class="fw-bold text-muted">Pass Go</span>
+                <span id="passGoValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-2">
+                <span id="otherIncomeHeading" class="fw-bold text-muted">Other income</span>
+                <span id="otherIncomeValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <strong id="totalIncomeHeading" class="fs-5">Total Income</strong>
+                <strong id="totalIncome" class="text-success fs-5"></strong>
+            </div>
+        </div>
+
+        <!-- Expenses Column -->
+        <div class="col-md-4 mb-4 px-3 border-start">
+            <h4 class="text-danger border-bottom pb-2">Expenses</h4>
+            
+            <div class="d-flex justify-content-between mb-2 mt-3">
+                <span id="payRentHeading" class="fw-bold text-muted">Pay rent</span>
+                <span id="payRentValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-2">
+                <span id="taxHeading" class="fw-bold text-muted">Tax</span>
+                <span id="taxValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-2">
+                <span id="otherExpensesHeading" class="fw-bold text-muted">Other expense</span>
+                <span id="otherExpensesValue" class="fw-bold text-dark"></span>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <strong class="fs-5">Total Expenses</strong>
+                <strong id="totalExpenses" class="text-danger fs-5"></strong>
+            </div>
+        </div>
+
+        <!-- Profit Column -->
+        <div class="col-md-4 mb-4 px-3 border-start">
+            <h4 class="text-info border-bottom pb-2">Profit</h4>
+            
+            <div class="d-flex justify-content-between mt-4 pt-4 border-top">
+                <strong class="fs-4">Net Profit</strong>
+                <strong id="profitTotal" class="text-info fs-3"></strong>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- performance -->
+<!--
+       
         <div id="performance" class="card shadow-sm mb-4 p-4 border-0">
             <div class="row border-bottom pb-2 mb-3">
                 <div class="col-4"><h4 class="text-primary fw-bold m-0">Income</h4></div>
@@ -207,7 +275,7 @@
                 <div class="col-2"><span id="taxValue" class="fw-bold fs-5 text-danger"></span></div>
             </div>
         </div>
-
+-->
         <!-- Reverse Transaction Button -->
         <div class="text-center mt-3">
             <button id="reverseTransaction" class="btn btn-danger btn-lg shadow fw-bold mb-3" style="display: none;">

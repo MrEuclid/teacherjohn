@@ -2,7 +2,18 @@
 session_save_path(sys_get_temp_dir());
 session_start();
 
+
+// --- NEW: Logout Logic ---
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    session_unset();    // Clear all session variables
+    session_destroy();  // Destroy the session completely
+    header("Location: login.php?cleared=1"); // Redirect to a clean URL
+    exit();
+}
+// -------------------------
+
 require_once '../connectTeacherJohn.php'; 
+// ... rest of your code ...
 
 
 
@@ -37,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $elapsed = $currentTime - $row['startTime'];
 
             if ($elapsed > $competition_duration) {
-                $error_message = "Sorry, your 45-minute competition window has expired.";
+                $error_message = "Sorry, your 60-minutes is over.";
             } else {
                 $_SESSION['teamName'] = $teamName;
                 $_SESSION['classCode'] = $row['classCode'];
@@ -94,6 +105,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ⚠️ Warning: You left the competition window! Your session was interrupted. Please log in again to continue.
     </div>
 <?php endif; ?>
+
+<?php if (isset($_GET['cleared']) && $_GET['cleared'] == 1): ?>
+    <div class="alert alert-success fw-bold text-center mt-3 shadow-sm" role="alert">
+        ✅ Session cleared! You can now start fresh with a new team.
+    </div>
+<?php endif; ?>
         <form method="POST" action="login.php">
             <div class="mb-3">
                 <label for="teamName" class="form-label">Team Name</label>
@@ -127,6 +144,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <button type="submit" class="btn btn-primary w-100 fs-5">Start Competition</button>
         </form>
+
+<div class="text-center mt-4">
+        <a href="login.php?action=logout" class="text-muted text-decoration-none">
+            <small>🔄 Reset Session (Click here if you are on a shared computer and need to start over)</small>
+        </a>
+    </div>
     </div>
 </div>
 

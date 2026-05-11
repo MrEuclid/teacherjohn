@@ -1,6 +1,6 @@
 <?php 
 $question = isset($_POST['question']) ? $_POST['question'] : 'quadratics G9';
-
+?>
 <!DOCTYPE html>
 <html lang="en">
 

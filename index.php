@@ -70,8 +70,8 @@
 
  <a href="puzzleTournament/index.php"><button class="btn btn-success">Puzzle Journey</button></a> 
  
-<a href="crossNumber/crossnumber5x5.php">
-    <button class="btn btn-success">Cross number</button></a>
+<a href="escape/escape.html">
+    <button class="btn btn-success">Escape</button></a>
     
  <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
 <button class="btn btn-info">Sokoban </button></a>

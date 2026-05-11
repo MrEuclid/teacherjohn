@@ -1,0 +1,450 @@
+
+
+img 
+    {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+
+h1 {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
+
+p {display:inline-block;}
+
+#instructions {display: inline-block; font-size:2em; font-weight:bolder; color:green; text-align:center;}
+
+img { width: 180px; height: 120px; padding: 5px; }
+
+
+h1 {
+font-weight: bolder; 
+   font-size: 24pt; 
+   
+   color:green;
+}
+
+h2 {
+font-weight: bolder; 
+   font-size: 20pt; 
+   
+   color:blue;
+
+}
+
+#teamName {display: inline-block; color: black; font-size: 2em;font-weight: bolder; width: auto;}
+#total,#timer , #cancel, #home , #start
+    {
+        display: inline-block; 
+        background-color: blue; 
+        color: white; 
+        width: 4em;
+         height: 3em;
+         font-size: 1em;
+         font-weight: bolder;
+        padding-bottom: 1em;
+        text-align:center;
+}
+
+#login {margin-bottom: 1.5em; background-color: lightgreen; color: black; }
+
+
+#theTeam {background-color: lightblue; text-align: center;; font-size: 1.2em ; font-weight: bold;}
+#home,#cancel ,#start
+            {
+                display: inline-block; 
+             background-color: green; 
+             color: yellow;
+            font-size:1em ; 
+            font-weight:bolder; 
+        }
+
+#expression{margin: 10px ;
+            background-color: lightblue;
+            color: black;
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1.2em;
+            width:240px ;
+            height:40px;
+            }
+
+            #ans {margin: 10px ;
+            background-color: lightgreen;
+            color: black;
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1.2em;
+            width:320px ;
+            height:40px;
+            }
+#casio {border-style: solid; color: green;}
+
+
+
+
+button.bigWriting {padding: 2px ; width: 160px ; margin-bottom: 5px ;
+  margin-top: 2px;vertical-align: top; margin-left: 5px ; margin-right: 5px ;
+ // background-color: orange; 
+  font-size: 18pt ; font-weight: bolder;color: white ;}
+
+button.small {padding: 2px ; width: 80px ; height: 80px ;margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 24pt ; color:black ; background-color: lightblue ;vertical-align: top;}
+
+button.large {padding: 2px ; width: 120px ; height:120px ; margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 24pt ; color:green ; background-color: lightyellow ; vertical-align: top;}
+
+button.large1 {padding: 2px ; width: 120px ; height:120px ; 
+vertical-align: top;
+  margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 24pt ; color:blue ; background-color: lightyellow ;}
+
+button.large2 {padding: 2px ; width: 120px ; height:120px ; 
+  vertical-align: top;
+  margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 24pt ; color:black ; background-color: lightgrey ;}
+
+#operation+, #operation*,#operation-, #operation/
+ {padding: 2px ; width: 120px ; 
+vertical-align: top;
+  margin-bottom: 5px ;margin-top: 2px; font-size: 18pt ; font-weight: bolder ;  lightblue ;}
+
+#guess {
+    background-color:lightgreen ; 
+    color:black ;
+    font-size:24pt ;
+    width: 120ps ;
+    height:60px ;
+    text-align:center ;
+  }
+
+.round {
+    background-color: #1164e0;
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24pt;
+    margin: 4px 2px;
+    font-weight:bolder ;
+
+border-radius: 20;}
+
+.alphabet {
+    background-color: green;
+    border: none;
+    color: yellow;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 2px 2px;
+    font-weight:bolder ;
+
+border-radius: 20;}
+
+
+
+.square {
+   
+    display: inline-block;
+    margin: 0;
+    padding: 2px 2px;
+
+    
+    text-rendering: auto;
+    text-align: center;
+    text-transform: none;
+    text-decoration: none;
+    text-indent: 0;
+    text-shadow: none;
+    letter-spacing: normal;
+    word-spacing: normal;
+    font-weight: bolder ;
+    font-family: sans-serif;
+    height: 50px ;
+    width: 50px ;
+    border: 1px outset buttonface; }
+
+
+    
+.rectangle {
+    
+    display: inline-block;
+    margin: 0;
+    padding: 2px 2px;
+    font-size: 2em;
+    color: black;
+    background-color: lightgreen;
+    
+    text-rendering: auto;
+    text-align: center;
+    text-transform: none;
+    text-decoration: none;
+    text-indent: 0;
+    text-shadow: none;
+    letter-spacing: normal;
+    word-spacing: normal;
+    font-weight: bolder ;
+    font-family: sans-serif;
+    height: 50px ;
+    width: 100px ;
+    border: 1px outset buttonface; }
+
+
+   .circle { 
+            width: 60px; 
+            height: 60px; 
+            margin:5px ;
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            background-color:green ;
+            color:yellow ;
+            font-size:24pt ;
+            font-weight:bolder ;
+            text-align: center; }
+
+
+
+.menu {
+    font-size: 24pt;
+}
+
+h1 {
+font-weight: bolder; 
+   font-size: 24pt; 
+   
+   color:green;
+}
+
+h2 {
+font-weight: bolder; 
+   font-size: 20pt; 
+   
+   color:blue;
+
+}
+
+h3 {
+font-weight: bolder; 
+   font-size: 16pt; 
+   
+   color:green;
+}
+
+h4 {
+font-weight: bold; 
+   font-size: 14pt; 
+   
+   color:black;
+}
+
+[id^=level] {
+background-color: lavender;
+color:black ;
+font-weight: bolder;
+font-size: 12pt ;
+text-align: center;
+width : 120px ;
+height: 90px ;
+
+}
+
+p {
+font-weight: bold;
+font-style: italic;
+font-size: medium;
+}
+
+#clear {background-color: blue; color: yellow; font-size: 1.2em; text-align: center; width: 120px; height: 40px;}
+
+#calculate{
+
+background-color:cornflowerblue; 
+}
+
+#answerm,#answern {
+                    margin: 2em; 
+                    background: lightblue; 
+                    text-align: center; 
+                    font-weight: bolder;
+                    font-size: 1.2em;
+                    color:black;
+                    width:5em;
+                  }
+
+
+
+button.bigWriting {padding: 2px ; width: 160px ; margin-bottom: 5px ;
+margin-top: 2px;vertical-align: top; margin-left: 5px ; margin-right: 5px ;
+// background-color: orange; 
+font-size: 18pt ; font-weight: bolder;color: white ;}
+
+button.small {padding: 2px ; width: 80px ; height: 80px ;margin-bottom: 5px ;margin-top: 2px; 
+font-size: 24pt ; color:black ; background-color: lightblue ;vertical-align: top;}
+
+button.large {padding: 2px ; width: 120px ; height:120px ; margin-bottom: 5px ;margin-top: 2px; 
+font-size: 24pt ; color:green ; background-color: lightyellow ; vertical-align: top;}
+
+button.large1 {padding: 2px ; width: 120px ; height:120px ; 
+vertical-align: top;
+margin-bottom: 5px ;margin-top: 2px; 
+font-size: 24pt ; color:blue ; background-color: lightyellow ;}
+
+button.large2 {padding: 2px ; width: 120px ; height:120px ; 
+vertical-align: top;
+margin-bottom: 5px ;margin-top: 2px; 
+font-size: 24pt ; color:black ; background-color: lightgrey ;}
+
+#operation+, #operation*,#operation-, #operation/
+{padding: 2px ; width: 120px ; 
+vertical-align: top;
+margin-bottom: 5px ;margin-top: 2px; font-size: 18pt ; font-weight: bolder ;  lightblue ;}
+
+#target {background-color: orange; color:lime ;}
+
+#newGame, #quit {font-size: 18pt; font-weight: bolder;}
+
+
+
+
+.medium {
+    display: inline-block;
+  
+    margin: 0;
+    padding: 10px 10px;
+
+    
+    text-rendering: auto;
+    text-align: center;
+    text-transform: none;
+    text-decoration: none;
+    text-indent: 0;
+    text-shadow: none;
+    letter-spacing: normal;
+    word-spacing: normal;
+    font-weight: bolder ;
+    font-size: 14pt ;
+    color:white ;
+    font-family: sans-serif;
+    height: 60px ;
+    width: 100px ;
+    border: 1px outset buttonface; }
+
+
+
+#message {font-size: 10pt ; font-style: italic;color: black ; text-align: justify;}
+
+#answer {
+            text-align: center;
+            background-color: lightblue;
+            font-size: 1.2em;
+            font-weight: bolder;
+}
+
+h2 {color: green }
+h1 {color: blue;}
+h3 {color:orange;}
+
+
+img {position: relative;}
+
+
+[id^=equation] {text-align: center; margin:1em;}
+[id^=solution] {text-align: center; margin:1em; background-color: lightblue;}
+
+input {
+     text-align: center;
+     background-color: lightblue; 
+     color:black; 
+     width:4em;
+ }
+
+ /* --- Competition Play Area Styles --- */
+
+.comp-play-area {
+    background-color: #f8f9fa; /* Very light grey to make the white cards pop */
+    min-height: 60vh;
+}
+
+/* Header Styling */
+.comp-header .comp-title {
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 0.2rem;
+}
+
+.comp-header .comp-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Individual Question Cards */
+.question-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    border: 1px solid #e9ecef;
+    position: relative; /* Needed for the overlapping badge */
+    transition: transform 0.2s ease-in-out;
+}
+
+.question-card:hover {
+    transform: translateY(-3px); /* Slight lift effect when hovering */
+}
+
+/* The Q1, Q2 Badge at the top left of each card */
+.question-badge {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background-color: #0d6efd; /* Bootstrap Primary Blue */
+    color: white;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+}
+
+/* Equation Container */
+.math-equation {
+    font-size: 1.5rem; /* Make the math easily readable */
+    text-align: center;
+    color: #343a40;
+    min-height: 60px; /* Prevents the card height from snapping when MathJax loads */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Custom Input Field */
+.solution-input {
+    border: 2px solid #ced4da;
+    font-size: 1.1rem;
+    text-align: center;
+    border-right: none; /* Removes double border next to the button */
+}
+
+.solution-input:focus {
+    border-color: #0d6efd;
+    box-shadow: none;
+}
+
+/* Custom Check Button */
+.btn-comp-check {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+    border: 2px solid #0d6efd;
+    padding: 0 20px;
+    transition: all 0.2s;
+}
+
+.btn-comp-check:hover {
+    background-color: #0b5ed7;
+    color: white;
+}

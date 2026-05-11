@@ -338,7 +338,7 @@ while ($row = $result->fetch_assoc()) {
             }
         });
     }
-
+/*
 // --- Anti-Cheat: Prevent Tab Switching or Minimizing ---
 document.addEventListener("visibilitychange", function() {
     if (document.hidden) {
@@ -351,6 +351,8 @@ document.addEventListener("visibilitychange", function() {
 window.addEventListener("blur", function() {
     window.location.href = "login.php?kicked=1";
 });
+
+*/
 </script>
 
 </body>

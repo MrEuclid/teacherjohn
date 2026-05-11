@@ -1,5 +1,5 @@
 <?php 
-$question = isset($_POST['question']) ? $_POST['question'] : 'E2 equations';
+$question = isset($_POST['question']) ? $_POST['question'] : 'Exponenti equations';
 
 ?>
 
@@ -16,7 +16,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'E2 equations';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-
+<link rel = "stylesheet" href="raceGeminiStyles.css">
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -46,40 +46,44 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
 </head>
 <body>
+<div class="container-fluid comp-play-area py-4">
+    <div class="row mb-5">
+        <div class="col-12 text-center comp-header">
+            <h1 class="comp-title">Find x and y</h1>
+            <h2 class="comp-subtitle">Generic Equations</h2>
+        </div>
+    </div>
 
-    <div class  = "container-fluid">
-
-
-    <div class = "row">
-      <div class = "col-12 text-center">
-
-    <h1>Solve each equation</h1>
-  
-  
-</div></div>
-
-
- <div class = "row">
-      <div class = "col-6 text-center">
-
-<p id = "equation1"></p>
+    <div class="row justify-content-center">
+        
+        <div class="col-12 col-md-5 mb-4">
+            <div id="ex1" class="question-card shadow-sm">
+                <span class="question-badge">Q1</span>
+                
+                <label id="equation1" class="math-equation d-block"></label>
+                
+                <div class="input-group mt-3">
+                    <input type="text" id="solution1" class="form-control solution-input" placeholder="Your answer...">
+                    <button id="check1" class="btn btn-comp-check">Check 1</button>
+                </div>
+            </div>
+        </div>
+ <div class="row justify-content-center">
+        <div class="col-12 col-md-5 mb-4">
+            <div id="ex2" class="question-card shadow-sm">
+                <span class="question-badge">Q2</span>
+                
+                <label id="equation2" class="math-equation d-block"></label>
+                
+                <div class="input-group mt-3">
+                    <input type="text" id="solution2" class="form-control solution-input" placeholder="Your answer...">
+                    <button id="check2" class="btn btn-comp-check">Check 2</button>
+                </div>
+            </div>
+        </div>
 </div>
-
-      <div class = "col-3 text-center">
-        <label>x  = </label><input id = "solution1"> 
-  </div> 
-      <div class = "col-3 text-center">  
-        <button id = "check1" >Check</button>
-</div></div>
-       
- 
-
-
+    </div>
 </div>
-
-</body>
-</html>
-
 <script type="text/javascript">
     
 
@@ -91,6 +95,25 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
 <script type="text/javascript">
     
+
+    function makeEquation_2()
+
+   {
+
+// 42^x - 1  = N
+// x > 4 and x < 10
+ let x = randomInteger(4,10);
+  
+let N  = 2**x - 1
+var expr = '$ 2^y -1   = ' +  N +  '$';
+
+  $('#equation2').html(expr);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
+
+
+      return x;
+    }
+
 
     function makeEquation_1()
 
@@ -106,23 +129,27 @@ var expr = '$ 4x^2 + 1  = ' +  N +  '$';
   $('#equation1').html(expr);
        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
 
-answer = x;
-console.log(answer);
-      return answer;
+
+
+      return x;
     }
+
+
 </script>
 
 <script type="text/javascript">
   
     $(document).ready(function(){
-     var points = 0;
-    var answer = [];
-    var correct = 0;
+      points = 0;
+     answer = [];
+     correct = 0;
     question = '<?php echo $question; ?>' ;
 
 answer  = [];
-answer[0] = makeEquation_1();
-checkAnswer(1)
-// console.log(answer);
+answer[1] = makeEquation_1();
+answer[2] = makeEquation_2();
+
+checkAnswer(2);
+ console.log(answer);
   })
 </script>

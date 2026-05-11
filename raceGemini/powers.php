@@ -49,42 +49,30 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 
     <div class  = "container-fluid">
 
- 
-    <div class  = "container-fluid">
-
 
     <div class = "row">
       <div class = "col-12 text-center">
 
-    <h1>Find the numbers x and y</h1>
-    <h3>x and y are whole numbers.</h3>
+    <h1>Solve each equation</h1>
+  
   
 </div></div>
 
 
  <div class = "row">
-      <div class = "col- 12 text-center">
+      <div class = "col-6 text-center">
 
-<p id = "equations"></p>
+<p id = "equation1"></p>
+</div>
 
-</div></div>
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-
-        <label>x  = </label><input id = "solution1">    
+      <div class = "col-3 text-center">
+        <label>x  = </label><input id = "solution1"> 
+  </div> 
+      <div class = "col-3 text-center">  
         <button id = "check1" >Check</button>
 </div></div>
        
-     
- <div class = "row">
-      <div class = "col-12 text-center">  
-        <label>y  = </label><input id = "solution2">
-         <button id = "check2" >Check</button>
-
-</div></div>
-
+ 
 
 
 </div>
@@ -113,13 +101,10 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
  let x = randomInteger(6,20);
   
 let N  = 4*x*x - 1 
-var expr = '$ 4x^2 + 1  = ' +  N +  ' x = $';
+var expr = '$ 4x^2 + 1  = ' +  N +  '$';
 
-  $('#equations').html(expr);
+  $('#equation1').html(expr);
        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
-console.log(expr,x,y,z1,z2);
-
-
 
 answer = x;
 console.log(answer);
@@ -134,38 +119,10 @@ console.log(answer);
     var answer = [];
     var correct = 0;
     question = '<?php echo $question; ?>' ;
-// points = question.substr(-1);
-// calculate points on exit
-// $('#cancel').text("Exit");
 
-a = [];
-
+answer  = [];
 answer[0] = makeEquation_1();
-
 checkAnswer(1)
 // console.log(answer);
   })
-
-// 1. Declare the answer array OUTSIDE the ready function so utilities.js can see it globally
-var answer = [];
- var correct = 0;
- var points = 0;
-$(document).ready(function(){
-   
-   
-    var question = '<?php echo $question; ?>';
-
-    // 2. Grab the generated x and y from your function
-    var generatedValues = makeEquations();
-
-    // 3. Manually map x to index 1, and y to index 2 so they match check1 and check2
-    answer[1] = generatedValues[0]; // This is 'x'
-    answer[2] = generatedValues[1]; // This is 'y'
-
-    // Initialize the checkAnswer utility for 2 questions
-    checkAnswer(2);
-    
-    console.log("Answers mapped for utilities.js: ", answer);
-});
 </script>
-

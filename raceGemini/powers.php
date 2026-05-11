@@ -84,6 +84,9 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 </div>
     </div>
 </div>
+</body>
+</html>
+
 <script type="text/javascript">
     
 
@@ -121,9 +124,10 @@ var expr = '$ 2^y -1   = ' +  N +  '$';
 
 // 4x^2 + 1 = N
 // x > 6 and x < 20
+
  let x = randomInteger(6,20);
   
-let N  = 4*x*x - 1 
+let N  = +(4*x*x + 1) ;
 var expr = '$ 4x^2 + 1  = ' +  N +  '$';
 
   $('#equation1').html(expr);

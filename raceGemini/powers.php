@@ -104,36 +104,26 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
 <script type="text/javascript">
     
 
-    function makeEquations()
+    function makeEquation_1()
 
    {
-let x = 0;
-let y = 0;
-while (parseInt(x + y)  <= 0 )
-{
-    x = randomInteger(10,20);
-    y = randomInteger(1,20);
-}
-let z1 = x*y ;
-let z2 = parseInt(x - y);
-var expr = '$ x' + ' - '  + 'y = ' +  z2 +  '$';
-expr += '<br>';
-expr += '$ xy = ' + z1 + '$'
-expr += '<br>';
-expr += '$ x + y > 0  ' + '$' ;
+
+// 4x^2 + 1 = N
+// x > 6 and x < 20
+ let x = randomInteger(6,20);
+  
+let N  = 4*x*x - 1 
+var expr = '$ 4x^2 + 1  = ' +  N +  ' x = $';
+
   $('#equations').html(expr);
-       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equations" ]);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
 console.log(expr,x,y,z1,z2);
 
 
 
-answer = [x,y];
+answer = x;
 console.log(answer);
       return answer;
-
-
-
-
     }
 </script>
 
@@ -150,9 +140,9 @@ console.log(answer);
 
 a = [];
 
-answer = makeEquations();
+answer[0] = makeEquation_1();
 
-checkAnswer(2)
+checkAnswer(1)
 // console.log(answer);
   })
 

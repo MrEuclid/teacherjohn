@@ -31,58 +31,42 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Exponenti equation
 
 <style>
 
-input {
-    text-align: center; 
-    background-color: lightyellow; 
-    color: black; 
-    font-size: 1.2em;
-    font-weight: bold;
-    height:40px;
-    margin:5px;
-    width:5em; }
-label {font-weight: bolder; font-size: 2em; margin: 1em;}
 </style>
 
 
 </head>
-<body>
-<div class="container-fluid comp-play-area py-4">
+<body><div class="container-fluid comp-play-area py-4">
     <div class="row mb-5">
         <div class="col-12 text-center comp-header">
             <h1 class="comp-title">Find x and y</h1>
-            <h2 class="comp-subtitle">Generic Equations</h2>
         </div>
     </div>
-
-    <div class="row justify-content-center">
-        
-        <div class="col-12 col-md-5 mb-4">
-            <div id="ex1" class="question-card shadow-sm">
-                <span class="question-badge">Q1</span>
-                
-                <label id="equation1" class="math-equation d-block"></label>
-                
-                <div class="input-group mt-3">
-                    <input type="text" id="solution1" class="form-control solution-input" placeholder="Your answer...">
-                    <button id="check1" class="btn btn-comp-check">Check 1</button>
-                </div>
-            </div>
+<div class="row mb-4">
+    <div class="col-12">
+        <div id="ex1" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 p-3 bg-light border rounded">
+            
+            <label id="equation1" class="mb-0 fs-4 fw-bold"></label>
+            
+<input type="text" id="solution1" class="form-control text-center" style="max-width: 120px;" placeholder="Answer">            
+            <button id="check1" class="btn btn-primary px-4 fw-bold">Check 1</button>
+            
         </div>
- <div class="row justify-content-center">
-        <div class="col-12 col-md-5 mb-4">
-            <div id="ex2" class="question-card shadow-sm">
-                <span class="question-badge">Q2</span>
-                
-                <label id="equation2" class="math-equation d-block"></label>
-                
-                <div class="input-group mt-3">
-                    <input type="text" id="solution2" class="form-control solution-input" placeholder="Your answer...">
-                    <button id="check2" class="btn btn-comp-check">Check 2</button>
-                </div>
-            </div>
-        </div>
+    </div>
 </div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div id="ex2" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 p-3 bg-light border rounded">
+            
+            <label id="equation2" class="mb-0 fs-4 fw-bold"></label>
+            
+            <input type="text" id="solution2" class="form-control text-center" style="max-width: 120px;" placeholder="Answer">
+            
+            <button id="check2" class="btn btn-primary px-4 fw-bold">Check 2</button>
+            
+        </div>
     </div>
+</div>
 </div>
 </body>
 </html>
@@ -108,7 +92,7 @@ label {font-weight: bolder; font-size: 2em; margin: 1em;}
  let x = randomInteger(4,10);
   
 let N  = 2**x - 1
-var expr = '$ 2^y -1   = ' +  N +  '$';
+var expr = '$ 2^y -1   = ' +  N +  ' , y = $';
 
   $('#equation2').html(expr);
        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
@@ -128,7 +112,7 @@ var expr = '$ 2^y -1   = ' +  N +  '$';
  let x = randomInteger(6,20);
   
 let N  = +(4*x*x + 1) ;
-var expr = '$ 4x^2 + 1  = ' +  N +  '$';
+var expr = '$ 4x^2 + 1  = ' +  N +  ' , x = $';
 
   $('#equation1').html(expr);
        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);

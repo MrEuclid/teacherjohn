@@ -160,7 +160,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex1">
 <label id = "equation1"></label>
 <input id = "solution1">
@@ -171,7 +171,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex2">
 <label id = "equation2"></label>
 <input id = "solution2">
@@ -182,7 +182,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex3">
 <label id = "equation3"></label>
 <input id = "solution3">
@@ -192,7 +192,7 @@ input {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex4">
 <label id = "equation4"></label>
 <input id = "solution4">

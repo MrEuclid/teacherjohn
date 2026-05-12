@@ -63,7 +63,7 @@
         fetchDataAndDraw();
 
         // 7. Set Interval to auto-refresh every 30 seconds (30000 milliseconds)
-        setInterval(fetchDataAndDraw, 30000);
+        setInterval(fetchDataAndDraw, 60000);
       }
 
       function fetchDataAndDraw() {

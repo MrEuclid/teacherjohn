@@ -62,8 +62,8 @@
         // 6. Fetch initial data and draw the dashboard immediately
         fetchDataAndDraw();
 
-        // 7. Set Interval to auto-refresh every 30 seconds (30000 milliseconds)
-        setInterval(fetchDataAndDraw, 60000);
+        // 7. Set Interval to auto-refresh every 2 minutes
+        setInterval(fetchDataAndDraw, 120000);
       }
 function fetchDataAndDraw() {
         // Asynchronous AJAX call

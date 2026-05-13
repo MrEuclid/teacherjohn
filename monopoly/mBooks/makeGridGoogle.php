@@ -65,8 +65,7 @@
         // 7. Set Interval to auto-refresh every 30 seconds (30000 milliseconds)
         setInterval(fetchDataAndDraw, 60000);
       }
-
-      function fetchDataAndDraw() {
+function fetchDataAndDraw() {
         // Asynchronous AJAX call
         $.ajax({
           url: "accountData.php",
@@ -78,16 +77,32 @@
             // Format the second column (index 1)
             formatter.format(data, 1);
 
+            // --- NEW CODE: Capture and preserve the sorting state ---
+            var chart = chartTable.getChart();
+            if (chart) {
+              var sortInfo = chart.getSortInfo();
+              
+              // If the user has actively sorted a column (column is not -1)
+              if (sortInfo && sortInfo.column !== -1) {
+                
+                // 1. Sort the underlying data to match the user's choice
+                data.sort([{column: sortInfo.column, desc: !sortInfo.ascending}]);
+                
+                // 2. Tell the chart options to keep displaying the little sort arrow
+                chartTable.setOption('sortColumn', sortInfo.column);
+                chartTable.setOption('sortAscending', sortInfo.ascending);
+              }
+            }
+            // --------------------------------------------------------
+
             // Redraw the dashboard with the fresh data.
-            // Because the dashboard instance already exists, the filter selection is preserved!
             dashboard.draw(data);
           },
           error: function(err) {
             console.error("Error fetching background data for dashboard update: ", err);
           }
         });
-      }
-    </script>
+      }    </script>
   </head>
 
   <body>

@@ -144,15 +144,11 @@ p.parameter  {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
-    <h1> $ x \Delta  y =  xy + x - y $ </h1>
+    <h1> $ a \Delta  b =  ab + a - b $ </h1>
 
     <h3>
         a = <p class = "parameter" id = "a"></p>,
@@ -160,7 +156,7 @@ p.parameter  {
       
     </h3>
 
-    <h4>There are 3 marks for each question.</h4>
+    
 
     
   
@@ -168,7 +164,7 @@ p.parameter  {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex1">
 <label id = "equation1"></label>
 <input id = "solution1">
@@ -179,7 +175,7 @@ p.parameter  {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex2">
 <label id = "equation2"></label>
 <input id = "solution2">
@@ -190,7 +186,7 @@ p.parameter  {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex3">
 <label id = "equation3"></label>
 <input id = "solution3">
@@ -200,7 +196,7 @@ p.parameter  {
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
     <div id = "ex4">
 <label id = "equation4"></label>
 <input id = "solution4">

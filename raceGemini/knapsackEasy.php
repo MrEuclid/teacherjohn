@@ -50,37 +50,33 @@ h4 : {text-align: green;}
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
    <div class = "row">
-      <div class = "col-12 c">
+      <div class = "col-12 text-center">
  <h2>Use these numbers to answer the question.</h2>
  <h4 id = "possibles"></h4>
+ <p id = "equations"></p>
 </div></div>
 
     <div class = "row">
-      <div class = "col-12 c">
+      <div class = "col-12 text-center">
+<label>x  = </label><input id = "solution1"><button id = "check1" >Check</button>
+</div></div>
+
+
+ <div class = "row">
+      <div class = "col-12 text-center">
+     <label>y  = </label><input id = "solution2"><button id = "check2" >Check</button>
+
 
 </div></div>
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col- 12 text-center">
 
-<p id = "equations"></p>
-
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- 12 c">
-
-        <label>x  = </label><input id = "solution1"><button id = "check1" >Check</button>
-         <label>y  = </label><input id = "solution2"><button id = "check2" >Check</button>
-          <label>z  = </label><input id = "solution3"><button id = "check3" >Check</button>
+        
+   <label>z  = </label><input id = "solution3"><button id = "check3" >Check</button>       
         
 
 </div></div>

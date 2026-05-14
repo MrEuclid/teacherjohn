@@ -144,7 +144,6 @@ p.parameter  {
 
     <div class  = "container-fluid">
 
-
     <div class = "row">
       <div class = "col-12 text-center">
 
@@ -154,58 +153,12 @@ p.parameter  {
         a = <p class = "parameter" id = "a"></p>,
         b = <p class = "parameter" id = "b"></p>,
       
-    </h3>
-
-    
-
-    
+    </h3>   
   
 </div></div>
 
 
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
-
+<php include "answerBootstrap4.html"; ?>
 
 
 </div>

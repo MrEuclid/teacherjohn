@@ -10,43 +10,17 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
   <head>
  
  
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-  
-<link rel="stylesheet" href="raceGeminiStyles.css">
+ <link rel="stylesheet" href="raceGeminiStyles.css">
 
 <script src="javascript/utilities.js"></script>
-   
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
 
 <title>Delta</title>
 
@@ -108,18 +82,7 @@ h4 {
             color: black;
 }
 
-input {
-    display: inline-block; 
-    background-color: lightyellow; 
-    text-align: center; 
-    font-size: 1.2em; 
-    font-weight: bolder;
-    margin: 10px;
-    width: 4em;
-    height: 3em;
 
-
-}
 
 [id^=equation] {
     font-weight: bolder;
@@ -158,7 +121,7 @@ p.parameter  {
 </div></div>
 
 
-<php include "answerBootstrap4.html"; ?>
+<?php include "answerBootstrap4.html"; ?>
 
 
 </div>

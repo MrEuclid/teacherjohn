@@ -197,7 +197,7 @@ var points = 0;
         $('#equation1').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
 
-        console.log("q1",a,b,delta(a,b));
+    //    console.log("q1",a,b,delta(a,b));
         return delta(a,b) ;
     }
 </script>
@@ -214,7 +214,7 @@ var points = 0;
         $('#equation2').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
 
-        console.log("q2",a,b,delta(b,a));
+     //   console.log("q2",a,b,delta(b,a));
         return delta(b,a)
 
     }
@@ -233,7 +233,7 @@ var points = 0;
         $('#equation3').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
 
-        console.log("q2",a,b,delta(b,a));
+    //    console.log("q2",a,b,delta(b,a));
         return delta(a,a) - delta(b,b);
     }
 </script>
@@ -255,7 +255,7 @@ var points = 0;
         $('#equation4').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation4" ]);
 
-        console.log("q4",a,m-a, a-1, (m -a) / (a - 1));
+    //    console.log("q4",a,m-a, a-1, (m -a) / (a - 1));
         return (m -a) / (a - 1) ;
     }
 </script>
@@ -294,7 +294,7 @@ answer[3] = makeQuestion3(a,b,c,d) ;
 answer[4] = makeQuestion4(a,b,c,d) ;
 
 
-  console.log(answer);
+ // console.log(answer);
 
 // get values of a,b,c,d - global
 

@@ -112,7 +112,7 @@ p.parameter  {
     font-weight: bolder;
 
 }
-
+input {max-}
 
 </style>
 
@@ -122,13 +122,10 @@ p.parameter  {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
+ 
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h1>Birthdays</h1>
 
@@ -138,50 +135,7 @@ p.parameter  {
     <p id = "intro"></p>
   
 </div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1" maxlength="3" minlength="3">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2" maxlength="3" minlength="3">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
+<?php include "answerBootstrap4.html"; ?>
 
 
 
@@ -292,7 +246,7 @@ const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fri
 const dayIndex = marchFirst.getDay(); 
 const dayName = daysOfWeek[dayIndex];
 let firstMarch = dayName;
-console.log(dayName);
+// console.log(dayName);
         let question = "The 1st of March that year is a " + firstMarch + "." ;
         question += "<br>" ;
         question += "What day of the week is Sreynith's birthday?";
@@ -316,7 +270,7 @@ console.log(dayName);
         $('#equation2').html(expr);
 
          let day = days[dara.getDay()];
-        console.log(day);
+     //   console.log(day);
         return day ;
     }
 </script>
@@ -332,7 +286,7 @@ console.log(dayName);
          let   expr = question;
         $('#equation3').html(expr);
         x = dateDiff(sreynith,dara);
-        console.log("diff",x);
+    //    console.log("diff",x);
         return x;
 
     }
@@ -353,7 +307,7 @@ console.log(dayName);
         $('#equation4').html(expr);
 
         let age = thisYear - birthYear; 
-        console.log("Age",age);
+     //   console.log("Age",age);
 
         return parseInt(age + 1);
 
@@ -414,7 +368,7 @@ answer[1] = answer[1].substr(0,3);
 answer[2] = answer[2].toUpperCase();
 answer[2] = answer[2].substr(0,3);
 
-console.log(answer);
+//console.log(answer);
 checkAnswer(4);
 //correct = 0 ; // number correct;
 //points = 0 ;

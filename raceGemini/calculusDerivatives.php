@@ -115,18 +115,7 @@ h4 {
             color: black;
 }
 
-input {
-    display: inline-block; 
-    background-color: lightyellow; 
-    text-align: center; 
-    font-size: 1.2em; 
-    font-weight: bolder;
-    margin: 10px;
-    width: 4em;
-    height: 3em;
 
-
-}
 
 [id^=equation] {
     font-weight: bolder;
@@ -149,54 +138,12 @@ input {
 
     <h1>Solve these Calculus Equations</h1>
 
-    <h4>There are 3 marks for each question.</h4>
+  
     
   
 </div></div>
 
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
+<?php include "answerBootstrap4.html"; ?>
 
 
 

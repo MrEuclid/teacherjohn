@@ -12,10 +12,6 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Challenge'
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    <script src = "https://cdnjs.com/libraries/mathjs"></script><script src="https://cdnjs.com/libraries/mathjs"></script>
-<script src="https://cdnjs.com/libraries/mathjs"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-    
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -31,21 +27,10 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Challenge'
 
 
 <link rel="stylesheet" href="raceGeminiStyles.css">
+
 <script src="javascript/utilities.js"></script>
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-
+    
+ 
 
 <title>complex numbers</title>
 
@@ -110,18 +95,7 @@ h4 {
             color: black;
 }
 
-input {
-    display: inline-block; 
-    background-color: lightyellow; 
-    text-align: center; 
-    font-size: 1.2em; 
-    font-weight: bolder;
-    margin: 10px;
-    width: 12em;
-    height: 4em;
 
-
-}
 
 [id^=equation] {
     font-weight: bolder;
@@ -138,62 +112,15 @@ input {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h1>Complex numbers</h1>
     <h2 id = "complexNumbers"></h2>
  
 </div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
+<?php include "answerBootstrap4.html"; ?>
 
 
 
@@ -318,6 +245,7 @@ var points = 0;
         expr += '$ z_2 = ' + c + '+' + d + 'i $' ;
 
         $('#complexNumbers').html(expr);
+     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "complexNumbers" ]);    
     question = '<?php echo $question; ?>' ;
 // points = question.substr(-1);
 // calculate points on exit

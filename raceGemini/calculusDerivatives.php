@@ -32,19 +32,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 
 <script src="javascript/utilities.js"></script>
     
-    
-     <script type="text/x-mathjax-config">
-     MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-     });
-      </script>   
-      
-    <script type="text/javascript">
-     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-      </script>
-      
+ 
   
  
 </script> 

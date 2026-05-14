@@ -48,14 +48,14 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Cubic Challenge';
 
     <div class  = "container-fluid">
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h2>Find the turning points, A and B.</h2>
   <h3 id = "equation"></h3>
   
 </div></div>
    <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
 <canvas id="myCanvas" width="500" height="280" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML canvas tag.</canvas>

@@ -57,30 +57,7 @@ h4 : {text-align: green;}
  <h4 id = "possibles"></h4>
  <p id = "equations"></p>
 </div></div>
-
-    <div class = "row">
-      <div class = "col-12 text-center">
-<label>x  = </label><input id = "solution1"><button id = "check1" >Check</button>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col-12 text-center">
-     <label>y  = </label><input id = "solution2"><button id = "check2" >Check</button>
-
-
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- 12 text-center">
-
-        
-   <label>z  = </label><input id = "solution3"><button id = "check3" >Check</button>       
-        
-
-</div></div>
-
+<?php include "answerBootstrap3.html"; ?>
 
 </div>
 
@@ -117,6 +94,20 @@ var points = 0;
         var expr = '$ x + y + z  ' + ' = ' + n + '$' + ' and '  + '$ x < y < z $' ;
         $('#equations').html(expr);
          MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equations" ]);
+
+           expr = '$ x =  $';
+        $('#equation1').html(expr);
+         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
+
+             expr = '$ y =  $';
+        $('#equation2').html(expr);
+         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
+
+          expr = '$ z =  $';
+        $('#equation3').html(expr);
+         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
+
+
         answers = [x,y,z];
         console.log("q1",x,y,z,n,answers,expr);
         return answers ;

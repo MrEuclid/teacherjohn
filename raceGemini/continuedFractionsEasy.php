@@ -14,7 +14,6 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Continued fraction
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       extensions: ["tex2jax.js"],
@@ -27,24 +26,13 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Continued fraction
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
   </script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
 
 <link rel="stylesheet" href="raceGeminiStyles.css">
+
 <script src="javascript/utilities.js"></script>
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-
+    
+ 
 
 <title>Continued fractions</title>
 
@@ -80,16 +68,10 @@ label {font-size: 1.2em; font-weight: bold; margin-right: 2em;}
     <div class  = "container-fluid">
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h1>Continued Fractions</h1>
- 
-  
-</div></div>
 
-
- <div class = "row">
-      <div class = "col- c">
 
 
 <p id = "eqtn2">
@@ -101,7 +83,11 @@ label {font-size: 1.2em; font-weight: bold; margin-right: 2em;}
   
 </p>
 
+
 </div></div>
+<?php include "answerBootstrap2.html"; ?>
+<!--
+
 
 
 
@@ -120,7 +106,7 @@ label {font-size: 1.2em; font-weight: bold; margin-right: 2em;}
          <button id = "check2" >Check b</button>
 
 </div></div>
-
+-->
 
 </div>
 
@@ -177,7 +163,7 @@ let denominator = 1;
 let expr =  '$' +   n + ' + \\frac{1}{' + n + ' + \\frac{1}{' + n + ' + 1}}  = \\frac{a}{b} $';
 
         $('#equation').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
 
 // do this for each levelof the continued fractions, adding n to the fraction and then inverting
 
@@ -208,10 +194,10 @@ answer = convergent(n) ;
  let ans = [];
 ans = makeQuestion();
 ans.unshift(0);
-console.log("ans",ans);
+// console.log("ans",ans);
 answer[1] = ans[1];
 answer[2] = ans[2];
-// console.log("answer ",answer);
+ console.log("answer ",answer);
 checkAnswer(2);
 })
 

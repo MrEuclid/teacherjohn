@@ -53,21 +53,7 @@
     </div>
 
     <p id="summary"></p>
-
-    <div class="row justify-content-center">
-      <div class="col-3">
-        <div id="ex1"></div>
-      </div>
-      <div class="col-3">   
-        <label id="equation1">At point C, y = </label>
-      </div>
-      <div class="col-3">   
-        <input id="solution1">
-      </div>
-      <div class="col-3"> 
-        <button id="check1" class="btn btn-primary">Check 1</button>
-      </div>
-    </div>
+<?php include "answerBootstrap1.html"; ?>
   </div>
 
 <script>

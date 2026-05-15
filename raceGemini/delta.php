@@ -10,43 +10,17 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
   <head>
  
  
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-  
-<link rel="stylesheet" href="raceGeminiStyles.css">
+ <link rel="stylesheet" href="raceGeminiStyles.css">
 
 <script src="javascript/utilities.js"></script>
-   
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
 
 <title>Delta</title>
 
@@ -108,18 +82,7 @@ h4 {
             color: black;
 }
 
-input {
-    display: inline-block; 
-    background-color: lightyellow; 
-    text-align: center; 
-    font-size: 1.2em; 
-    font-weight: bolder;
-    margin: 10px;
-    width: 4em;
-    height: 3em;
 
-
-}
 
 [id^=equation] {
     font-weight: bolder;
@@ -144,72 +107,21 @@ p.parameter  {
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
-
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
-    <h1> $ x \Delta  y =  xy + x - y $ </h1>
+    <h1> $ a \Delta  b =  ab + a - b $ </h1>
 
     <h3>
         a = <p class = "parameter" id = "a"></p>,
         b = <p class = "parameter" id = "b"></p>,
       
-    </h3>
-
-    <h4>There are 3 marks for each question.</h4>
-
-    
+    </h3>   
   
 </div></div>
 
 
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- <div class = "row">
-      <div class = "col- c">
-    <div id = "ex4">
-<label id = "equation4"></label>
-<input id = "solution4">
-<button id = "check4">Check 4</button>
-</div>
-</div></div>
-
-
-
+<?php include "answerBootstrap4.html"; ?>
 
 
 </div>
@@ -285,7 +197,7 @@ var points = 0;
         $('#equation1').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
 
-        console.log("q1",a,b,delta(a,b));
+    //    console.log("q1",a,b,delta(a,b));
         return delta(a,b) ;
     }
 </script>
@@ -302,7 +214,7 @@ var points = 0;
         $('#equation2').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
 
-        console.log("q2",a,b,delta(b,a));
+     //   console.log("q2",a,b,delta(b,a));
         return delta(b,a)
 
     }
@@ -321,7 +233,7 @@ var points = 0;
         $('#equation3').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
 
-        console.log("q2",a,b,delta(b,a));
+    //    console.log("q2",a,b,delta(b,a));
         return delta(a,a) - delta(b,b);
     }
 </script>
@@ -343,7 +255,7 @@ var points = 0;
         $('#equation4').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation4" ]);
 
-        console.log("q4",a,m-a, a-1, (m -a) / (a - 1));
+    //    console.log("q4",a,m-a, a-1, (m -a) / (a - 1));
         return (m -a) / (a - 1) ;
     }
 </script>
@@ -382,7 +294,7 @@ answer[3] = makeQuestion3(a,b,c,d) ;
 answer[4] = makeQuestion4(a,b,c,d) ;
 
 
-  console.log(answer);
+ // console.log(answer);
 
 // get values of a,b,c,d - global
 

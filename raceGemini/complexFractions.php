@@ -5,17 +5,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Fraction';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="raceGeminiStyles.css">
-  
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-  <!-- Single, correct import for Math.js
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
--->
-  <script src="javascript/utilities.js"></script>
-
+    
   <title>Complex fractions 2</title>
 
   <style>
@@ -27,16 +17,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Fraction';
     #message { font-size: 10pt; font-style: italic; color: black; text-align: justify; }
     #answer { text-align: center; background-color: lightblue; font-size: 1.2em; font-weight: bolder; }
     
-    input {
-        display: inline-block; 
-        background-color: lightyellow; 
-        text-align: center; 
-        font-size: 1.2em; 
-        font-weight: bolder;
-        margin: 10px;
-        width: 12em;
-        height: 4em;
-    }
+  
 
     [id^=equation] {
         font-weight: bolder;
@@ -60,36 +41,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Complex Fraction';
                 <h2 id="complexNumbers"></h2>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col- c">
-                <div id="ex1">
-                    <label id="equation1"></label>
-                    <input id="solution1">
-                    <button id="check1">Check 1</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col- c">
-                <div id="ex2">
-                    <label id="equation2"></label>
-                    <input id="solution2">
-                    <button id="check2">Check 2</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col- c">
-                <div id="ex3">
-                    <label id="equation3"></label>
-                    <input id="solution3">
-                    <button id="check3">Check 3</button>
-                </div>
-            </div>
-        </div>
+<?php include "answerBootstrap3.html"; ?>
     </div>
 
 <script>

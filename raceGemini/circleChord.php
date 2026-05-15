@@ -12,40 +12,25 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    <script src = "https://cdnjs.com/libraries/mathjs"></script>
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
+<script src="https://cdnjs.com/libraries/mathjs"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
 
-  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+    
+     <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+     });
+      </script>   
+      
+    <script type="text/javascript">
+     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+      </script>
+      
 
-<link rel="stylesheet" href="raceGeminiStyles.css">
-<script src="javascript/utilities.js"></script>
+ <link rel="stylesheet" href="raceGeminiStyles.css">
 
-
-
- <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-    });
-  </script>   
-  
-   <script type="text/javascript">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-  </script>
-  
-  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
-  <link rel="stylesheet" href="race2024.css">
 <script src="javascript/utilities.js"></script>
 
 <title>Circle and line</title>
@@ -64,7 +49,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Delta Challenge';
 
     <div class  = "container-fluid">
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h2>Circle & Line</h2>
   <h3 id = "equation"></h3>
@@ -79,7 +64,8 @@ Your browser does not support the HTML canvas tag.</canvas>
 
 <p id = "summary"></p>
 
-<!-- questions -->
+<?php include 'answerBootstrap3.html' ; ?>
+<!-- questions 
 
 
  <div class = "row justify-content-center">
@@ -137,8 +123,8 @@ Your browser does not support the HTML canvas tag.</canvas>
 <button id = "check3">Check 3</button>
 </div></div>
 
-
-
+-->
+</div>
 </body>
 </html>
 
@@ -245,7 +231,25 @@ ctx.stroke();
 $('#equation').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 
+  
+  expr = 'At A  x = ';
+
+$('#equation1').html(expr);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);    
+
+  expr = 'At B  x = ';       
+
+$('#equation2').html(expr);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);          
+
+ expr = '$ \\overline{AB} $ =  (2dp)';       
+
+$('#equation3').html(expr);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);          
+
     }
+
+
 </script>
 
 

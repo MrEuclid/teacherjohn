@@ -62,7 +62,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Cubic equation';
 
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
 
     <h4 id = "equation"></h4>
@@ -129,7 +129,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Cubic equation';
 </div></div>
 
 <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
   $ x_{1} < x_{2} < x_{3} $
 </div></div>
 

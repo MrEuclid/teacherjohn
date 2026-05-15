@@ -34,9 +34,7 @@ label {font-weight: bold; font-size: 1.2em; margin-top: 1em;}
 
 #summary {text-align: center;}
 
-[id^=solution]  {text-align: center;margin-bottom:1em;}
-[id^=check] {margin-bottom:1em;}
-[id^=equation] {margin-bottom:1em;}
+
 </style>
 
 </head>
@@ -44,14 +42,14 @@ label {font-weight: bold; font-size: 1.2em; margin-top: 1em;}
 
     <div class  = "container-fluid">
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h2>Parabola & Line</h2>
   <h3 id = "equation"></h3>
   
 </div></div>
    <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
 <canvas id="myCanvas" width="500" height="280" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML canvas tag.</canvas>
@@ -61,41 +59,8 @@ Your browser does not support the HTML canvas tag.</canvas>
 
 <!-- questions -->
 
+<?php include "answerBootstrap2.html"; ?>
 
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex1"></div>
-    </div>
-    
-    <div class = "col-3">   
-<label>At point A, x =  (2dp)</label>
-</div>
-
-    <div class = "col-3">   
-<input id = "solution1">
-</div>
-
- <div class = "col-3"> 
-<button id = "check1">Check 1</button>
-</div></div>
-
-
- <div class = "row justify-content-center">
-      <div class = "col-3">
-    <div id = "ex1"></div>
-    </div>
-    
-    <div class = "col-3">   
-<label>At point B, x =  (2dp) </label>
-</div>
-
-    <div class = "col-3">   
-<input id = "solution2">
-</div>
-
- <div class = "col-3"> 
-<button id = "check2">Check 1</button>
-</div></div>
 
 </div>
 
@@ -233,11 +198,8 @@ return data[0];
     {
 // draw y = x^2
 
- var expr = '$ y = x^2  $';
-    //  var expr = '$ \\sum_{i=1}^n a_i$';
-$('#equation').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
-  
+ 
+
 // make as string for evaluation 
 let y = 'x*x' ;
 
@@ -251,164 +213,117 @@ let y = 'x*x' ;
 
 
 <script>
+function makeQuestion1() {
+    // 1. Secure variables with 'let'
+    let n = randomInteger(2, 4); 
+    
+    let m = 10 * n * n / (n + 5);   
+    let a = (n + 5);
+    let b = -n * n;
+    let c = -5 * n * n;
+    
+    let soltn = solveQuadratic(a, b, c);
+    console.log("solvex", a, b, c, soltn);
+    
+    let ax = soltn[0];
+    let ay = ax * ax;
 
-    function makeQuestion1()
+    let bx = soltn[1];
+    let by = bx * bx;
 
-    {
-// y = mx + c cuts the parabola in two places.
-// the line goes from (-5,0) and cuts at (n,n^2) where n in [1,2,3,4]
-//B has coordinate (n,n*n)
-// the equation of the line is (n+5)y = n*n x + 5n = by - ax = 5n
-let n = randomInteger(2,4); // Bx
-// n = 2; // known soluntion
-// y = mx + c 
-// m = n*n / (n + 5)
-// y = (ax + c) / b 
+    let yEnd = (10 * n * n) / (n + 5);  
 
-let m = 10*n*n / (n + 5);   // goes back to x = -5 
-// let quadratic = (n+5)*x*x - n*n*x -5n*n = 0 ;
-a = (n+5);
-b = -n*n;
-c= -5*n*n;
-soltn = solveQuadratic(a,b,c);
-console.log("solvex",a,b,c,soltn);
-ax = soltn[0];
-ay = ax*ax;
-
-bx = soltn[1];
-by = bx*bx;
-
-let yEnd = (10*n*n)/(n+5);  // highest point of the line
-
-let start = transform(-5,0,side,side,xMin,yMin,xMax,yMax);
-let finish = transform(xMax,yEnd,side,side,xMin,yMin,xMax,yMax);
-cx = start[0];
-cy = start[1];
-
-cxNext = finish[0];
-cyNext = finish[1];
-console.log(start,finish);
-console.log(cx,cy,cxNext,cyNext);
-  ctx.moveTo(cx,cy);
-    ctx.lineTo(cxNext,cyNext);
+    // Ensure side, xMin, etc., are defined globally or passed in!
+    let start = transform(-5, 0, side, side, xMin, yMin, xMax, yMax);
+    let finish = transform(xMax, yEnd, side, side, xMin, yMin, xMax, yMax);
+    
+    let cx = start[0];
+    let cy = start[1];
+    let cxNext = finish[0];
+    let cyNext = finish[1];
+    
+    // Ensure 'ctx' is defined before this point!
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cxNext, cyNext);
     ctx.stroke();
 
-// intercepts on the parabola are x = 0, sqrt(m)
+    let A = transform(ax, ay, side, side, xMin, yMin, xMax, yMax);
+    let B = transform(bx, by, side, side, xMin, yMin, xMax, yMax);
 
-let Bx = n;
-let By = n*n;
+    // Canvas text
+    ctx.fillStyle = "green";
+    ctx.font = "18px Georgia";
+    ctx.fillText("A", A[0], A[1]); 
+    ctx.fillText("B", B[0], B[1]); 
 
-// let Ax = 
+    // Build the equation string
+    let p = n * n;
+    let q = n + 5; 
+    let r = 5 * p;
+    
+    let lineEqtn = `$ ${q}y = ${p}x + ${r} $`;
+     expr = `$ y = x^2 $<br>${lineEqtn}`; 
+    
+    $('#equation').html(expr);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation"]);
 
-A = transform(ax,ay,side,side,xMin,yMin,xMax,yMax);
-B = transform(bx,by,side,side,xMin,yMin,xMax,yMax);
 
-ax = A[0];
-ay = A[1];
-bx = B[0];
-by = B[1];
+      var term = 'At A, x =  ';
+    $('#equation1').html(term);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]); // Fixed targeting equation1
 
-// write A, B
-ctx.fillStyle = "green";
-ctx.font = "18px Georgia";
-ctx.fillText("A", ax,ay)   ; 
-ctx.fillText("B", bx,by)   ; 
-
-//d =  Math.sqrt(x*x + y*y);
-
-// console.log("q1",m,x,y,d);
-// javascript doesn't do rounding as expected
-// roundedNum = (Math.round( d * 100 ) / 100)
-
-// append equation 
-// straight line = n*n*x/(n+5) + 5n*n/(n+5)
-let p = n*n;
-let q = +n+5;
-let r = 5*p;
-let lineEqtn = '$' + q + 'y' + ' = ' + p + 'x + '  +  r  + ' $';
-
-$('#equation').append(' and ' + lineEqtn);
-
-       var term = '$ \\overline{OA} =  (2dp) $' ;
-        $('#equation1').html(term);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
-
-        return soltn; // includes roots as decimal and fractions
-
-    }
+        var term = 'At B, y =  $';
+    $('#equation2').html(term);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]); // Fixed targeting equation2
+    return soltn[0]; 
+}
 </script>
 
-<script type="text/javascript">
-    function fquad(x,expr) // uses expression generated by makeQuadratic
-    {
-        y = eval(expr);
-        return y
-    }
-</script>
 
 <script>
-
 $(document).ready(function(){
-      question = '<?php echo $question; ?>' ;
-var c = document.getElementById("myCanvas");
- ctx = c.getContext("2d");
- side = 400; 
-ctx.width  = side;
-ctx.height = side;
-labels = ["A","B","C","D"];  // axes intercepts + minima/maxima
-xMin = -5;
-xMax = 5;
-yMin = -25;
-yMax = 25;
+    question = '<?php echo $question; ?>';
+    var c = document.getElementById("myCanvas");
+    
+    // Make sure ctx is global (no var/let) so makeQuestion1 can use it
+    ctx = c.getContext("2d");
+    side = 400; 
+    ctx.width  = side;
+    ctx.height = side;
+    labels = ["A","B","C","D"];  
+    xMin = -5;
+    xMax = 5;
+    yMin = -25;
+    yMax = 25;
 
-drawAxes();
-let fnc = [];
-fnc = makeQuadratic(xMin,xMax);
-// console.log("returned ",fnc);
+    drawAxes();
 
-yxpr = fnc[2] ;  // equation
-// alert(yxpr + ' ' + fquad(0,yxpr));
-ctx.font = "18px Arial";
-ctx.strokeStyle = "red";
-// build an array of transformed points;
-newData = [];
-let i = 0;
-for (let x = xMin; x < xMax; x = x+ 0.25)
-{
-   // y = x*x + 2*x - 3;
-    y = fquad(x,yxpr);
-    //x*x;
-  
-    cnvs =  transform(x, y, side, side, xMin, yMin, xMax, yMax);
-   newData[i] = cnvs;
-   i++;
-
-}
-
-for (let i =0; i < newData.length -1 ; i++)
-{
-     ctx.beginPath();
-     cx = newData[i][0] ;
-     cy = newData[i][1] ;
-     next = parseInt(i+1);
-     cxNext = newData[next][0];
-     cyNext = newData[next][1];
-    ctx.moveTo(cx,cy);
-    ctx.lineTo(cxNext,cyNext);
+    // --- DRAW THE Y = X^2 PARABOLA DIRECTLY ---
+    // This removes the need for fquad() and makeQuadratic() entirely!
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    for (let x = xMin; x <= xMax; x = x + 0.25) {
+        let y = x * x; // Matches the math in your makeQuestion1 exactly!
+        let cnvs = transform(x, y, side, side, xMin, yMin, xMax, yMax);
+        
+        if (x === xMin) {
+            ctx.moveTo(cnvs[0], cnvs[1]);
+        } else {
+            ctx.lineTo(cnvs[0], cnvs[1]);
+        }
+    }
     ctx.stroke();
-}
+    // -------------------------------------------
 
-// console.log("newData",newData);
-
-let a = makeQuestion1()
-question = '<?php echo $question; ?>' ;
-
-// x,y,radius, anngleStart, angleEnd
-answer[1] = a[0] ;   
-answer[2] = a[1]  ;    // B
-checkAnswer(2);
-// console.log(answer);
-
-})
+    // Generate the question, the line, and the math string
+    answer = [];
+  let   x = makeQuestion1();
+  answer[1] = x;
+ answer[2] = x*x;
+    console.log(answer)
+    // Assuming you have checkAnswer bound to your buttons
+    checkAnswer(2); 
+});
+</script>
 </script> 
 

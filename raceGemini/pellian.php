@@ -41,13 +41,9 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Pellian';
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-center">
 
     <h1>Find the numbers m and n</h1>
     <h3>m and n are whole numbers.</h3>
@@ -56,21 +52,13 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Pellian';
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
 
 <p id = "pellian"></p>
 
 </div></div>
 
-
- <div class = "row">
-      <div class = "col- 12 c">
-
-        <label>m  = </label><input id = "solution1"> <button id = "check1" >Check</button>
-         <label>n  = </label><input id = "solution2"> <button id = "check2" >Check</button>
-       
-
-</div></div>
+<?php include "answerBootstrap2.html" ?>
 
 
 </div>

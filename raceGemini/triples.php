@@ -49,13 +49,10 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Triples';
 
     <div class  = "container-fluid">
 
-        <div class = "row">
-            <div class = "col-sm-12 c">
-                <p id = "stars"></p>
-                </div></div>
+
 
     <div class = "row">
-      <div class = "col-sm-12 c">
+      <div class = "col-12 text-cente">
 
     <h1>Solve the equations </h1>
 
@@ -65,7 +62,7 @@ $question = isset($_POST['question']) ? $_POST['question'] : 'Triples';
 
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
 
 $ m^2 + n^2 = $ <label id = "A"></label>
 <br>
@@ -77,18 +74,13 @@ $ z = m \times n $
 </div></div>
 
  <div class = "row">
-      <div class = "col- c">
+      <div class = "col-12 text-center">
 
 Find m,n first and then calculate z.
 
 </div></div>
 
- <div class = "row">
-      <div class = "col-  c">
-
-        <label>z =    </label><input id = "solution1"><button id = "check1" >Check</button>
-
-</div></div>
+<?php include "answerBootstrap1.html"
 
 
 </div>

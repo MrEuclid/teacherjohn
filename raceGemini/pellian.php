@@ -102,6 +102,14 @@ var expr = '$ m^2' + ' - ' + k + 'n^2 = 1  $';
        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "pellian" ]);
 console.log(expr,n);
 
+var expr = '$ m =   $';
+  $('#equation1').html(expr);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
+
+var expr = '$ n =   $';
+  $('#equation2').html(expr);
+       MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]);
+
 var y = 1;;
 found = false;
 let a =  [];

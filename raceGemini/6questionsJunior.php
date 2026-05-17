@@ -153,41 +153,7 @@ input {
     
   
 </div></div>
-
-
- <div class = "row">
-      <div class = "col-12 ">
-    <div id = "ex1">
-<label id = "equation1"></label>
-<input id = "solution1">
-<button id = "check1">Check 1</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 ">
-    <div id = "ex2">
-<label id = "equation2"></label>
-<input id = "solution2">
-<button id = "check2">Check 2</button>
-</div>
-</div></div>
-
-
-
- <div class = "row">
-      <div class = "col-12 ">
-    <div id = "ex3">
-<label id = "equation3"></label>
-<input id = "solution3">
-<button id = "check3">Check 3</button>
-</div>
-</div></div>
-
-
- 
+<?php include "answerBootstrap3.html" ?>
 
 
 

@@ -110,7 +110,7 @@ p.parameter  {
     <div class = "row">
       <div class = "col-12 text-center">
 
-    <h1> $ a \Delta  b =  ab + a - b $ </h1>
+    <h1 id = "equation" > $ a \Delta  b =  ab + a - b $ </h1>
 
     <h3>
         a = <p class = "parameter" id = "a"></p>,
@@ -229,7 +229,7 @@ var points = 0;
     {
         
 
-        expr = '$ a \\Delta a  - b \\Delta b =  $';
+        expr = '$ a \Delta a  - b \\Delta b =  $';
         $('#equation3').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
 
@@ -280,7 +280,9 @@ var points = 0;
 // calculate points on exit
 // $('#cancel').text("Exit");
 
-
+ expr = '$ a \\Delta  b =  ab + a - b $ ';
+        $('#equation').html(expr);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 
 a = randomInteger(2,10);
 b = randomInteger(2,10);

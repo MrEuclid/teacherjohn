@@ -83,7 +83,7 @@ label {font-size: 1.2em; font-weight: bold; margin-right: 2em;}
   
 </p>
 
-
+<p id = "equation"</p>
 </div></div>
 <?php include "answerBootstrap2.html"; ?>
 <!--
@@ -163,11 +163,12 @@ let denominator = 1;
 let expr =  '$' +   n + ' + \\frac{1}{' + n + ' + \\frac{1}{' + n + ' + 1}}  = \\frac{a}{b} $';
 
         $('#equation').html(expr);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation" ]);
 
 // do this for each levelof the continued fractions, adding n to the fraction and then inverting
 
-
+$('#equation1').html("a = ");
+$('#equation2').html("b = ");
 
 // alert(sum[0] + "  3 " + sum[1]);
 // level 1

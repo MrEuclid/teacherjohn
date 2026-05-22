@@ -80,7 +80,7 @@ Find m,n first and then calculate z.
 
 </div></div>
 
-<?php include "answerBootstrap1.html"
+<?php include "answerBootstrap1.html" ?>
 
 
 </div>

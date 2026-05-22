@@ -239,53 +239,11 @@ points = 0 ;
 // x = parseInt(x);
 //y = Math.log2(4**3*2**10*2**5);
 // alert(x + " " + y);
-
+checkAnswer(4)
 
 
 console.log(answer);
   })
 
-
-</script>
-
-
-<script>
-      $(document).ready(function(){
-    $('[id^=check]').on('click', function()
-
-
-    {
-        var clicked = this.id;
-        var qNumber = clicked.slice(-1);
-       // alert("Checking " + qNumber);
-console.log("answers",answer);
-        var guess = $('#solution' + qNumber).val() ;
-        guess = round2DP(guess);
-        if (guess == answer[qNumber])
-        {
-            alert("Correct");
-            $('#solution' + qNumber).prop('disabled',true).css({"background-color":"lightgreen","color":"black"});
-            $('#' + clicked).hide() ;
-            points = points + 2 ;
-
-            if (points == 8)
-
-            {
-
-                alert("You have answered the questions." );
-alert("Processing win " + questionID + " with " + points + " pts");
-processWin(questionID);
-    console.log("processing ",questionID);
-
-            }
-        }
-
-        else
-
-        {
-            alert("keep tryings")
-        }
-})
-})
 
 </script>

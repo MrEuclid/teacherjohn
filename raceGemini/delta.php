@@ -229,7 +229,7 @@ var points = 0;
     {
         
 
-        expr = '$ a \Delta a  - b \\Delta b =  $';
+        expr = '$ a \\Delta a  - b \\Delta b =  $';
         $('#equation3').html(expr);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation3" ]);
 

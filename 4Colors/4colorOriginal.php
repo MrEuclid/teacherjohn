@@ -25,7 +25,11 @@ li {text-align: left;}
 
 <body>
     <div class  = "container-fluid">
-
+  <div class="p-3">
+    <a href="/index.php" class="btn btn-outline-secondary">
+        ← Back to Home
+    </a>
+</div>
          <div class = "row">
         
         <div class = "col- text-center">

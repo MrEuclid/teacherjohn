@@ -272,7 +272,7 @@ function makeQuestion1() {
     $('#equation1').html(term);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation1" ]); // Fixed targeting equation1
 
-        var term = 'At B, y =  $';
+        var term = 'At B, y =  ';
     $('#equation2').html(term);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation2" ]); // Fixed targeting equation2
     return soltn[0]; 

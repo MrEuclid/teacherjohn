@@ -73,10 +73,8 @@
 <a href="escape/escape.html">
     <button class="btn btn-success">Escape</button></a>
     
- <a href = "https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6" target = "_blank">
-<button class="btn btn-info">Sokoban </button></a>
-
-<a href="logic/make15.html" target = "_blank"><button class="btn btn-primary">Make 15</button></a>
+<a href = "4Colors/4color.php" target ="_blank"><button class = "btn btn-primary">4 Colors - 1</button></a>
+<a href = "4Colors/4colorOriginal.php" target ="_blank"><button class = "btn btn-primary">4 Colors - 2</button></a>
 <a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
  <a href = "https://docs.google.com/document/d/1bmKyn9a4v3X64fZCoJMxkxrMsE9OIE299Yob4z9m7gQ/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Monopoly report</button></a>

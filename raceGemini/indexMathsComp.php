@@ -189,9 +189,9 @@ while ($row = $result->fetch_assoc()) {
         } else if(lockedGrade === "8") {
             $('.g8 ,.g7_g8 ,.g8_g9').fadeIn();
         } else if(lockedGrade === "9") {
-            $('.g9, .g8_g9').fadeIn();
+            $('.g9, .g8_g9, .g9_g10').fadeIn();
         } else if(lockedGrade === "10") {
-            $('.g10, .g10_11').fadeIn();
+            $('.g10, .g10_11, .g9_g10').fadeIn();
         } else if(lockedGrade === "11") {
             $('.g11, .g10_11, .g11_12').fadeIn();
         } else if(lockedGrade === "12") {

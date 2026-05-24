@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 Lunar Lander</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            background-color: #000;
+            border: 2px solid #444;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .instructions {
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <div class="instructions">
+        <strong>Controls:</strong> [UP] Thrust | [LEFT] / [RIGHT] Rotate | [SPACE] Restart
+    </div>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // --- PHYSICS & GAME CONSTANTS ---
+    const GRAVITY = 0.025;
+    const THRUST_POWER = 0.06;
+    const ROTATION_SPEED = 0.05;
+    const MAX_SAFE_LANDING_SPEED = 1.5;
+    const MAX_SAFE_ANGLE = 0.2; // Radians
+
+    // --- GAME STATE ---
+    let lander, keys, gameState;
+    let pad = { x: 350, y: 550, width: 100 };
+
+    function initGame() {
+        lander = {
+            x: 400,
+            y: 50,
+            vx: 0,
+            vy: 0,
+            angle: 0, // 0 is pointing straight up
+            fuel: 500,
+            width: 20,
+            height: 30,
+            thrusting: false
+        };
+        keys = { ArrowUp: false, ArrowLeft: false, ArrowRight: false };
+        gameState = "playing"; // playing, won, crashed
+    }
+
+    // --- INPUT HANDLING ---
+    window.addEventListener("keydown", (e) => {
+        if (keys.hasOwnProperty(e.code)) keys[e.code] = true;
+        if (e.code === "Space" && gameState !== "playing") initGame();
+    });
+    window.addEventListener("keyup", (e) => {
+        if (keys.hasOwnProperty(e.code)) keys[e.code] = false;
+    });
+
+    // --- UPDATE LOOP (Physics Engine) ---
+    function update() {
+        if (gameState !== "playing") return;
+
+        // Rotation
+        if (keys.ArrowLeft) lander.angle -= ROTATION_SPEED;
+        if (keys.ArrowRight) lander.angle += ROTATION_SPEED;
+
+        // Thrust (Vector Math)
+        lander.thrusting = keys.ArrowUp && lander.fuel > 0;
+        if (lander.thrusting) {
+            // Trigonometry to apply thrust in the direction the lander is pointing
+            lander.vx += Math.sin(lander.angle) * THRUST_POWER;
+            lander.vy -= Math.cos(lander.angle) * THRUST_POWER;
+            lander.fuel--;
+        }
+
+        // Gravity
+        lander.vy += GRAVITY;
+
+        // Apply Velocity to Position
+        lander.x += lander.vx;
+        lander.y += lander.vy;
+
+        // Screen Wrap (X-axis)
+        if (lander.x > canvas.width) lander.x = 0;
+        if (lander.x < 0) lander.x = canvas.width;
+
+        // Collision Detection (Ground / Pad)
+        if (lander.y + lander.height / 2 >= pad.y) {
+            lander.y = pad.y - lander.height / 2;
+            
+            // Check Landing Conditions
+            let onPad = (lander.x > pad.x && lander.x < pad.x + pad.width);
+            let safeSpeed = (lander.vy <= MAX_SAFE_LANDING_SPEED);
+            let upright = (Math.abs(lander.angle) <= MAX_SAFE_ANGLE);
+
+            if (onPad && safeSpeed && upright) {
+                gameState = "won";
+            } else {
+                gameState = "crashed";
+            }
+        }
+    }
+
+    // --- RENDER LOOP ---
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Landing Pad
+        ctx.fillStyle = "#444";
+        ctx.fillRect(0, pad.y, canvas.width, canvas.height - pad.y); // Ground
+        ctx.fillStyle = "#0f0";
+        ctx.fillRect(pad.x, pad.y, pad.width, 5); // Pad
+
+        // Draw Lander
+        ctx.save();
+        ctx.translate(lander.x, lander.y);
+        ctx.rotate(lander.angle);
+
+        // Body
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, -lander.height/2);
+        ctx.lineTo(lander.width/2, lander.height/2);
+        ctx.lineTo(-lander.width/2, lander.height/2);
+        ctx.closePath();
+        ctx.stroke();
+
+        // Thrust Flame
+        if (lander.thrusting) {
+            ctx.strokeStyle = "#f90";
+            ctx.beginPath();
+            ctx.moveTo(-5, lander.height/2 + 2);
+            ctx.lineTo(0, lander.height/2 + 15 + Math.random() * 10);
+            ctx.lineTo(5, lander.height/2 + 2);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // Draw UI
+        ctx.fillStyle = "#fff";
+        ctx.font = "16px monospace";
+        ctx.fillText(`FUEL: ${lander.fuel}`, 20, 30);
+        ctx.fillText(`V-SPEED: ${(lander.vy * 10).toFixed(1)}`, 20, 50);
+
+        // Draw End Game Text
+        if (gameState !== "playing") {
+            ctx.fillStyle = gameState === "won" ? "#0f0" : "#f00";
+            ctx.font = "40px monospace";
+            ctx.textAlign = "center";
+            let msg = gameState === "won" ? "SUCCESSFUL LANDING" : "CRASHED";
+            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+            
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px monospace";
+            ctx.fillText("Press SPACE to restart", canvas.width / 2, canvas.height / 2 + 40);
+            ctx.textAlign = "left"; // reset
+        }
+    }
+
+    // --- MAIN GAME LOOP ---
+    function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+    }
+
+    // Start Game
+    initGame();
+    loop();
+
+</script>
+</body>
+</html>

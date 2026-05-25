@@ -3,9 +3,12 @@ require_once "../connectTeacherJohn.php";
 
 $level = isset($_GET['level']) ? $_GET['level'] : 'all';
 
-$sql = "SELECT user AS team, level, SUM(4*difficulty) AS score, 
-        ROUND((MAX(UNIX_TIMESTAMP(datetime)) - MIN(UNIX_TIMESTAMP(datetime)))/60, 2) AS timeElapsed 
-        FROM jimmy ";
+$sql = "SELECT 
+    user AS team, 
+    level, 
+    SUM(4*difficulty) AS score, 
+    IFNULL(ROUND((MAX(UNIX_TIMESTAMP(submission_time)) - MIN(UNIX_TIMESTAMP(submission_time)))/60, 2), 0.00) AS timeElapsed 
+FROM jimmy ";
 
 // Check if level is 'all' or a valid integer string (including '0')
 if ($level !== 'all') {

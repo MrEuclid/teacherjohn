@@ -68,7 +68,7 @@
 
   <a href = "hangman/hangman.html"><button class = "btn btm sm btn-info">Find the word (G5 - G6)</button></a>
 
- <a href="puzzleTournament/index.php"><button class="btn btn-success">Puzzle Journey</button></a> 
+ <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
 <a href="escape/escape.html">
     <button class="btn btn-success">Escape</button></a>

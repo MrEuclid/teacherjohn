@@ -65,39 +65,77 @@
 <script>
 $(document).ready(function() {
     let currentLevel = "all";
+function refreshLeaderboard() {
+        console.log("STEP 1: refreshLeaderboard() triggered. Current level: ", currentLevel);
 
-    function refreshLeaderboard() {
-        $.getJSON('fetchMathLeaderboard.php', { level: currentLevel }, function(data) {
-            let body = $('#leaderboardBody').empty();
-            if (!data || data.length === 0) {
-                body.append('<tr><td colspan="5" class="py-5 text-muted fs-4">No results for this level.</td></tr>');
-                return;
+        $.ajax({
+            url: 'fetchMathLeaderboard.php',
+            data: { level: currentLevel },
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                console.log("STEP 2: AJAX Success! Raw data type:", typeof data);
+               console.log("STEP 3: Data content:", JSON.stringify(data));
+
+                // Bulletproof JSON parsing just in case PHP missed the header
+                if (typeof data === "string") {
+                    try {
+                        data = JSON.parse(data);
+                        console.log("STEP 4: Successfully forced JSON parse.");
+                    } catch (e) {
+                        console.error("STEP 4 ERROR: Failed to parse string into JSON:", e);
+                        return;
+                    }
+                }
+
+                // Verify the HTML table exists before trying to write to it
+                let body = $('#leaderboardBody');
+                if (body.length === 0) {
+                    console.error("STEP 5 CRITICAL ERROR: Could not find <tbody id='leaderboardBody'> in your HTML! Check your table tags.");
+                    return;
+                }
+
+                body.empty();
+
+                if (!data || data.length === 0) {
+                    console.log("STEP 6: Data is empty array. Showing 'No results'.");
+                    body.append('<tr><td colspan="5" class="py-5 text-muted fs-4">No results for this level.</td></tr>');
+                    $('#statusUpdate').text("Last Update: " + new Date().toLocaleTimeString());
+                    return;
+                }
+
+                console.log("STEP 6: Iterating through data to build table...");
+                data.forEach((row, index) => {
+                    let rank = index + 1;
+                    let rankDisplay = rank;
+                    if (rank === 1) rankDisplay = "<span class='gold fs-2'>🥇</span>";
+                    else if (rank === 2) rankDisplay = "<span class='silver fs-3'>🥈</span>";
+                    else if (rank === 3) rankDisplay = "<span class='bronze fs-4'>🥉</span>";
+
+                    let gradeName = "Grade " + (parseInt(row.level) + 2);
+
+                    body.append(`
+                        <tr>
+                            <td>${rankDisplay}</td>
+                            <td class="text-start ps-5 fw-bold fs-4">${row.team}</td>
+                            <td><span class="badge bg-secondary fs-6">${gradeName}</span></td>
+                            <td class="score-val">${row.score}</td>
+                            // New line (using text-white)
+<td class="text-white fw-bold">${row.timeElapsed} mins</td>
+                        </tr>
+                    `);
+                });
+                
+                $('#statusUpdate').text("Last Update: " + new Date().toLocaleTimeString()).removeClass("text-danger");
+                console.log("STEP 7: Table build complete!");
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Error:", textStatus, errorThrown);
+                console.log("Raw Server Response:", jqXHR.responseText);
+                $('#statusUpdate').text("⚠️ Data parse error. Check Developer Console (F12).").addClass("text-danger");
             }
-
-            data.forEach((row, index) => {
-                let rank = index + 1;
-                let rankDisplay = rank;
-                if (rank === 1) rankDisplay = "<span class='gold fs-2'>🥇</span>";
-                else if (rank === 2) rankDisplay = "<span class='silver fs-3'>🥈</span>";
-                else if (rank === 3) rankDisplay = "<span class='bronze fs-4'>🥉</span>";
-
-                // Mapping: level 0 = Grade 2, level 1 = Grade 3, etc.
-                let gradeName = "Grade " + (parseInt(row.level) + 2);
-
-                body.append(`
-                    <tr>
-                        <td>${rankDisplay}</td>
-                        <td class="text-start ps-5 fw-bold fs-4">${row.team}</td>
-                        <td><span class="badge bg-secondary fs-6">${gradeName}</span></td>
-                        <td class="score-val">${row.score}</td>
-                        <td class="text-muted">${row.timeElapsed} mins</td>
-                    </tr>
-                `);
-            });
-            $('#statusUpdate').text("Last Update: " + new Date().toLocaleTimeString());
         });
     }
-
     $('#levelFilter').change(function() {
         currentLevel = $(this).val();
         refreshLeaderboard();
@@ -139,7 +177,7 @@ $(document).ready(function() {
     });
 
     refreshLeaderboard();
-    setInterval(refreshLeaderboard, 5000);
+    setInterval(refreshLeaderboard, 20000);
 });
 </script>
 </body>

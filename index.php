@@ -73,7 +73,7 @@
 <a href="escape/escape.html">
     <button class="btn btn-success">Escape</button></a>
     
-<a href = "logic/miniSudoku.html" target ="_blank"><button class = "btn btn-primary"><Mini Sudoku</button></a>
+<a href = "logic/miniSudoku.html" target ="_blank"><button class = "btn btn-primary">Mini Sudoku</button></a>
 <a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
  <a href = "https://docs.google.com/document/d/1bmKyn9a4v3X64fZCoJMxkxrMsE9OIE299Yob4z9m7gQ/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Monopoly report</button></a>

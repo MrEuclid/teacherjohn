@@ -127,10 +127,7 @@ x = t;
 console.log(t,x,y,expr);
 
 // use a[1] and a[2] not a[0]
-if ( x< y)
-{a = [0,x,y];}
-else 
-{a = [0,y,x]; }
+a = [0,x,y]
 
 
       return a;

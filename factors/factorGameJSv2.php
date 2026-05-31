@@ -35,14 +35,13 @@
         .stat-box.score { border-bottom-color: #198754; color: #198754; font-size: 1.5rem; }
         .stat-box.status { border-bottom-color: #0dcaf0; }
 
-        /* Preserved and modernized button classes for injected JS compatibility */
         button.num {
             border: none;
             width: 60px;
             height: 60px;
             text-align: center;
             margin: 6px;
-            border-radius: 50%; /* Circular balls */
+            border-radius: 50%; 
             font-size: 1.2rem;
             font-weight: bold;
             color: #333;
@@ -55,11 +54,7 @@
             cursor: pointer;
         }
         
-        .rules-card {
-            border-left: 5px solid #0dcaf0;
-        }
-        
-        /* Utility overrides to hide backend elements cleanly */
+        .rules-card { border-left: 5px solid #0dcaf0; }
         .backend-data { display: none; }
     </style>
 </head>
@@ -69,15 +64,15 @@
     
     <div class="row game-header align-items-center">
         <div class="col-md-3 text-center text-md-start px-4 mb-3 mb-md-0">
-            <a href="../indexNewMaths.php" class="btn btn-light btn-sm me-2" title="Back">
+            <a href="indexSecondaryMaths.php" class="btn btn-light btn-sm me-2" title="Back">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
-            <a href="factorGameJSv2.php" class="btn btn-light btn-sm" title="Reset">
-                <i class="bi bi-arrow-clockwise"></i> Reset
-            </a>
+            <button id="retryBtn" class="btn btn-warning btn-sm fw-bold shadow-sm" style="display: none;">
+                <i class="bi bi-arrow-counterclockwise"></i> Retry Level
+            </button>
         </div>
         <div class="col-md-6 text-center">
-            <h2 class="mb-0 fw-bold">The Factor Game <span class="badge bg-warning text-dark fs-6 ms-2 align-middle">v2.2</span></h2>
+            <h2 class="mb-0 fw-bold">The Factor Game <span class="badge bg-warning text-dark fs-6 ms-2 align-middle">v2.3</span></h2>
         </div>
         <div class="col-md-3 text-center text-md-end px-4 mt-3 mt-md-0">
             <select id="level" class="form-select shadow-sm w-auto d-inline-block fw-bold text-primary border-0">
@@ -93,8 +88,6 @@
     </div>
 
     <div id="howMany" class="backend-data"></div>
-    <div id="maxScore" class="backend-data"></div>
-    <div id="maxPossible" class="backend-data"></div>
 
     <div class="row mb-4 g-3 justify-content-center">
         <div class="col-md-3">
@@ -156,27 +149,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalScore = document.getElementById('total');
     const myChoices = document.getElementById('myChoices');
     const howMany = document.getElementById('howMany');
+    const retryBtn = document.getElementById('retryBtn');
 
-    levelSelect.addEventListener('change', function() {
-        const level = this.value;
-        
-        // Reset Game UI & Show Loading State
+    // Reusable function to fetch and load a level
+    function loadLevel(level) {
         numberBalls.innerHTML = '<div class="spinner-border text-primary my-5" role="status"><span class="visually-hidden">Loading...</span></div>';
         gameStatus.innerText = 'Playing';
+        gameStatus.className = "";
         totalScore.innerText = '0';
         myChoices.innerText = ' * ';
+        
+        // Show the Retry Button now that a game has started
+        retryBtn.style.display = 'inline-block';
 
-        // Modern Fetch API (Replaces jQuery $.ajax)
         fetch(`factorv2Scripts.php?level=${level}`)
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.text();
             })
             .then(data => {
-                // Inject the backend data exactly as jQuery did
                 howMany.innerHTML = data;
-                
-                // If factorv2Scripts.php returns <script> tags, we need to explicitly execute them in Vanilla JS
                 Array.from(howMany.querySelectorAll("script")).forEach(oldScript => {
                     const newScript = document.createElement("script");
                     Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
@@ -184,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
                 
-                // Clear the loading spinner from the board area if the backend script populates it
                 if (numberBalls.innerHTML.includes('spinner-border')) {
                     numberBalls.innerHTML = ''; 
                 }
@@ -194,9 +185,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Request failed. Please check your connection.');
                 numberBalls.innerHTML = '<h5 class="text-danger">Failed to load game board.</h5>';
             });
+    }
+
+    // Trigger when Dropdown changes
+    levelSelect.addEventListener('change', function() {
+        loadLevel(this.value);
+    });
+
+    // Trigger when Retry is clicked
+    retryBtn.addEventListener('click', function() {
+        if (levelSelect.value) {
+            loadLevel(levelSelect.value);
+        }
     });
 });
 </script>
-
 </body>
 </html>

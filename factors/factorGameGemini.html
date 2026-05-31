@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Factor Game</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .number-tile {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s, background-color 0.1s;
+        }
+        /* Available Tile */
+        .available-tile {
+            background-color: #ffffff;
+            color: #1e3a8a; /* Blue-900 */
+            border: 2px solid #3b82f6; /* Blue-500 */
+        }
+        .available-tile:hover {
+            background-color: #dbeafe; /* Blue-100 */
+            transform: scale(1.05);
+        }
+        /* Taken by Player 1 (Emerald) */
+        .taken-p1 {
+            background-color: #10b981; /* Emerald-500 */
+            color: white;
+            cursor: default;
+        }
+        /* Taken by Player 2 (Red) */
+        .taken-p2 {
+            background-color: #ef4444; /* Red-500 */
+            color: white;
+            cursor: default;
+        }
+        /* Factor Highlight */
+        .factor-highlight {
+            border: 3px solid #facc15; /* Yellow-400 */
+            animation: factor-pulse 0.5s ease-in-out;
+        }
+
+        @keyframes factor-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(252, 211, 77, 0.7); }
+            50% { box-shadow: 0 0 0 6px rgba(252, 211, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(252, 211, 77, 0); }
+        }
+
+        .score-box {
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .score-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div id="game-container" class="w-full max-w-lg flex flex-col items-center space-y-6">
+        <h1 class="text-3xl font-extrabold text-[#1e3a8a]">The Factor Game (2-Player)</h1>
+        <p class="text-sm text-gray-600 text-center max-w-xs">The player who chooses the number scores its value; the opponent scores all its untaken factors.</p>
+
+        <!-- Score Board -->
+        <div class="flex justify-around w-full max-w-sm">
+            <div class="score-box border-b-4 border-emerald-500 text-center">
+                <div class="score-title text-emerald-600">Player 1</div>
+                <div id="score-p1" class="text-3xl font-black text-emerald-800">0</div>
+            </div>
+            <div class="score-box border-b-4 border-red-500 text-center">
+                <div class="score-title text-red-600">Player 2</div>
+                <div id="score-p2" class="text-3xl font-black text-red-800">0</div>
+            </div>
+        </div>
+        
+        <!-- Game Board (1 to 30) -->
+        <div id="board" class="game-board p-4 bg-gray-200 rounded-xl shadow-inner">
+            <!-- Tiles 1-30 generated here -->
+        </div>
+
+        <!-- Status & Controls -->
+        <div id="status-message" class="text-center h-8 font-semibold text-gray-700">Choose a number to start.</div>
+        
+        <button id="new-game-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200">
+            Start New Game
+        </button>
+    </div>
+
+    <!-- Modal for Game Over -->
+    <div id="game-over-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-8 rounded-xl shadow-2xl text-center space-y-4 max-w-sm w-full">
+            <h2 id="modal-title" class="text-3xl font-extrabold text-[#1e3a8a]">Game Over!</h2>
+            <p id="modal-message" class="text-lg text-gray-700"></p>
+            <button id="modal-close-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 mt-4">
+                Play Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const BOARD_SIZE = 30;
+        const BOARD_ELEM = document.getElementById('board');
+        const SCORE_P1_ELEM = document.getElementById('score-p1');
+        const SCORE_P2_ELEM = document.getElementById('score-p2');
+        const STATUS_ELEM = document.getElementById('status-message');
+        const NEW_GAME_BTN = document.getElementById('new-game-btn');
+        const MODAL = document.getElementById('game-over-modal');
+        const MODAL_TITLE = document.getElementById('modal-title');
+        const MODAL_MESSAGE = document.getElementById('modal-message');
+        const MODAL_CLOSE_BTN = document.getElementById('modal-close-btn');
+
+        let takenNumbers = new Set();
+        let player1Score = 0;
+        let player2Score = 0;
+        let currentPlayer = 1; // 1 for Player 1, 2 for Player 2
+        let isProcessing = false;
+
+        // --- Core Math Logic ---
+
+        /**
+         * Calculates all proper factors of a number N (factors excluding N itself).
+         * @param {number} n 
+         * @returns {number[]} Array of proper factors.
+         */
+        function getProperFactors(n) {
+            const factors = new Set();
+            // Start from 1, exclude N itself
+            for (let i = 1; i < n; i++) {
+                if (n % i === 0) {
+                    factors.add(i);
+                }
+            }
+            return Array.from(factors);
+        }
+        
+        /**
+         * Calculates the sum of all *untaken* proper factors for a given number.
+         * @param {number} n 
+         * @returns {number} The score that would be awarded to the opponent.
+         */
+        function getUntakenFactorScore(n) {
+            const properFactors = getProperFactors(n);
+            let score = 0;
+            properFactors.forEach(factor => {
+                if (!takenNumbers.has(factor)) {
+                    score += factor;
+                }
+            });
+            return score;
+        }
+
+        // --- Game Logic ---
+
+        /**
+         * Checks if a move is valid (number is untaken and has at least one untaken proper factor).
+         * @param {number} n 
+         * @returns {boolean}
+         */
+        function isValidMove(n) {
+            if (takenNumbers.has(n)) return false;
+            
+            const untakenFactorScore = getUntakenFactorScore(n);
+            // The number must have at least one untaken factor to be a legal move.
+            return untakenFactorScore > 0;
+        }
+
+        /**
+         * Executes the sequence of moves and updates the board.
+         * @param {number} chosenNumber - The number selected by the human player.
+         * @param {number[]} factors - The proper factors that were awarded to the *other* player.
+         */
+        function executeMove(chosenNumber, factors) {
+            // 1. Score Update
+            if (currentPlayer === 1) {
+                // P1 scores the chosen number, P2 scores the factors
+                player1Score += chosenNumber;
+                factors.forEach(f => player2Score += f);
+            } else { // Current Player is 2
+                // P2 scores the chosen number, P1 scores the factors
+                player2Score += chosenNumber;
+                factors.forEach(f => player1Score += f);
+            }
+
+            // 2. Mark as Taken
+            takenNumbers.add(chosenNumber);
+            factors.forEach(f => takenNumbers.add(f));
+
+            // 3. UI Update
+            updateScores();
+            // Use currentPlayer for the coloring logic in renderBoard
+            renderBoard(chosenNumber, currentPlayer, factors);
+        }
+
+        /**
+         * Handles the human player's move.
+         * @param {number} n - The number clicked.
+         */
+        function handlePlayerMove(n) {
+            if (isProcessing || !isValidMove(n)) {
+                if (!takenNumbers.has(n)) {
+                    // Clarify why the move is invalid
+                    setStatusMessage(`P${currentPlayer}'s turn: Number ${n} is not a valid choice. Choose a number with valid, untaken factors.`);
+                }
+                return;
+            }
+            
+            isProcessing = true;
+            STATUS_ELEM.textContent = `P${currentPlayer} chose ${n}. Calculating scores...`;
+
+            const properFactors = getProperFactors(n);
+            const untakenFactors = properFactors.filter(f => !takenNumbers.has(f));
+
+            // Execute move
+            executeMove(n, untakenFactors);
+            
+            const factorScore = untakenFactors.reduce((a, b) => a + b, 0);
+            const opponentID = (currentPlayer === 1) ? 2 : 1;
+            
+            setStatusMessage(`P${currentPlayer} chose ${n}. P${opponentID} scored ${factorScore} points from the factors.`);
+
+            // Short delay before switching turn
+            setTimeout(checkGameOverOrSwitchTurn, 1500);
+        }
+
+        /**
+         * Checks game over condition and switches turn if not over.
+         */
+        function checkGameOverOrSwitchTurn() {
+            isProcessing = false;
+            if (isGameOver()) {
+                checkGameOver();
+            } else {
+                // Switch player
+                currentPlayer = (currentPlayer === 1) ? 2 : 1;
+                setStatusMessage(`It's Player ${currentPlayer}'s turn. Choose a number.`);
+            }
+        }
+
+        /**
+         * Checks if there are any valid moves remaining for the current player.
+         */
+        function isGameOver() {
+            // Game is over if *no* available number has any untaken proper factors.
+            for (let n = 1; n <= BOARD_SIZE; n++) {
+                if (isValidMove(n)) {
+                    return false; // Found a valid move, game continues
+                }
+            }
+            return true; // No valid moves found for either player
+        }
+
+        /**
+         * Display game end message.
+         */
+        function checkGameOver() {
+            if (isGameOver()) {
+                let winner;
+                let message;
+                if (player1Score > player2Score) {
+                    winner = "Player 1";
+                    message = `P1 wins! Final score: ${player1Score} to ${player2Score}.`;
+                } else if (player2Score > player1Score) {
+                    winner = "Player 2";
+                    message = `P2 wins! Final score: ${player2Score} to ${player1Score}.`;
+                } else {
+                    winner = "Tie";
+                    message = `It's a tie! Both players scored ${player1Score}.`;
+                }
+                
+                MODAL_TITLE.textContent = `Game Over! ${winner} Wins!`;
+                MODAL_MESSAGE.textContent = message;
+                MODAL.classList.remove('hidden');
+                setStatusMessage(`Game ended. ${winner} wins!`);
+            }
+        }
+
+        // --- UI Functions ---
+
+        /**
+         * Updates the score displays.
+         */
+        function updateScores() {
+            SCORE_P1_ELEM.textContent = player1Score;
+            SCORE_P2_ELEM.textContent = player2Score;
+        }
+
+        /**
+         * Renders the game board based on the current state.
+         * @param {number} lastChosen - The number chosen in the last move (for animation).
+         * @param {number} lastPlayer - The player who made the last choice (1 or 2).
+         * @param {number[]} lastFactors - The factors awarded in the last move (for animation).
+         */
+        function renderBoard(lastChosen = 0, lastPlayer = 0, lastFactors = []) {
+            BOARD_ELEM.innerHTML = '';
+
+            for (let n = 1; n <= BOARD_SIZE; n++) {
+                const tile = document.createElement('div');
+                tile.textContent = n;
+                tile.dataset.number = n;
+                tile.classList.add('number-tile');
+                
+                if (takenNumbers.has(n)) {
+                    // Check which player took it
+                    if (n === lastChosen) {
+                         // The chosen number is colored by the player who chose it.
+                         tile.classList.add(lastPlayer === 1 ? 'taken-p1' : 'taken-p2');
+                    } else if (lastFactors.includes(n)) {
+                        // Factors are scored by the *other* player, so they get the opponent's color.
+                        const factorTaker = lastPlayer === 1 ? 2 : 1;
+                        tile.classList.add(factorTaker === 1 ? 'taken-p1' : 'taken-p2'); 
+                    } else {
+                        // Must be a number taken in a prior round. We use a simple color logic here.
+                        // A more robust game would track every number's owner, but for simplicity:
+                        tile.classList.add('taken-p1', 'opacity-50'); 
+                    }
+                } else {
+                    tile.classList.add('available-tile');
+                    tile.addEventListener('click', () => handlePlayerMove(n));
+                    if (!isValidMove(n)) {
+                         tile.classList.add('opacity-50', 'pointer-events-none');
+                         tile.title = "No untaken factors remain.";
+                    }
+                }
+
+                // Apply factor highlight animation to the awarded factors
+                if (lastFactors.includes(n)) {
+                    tile.classList.add('factor-highlight');
+                    setTimeout(() => {
+                        tile.classList.remove('factor-highlight');
+                    }, 1500);
+                }
+                
+                BOARD_ELEM.appendChild(tile);
+            }
+        }
+        
+        /**
+         * Sets the current status message in the UI.
+         */
+        function setStatusMessage(msg) {
+            STATUS_ELEM.textContent = msg;
+        }
+
+        /**
+         * Resets the game to its initial state.
+         */
+        function startGame() {
+            takenNumbers.clear();
+            player1Score = 0;
+            player2Score = 0;
+            currentPlayer = 1;
+            isProcessing = false;
+            
+            updateScores();
+            renderBoard();
+            setStatusMessage("It's Player 1's turn. Choose a number.");
+            MODAL.classList.add('hidden');
+        }
+
+        // --- Event Listeners and Initialization ---
+
+        NEW_GAME_BTN.addEventListener('click', startGame);
+        MODAL_CLOSE_BTN.addEventListener('click', startGame);
+
+        window.onload = startGame;
+    </script>
+</body>
+</html>

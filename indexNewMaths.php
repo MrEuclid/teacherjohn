@@ -82,6 +82,9 @@
       <a href="escape/escape.html"><button class="btn btn-success">Escape</button></a>
        <a href="greenLight/greenLightApp.html" target="_blank"><button class="btn btn-success">Green Light</button></a>
            <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-success">Number Race</button></a>
+           <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
+      
+
 </div>
 
 

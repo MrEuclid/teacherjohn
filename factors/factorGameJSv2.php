@@ -1,175 +1,202 @@
 <!DOCTYPE html>
-
 <html lang="en">
-  <head>
-    <title>Factor game Bootstrap and javascript</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
- 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Factor Game</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-header {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 20px 0;
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-bottom: 4px solid #0d6efd;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .stat-box.choices { border-bottom-color: #ffc107; background-color: #fffdf5; }
+        .stat-box.score { border-bottom-color: #198754; color: #198754; font-size: 1.5rem; }
+        .stat-box.status { border-bottom-color: #0dcaf0; }
+
+        /* Preserved and modernized button classes for injected JS compatibility */
+        button.num {
+            border: none;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            margin: 6px;
+            border-radius: 50%; /* Circular balls */
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            transition: transform 0.15s ease-in-out, box-shadow 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        button.num:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        
+        .rules-card {
+            border-left: 5px solid #0dcaf0;
+        }
+        
+        /* Utility overrides to hide backend elements cleanly */
+        .backend-data { display: none; }
+    </style>
 </head>
-
-<style type="text/css">
-
-.c {margin-left: auto; margin-right: auto;}
-
- #total , #maxPossible, #gameStatus  {background-color: blue ; 
-  color : white; font-size: 24pt ;}
-
-#myChoices {background-color: yellow ; 
-  color : black; font-size: 16pt ;}
-
-
-button.num {
-    
-    border: none;
-    
-    padding: 10px;
-    width: 60px ;
-    height: 60px ; 
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    
-    margin: 4px 2px;
-    border-radius : 12px;
-}
-
-
-
-button.smaller {padding: 2px ; width: 60px ; margin-bottom: 5px ;margin-top: 2px;}
-button.largerer {padding: 2px ; width: 240px ; margin-bottom: 5px ;margin-top: 2px;}
-
- li {font-size: 14pt ; color: blue ; font-family: sans-serif;} 
-</style>
-
-
 <body>
-  <div class = "container-fluid">
-<div class = "row">
-  <div class = "col-sm-1">
 
-   <a href="indexSecondaryMaths.php" 
-   class="btn btn-info btn-sm">
-          <span class="glyphicon glyphicon-arrow-left"></span>
-        </a>
-
-     <a href="factorGameJSv2.php" class="btn btn-info btn-sm">
-          <span class="glyphicon glyphicon-repeat"></span>
-        </a>
-     
+<div class="container pb-5">
+    
+    <div class="row game-header align-items-center">
+        <div class="col-md-3 text-center text-md-start px-4 mb-3 mb-md-0">
+            <a href="../indexNewMaths.php" class="btn btn-light btn-sm me-2" title="Back">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <a href="factorGameJSv2.php" class="btn btn-light btn-sm" title="Reset">
+                <i class="bi bi-arrow-clockwise"></i> Reset
+            </a>
+        </div>
+        <div class="col-md-6 text-center">
+            <h2 class="mb-0 fw-bold">The Factor Game <span class="badge bg-warning text-dark fs-6 ms-2 align-middle">v2.2</span></h2>
+        </div>
+        <div class="col-md-3 text-center text-md-end px-4 mt-3 mt-md-0">
+            <select id="level" class="form-select shadow-sm w-auto d-inline-block fw-bold text-primary border-0">
+                <option value="" disabled selected>Select Level...</option>
+                <option value="6">Easy (6)</option>
+                <option value="12">Medium (12)</option>
+                <option value="18">Hard (18)</option>
+                <option value="24">Difficult (24)</option>
+                <option value="30">Very Difficult (30)</option>
+                <option value="36">Extreme (36)</option>
+            </select>
+        </div>
     </div>
 
-<div class = "col-sm-10">
+    <div id="howMany" class="backend-data"></div>
+    <div id="maxScore" class="backend-data"></div>
+    <div id="maxPossible" class="backend-data"></div>
 
-<h3>The Factor Game v2.2
-  <select id = "level">
-       <option value="" disabled selected>Select level</option>
-    
-    <option value="6">Easy</option>
-    <option value="12">Medium</option>
-    <option value="18">Hard</option>
-    <option value="24">Difficult</option>
-    <option value="30">Very difficult</option>
-    <option value="36">Extreme</option>
-    
-</select>
-  
+    <div class="row mb-4 g-3 justify-content-center">
+        <div class="col-md-3">
+            <div class="stat-box status">
+                <div class="text-muted small text-uppercase">Status</div>
+                <span id="gameStatus">Waiting</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-box score">
+                <div class="text-muted small text-uppercase">Score</div>
+                <span id="total">0</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-box choices">
+                <div class="text-muted small text-uppercase">Your Choices</div>
+                <span id="myChoices"> * </span>
+            </div>
+        </div>
+    </div>
 
-</h3>
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="p-4 bg-white rounded-3 shadow-sm border" style="min-height: 250px;">
+                <div id="numberBalls" class="d-flex flex-wrap justify-content-center align-items-center h-100 mt-4 text-muted">
+                    <h5>Please select a level to generate the board.</h5>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card rules-card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="card-title fw-bold"><i class="bi bi-info-circle text-info me-2"></i> Game Rules</h4>
+                    <ul class="list-group list-group-flush mt-3">
+                        <li class="list-group-item border-0"><i class="bi bi-check2-circle text-success me-2"></i> You can only choose numbers which still have factors.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2-circle text-success me-2"></i> The numbers you can choose will be highlighted in green.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2-circle text-success me-2"></i> When you choose a number, it is added to your score.</li>
+                        <li class="list-group-item border-0"><i class="bi bi-check2-circle text-success me-2"></i> When you choose a number, its factors are removed from the board.</li>
+                        <li class="list-group-item border-0 fw-bold text-primary mt-2"><i class="bi bi-trophy-fill text-warning me-2"></i> If you get the maximum possible score, you win!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-</div>
-</span>
-</div> <!-- row -->
+</div> 
 
-<div class = "row">
-  <div class = "col-sm-8 col-sm-offset-2">
-<button id = "howMany"></button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<button id = "gameStatus" >Waiting</button>
-<button id = "total">Score</button>
-<button id = "maxPossible">Maximum</button>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const levelSelect = document.getElementById('level');
+    const numberBalls = document.getElementById('numberBalls');
+    const gameStatus = document.getElementById('gameStatus');
+    const totalScore = document.getElementById('total');
+    const myChoices = document.getElementById('myChoices');
+    const howMany = document.getElementById('howMany');
 
-<button id = "myChoices"> * </button>
+    levelSelect.addEventListener('change', function() {
+        const level = this.value;
+        
+        // Reset Game UI & Show Loading State
+        numberBalls.innerHTML = '<div class="spinner-border text-primary my-5" role="status"><span class="visually-hidden">Loading...</span></div>';
+        gameStatus.innerText = 'Playing';
+        totalScore.innerText = '0';
+        myChoices.innerText = ' * ';
 
-</div></div>
+        // Modern Fetch API (Replaces jQuery $.ajax)
+        fetch(`factorv2Scripts.php?level=${level}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(data => {
+                // Inject the backend data exactly as jQuery did
+                howMany.innerHTML = data;
+                
+                // If factorv2Scripts.php returns <script> tags, we need to explicitly execute them in Vanilla JS
+                Array.from(howMany.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+                
+                // Clear the loading spinner from the board area if the backend script populates it
+                if (numberBalls.innerHTML.includes('spinner-border')) {
+                    numberBalls.innerHTML = ''; 
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('Request failed. Please check your connection.');
+                numberBalls.innerHTML = '<h5 class="text-danger">Failed to load game board.</h5>';
+            });
+    });
+});
+</script>
 
-
-<div class = "row">
-  <div class = "col-sm-8 col-sm-offset-2">
- 
-    <p id = "numberBalls"></p>
- 
-  </div>
-</div>
-<div class = "row">
-  <div class = "col-sm-8 col-sm-offset-2">
-  <h1>Rules</h1>
-  <br>
-  <strong>
-  <ul>
-    <li>
-      You can only choose numbers which still have factors
-    </li>
-    <li>
-      The numbers you can choose are green
-    </li>
-    <li>
-      When you choose a number it is added to your score
-    </li>
-    <li>
-      When you choose a number its factors are removed
-    </li>
-    <li>
-      If you get the maximum possible score you win
-    </li>
-  </ul>
-</strong>
-  </div>
-</div>
-
-</div> <!-- container -->
-  
 </body>
 </html>
-
-
-<script type="text/javascript">
- $(document).ready(function(){
-     $('#level').on('change', function(){
-    
- level = $(this).val() ;
- // alert('Selected ' + level) ;
- $('p#numberBalls').text('') ; // clear existing numbers
- $('#gameStatus').text('Playing') ;
- $('#total').text('0') ;
- $('#myChoices').text(' * ') ;
-
-
-
-  
-                $.ajax({
-                    url:"factorv2Scripts.php",
-                    type:"GET",
-                    data:{level:level},
-                    success:function(data){
-                        $("#howMany").html(data);
-                    //  alert('q ' + q) ;
-                    },
-                    error: function(xhr, textStatus, errorThrown){
-                        alert('request failed');
-                    }
-                });
-            });
-        });
-
-
-</script>
-
-<script type="text/javascript">
-  $('#howMany').hide() ;
-  $('#maxScore').hide() ;
-  $('#maxPossible').hide() ;
-</script>

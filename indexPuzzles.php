@@ -117,7 +117,7 @@ button {margin: 0.5em;}
   <a href = "twoPlayerGames/connect4.html" target="_blank"><button class = "btn  btn-info" title = "Get 4 in a row to win." >Connect 4 Game</button></a>  
   <a href = "twoPlayerGames/tictactoe4x4.html" target="_blank"><button class = "btn  btn-info" title = "played on a 5x5 board, get 4 in a row to einn." >Tic-Tac-Toe</button></a> 
 
-  <a href = "twoPlayerGames/factorGameGemini.html" target = "_blank"><button class = "btn btn-success" title = "find the best way to take the factors of the numbers.">Factor game</button></a>
+  <a href = "twoPlayerGames/factorGameGemini.html" target = "_blank"><button class = "btn btn-success" title = "Find the best way to take the factors of the numbers.">Factor game</button></a>
   <a href = "twoPlayerGames/nim.html" target = "_blank"><button title = "Take the last piece and you lose."class = "btn btn-primary">Nim</button></a>
 <!--
   <a href = "cram4.html" target = "_blank"><button class = "btn btn-primary" title = "Block your opponet using blocks">Cram 4</button></a> 
@@ -158,6 +158,7 @@ button {margin: 0.5em;}
 
     <a href = "functionMachine/functionMachine.html" target="_blank"><button class = "btn btn-success" title = "Function machine">Functions</button></a>
 
+           <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
 
 <a href = "crossNumber/crossNumberGemini.html" target="_blank"><button class = "btn btn-primary">Crossnumber G6 - G7</button></a>
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juniper Green - Challenge Mode</title>
+<style>
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    text-align: center; 
+    background-color: #f8f9fa; 
+    padding: 20px; 
+    color: #212529;
+  }
+  .game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .settings-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e9ecef;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  select {
+    padding: 8px;
+    font-size: 1.1em;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+  }
+  #status { 
+    font-size: 1.8em; 
+    font-weight: bold; 
+    margin-bottom: 5px; 
+  }
+  #warning-message {
+    height: 25px;
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  #current-number { 
+    font-size: 4em; 
+    font-weight: bold; 
+    color: #0d6efd; 
+    margin-bottom: 20px; 
+    min-height: 80px; 
+  }
+  #grid { 
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px; 
+    margin: 0 auto 30px auto; 
+  }
+  .num-btn { 
+    width: 60px;
+    height: 60px; 
+    font-size: 1.2em; 
+    border: 2px solid #dee2e6; 
+    border-radius: 8px; 
+    background-color: #fff; 
+    cursor: pointer; 
+    transition: all 0.1s; 
+    font-weight: 500;
+  }
+  .num-btn:hover:not(.used) { 
+    background-color: #e9ecef; 
+    border-color: #0d6efd;
+  }
+  .num-btn.used { 
+    background-color: #e9ecef; 
+    color: #adb5bd; 
+    cursor: not-allowed; 
+    text-decoration: line-through; 
+    border-color: #e9ecef; 
+    opacity: 0.6;
+  }
+  #reset-btn { 
+    padding: 10px 20px; 
+    font-size: 1.1em; 
+    background-color: #198754; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  #reset-btn:hover { 
+    background-color: #157347; 
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="settings-bar">
+        <div>
+            <label for="board-size" style="font-weight: bold; font-size: 1.1em;">Board Size: </label>
+            <select id="board-size">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100" selected>100</option>
+                <option value="150">150</option>
+                <option value="200">200</option>
+            </select>
+        </div>
+        <button id="reset-btn">Restart Game</button>
+    </div>
+
+    <div id="status">Player 1's Turn: Pick an EVEN number</div>
+    <div id="warning-message"></div>
+    
+    <div id="current-number">-</div>
+    <div id="grid"></div>
+</div>
+
+<script>
+  const grid = document.getElementById('grid');
+  const statusEl = document.getElementById('status');
+  const warningEl = document.getElementById('warning-message');
+  const currentNumberEl = document.getElementById('current-number');
+  const resetBtn = document.getElementById('reset-btn');
+  const sizeSelect = document.getElementById('board-size');
+
+  let maxNumber = 100;
+  let currentNumber = null;
+  let usedNumbers = new Set();
+  let currentPlayer = 1;
+  let gameOver = false;
+
+  // Initialize the grid dynamically based on the dropdown
+  function initGrid() {
+    maxNumber = parseInt(sizeSelect.value);
+    grid.innerHTML = '';
+    
+    // Calculate a good grid width depending on the number of buttons
+    let columns = maxNumber <= 50 ? 10 : 15;
+    grid.style.maxWidth = (columns * 68) + "px"; // 60px width + 8px gap
+
+    for (let i = 1; i <= maxNumber; i++) {
+      const btn = document.createElement('button');
+      btn.classList.add('num-btn');
+      btn.textContent = i;
+      btn.id = `btn-${i}`;
+      btn.onclick = () => handleMove(i);
+      grid.appendChild(btn);
+    }
+    resetGame();
+  }
+
+  function resetGame() {
+    currentNumber = null;
+    usedNumbers.clear();
+    currentPlayer = 1;
+    gameOver = false;
+    currentNumberEl.textContent = '-';
+    warningEl.textContent = '';
+    statusEl.textContent = "Player 1's Turn: Pick an EVEN number";
+    statusEl.style.color = '#212529';
+
+    for (let i = 1; i <= maxNumber; i++) {
+      const btn = document.getElementById(`btn-${i}`);
+      btn.className = 'num-btn';
+      btn.disabled = false;
+    }
+  }
+
+  // Find factors and multiples behind the scenes to check for game over
+  function getValidMoves(num) {
+    let moves = [];
+    for (let i = 1; i <= maxNumber; i++) {
+      if (!usedNumbers.has(i)) {
+        if (num % i === 0 || i % num === 0) {
+          moves.push(i);
+        }
+      }
+    }
+    return moves;
+  }
+
+  function handleMove(num) {
+    if (gameOver) return;
+    
+    // Clear any previous warnings
+    warningEl.textContent = '';
+
+    // Check if number is already used
+    if (usedNumbers.has(num)) {
+        warningEl.textContent = `Illegal Move: ${num} has already been played!`;
+        return;
+    }
+
+    // Safety check for Turn 1
+    if (currentNumber === null) {
+        if (num % 2 !== 0) {
+            warningEl.textContent = `Illegal Move: The very first number must be EVEN.`;
+            return;
+        }
+    } else {
+        // Safety check for subsequent turns
+        if (num % currentNumber !== 0 && currentNumber % num !== 0) {
+            warningEl.textContent = `Illegal Move: ${num} is not a factor or multiple of ${currentNumber}.`;
+            return;
+        }
+    }
+
+    // Apply the valid move
+    usedNumbers.add(num);
+    currentNumber = num;
+    currentNumberEl.textContent = num;
+
+    // Update UI for the clicked button
+    const clickedBtn = document.getElementById(`btn-${num}`);
+    clickedBtn.classList.add('used');
+    clickedBtn.disabled = true;
+
+    // Switch player turn
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+
+    // Calculate possible next moves secretly
+    const validMoves = getValidMoves(currentNumber);
+
+    if (validMoves.length === 0) {
+      // No moves left - previous player wins
+      const winner = currentPlayer === 1 ? 2 : 1;
+      statusEl.textContent = `Player ${winner} Wins! No valid moves left.`;
+      statusEl.style.color = '#198754';
+      gameOver = true;
+      
+      // Lock the board
+      for (let i = 1; i <= maxNumber; i++) {
+        document.getElementById(`btn-${i}`).disabled = true;
+      }
+    } else {
+      // Game continues
+      statusEl.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+  }
+
+  // Event Listeners
+  resetBtn.onclick = resetGame;
+  sizeSelect.onchange = initGrid; // Rebuild the board when size changes
+  
+  // Start up
+  initGrid();
+</script>
+</body>
+</html>

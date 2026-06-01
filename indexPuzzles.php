@@ -108,6 +108,8 @@ button {margin: 0.5em;}
          
 <div class= "row">
  <div class = "col-12 text-center">
+   <a href = "juniperGreen/jg2.html" target = "_blank"><button title = "Factors and Multiples" class = "btn btn-info">Factors and Multiples</button></a>
+
  <a href = "twoPlayerGames/cramGemini.html" target = "_blank"><button title = "Game of Cram. Block you opponent from making a move." class = "btn btn-primary">Blocks </button></a>
 
  <a href = "twoPlayerGames/hex.html" target = "_blank"><button title = "Race to connect your pieces across the board.." class = "btn btn-info">Hex</button></a>

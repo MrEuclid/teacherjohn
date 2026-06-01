@@ -29,14 +29,13 @@
         <div class="d-flex gap-3">
             <div class="input-group">
                 <label class="input-group-text bg-dark text-info border-secondary fw-bold">Grade Level</label>
-                <select id="levelFilter" class="form-select bg-dark text-white border-secondary fw-bold" style="width: 200px;">
-                    <option value="all">All Grades</option>
-                    <option value="0">Grade 2</option>
-                    <option value="1">Grade 3</option>
-                    <option value="2">Grade 4</option>
-                    <option value="3">Grade 5</option>
-                    <option value="4">Grade 6</option>
-                </select>
+              <select id="levelFilter" class="form-select bg-dark text-white border-secondary fw-bold" style="width: 200px;">
+    <option value="all">All Grades</option>
+    <option value="0">Grade 2</option>
+    <option value="1">Grade 3-4</option>
+    <option value="2">Grade 5</option>
+    <option value="3">Grade 6</option>
+</select>
             </div>
             <button id="exportCsv" class="btn btn-success fw-bold px-4">📥 Export CSV</button>
             <button id="deleteLevel" class="btn btn-outline-danger fw-bold px-4">🗑️ Clear Data</button>
@@ -112,8 +111,21 @@ function refreshLeaderboard() {
                     else if (rank === 2) rankDisplay = "<span class='silver fs-3'>🥈</span>";
                     else if (rank === 3) rankDisplay = "<span class='bronze fs-4'>🥉</span>";
 
-                    let gradeName = "Grade " + (parseInt(row.level) + 2);
+// Translate the database level explicitly back to the correct Grade text
+let dbLevel = parseInt(row.level);
+let gradeName = "";
 
+if (dbLevel === 0) {
+    gradeName = "Grade 2";
+} else if (dbLevel === 1) {
+    gradeName = "Grade 3-4";
+} else if (dbLevel === 2) {
+    gradeName = "Grade 5";
+} else if (dbLevel === 3) {
+    gradeName = "Grade 6";
+} else {
+    gradeName = "Grade " + dbLevel; // Fallback just in case
+}
                     body.append(`
                         <tr>
                             <td>${rankDisplay}</td>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownNumberStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+   
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+  
+  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
+<title>CountdownNumbers</title>
+</head>
+<body>
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+                <p id = "stars"></p>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-sm-12 c">
+
+    <h1> 
+        <a href = "countDownNumbers.html"><button id = "newGame" class="btn btn-info long menu">New</button></a>&nbsp; Number Race
+        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
+    </h1>
+   <h4>How quickly can you find the answer?</h4>
+   
+</div></div>
+
+<div id  = "registration">
+<div class = "row">
+    <div class = "col-sm-12 c">
+
+  <h2> 
+       <label>Your team name</label>
+       <br>
+       <input type = "text" id = "teamName">
+       <button id = "register">Go</button>
+       <br>
+       <p id = "error"></p>
+  </h2>
+</div></div>
+
+</div> <!-- register -->
+
+<div id  = "gameLevels">
+    <!--
+    <div class = "row">
+        <div class = "col-sm-12 c">
+            <button id = "level1">G1 - G3</button>
+            <button id = "level2">G4 - G6</button>
+            <button id = "level3">G7 - G12</button>
+            <button id = "level4">Difficult</button>
+
+            </div></div>
+        -->
+</div>
+
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p class = "c" id = "ourTeam"></p>
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<div id = 'timer' class= 'round'>
+    0:00
+        </div>
+   
+<button class = 'round' id = "target">0</button>
+<button class = 'round' id = "score">0</button>
+<button  class = 'round' id = "start">Play</button>
+
+</div></div>
+
+
+<div id = "gameArea">
+
+  <p id = "solution"></p>
+
+    <div class = "row">
+        <div class = "col-sm-12 c">
+           <button id = "operand1" class="large1"></button>
+           <button id = "op" class="large1"></button>
+           <button id = "operand2" class="large1"></button>
+           <button id = "go" class="large2">Go</button>
+                
+       </div></div>
+        
+     <div class = "row">
+       <div class = "col-sm-12 c">
+           <button id = "operation+" class = "small">+</button>
+           <button id = "operation*" class = "small">$ \times $</button>
+           <button id = "operation-" class = "small">-</button>
+           <button id = "operationd" class = "small">$ \div $</button>  
+       </div></div>
+     
+     <div class = "row">
+       <div class = "col-sm-12 c">
+           <button id = "number0" class = "large"></button>
+           <button id = "number1" class = "large"></button>
+           <button id = "number2" class = "large"></button>
+           <button id = "number3" class = "large"></button>
+       </div>
+     </div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "keypad">
+    <button id = "clear" class = "long">Cancel</button>
+    <input id = "symbol" type = "text" readonly="true" hidden="true">
+    <p id = "warning"></p>
+</p>
+
+</div> <!-- game area-->
+
+</div></div>
+
+
+
+</div>
+
+</body>
+</html>
+
+<script>
+    function setUp(gameNumber)
+
+    {
+    cntMoves = 0 ;
+   n = 4 ;
+  
+   $('#clear').show() ;
+ 
+ cntMoves = 0 ;
+ moves = [] ;
+
+ var a = 0 ; 
+var b = 0 ;
+var c = 0 ; 
+var d = 0 ;
+
+answer = 0 ; // answer reached by player
+equation = '' ; // string with calcs to evaluate
+operation = '' ; // symbol of operator + - * /
+
+$('#go').prop('disabled',true) ;
+$('[id^=operand]').text('') ;
+$('#symbol').val('') ;
+$('#op').text('') ;
+
+numbers = [] ;
+while ((a == b) |  (a == c) | a == d | b == c | b == d | c ==d)  // ensuree that there are no duplicates
+{
+ 
+  a = getRandomInt(1,10) ;
+  b= getRandomInt(1,10);
+  c = getRandomInt(1,10) ;
+  d = getRandomInt(1,10) ;
+  
+}
+
+console.log("numbers",a,b,c,d) ;
+
+numbers.push(a) ;
+numbers.push(b) ;
+numbers.push(c) ;
+numbers.push(d) ;
+console.log(numbers);
+target = makeTarget(numbers) ;
+//console.log(target) ;
+copyTarget = target ;
+$('#solution').append('<br>') ;
+$('#solution').append(target + ' * ') ;
+
+original = [] ; // store a copy of the numbers array 
+for (var i = 0 ; i < numbers.length; i++)
+{
+    original[i] = numbers[i] ;
+    $('#solution').append(numbers[i] + ' - ') ;
+
+}
+original.sort(function(a,b){return a - b}) ;
+$('#solution').append('<br>') ;
+
+numbers.sort(function(a,b){return a - b})
+for (var i = 0 ; i < numbers.length; i++)
+{
+    var offset = parseInt(i) ;
+    $('#number' + offset).text(numbers[i]).show() 
+
+}
+
+$('#target').html(target);
+    }
+
+</script>
+
+<script>
+  function operateOnTwoNumbers(data2)
+  {
+// used to generate a solution - may not be unique
+    ops = ["a","s",'m','d'] ;
+
+  l = data2.length - 1 ;
+
+if (l >= 2)  // more than two elements in data2
+{
+var p = 0 ;
+var a = -1 ; 
+var b = -1 ;
+// get two data items
+while (a == b)
+{
+  a = getRandomInt(0,l) ;
+  b = getRandomInt(0,l) ;
+}
+
+// get values of the index
+var x = data2[a] ;
+var y = data2[b] ;
+
+// console.log("got data2",data2,"removing for processing",x,y,"indexes",a,b) ;
+
+// remove selected from the data2 array
+
+data2.splice(data2.indexOf(x), 1);
+data2.splice(data2.indexOf(y), 1);
+// console.log("data2 after splice",data2) ;
+}  // if l > 2
+else 
+{
+  var x = data2[0] ;
+  var y = data2[1] ;
+//  console.log("got data length 2",data2," processing",x,y,"indexes") ;
+  data2 = [] ; // empty array
+}
+
+
+// check of x is divisible by y or y divisible by x 
+if (x > y) {var remainder = x % y ;}
+if (y > x) {var remainder = y % x ;}
+// console.log(x,y,remainder) ;
+if (remainder == 0)
+{z =  3  ;}  // if one is a multiple of the other
+else 
+{z = getRandomInt(0,2) ; }  // omit division as an option
+
+op = ops[z] ;
+// console.log("operating with ",op,x,y,data2) ;
+$('#solution').append(x + " " + op + " " + y + "<br>") ;
+
+switch(op) {
+  case 'a':
+     p = x + y ;
+    break;
+
+  case 's':
+    if (x > y) {p = x- y; } else {p = y-x ;}
+    break;
+
+  case 'm':
+    p = x * y;
+    break;
+
+  case 'd':
+  if (x > y) {p = x /  y; } else {p = y / x ;}
+    break;
+
+
+}
+data2.push(p) ;
+// console.log("Coming back",p,data2); 
+return data2 ;
+  }
+
+</script>
+
+<script>
+  function getRandomInt(lower,upper)
+  {
+    var randomNumber = Math.floor((Math.random() * upper) + lower) ; 
+  return randomNumber + 1 ;
+  }
+</script>
+
+<script>
+  function makeTarget(source)
+  {
+  
+   data = [];
+  
+
+// copy source to data
+
+for (i = 0; i < source.length; i++) {
+  data[i] = source[i];
+}
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("1 data is now",data) ;
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("2 data is now",data) ;
+
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("3 data is now",data) ;
+// console.log("end",data) ;
+
+var targetNumber = data[0] ;
+
+
+  return targetNumber ;
+  }
+</script>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+ // load words into an array
+ // sorted in upper case
+
+
+
+setUp(0) ;
+
+
+
+queen = '&#9813;' ;
+
+   cntMoves = 0 ;
+   score = 0 ; 
+   cancelled = 0 ; // counts cancelled moves
+   wins = 0 ;
+   $('#target').text(target) ;
+   $('#score').text(score) ;
+  
+
+
+$('#timer').hide() ;
+$('#score').hide() ;
+$('#gameArea').hide() ;
+$('#target').hide() ;
+$('#start').hide() ;
+$('#keypad').hide() ; 
+ $('#stars').empty() ;
+ $('#gameLevels').hide() ;
+ gameLevel = 0 ;
+ 
+
+})
+    </script>
+
+<script>
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text(minutes + ":" + seconds);
+
+        if (--timer < 0) {
+            display.text('X' + ":" + 'X');
+            $('#gameArea').hide() ;
+            $('#words').show() ;
+          $('#answers').show() ;
+            $('#newGame').show() ;
+        }
+    }, 1000);
+}
+
+</script>
+
+<script>
+  function writeNumbers()
+  {
+    numbers.sort(function(a,b){return a - b});
+    $('[id^=number]').hide() ;
+      for (var i = 0 ; i < numbers.length; i++)
+      {
+        $('#number' + i).text(numbers[i]).show() ;
+      }
+  }
+</script>
+
+<script>
+
+    function writeData() {
+
+  
+var team = $('#teamName').val() ;
+var score = 10 ;
+var target = parseInt($('#target').text()) ;
+var puzzle = '*' ;
+original.sort(function(a,b){return a - b}) ;
+for (var i = 0 ; i < original.length; i++)
+{
+  puzzle = puzzle + original[i] + '*' ;
+}
+    $.ajax({
+    url: 'writeDataNumbers.php', // to be done
+    type: 'POST',
+    data: {team:team,target:target,puzzle:puzzle,score:score}, 
+    datatype: 'json'
+})  // parameters
+.done(function (response) { 
+
+// console.log("writing",team,word) ;
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+
+    }  // function
+</script>
+
+<script>
+
+    $(document).ready(function(){
+        $('#register').on('click', function(){
+          teamName = $('#teamName').val() ;
+        //  alert(teamName);
+           if (teamName.length > 0 )
+           {
+            var lowerLimit = 100 ; 
+            var upperLimit = 999 ;   
+            var n = Math.floor((Math.random() * upperLimit) + lowerLimit);   
+           teamName = teamName + '-#' + n ;
+           $('#ourTeam').text(teamName);
+
+
+$('#gameLevels').hide() ; // not using them yet
+
+$('#registration').hide() ;
+
+        }
+else
+{
+    $('#error').text("Please write you team name") ;
+}
+
+        })
+    })
+</script>
+
+<script>
+
+    $(document).ready(function(){
+
+      // get game level
+
+        $('[id^=level]').on('click', function(){
+    var firedButton = this.id;
+    $('#gameLevels').hide() ;
+
+
+gameLevel  = parseInt(firedButton.substr(5)) ;
+$('#solutions').append('<br>' + ' Level ' + gameLevel) ;
+
+// alert('Level = ' + gameLevel) ;
+$('#timer').show() ;
+$('#target').show() ;
+$('#score').hide ;
+$('#nWords').show() ;
+$('#start').show() ;
+$('#maxWords').show() ;
+        })
+    })
+
+</script>
+
+<script>
+$(document).ready(function(){
+    $('#start').on('click', function(){
+
+       // alert("Timer on") ;
+        $('#keypad').show() ;
+        $('#gameArea').show() ;
+        $('#start').hide() ;
+        $('#score').show() ;
+
+        jQuery(function ($) {
+            var fiveMinutes = 60 * 20,
+                display = $('#timer');
+            startTimer(fiveMinutes, display);
+        });      
+    })
+    })
+        </script>
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('[id^=operand]').on('click', function(){
+
+   var id = this.id;
+   var index = parseInt(id.substr(7)) ;
+   var numberValue = parseFloat($('#operand'+index).text()) ;
+   
+   // find index of the value in numbers and push it back into number? button and sort
+  numbers.push(numberValue) ;
+  writeNumbers() ;
+
+   $('#operand' + index).text('') ;
+   $('#go').prop('diabled',true) ;
+
+  
+    })
+    
+    })     
+</script>
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+      $('[id^=number]').on('click', function(){
+  
+     var id = this.id;
+     var index = parseInt(id.substr(6)) ;
+     var numberValue = numbers[index] ;
+   //  alert(id + ' ' + index + ' ' + numberValue) ;  
+     var content1 = $('#operand1').text() ;
+     var content2 = $('#operand2').text() ; 
+     if (content1 == '')
+     {$('#operand1').text(numberValue) ;}
+     else 
+     {$('#operand2').text(numberValue) ;}
+      // hide button
+      $('#number'+index).hide() ;
+
+      // take out of numbers
+      numbers.splice(index,1) ;
+        writeNumbers() ;
+      
+
+      if ($('#operand1').text()  != '' & $('#operand1').text() != '' & $('#symbol').val() != '')
+ {$('#go').prop('disabled',false) ;}
+ else 
+ {
+  $('#go').prop('disabled',true) ;
+ }
+
+    })    
+  })     
+ </script>
+
+
+
+<script type="text/javascript">
+  
+    $(document).ready(function(){
+      $('[id^= operation]').on('click', function(){
+
+   // get plain symbol
+   var id = this.id;
+     var symbol  = id.substr(9) ; 
+     if (symbol == 'd') {symbol = '/' ;}
+     
+     $('#symbol').val(symbol) ;
+ // alert(id + '-> ' + symbol)
+ 
+ // alert('OP clicked ') ;
+  var op1 = $('#operand1').text() ;
+  var op2 = $('#operand2').text() ;
+ 
+ $('#clear').show() ;
+  var operationID = this.id;
+ var operation = $('#'+operationID).text() ;
+ // alert(operationID + ' clicked' ) ;
+  myOp = operationID[operationID.length -1];
+ 
+ 
+  if (myOp == 'd') {myOp =  '$ \\div $'  ;}
+  if (myOp == '*') {myOp =  '$ \\times $'  ;}
+ 
+ 
+ $('#op').text(myOp) ;
+ 
+ MathJax.Hub.Queue(["Typeset", MathJax.Hub, "op"]);
+
+
+  // alert('op1 = ' + op1 + ' op2 ' + op2 + 'Clicked = ' + operationID) ;
+ 
+
+ 
+  if ($('#operand1').text()  != '' & $('#operand1').text() != '' & $('#symbol').val() != '')
+ {$('#go').prop('disabled',false) ;}
+ else
+ {
+  $('#go').prop('disabled',true) ;
+ }
+ 
+
+ 
+ 
+ })
+      
+      })     
+ </script>
+ 
+ <script type="text/javascript">
+   
+    $(document).ready(function(){
+      $('#clear').on('click', function(){
+
+     
+
+   $('#clear').show() ;
+
+  answer = 0 ;
+
+  for (var i = 0 ; i <= 3 ; i++)
+  {
+    
+    numbers[i] = original[i] ;
+    $('#number' +i ).text(original[i]).show() ;
+
+  }
+  original.sort(function(a,b){return a - b}) ;
+ $('#operand1').text('') ;
+ $('#operand2').text('') ;
+ $('#op').text('') ;
+ $('#symbol').val('') ;
+ answer = 0 ;
+ equation = '' ;
+
+ $('#go').prop('disabled',true) ;
+
+
+      })
+      
+      })     
+ </script>
+
+
+ 
+ 
+ <script type="text/javascript">
+   
+   $(document).ready(function(){
+     $('#go').on('click', function(){
+
+      var x = parseFloat($('#operand1').text()) ;
+      var y = parseFloat($('#operand2').text()) ;
+      var op = $('#symbol').val() ;
+
+
+
+      console.log("numbers at start",numbers) ;
+      if (op == 'a') {op = '+' ;}
+      if (op == 's') {op = '-' ;}
+      if (op == '\times ') {op = '*' ;}
+      if (op == '\div ' ) {op = '/' ;}
+
+      
+      var expression = x+op+y ;
+      console.log("expression ",expression) ;
+      answer = eval(x + op + y) ;
+      answer = parseFloat(answer) ; // allow for decimals
+    //   alert(x + op + y + ' = ' + answer);
+     
+      numbers.push(answer) ;
+      console.log("numbers + answer",numbers.length,numbers,answer,x,y,target, target == answer)
+      // alert(' numbers = ' + numbers + ' length ' + numbers.length) ;
+
+      if (numbers.length > 1)
+      {$('#operand1').text('') ;
+      $('#operand2').text('') ;
+      $('#symbol').val('') ;
+      $('#op').text('') ;
+
+      writeNumbers() ;}
+
+     if (numbers.length == 1)
+      {
+        guess = answer ;
+        target = parseInt($('#target').text());
+        console.log("numbers + answer",numbers.length,numbers,answer,x,y,target, target == answer)
+       if (target == answer)
+       {alert("You win") ;
+        wins = wins + 1 ;
+        score = wins * 10 ;
+        writeData() ;
+        $('#score').text(score) ;
+        $('#stars').append(queen) ;
+        setUp(wins); }
+        else
+        {
+          alert('Try again') ;
+          answer = 0 ;
+
+for (var i = 0 ; i <= 3 ; i++)
+{
+
+  numbers[i] = original[i] ;
+  $('#number' +i ).text(original[i]).show() ;
+
+}
+
+$('#operand1').text('') ;
+$('#operand2').text('') ;
+$('#op').text('') ;
+$('#symbol').val('') ;
+answer = 0 ;
+equation = '' ;
+
+$('#go').prop('disabled',true) ;
+
+
+        }
+      }
+     
+     })   
+    })  
+</script>
+
+ 

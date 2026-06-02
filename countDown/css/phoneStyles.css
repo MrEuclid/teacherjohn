@@ -1,0 +1,102 @@
+
+.c {text-align:center ; width:autp ;}
+#imgPhone, #imgAlien {
+  display: inline-block; 
+  width:50px ; 
+  height:50px ;
+  margin: 20px ;
+
+}
+
+#saucer {width:250px ; 
+  height:150px ;}
+
+#two {font-weight: bolder;color: red ; font-size: 24pt ;}
+
+#personalDataTable {background-color: yellow ;} 
+
+#error {color:red ; text-align:center; font-weight:bold ; font-size:12pt ;}  
+#registerTeam, 
+#cancelRegistration, 
+#clearRegistration, #acceptTeam, 
+#cancelTeam , 
+#cancelPrice,
+#submitPrice ,
+#submitBuy, 
+#cancelBuy
+{
+  font-size:16pt ; 
+  color:black ; 
+  text-align:center ; 
+  width:120px ; 
+  height:40px;
+  margin:10px ;
+  }  
+
+input {
+  background-color:lightblue; 
+  color:black; 
+  font-size:14pt ; 
+  font-weight:bolder ;
+  text-align:center ;
+  width:40px ;
+
+  }
+
+  [id^=player] {
+    margin:10px ;
+    width:60px ;
+    background-color:lightgreen ;
+    color:black ;
+    font-weight:normal ;
+    font-size:12pt ;
+  }
+
+  #team {
+    background-color:lightred ;
+    color:black ;
+  }
+
+  #currentRound , #rooms, #stock, #ourTeamID , #stock{
+      width:40px ;
+      background-color:lightyellow ; 
+      color:green;
+      }
+
+      #aliensArriving {
+        width:100px ;
+        background-color:lightgreen ; 
+        color:black;
+        }
+      
+  #ourTeam {
+      width:240px ; 
+      background-color:lightgreen; 
+      color:orangeblack;
+      margin-bottom:20px ;
+      }
+
+  #teamName {
+      width:120px ; 
+      background-color:lightgreen; 
+      color:orangeblack;
+      margin-bottom:20px ;
+      }
+
+#numberPhones {text-align:center ; color:black; background-color:lightblue ; font-size:12pt ; font-weight:bolder ; width:120px ; }
+
+#yourMoney {
+  display: inline-block; 
+  text-align: center ; 
+  color: blue; 
+  font-size: 18pt ; 
+  font-weight: bolder ;
+  }
+
+label {margin-right: 10px ; margin-left: 10px ;}
+    
+#question 
+
+{font-size:16pt ; color:black ; text-align:center ; margin-top:50px ;}
+
+#results {text-align:center ; 

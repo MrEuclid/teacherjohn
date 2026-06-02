@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- copied from mathematics.teacherjohn.org -->
+<!-- Guest version with no DB -->  
+
+<title>primary translation</title>
+   
+<!-- loads jQuery and bootstrap -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- bootstrap loaded from server for intranet for better loading speed -->
+ <link rel="stylesheet" href="javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<!-- need this to move the sentence parts in a vertical sortable list -->
+
+  <script src="javaScript/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+  <script src="javaScript/touchPunch/punch.js"></script> 
+  
+
+
+<style type="text/css">
+  
+ul {list-style: none ;}
+
+.c {text-align: center;}
+.l {text-align: left;}
+.r {text-align: right}
+
+[id^=partA] {padding-right: 25px;}
+
+body {background-color: white}
+
+#stars {font-size: 4em; font-weight: bolder; color: green}
+
+h1 {color: blue;}
+h2 {color: green ;}
+h3 {color: orange;}
+
+#checkAnswer {margin-bottom: 10px ;margin-top: 10px ; ; background-color: orange ; color:black; font-size: 1.5em; font-weight: bold;}
+
+[id^=partA] 
+  {
+    background-color: white; 
+    width: auto; 
+    color:green; 
+    font-size: 1.5em ; 
+    font-weight: 
+    bold;
+  }
+
+[id^=partB] 
+  {
+    background-color: white; 
+    width: auto; 
+    color:blue; 
+    font-size: 1.5em ; 
+    font-weight: bold; 
+
+  }
+
+[id^=unit] {margin: 5px ; background-color: black; color: white; font-weight: bolder;font-size: 1em}
+[id^=lev] {margin: 5px ; background-color: yellow; color: red; font-weight: bolder;font-size: 1em}
+
+
+#home , #restart 
+  {
+    margin-bottom: 5px ;
+    margin-top: 5px ;  
+    background-color: lightblue ; 
+    color:black; 
+    font-size: 1em; 
+    font-weight: bold;
+  }
+
+  #score 
+
+    {
+    margin-bottom: 5px ;
+    margin-top: 5px ;  
+    background-color: pink ; 
+    color:black; 
+    font-size: 1em; 
+    font-weight: bold;
+  }
+
+
+
+</style>
+
+  <script>
+  $( function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+$('#sortable li').addClass('ui-state-default');
+  } );
+  </script>
+  </head>
+
+
+  <body>
+    
+    <div class = "container-fluid">
+    <div class = "row">
+     <div class = "col-sm-12 c">
+     <h1 class = "c">The Translation Game</h1> 
+     <h2 id = "instructions" class = "c">Move the English Words</h2>
+    </div>
+   </div>
+   
+    <div class = "row">
+     <div class = "col-sm-12 c">
+     <h1 id = "stars" class = "c"></h1> 
+       <input type = "text" id = "starCount" hidden="true">
+    </div>
+   </div>
+
+
+
+   <div class = "row">
+    <div class = "col-sm-12 c">
+      <a href = "index.php">
+   <button id = "home">Home</button>
+  </a>
+   <button id = "score">score</button>
+  <a href = "kh_en.html">
+    <button id = "restart">Restart</button>
+  </a>
+   </div>
+  </div>
+
+    
+  <div class = "row">
+    <div class = "col-sm-12 c">
+        <button id = "go">Go</button>
+    </div></div>
+
+
+  <div class = "row">
+    <div class = "col-sm-12 c">
+      <button id = "checkAnswer">Check your answer</button>
+    </div></div>
+  
+  
+  
+  
+  
+  <div class = "row">
+    <div class = "col-sm-6 r">
+  
+   <ul id="notSortable">
+    <li id = "partA0" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA6" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA7" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA8" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partA9" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  </ul>
+  
+    </div>
+  
+    <div class = "col-sm-6 l">
+   <ul id="sortable">
+    <li id = "partB0" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB6" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB7" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB8" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+    <li id = "partB9" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  </ul>
+  
+   
+ <ul id="notSortableAnswers">
+  <li id = "partC0" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC6" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC7" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC8" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+  <li id = "partC9" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span></li>
+
+</ul>
+   
+    </div>
+  </div>
+  
+  <div class = "row">
+    <div class = "col-sm-12 c">
+        <p id = "sentences"></p>
+    </div></div>
+  
+   </div>
+   </body>
+   </html>
+
+   <script type="text/javascript">
+  
+
+  function shuffle(array) {
+  currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+  
+  </script>
+
+  
+
+
+
+
+   <script type="text/javascript">
+    $(document).ready(function(){
+      level = 1;
+      items = 6;
+      $('#go').show() ;
+      $('#checkAnswer').show() ;
+      $('#sorted').show() ;
+      $('[id^=part]').show() ;
+
+      $('#starCount').val(0);
+      $('#sentences').show() ;
+
+// load array of word pairs
+
+
+$.ajax({
+    url: 'loadTranslationPairs.php',
+    type: 'POST',
+   
+    datatype:'json'
+  })  // parameters
+    .done (function(data){
+  // alert('The table ' + data) ;
+    data = JSON.parse(data) ;
+    $('#theSentences').val(data) ;   
+    var l = data.length;
+
+console.log(data) ;  
+myData = data ; // copy of data 
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure writing " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+}) ; // fail
+
+    
+})  // document load
+  
+    
+    </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#go').on("click", function(event) {
+      
+    // alert(myData[2]);
+  
+  $('#score').text('0');
+  
+  // $('#submit').show() ;
+  $('#sentences').empty() ;
+  
+  pointer = [] ;
+  khmer = [] ;
+  english = [] ;
+
+  items = 6;
+
+  for (i = 0 ; i < items; i++)
+    {
+      pointer[i] = myData[i][0];
+      khmer[i] = myData[i][1];
+      english[i] = myData[i][2];
+
+    } 
+//alert(pointers);
+//alert(khmer);
+//alert(english);
+oldEnglish = english.slice(0);
+console.log(oldEnglish) ;
+for (var i = english.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = english[i];
+        english[i] = english[j];
+        english[j] = temp;
+    }
+
+//alert(english);
+ 
+console.log(english) ;
+$('[id^=part]').show() ;
+$('[id^=partC]').show() ;
+
+
+// alert('Question grid has array of ' + l + ' ' + myQuestions);
+
+for (var i = 0 ; i < items ;i++)
+{
+  $('#partA'+i).text(khmer[i]);
+  $('#partB'+i).text(english[i]);
+  $('#partC'+i).text(pointer[i]);
+}
+
+    })
+  })
+
+  </script>
+
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#checkAnswer').on("click", function(event) {
+  
+ // alert('Lets see how you did ');
+ 
+ var  sortedIDs = $( "#sortable" ).sortable( "toArray" ); // array of moveable li (partB)
+a = [];
+b = [];
+c = [];
+g = [];
+ 
+for (var i = 0 ; i < items ; i++)
+ {
+  guess = sortedIDs[i] ;  // the answer that the user has moved next to partA of the sentence
+  a[i] = $('#partA'+i).text() ;
+  b[i] = $('#partB'+i).text() ;
+  c[i] = $('#partC'+i).text() ;  // holds the correct answer for partB
+  g[i]  =$('#'+guess).text() ;
+
+ if (g[i] == b[i]) {
+score = score + 1 ; }  // if the guess is correct increment the score
+  // if the guess is correct increment the score
+  
+  // if score = l then add star and set new screen
+ }
+  console.log(a); 
+  console.log(b);
+  console.log(g);
+  console.log(english);
+  console.log(oldEnglish);
+  console.log(sortedIDs);
+  
+  
+   })
+  })
+  </script>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownNumberStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+   
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+  
+  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
+<title>CountdownNumbers</title>
+<body>
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+
+                <button id = "go">Go</button>
+                </div></div>
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+                <p id = "puzzles"></p>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-sm-12 c">
+<script>
+    function setUp(gameNumber)
+
+    {
+ 
+ 
+ 
+
+ var a = 0 ; 
+var b = 0 ;
+var c = 0 ; 
+var d = 0 ;
+
+
+numbers = [] ;
+while ((a == b) |  (a == c) | a == d | b == c | b == d | c ==d)  // ensuree that there are no duplicates
+{
+ 
+  a = getRandomInt(1,20) ;
+  b= getRandomInt(1,20);
+  c = getRandomInt(1,10) ;
+  d = getRandomInt(20,100) ;
+  
+}
+
+//console.log("numbers",a,b,c,d) ;
+
+numbers.push(a) ;
+numbers.push(b) ;
+numbers.push(c) ;
+numbers.push(d) ;
+// console.log(numbers);
+target = makeTarget(numbers) ;
+//console.log(target) ;
+
+$('#puzzles').append('#' + i + '-') ;
+$('#puzzles').append(target + ' * ') ;
+numbers.sort(function(a,b){return a - b}) ;
+
+
+for (var i = 0 ; i < numbers.length; i++)
+{
+    
+    $('#puzzles').append(numbers[i] + '*') ;
+
+}
+
+$('#puzzles').append('*' + target + '<br>') ;
+
+writeEquation(target,puzzle) ;
+
+
+
+    }
+
+</script>
+
+
+<script>
+  function getRandomInt(lower,upper)
+  {
+    var randomNumber = Math.floor((Math.random() * upper) + lower) ; 
+  return randomNumber + 1 ;
+  }
+</script>
+
+<script>
+  function makeTarget(source)
+  {
+  
+   data = [];
+  
+
+// copy source to data
+
+for (i = 0; i < source.length; i++) {
+  data[i] = source[i];
+}
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("1 data is now",data) ;
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("2 data is now",data) ;
+
+
+
+var dataCopy  = [...data];
+data = operateOnTwoNumbers(dataCopy) ;
+// console.log("3 data is now",data) ;
+// console.log("end",data) ;
+
+var targetNumber = data[0] ;
+
+
+  return targetNumber ;
+  }
+</script>
+
+<script>
+function writeEquation(target,puzzle) {
+
+  
+        $.ajax({
+        url: 'writeEquations.php', // to be done
+        type: 'POST',
+        data: {target:target,puzzle:puzzle}, 
+        datatype: 'json'
+    })  // parameters
+    .done(function (response) { 
+    
+    // console.log("writing",team,word) ;
+    
+    })  //done
+    .fail(function (jqXHR, textStatus, errorThrown) { 
+    alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+    
+    })  // fail
+    
+    
+        }  // function
+    </script>
+
+     
+ <script type="text/javascript">
+   
+    $(document).ready(function(){
+      $('#go').on('click', function(){
+
+        for (var i = 1 ; i <= 1000 ; i++)
+        {
+            setUp(i) ;
+        }
+
+      })
+    })
+
+</script>
+    
+    

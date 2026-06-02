@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<title>CountdownWords Big</title>
+
+<style>
+    .menu {
+        font-size: 24pt;
+    }
+
+h1 {
+    font-weight: bolder; 
+       font-size: 24pt; 
+       
+       color:green;
+}
+
+h2 {
+    font-weight: bolder; 
+       font-size: 20pt; 
+       
+       color:blue;
+
+}
+
+h3 {
+    font-weight: bolder; 
+       font-size: 16pt; 
+       
+       color:green;
+}
+
+h4 {
+    font-weight: bold; 
+       font-size: 14pt; 
+       
+       color:orange;
+}
+
+[id^=level] {
+    background-color: lavender;
+    color:black ;
+    font-weight: bolder;
+    font-size: 12pt ;
+    text-align: center;
+    width : 120px ;
+    height: 90px ;
+
+}
+
+p {
+    font-weight: bold;
+    font-style: italic;
+    font-size: medium;
+}
+
+#check {background-color: grey; color:black;}
+#letterCount {background-color: red; color:white;}
+#smallestWordMessage {font-weight: bold; color:green ; text-align: center ; font-size: 14pt;}
+   
+</style>
+
+<body>
+
+
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+                <p id = "stars"></p>
+                </div></div>
+    <div class = "row">
+      <div class = "col-sm-12 c">
+
+    <h1> 
+        <a href = "countDownBigWords.html"><button id = "newGame" class="btn btn-info long menu">New game</button></a>&nbsp; Word Race
+        <a href = "../index.php"><button id = "quit" class="btn btn-danger long menu">Quit</button></a>
+    </h1>
+   <h4>How many big English words do you know?</h4>
+   <p id = "smallestWordMessage"></p>
+   
+</div></div>
+
+<div id  = "registration">
+<div class = "row">
+    <div class = "col-sm-12 c">
+
+  <h2> 
+       <label>Your team name</label>
+       <br>
+       <input type = "text" id = "teamName">
+       <button id = "register">Go</button>
+       <br>
+       <p id = "error"></p>
+  </h2>
+</div></div>
+
+</div> <!-- register -->
+
+<div id  = "gameLevels">
+    <div class = "row">
+        <div class = "col-sm-12 c">
+     
+
+            </div></div>
+</div>
+
+<!-- set keyboard type and number of letters-->
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p class = "c" id = "ourTeam"></p>
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+<div id = 'timer' class= 'round'>
+    0:00
+        </div>
+   
+<button class = 'round' id = "total">0</button>
+<button class = 'round' id = "nWords">0</button>
+
+<button  class = 'round' id = "start">Play</button>
+<button class = 'round' id = "letterCount">0</button>
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+
+
+
+
+</div></div>
+
+<div class = "row">
+    <div class = "col-sm-12 c">
+
+<div id = "gameArea">
+<input id = "guess" type = "text" readonly = "TRUE"> 
+<button id = "check" class = "long">Send</button>
+
+<br><br>
+<!--
+<p id = "myLettersABC">
+<button id = "letterA" class = "circle">A</button>
+<button id = "letterB" class = "circle">B</button>
+<button id = "letterC" class = "circle">C</button>
+<button id = "letterD" class = "circle">D</button>
+<button id = "letterE" class = "circle">E</button>
+<button id = "letterF" class = "circle">F</button>
+<button id = "letterG" class = "circle">G</button>
+
+
+<button id = "letterH" class = "circle">H</button>
+
+<button id = "letterI" class = "circle">I</button>
+<button id = "letterJ" class = "circle">J</button>
+<button id = "letterK" class = "circle">K</button>
+<button id = "letterL" class = "circle">L</button>
+
+<button id = "letterM" class = "circle">M</button>
+<button id = "letterN" class = "circle">N</button>
+
+
+<button id = "letterO" class = "circle">O</button>
+
+<button id = "letterP" class = "circle">P</button>
+<button id = "letterQ" class = "circle">Q</button>
+<button id = "letterR" class = "circle">R</button>
+<button id = "letterS" class = "circle">S</button>
+
+<button id = "letterT" class = "circle">T</button>
+<button id = "letterU" class = "circle">U</button>
+
+
+<button id = "letterV" class = "circle">V</button>
+<button id = "letterW" class = "circle">W</button>
+<button id = "letterX" class = "circle">X</button>
+<button id = "letterY" class = "circle">Y</button>
+<button id = "letterZ" class = "circle">Z</button>
+<br>
+<button id = "backspace"><--</button>
+<button id = "cancel">X</button>
+
+<button id = "check" class = "long">Send</button>
+</p>
+
+-->
+
+<p id = "keyboard">
+    
+
+    <button id = "letterQ" class = "circle">Q</button>
+    <button id = "letterW" class = "circle">W</button>
+    <button id = "letterE" class = "circle">E</button>
+    <button id = "letterR" class = "circle">R</button>
+    <button id = "letterT" class = "circle">T</button>
+    <button id = "letterY" class = "circle">Y</button>
+    <button id = "letterU" class = "circle">U</button>
+    <button id = "letterI" class = "circle">I</button>
+    <button id = "letterO" class = "circle">O</button>
+    <button id = "letterP" class = "circle">P</button>
+<br>
+    <button id = "letterA" class = "circle">A</button>
+    <button id = "letterS" class = "circle">S</button>
+    <button id = "letterD" class = "circle">D</button>
+    <button id = "letterF" class = "circle">F</button>
+    <button id = "letterG" class = "circle">G</button>
+    <button id = "letterH" class = "circle">H</button>
+    <button id = "letterJ" class = "circle">J</button>
+    <button id = "letterK" class = "circle">K</button>
+    <button id = "letterL" class = "circle">L</button>
+<br>
+    <button id = "letterZ" class = "circle">Z</button>
+    <button id = "letterX" class = "circle">X</button>
+    <button id = "letterC" class = "circle">C</button>
+    <button id = "letterV" class = "circle">V</button>
+    <button id = "letterB" class = "circle">B</button>
+    <button id = "letterN" class = "circle">N</button>
+    <button id = "letterM" class = "circle">M</button>
+    <br>
+
+    </p>
+
+    <button id = "backspace"><--</button>
+    
+    <button id = "cancel">X</button>
+    
+
+</div>
+</div>
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "words"></p>
+</div></div>
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "maxWords"></p>
+</div></div>
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "results"></p>
+</div></div>
+<div class = "row">
+    <div class = "col-sm-12 c">
+<p id = "answers"></p>
+
+</div></div>
+
+</div>
+
+</body>
+</html>
+
+<script>
+    function possibleWords()
+    {
+        // uses global variable array data
+        
+        var cnt = 0 ;
+        var answers = [] ;
+        $('#answers').empty() ;
+    
+    // check that for each word, all of its letters are in letters
+    for (var i = 0 ; i < data.length ; i++)
+
+    {
+        wordArray = data[i].split("");
+      //  console.log("word array",data[i] , wordArray) ;
+        var j = 0 ;
+        var missing = 0 ; // number of missing letters
+        // check that each of the word letters is in chosen
+       
+        while (j < wordArray.length & missing == 0 )
+        {
+            var index = chosen.indexOf(wordArray[j]) ;
+            if (index == -1) {missing = missing + 1;}
+            j++ ;
+        } // while
+        if (missing == 0 )
+        {  cnt++ ;
+        answers.push(data[i]);
+        }
+     //   $('#results').append(cnt + ' ' + msg + '<br>') ;
+    
+    }
+
+    if (answers.length < 5000)
+   { answers.sort() ;
+    for (let cnt = 0 ; cnt < answers.length ; cnt++)
+    {
+        $('#answers').append(answers[cnt] + ' * ') ;
+    }
+}
+
+        return cnt ;
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+ // load words into an array
+ // sorted in upper case
+
+ myWords = [] ;
+ $('#words').empty() ;
+$('#timer').hide() ;
+$('#total').hide() ;
+$('#nWords').hide() ;
+$('#start').hide() ;
+$('#maxWords').show() ;
+ $('#gameArea').hide() ;
+$('#answers').hide() ; 
+ $('#stars').empty() ;
+ $('#gameLevels').hide() ;
+ $('#letterCount').hide() ;
+
+minutes = 15 ; // game length
+wordLength = 8;
+$('#smallestWordMessage').text('Words must have at least ' + wordLength + ' letters.') ;
+
+ $.ajax({
+    url: 'loadBigWords.php',
+    type: 'POST',
+    data: {wordLength : wordLength},
+    datatype: 'json'
+})
+.done(function (response) { 
+
+//  alert('Ready to play!') ;
+console.log("response",response,response.length) ;
+data = JSON.parse(response) ;
+data = data.map(function(x){ return x.toUpperCase(); })
+ data = data.map(data => data.toUpperCase());
+//console.log(data,data.length) ;
+/*
+for (var i = 0 ; i < data.length; i++)
+{
+   $('#words').append(i + '*' + data[i]+'-');
+}
+*/
+
+})
+
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+});
+})
+    </script>
+
+<script>
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text(minutes + ":" + seconds);
+
+        if (--timer < 0) {
+            display.text('X' + ":" + 'X');
+            $('#gameArea').hide() ;
+            $('#words').show() ;
+          $('#answers').show() ;
+            $('#newGame').show() ;
+        }
+    }, 1000);
+}
+
+</script>
+
+<script>
+
+    function writeData(team,word) {
+
+      //  alert("Calling write") ;
+            // write to countDownResults ;
+     //       console.log("writing",team,word) ;
+    $.ajax({
+    url: 'writeData.php',
+    type: 'POST',
+    data: {team:team,word:word }, 
+    datatype: 'json'
+})  // parameters
+.done(function (response) { 
+
+// console.log("writing",team,word) ;
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+writeData(team,word) ;
+})  // fail
+
+
+    }  // function
+</script>
+<script>
+
+// count letters 
+$(document).ready(function(){
+    $('#guess').on('oninput', function(){
+        var letters = $('#guess').text().length ;
+      $('#letterCount').text(letters)
+
+    })
+})
+</script>
+<script>
+
+    $(document).ready(function(){
+        $('#register').on('click', function(){
+          teamName = $('#teamName').val() ;
+        //  alert(teamName);
+           if (teamName.length > 0 )
+           {
+            var lowerLimit = 100 ; 
+            var upperLimit = 999 ;   
+            var n = Math.floor((Math.random() * upperLimit) + lowerLimit);   
+           teamName = teamName + '-#' + n ;
+           $('#ourTeam').text(teamName);
+
+
+$('#gameLevels').show() ;
+
+$('#timer').show() ;
+$('#total').show() ;
+$('#nWords').show() ;
+$('#start').show() ;
+$('#maxWords').show() ;
+$('#letterCount').show() ;
+$('#registration').hide() ;
+
+        }
+else
+{
+    $('#error').text("Please write you team name") ;
+}
+
+        })
+    })
+</script>
+
+<script>
+
+    $(document).ready(function(){
+        $('[id^=level]').on('click', function(){
+
+    var firedButton = this.id;
+    
+    $('#gameLevels').hide() ;
+
+
+gameLevel  = parseInt(firedButton.substr(5)) ;
+
+// alert('Level = ' + gameLevel) ;
+
+$('#timer').show() ;
+$('#total').show() ;
+$('#nWords').show() ;
+$('#start').show() ;
+$('#maxWords').show() ;
+
+
+        })
+    })
+
+</script>
+
+
+<script>
+
+$(document).ready(function(){
+    $('#start').on('click', function(){
+
+     //   alert("Timer on") ;
+        $('#start').hide() ;
+        $('#gameArea').show() ;
+        
+
+        $('#keyboard').show() ;
+        
+
+        jQuery(function ($) {
+            var fiveMinutes = 60 * minutes,
+                display = $('#timer');
+            startTimer(fiveMinutes, display);
+        });
+
+  
+});
+
+})
+    </script>
+
+<script>
+
+    $(document).ready(function(){
+       $('#check').on('click', function(){
+  
+        var  word = $('#guess').val() ;
+       var   wordIndex = data.indexOf(word,0) ;
+       $('#letterCount').text(word.length) ;
+ // alert("INDEX = " + wordIndex) ;
+
+ //   alert("checking " + word) ;
+
+   //  console.log("DATA", word,data.indexOf(word)) ;
+
+  
+  if (wordIndex != -1 & word.length > 0 ) 
+    {
+       
+      var dup = myWords.indexOf(word,0);
+    
+        if (dup == -1 ) 
+            {
+                myWords.push(word) ;
+              //  alert('Yes - well done') ;
+                var score = parseInt(word.length) ;
+                var total = parseInt($('#total').html()) ;
+                var sum = total + score ;
+
+                var wordTotal = parseInt($('#nWords').html()) + 1;
+                $('#nWords').text(wordTotal) ;
+
+            //    console.log("Score",word,word.length,score,total,sum)
+                $('#total').text(sum);
+                $('#stars').append('*') ;
+                // write myWords in order 
+             
+                myWords.sort() ;
+                
+                $('#words').empty() ;
+                
+                for (var i = 0 ; i < myWords.length; i++)
+                {
+                    $('#words').append(myWords[i] + ' - ');
+                }
+                
+               // $('#words').append(word + ' - ');
+                
+               writeData(teamName,word) ;
+                alert("writing " + teamName + " " + word) ;
+            }  // dup == -1
+        else
+        {
+            alert('You have already used ' + word + '!');
+        }
+        
+    }  // word index <> 0
+
+    
+   if (wordIndex == -1 & word.length > 0 ) {alert(word + ' is not in the list of big words'); }
+     else {$('#guess').val('') ;}
+    
+    })
+    })
+        </script>
+
+
+<!---
+<script type="text/javascript">
+    function shuffle(arra1) {
+    var ctr = arra1.length, temp, index;
+
+// While there are elements in the array
+    while (ctr > 0) {
+// Pick a random index
+        index = Math.floor(Math.random() * ctr);
+// Decrease ctr by 1
+        ctr--;
+// And swap the last element with it
+        temp = arra1[ctr];
+        arra1[ctr] = arra1[index];
+        arra1[index] = temp;
+    }
+    return arra1;
+}
+</script>
+
+-->
+
+<script type="text/javascript">
+</script>
+
+<script type="text/javascript">
+</script>
+
+<script>
+
+  //  $(document).ready(function(){$('[id^=letter]').on('click', function(){
+
+        $(document).delegate("[id^=letter]","click",function(){   // use delegate because letters are brought in with load()
+
+            var clickedID = this.id ;
+            var n = clickedID.substr(6);
+       //    alert('Letter = ' + n) ; 
+         //  console.log("clicked",n);
+           var current = $('#guess').val() ;
+           $('#guess').val(current + n) ;
+
+        })
+ //   })
+</script>
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#cancel').on('click', function(){
+            $('#guess').val('') ;
+
+        })
+    })
+</script>
+
+<script>
+
+    $(document).ready(function(){
+        $('#backspace').on('click', function(){
+           var current = $('#guess').val() ;
+         //  alert(current);
+           if (current.length > 0 )
+           {newText = current.substr(0, current.length-1);
+            $('#guess').val(newText)    ;
+        }
+
+        })
+    })
+</script>
+
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#maxWords').on('click', function(){
+var cnt = 0 ;
+            console.log("letters",chosen,data[3]) ;
+    // check that for each word, all of its letters are in letters
+    for (var i = 0 ; i < data.length ; i++)
+
+    {
+        wordArray = data[i].split("");
+      //  console.log("word array",data[i] , wordArray) ;
+        var j = 0 ;
+        var missing = 0 ; // number of missing letters
+        // check that each of the word letters is in chosen
+       
+        while (j < wordArray.length & missing == 0 )
+        {
+            var index = chosen.indexOf(wordArray[j]) ;
+            if (index == -1) {missing = missing + 1;}
+            j++ ;
+        } // while
+        if (missing > 0 )
+        {msg = data[i] + ' is x ';}
+        else 
+        {  msg = data[i] + ' OK' ; 
+        cnt++ ;
+     //   $('#results').append(cnt + ' ' + msg + '<br>') ;
+    
+    }
+     
+   
+   // console.log("results",msg,i,data[i]) ;
+
+    
+    } // for 
+
+$('#results').append(cnt + ' words possible' + '<br>') ;
+    })
+})
+</script>

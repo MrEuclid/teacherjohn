@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+ 
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/countDownNumberStyles.css">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+   
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+  
+  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
+<title>CountdownNumbers</title>
+<body>
+
+    <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+
+                <button id = "go">Go</button>
+                </div></div>
+
+        <div class = "row">
+            <div class = "col-sm-12 c">
+                <p id = "puzzles"></p>
+                </div></div>
+
+    <div class = "row">
+      <div class = "col-sm-12 c">
+
+        <script>
+            function makeTarget(source)
+            {
+            
+             data = [];
+            
+          
+          // copy source to data
+          
+          for (i = 0; i < source.length; i++) {
+            data[i] = source[i];
+          }
+          
+          
+          var dataCopy  = [...data];
+          data = operateOnTwoNumbers(dataCopy) ;
+          // console.log("1 data is now",data) ;
+          
+          
+          var dataCopy  = [...data];
+          data = operateOnTwoNumbers(dataCopy) ;
+          // console.log("2 data is now",data) ;
+          
+          
+          
+          var dataCopy  = [...data];
+          data = operateOnTwoNumbers(dataCopy) ;
+          // console.log("3 data is now",data) ;
+          // console.log("end",data) ;
+          
+          var targetNumber = data[0] ;
+          
+          
+            return targetNumber ;
+            }
+          </script>
+
+<script>
+    function setUp(gameNumber)
+
+    {
+
+var a = 0 ; 
+var b = 0 ;
+var c = 0 ; 
+var d = 0 ;
+
+
+numbers = [] ;
+while ((a == b) |  (a == c) | a == d | b == c | b == d | c ==d)  // ensuree that there are no duplicates
+{
+ 
+  a = getRandomInt(1,20) ;
+  b= getRandomInt(1,20);
+  c = getRandomInt(1,10) ;
+  d = getRandomInt(20,100) ;
+  
+}
+
+console.log("numbers",a,b,c,d) ;
+
+numbers.push(a) ;
+numbers.push(b) ;
+numbers.push(c) ;
+numbers.push(d) ;
+// console.log(numbers);
+target = makeTarget(numbers) ;
+//console.log(target) ;
+puzzle = '*' ;
+$('#puzzles').append('#' + gameNumber + '-') ;
+$('#puzzles').append(target + ' * ') ;
+numbers.sort(function(a,b){return a - b}) ;
+
+
+for (var i = 0 ; i < numbers.length; i++)
+{
+    
+    $('#puzzles').append(numbers[i] + '*') ;
+    puzzle = puzzle + numbers[i] + '*' ;
+
+}
+
+$('#puzzles').append('*' + target + '<br>') ;
+
+writeEquation(target,puzzle) ;
+
+console.log(target,puzzle) ;
+
+    }
+
+</script>
+
+<script>
+  function operateOnTwoNumbers(data2)
+  {
+// used to generate a solution - may not be unique
+    ops = ["a","s",'m','d'] ;
+
+  l = data2.length - 1 ;
+
+if (l >= 2)  // more than two elements in data2
+{
+var p = 0 ;
+var a = -1 ; 
+var b = -1 ;
+// get two data items
+while (a == b)
+{
+  a = getRandomInt(0,l) ;
+  b = getRandomInt(0,l) ;
+}
+
+// get values of the index
+var x = data2[a] ;
+var y = data2[b] ;
+
+// console.log("got data2",data2,"removing for processing",x,y,"indexes",a,b) ;
+
+// remove selected from the data2 array
+
+data2.splice(data2.indexOf(x), 1);
+data2.splice(data2.indexOf(y), 1);
+// console.log("data2 after splice",data2) ;
+}  // if l > 2
+else 
+{
+  var x = data2[0] ;
+  var y = data2[1] ;
+//  console.log("got data length 2",data2," processing",x,y,"indexes") ;
+  data2 = [] ; // empty array
+}
+
+
+// check of x is divisible by y or y divisible by x 
+if (x > y) {var remainder = x % y ;}
+if (y > x) {var remainder = y % x ;}
+// console.log(x,y,remainder) ;
+if (remainder == 0)
+{z =  3  ;}  // if one is a multiple of the other
+else 
+{z = getRandomInt(0,2) ; }  // omit division as an option
+
+op = ops[z] ;
+// console.log("operating with ",op,x,y,data2) ;
+$('#solution').append(x + " " + op + " " + y + "<br>") ;
+
+switch(op) {
+  case 'a':
+     p = x + y ;
+    break;
+
+  case 's':
+    if (x > y) {p = x- y; } else {p = y-x ;}
+    break;
+
+  case 'm':
+    p = x * y;
+    break;
+
+  case 'd':
+  if (x > y) {p = x /  y; } else {p = y / x ;}
+    break;
+
+
+}
+data2.push(p) ;
+// console.log("Coming back",p,data2); 
+return data2 ;
+  }
+
+</script>
+
+
+<script>
+  function getRandomInt(lower,upper)
+  {
+    var randomNumber = Math.floor((Math.random() * upper) + lower) ; 
+  return randomNumber + 1 ;
+  }
+</script>
+
+
+
+<script>
+function writeEquation(target,puzzle) {
+
+  
+        $.ajax({
+        url: 'writeEquations.php', // to be done
+        type: 'POST',
+        data: {target:target,puzzle:puzzle}, 
+        datatype: 'json'
+    })  // parameters
+    .done(function (response) { 
+    
+    // console.log("writing",team,word) ;
+    
+    })  //done
+    .fail(function (jqXHR, textStatus, errorThrown) { 
+    alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+    
+    })  // fail
+    
+    
+        }  // function
+    </script>
+
+     
+ <script type="text/javascript">
+   
+    $(document).ready(function(){
+      $('#go').on('click', function(){
+
+        for (var j = 1 ; j <= 1000 ; j++)
+        {
+            setUp(j) ;
+        }
+
+      })
+    })
+
+</script>
+    
+    

@@ -1,0 +1,8 @@
+SELECT
+    -- 1. Get the word column and ensure it is uppercase (if it isn't already)
+    UPPER(word_column_name) 
+FROM
+    your_table_name
+INTO OUTFILE '/tmp/wordlist.txt' -- or the desired path on the server
+FIELDS TERMINATED BY '' -- No separator between fields (as we only have one column)
+LINES TERMINATED BY '\n'; -- Each word goes on a new line

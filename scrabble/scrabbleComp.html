@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styling for the button container to use CSS Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(13, minmax(0, 1fr));
+            gap: 1px;
+            max-width: 800px;
+            margin: 20px auto;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            padding: 2px;
+            background-color: #e5e7eb;
+        }
+        .grid-button {
+            height: 40px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center; 
+            /* Default empty cell style: Dark background, White text */
+            background-color: #374151; /* Dark Charcoal */
+            color: white; 
+            font-weight: bold; 
+            font-size: 1.25rem; 
+            /* Clear any previous inline styles */
+                /*      background-color: #374151 !important; */
+             background-color: green !important; 
+            color: white !important;
+        }
+        .grid-button:hover:not(.placed-letter):not(.staged-letter):not(.current-cell) {
+            background-color: #6b7280; /* Darker hover for empty cells */
+        }
+        
+        /* Permanent Letter (Initial ENGLISH, or verified words) */
+        .placed-letter {
+            /* NOTE: Background is often overridden by intersection-letter/inline style, but this class is crucial for logic */
+            background-color: #10b981 !important; /* Green for placed letters */
+            color: white !important;
+            font-weight: bold;
+            cursor: default;
+            font-size: 1.5rem !important; 
+        }
+        /* Intersection Letter (Blue color for all committed tiles) */
+        .intersection-letter {
+            background-color: #3b82f6 !important; /* Blue for intersection */
+        }
+        
+        /* Temporary Staged Letter (Word in progress) - Base Style */
+        .staged-letter {
+            /* JS will set the color and background inline for max specificity */
+            font-weight: bold;
+            border: 2px solid #d97706;
+            font-size: 1.5rem !important; 
+        }
+        
+        /* Cell currently waiting for a letter */
+        .current-cell {
+            border: 3px solid #f97316 !important; /* Orange border for target cell */
+            background-color: #fef3c7 !important; /* Light yellow background */
+            color: #d97706 !important;
+        }
+        
+        /* Failed Placement */
+        .highlight-failed {
+            background-color: #ef4444 !important; /* Brighter Red for failed attempts */
+            color: white !important;
+            font-weight: bold;
+            border: 2px solid #b91c1c;
+        }
+        
+        /* Styling for the Letter Rack */
+        .rack-letter {
+            height: 50px;
+            width: 50px;
+            background-color: #fcd34d; /* Yellow tile */
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #d97706;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .rack-letter:hover:not(.disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        /* Disabled tiles retain the vibrant color but change cursor */
+        .rack-letter.disabled {
+             opacity: 1; /* Full opacity */
+             cursor: not-allowed;
+             background-color: #fcd34d; /* Retain the yellow color */
+             color: #333; /* Retain the dark text color */
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body class="bg-gray-50 p-6">
+
+    <div id="login-container" class="max-w-md mx-auto mt-20 p-6 bg-white rounded-xl shadow-2xl">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Student Login</h2>
+        <input type="text" id="student-id-input" placeholder="Enter Student ID" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4">
+        <button id="start-game-button" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all">
+            Start Game
+        </button>
+        <p id="login-message" class="mt-3 text-sm text-red-500 text-center"></p>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Word Builder  Score: <span id="current-score" class="text-blue-600 font-extrabold">0</span></h1>
+         <div id="messages" class="mb-4 text-sm font-medium text-gray-700 min-h-[1.5rem] p-2 bg-white rounded-lg shadow">
+                Click an empty cell on the board to start placing your word.
+            </div>
+            
+            <div class="flex justify-center flex-wrap gap-4 mb-6">
+                <button id="verify-placement" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-all disabled:opacity-50" disabled>
+                    Send
+                </button>
+                <button id="clear-staging" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg shadow-md transition-all">
+                    Clear word
+                </button>
+                <button id="clear-board" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-lg shadow-md transition-all">
+                    Clear Board
+                </button>
+            </div>
+
+            <div id="button-grid" class="grid-container shadow-xl">
+                </div>
+
+            <div class="mt-8">
+           <div id="letter-rack" class="flex justify-center flex-wrap gap-3 p-4 bg-gray-200 rounded-xl shadow-inner">
+                    </div>
+            </div>
+        </div>
+    </div>
+<script>
+    const GRID_SIZE = 13;
+    const RACK_SIZE = 10;
+    const VOWELS = "AEIOU";
+    const ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    // =========================================================
+    // GLOBAL STATE & API CONFIG
+    // =========================================================
+    let DICTIONARY_WORDS = new Set();
+    const DICTIONARY_URL = '/getDictionary.php';
+    const SCORE_API_URL = '/logScore.php'; // <--- STUDENT SCORE API ENDPOINT
+    
+    let studentId = null; // New variable to store the logged-in ID
+    let rack = []; 
+    let staging = []; 
+    let currentCell = null; 
+    let direction = null; 
+    let score = 0; 
+    
+    // --- Client-side word cache for faster validation ---
+    const validatedWordsCache = {};
+    
+    // --- DICTIONARY LOADING ---
+    async function loadDictionary() {
+        const $messages = $('#messages');
+        $messages.text("Loading dictionary (50000+ words)... Please wait.");
+        
+        try {
+            const response = await fetch(DICTIONARY_URL);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}. Check your PHP file path.`);
+            }
+            
+            const wordsArray = await response.json();
+            
+            if (Array.isArray(wordsArray) && wordsArray.length > 0) {
+                DICTIONARY_WORDS = new Set(wordsArray.map(word => word.toUpperCase()));
+                $messages.removeClass('text-gray-700').addClass('text-green-600');
+                $messages.text(`Dictionary loaded successfully! Total words: ${DICTIONARY_WORDS.size.toLocaleString()}.`);
+
+                reinitializeGrid();
+                
+            } else {
+                 throw new Error("API response was empty or not an array. Check PHP output format.");
+            }
+            
+        } catch (error) {
+            $messages.removeClass('text-gray-700').addClass('text-red-600');
+            $messages.html(`Dictionary loading FAILED. <br>Error: ${error.message}`);
+            console.error("Dictionary Load Error:", error);
+        }
+    }
+
+    // =========================================================
+    // NEW: SCORE LOGGING FUNCTION
+    // =========================================================
+    async function logScoreToDatabase() {
+        if (!studentId) {
+            console.error("Cannot log score: Student ID is missing.");
+            return;
+        }
+
+        const payload = {
+            student_id: studentId,
+            current_score: score
+        };
+
+        try {
+            const response = await fetch(SCORE_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            console.log("Score successfully logged:", result);
+            
+            $('#messages').append(`<span class="text-xs text-blue-500 ml-2">(Score logged successfully)</span>`);
+
+        } catch (error) {
+            console.error("Error logging score:", error);
+            $('#messages').append(`<span class="text-xs text-red-500 ml-2">(Score logging failed: ${error.message})</span>`);
+        }
+    }
+
+
+    // Helper functions 
+
+    function getCoordsFromId(id) {
+        const parts = id.split('_'); 
+        return { 
+            r: parseInt(parts[0].substring(1)), 
+            c: parseInt(parts[1].substring(1)) 
+        };
+    }
+    
+    function getCellId(r, c) {
+        return `#r${r}_c${c}`;
+    }
+    
+    function renderScore() {
+        $('#current-score').text(score);
+    }
+
+    function checkWordValidity(word) {
+        const wordUpper = word.toUpperCase();
+        
+        if (validatedWordsCache.hasOwnProperty(wordUpper)) {
+            const isSuccessful = validatedWordsCache[wordUpper];
+            return { 
+                success: isSuccessful, 
+                message: isSuccessful ? "Found in local dictionary." : "Not found in local dictionary."
+            };
+        }
+
+        const isSuccessful = DICTIONARY_WORDS.has(wordUpper);
+        
+        validatedWordsCache[wordUpper] = isSuccessful;
+        
+        return { 
+            success: isSuccessful, 
+            message: isSuccessful ? "Found in local dictionary." : "Not a recognized word in the dictionary."
+        };
+    }
+
+    // --- Letter Rack Management (Unchanged) ---
+    function generateRack() {
+        let rackLetters = [];
+        let vowelPool = VOWELS.split(''); 
+        let consonantPool = ALL_LETTERS.split('').filter(l => !VOWELS.includes(l));
+        
+        const REQUIRED_VOWELS = 3;
+        const REQUIRED_CONSONANTS = 7;
+        
+        for (let i = 0; i < REQUIRED_VOWELS; i++) {
+            if (vowelPool.length === 0) break; 
+            const randomIndex = Math.floor(Math.random() * vowelPool.length);
+            const chosenVowel = vowelPool.splice(randomIndex, 1)[0];
+            rackLetters.push(chosenVowel);
+        }
+
+        for (let i = 0; i < REQUIRED_CONSONANTS; i++) {
+            if (consonantPool.length === 0) break;
+            const randomIndex = Math.floor(Math.random() * consonantPool.length);
+            const chosenConsonant = consonantPool.splice(randomIndex, 1)[0];
+            rackLetters.push(chosenConsonant);
+        }
+
+        rackLetters.sort(); 
+
+        rack = rackLetters.map((letter, index) => ({
+            letter: letter,
+            id: `rack-${index}`
+        }));
+        
+        renderRack();
+    }
+
+    function renderRack() {
+        const rackContainer = $('#letter-rack');
+        rackContainer.empty();
+        
+        rack.forEach((item) => {
+            const button = $('<button>', {
+                id: item.id,
+                class: `rack-letter rounded-lg disabled`, 
+                text: item.letter,
+                'data-letter': item.letter 
+            });
+
+            rackContainer.append(button);
+        });
+    }
+
+    // --- Grid Management ---
+    function reinitializeGrid() {
+        const gridContainer = $('#button-grid');
+        gridContainer.empty(); 
+        
+        staging = [];
+        currentCell = null;
+        direction = null; 
+        score = 0; 
+        
+        for (const key in validatedWordsCache) {
+             delete validatedWordsCache[key];
+        }
+        
+        for (let r = 1; r <= GRID_SIZE; r++) {
+            for (let c = 1; c <= GRID_SIZE; c++) {
+                const buttonId = `r${r}_c${c}`;
+                
+                const button = $('<button>', {
+                    id: buttonId,
+                    class: 'grid-button rounded transition-colors',
+                    text: '' 
+                }).attr('title', `(${r}, ${c})`); 
+
+                gridContainer.append(button);
+            }
+        }
+        
+            
+    //    placeWordCommit("ENGLISH", 7, 5, 7, 11, true); 
+        placeWordCommit("ENGLISH", 5, 4, 5, 10, true); 
+        
+        generateRack();
+        renderScore(); 
+
+        $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text('Board Initialized. ENGLISH is placed at R7, C5-C11. Click an empty cell to start your word.');
+        updateButtonStates();
+    }
+    
+    /**
+     * Clears visual staging and resets game state variables.
+     * Relies on the 'isCommitted' flag to prevent clearing text of newly placed tiles.
+     */
+    function clearStaging() {
+        clearFailedHighlights(); 
+        
+        staging.forEach(p => {
+            const $el = $(getCellId(p.r, p.c));
+            
+            if (p.isCommitted || p.isIntersection) {
+                // The tile was committed OR it was a permanent intersection tile. 
+                // Only remove the temporary staging styles. DO NOT clear text.
+                $el.removeClass('staged-letter current-cell').removeAttr('style');
+            } else {
+                // This must be a New Tile that FAILED validation or was cleared manually.
+                $el.removeClass('staged-letter current-cell').removeAttr('style');
+                $el.text(''); // <-- CLEAR TEXT ONLY FOR FAILED NEW TILES
+            }
+        });
+
+        $('.grid-button.current-cell').removeClass('current-cell');
+        
+        // Final reset of global state variables
+        staging = [];
+        currentCell = null;
+        direction = null; 
+        
+        $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text("Staging cleared. Click an empty cell on the board to start placing your word.");
+        updateButtonStates();
+    }
+
+    function clearFailedHighlights() {
+        $('.highlight-failed').each(function() {
+            const $el = $(this);
+            $el.removeClass('highlight-failed');
+        });
+    }
+    
+    function updateButtonStates() {
+        const wordLength = staging.length;
+        
+        $('#verify-placement').prop('disabled', wordLength < 1 || (wordLength > 1 && direction === null));
+        
+        if (currentCell) {
+             $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text(`Step 1 Complete. Selected square (${currentCell.r}, ${currentCell.c}). Ready to place letter: Click a tile from your rack below (Step 2).`);
+             $('.rack-letter').removeClass('disabled'); 
+        } else if (wordLength > 0) {
+             const dirMsg = direction ? ` in a ${direction} line` : ``;
+             $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text(`Staged word of length ${wordLength}${dirMsg}. Click an adjacent empty cell to continue, or click VERIFY.`);
+             $('.rack-letter').addClass('disabled'); 
+        } else {
+             $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text("Click an empty cell on the board to start placing your word.");
+             $('.rack-letter').addClass('disabled'); 
+        }
+    }
+    
+    function checkCollinearityAndContiguity() {
+        if (staging.length <= 1) return { isValid: true, direction: null, message: null };
+
+        const rows = new Set(staging.map(p => p.r));
+        const cols = new Set(staging.map(p => p.c));
+
+        const isHorizontal = rows.size === 1;
+        const isVertical = cols.size === 1;
+
+        if (!isHorizontal && !isVertical) {
+            return { isValid: false, direction: null, message: "All staged letters must be placed in a single straight line (either horizontally or vertically)." };
+        }
+
+        const axis = isHorizontal ? 'c' : 'r';
+        const sortedStaging = [...staging].sort((a, b) => a[axis] - b[axis]);
+        
+        const minVal = sortedStaging[0][axis];
+        const maxVal = sortedStaging[sortedStaging.length - 1][axis];
+        const expectedLength = maxVal - minVal + 1;
+
+        if (staging.length < expectedLength) {
+            for (let i = 0; i < expectedLength; i++) {
+                const val = minVal + i;
+                if (!staging.some(p => p[axis] === val)) {
+                    const missingR = isHorizontal ? staging[0].r : val;
+                    const missingC = isHorizontal ? val : staging[0].c;
+                    const $missingEl = $(getCellId(missingR, missingC));
+                    
+                    if (!$missingEl.hasClass('placed-letter')) {
+                         return { isValid: false, direction: null, message: "Staged letters must be contiguous and cannot leave empty gaps between them." };
+                    }
+                }
+            }
+        }
+
+        const finalDirection = isHorizontal ? 'horizontal' : 'vertical';
+        return { isValid: true, direction: finalDirection, message: null };
+    }
+    
+    // --- Word Reconstruction (Used for multi-tile primary word) ---
+    function getFinalWordDetails() {
+        if (staging.length === 0 || !direction) {
+            return { fullWord: "", fullPath: [], newLetterCount: 0, error: "Word direction is not set or staging is empty." };
+        }
+
+        const axis = direction === 'horizontal' ? 'c' : 'r';
+        const otherAxis = direction === 'horizontal' ? 'r' : 'c';
+        const fixedCoord = staging[0][otherAxis];
+        
+        const minStaged = staging.reduce((min, p) => Math.min(min, p[axis]), Infinity);
+        const maxStaged = staging.reduce((max, p) => Math.max(max, p[axis]), -Infinity); 
+
+        let start = minStaged;
+        let end = maxStaged;
+
+        // 1. Scan backward
+        while (true) {
+            const checkIndex = start - 1;
+            const r = direction === 'horizontal' ? fixedCoord : checkIndex;
+            const c = direction === 'horizontal' ? checkIndex : fixedCoord;
+            
+            if (checkIndex < 1) break; 
+            
+            const $el = $(getCellId(r, c));
+            if ($el.hasClass('placed-letter')) {
+                start = checkIndex;
+            } else {
+                break; 
+            }
+        }
+
+        // 2. Scan forward
+        while (true) {
+            const checkIndex = end + 1;
+            const r = direction === 'horizontal' ? fixedCoord : checkIndex;
+            const c = direction === 'horizontal' ? checkIndex : fixedCoord;
+
+            if (checkIndex > GRID_SIZE) break; 
+
+            const $el = $(getCellId(r, c));
+            if ($el.hasClass('placed-letter')) {
+                end = checkIndex;
+            } else {
+                break; 
+            }
+        }
+
+        // 3. Reconstruct the full word and path
+        let fullWord = "";
+        let fullPath = [];
+        let newLetterCount = 0;
+
+        for (let i = start; i <= end; i++) {
+            const r = direction === 'horizontal' ? fixedCoord : i;
+            const c = direction === 'horizontal' ? i : fixedCoord;
+            const cellId = getCellId(r, c);
+            
+            const $el = $(cellId);
+            const stagedItem = staging.find(p => p.id === cellId);
+            
+            let letter;
+            let isStaged = false;
+            let isNewTile = false;
+
+            if (stagedItem) {
+                letter = stagedItem.letter;
+                isStaged = true;
+                if (!stagedItem.isIntersection) {
+                    newLetterCount++; 
+                    isNewTile = true;
+                }
+            } else if ($el.hasClass('placed-letter')) {
+                letter = $el.text().trim();
+                isStaged = false; 
+            } else {
+                return { fullWord: "", fullPath: [], newLetterCount: 0, error: "Contiguity failure during final word scan (empty cell found in path)." };
+            }
+
+            fullWord += letter;
+            fullPath.push({ r, c, letter, id: cellId, isStaged: isStaged, isNewTile: isNewTile });
+        }
+        
+        if (fullWord.length < 2) {
+             return { fullWord: "", fullPath: [], newLetterCount: 0, error: "Resulting word is too short." };
+        }
+
+        return { 
+            fullWord: fullWord, 
+            fullPath: fullPath,
+            newLetterCount: newLetterCount,
+            error: null
+        };
+    }
+
+    // --- Helper for Cross/Perpendicular Words ---
+    
+    /**
+     * Reconstructs the full word that passes through a specific cell along the given axis.
+     */
+    function getPerpendicularWord(stagedItem, scanAxis) {
+        const rFixed = stagedItem.r;
+        const cFixed = stagedItem.c;
+        const isHorizontalScan = (scanAxis === 'c');
+        
+        const perpCoord = isHorizontalScan ? stagedItem.c : stagedItem.r;
+        
+        let start = perpCoord;
+        let end = perpCoord;
+
+        // Scan backward (smaller index)
+        while (true) {
+            const checkIndex = start - 1;
+            const r = isHorizontalScan ? rFixed : checkIndex;
+            const c = isHorizontalScan ? checkIndex : cFixed;
+            
+            if (checkIndex < 1) break; 
+            
+            const $el = $(getCellId(r, c));
+            // CRITICAL: Checks for existing permanent tiles (which includes newly placed ones)
+            if ($el.hasClass('placed-letter') && !staging.some(p => p.id === $el.attr('id'))) {
+                start = checkIndex;
+            } else {
+                break; 
+            }
+        }
+
+        // Scan forward (larger index)
+        while (true) {
+            const checkIndex = end + 1;
+            const r = isHorizontalScan ? rFixed : checkIndex;
+            const c = isHorizontalScan ? checkIndex : cFixed;
+
+            if (checkIndex > GRID_SIZE) break; 
+
+            const $el = $(getCellId(r, c));
+            // CRITICAL: Checks for existing permanent tiles (which includes newly placed ones)
+            if ($el.hasClass('placed-letter') && !staging.some(p => p.id === $el.attr('id'))) {
+                end = checkIndex;
+            } else {
+                break; 
+            }
+        }
+        
+        // Reconstruct the Word
+        const wordLength = end - start + 1;
+        
+        if (wordLength > 1) {
+            let word = "";
+            for (let i = start; i <= end; i++) {
+                const r = isHorizontalScan ? rFixed : i;
+                const c = isHorizontalScan ? i : cFixed;
+                
+                const cellId = getCellId(r, c);
+                if (cellId === stagedItem.id) {
+                    word += stagedItem.letter; 
+                } else {
+                    word += $(cellId).text().trim(); 
+                }
+            }
+
+            return { word: word, validationResult: checkWordValidity(word) };
+        }
+        
+        return null; // No word of length 2 or more formed
+    }
+
+    /**
+     * Collects cross-words created by the staged tiles. Used for multi-tile moves only.
+     */
+    function getCrossWordValidationResults(primaryWordPath, primaryDirection) {
+        const crossWordChecks = [];
+        
+        const scanAxis = primaryDirection === 'horizontal' ? 'r' : 'c'; 
+
+        for (const item of primaryWordPath) {
+            if (!item.isNewTile) continue; 
+
+            const result = getPerpendicularWord(item, scanAxis);
+            if (result) {
+                crossWordChecks.push(result);
+            }
+        }
+
+        const uniqueCrossWordChecks = [];
+        const seenWords = new Set();
+        crossWordChecks.forEach(check => {
+            if (!seenWords.has(check.word)) {
+                seenWords.add(check.word);
+                uniqueCrossWordChecks.push(check);
+            }
+        });
+
+        return uniqueCrossWordChecks;
+    }
+
+    // --- Word Placement Validation and Commit Logic ---
+    
+    function placeWordCommit(initialWord, startRow, startColumn, endRow, endColumn, isFirstWord = false) {
+        
+        if (!isFirstWord) {
+            clearFailedHighlights();
+        }
+        
+        let wordPath = staging;
+        let wordUpper = initialWord.toUpperCase();
+        
+        // --- 1. INITIAL WORD PATH CONSTRUCTION (For 'ENGLISH' only) ---
+        if (isFirstWord) {
+            wordPath = [];
+            const isHorizontal = startRow === endRow;
+            
+            for (let i = 0; i < wordUpper.length; i++) {
+                const r = isHorizontal ? startRow : startRow + i;
+                const c = isHorizontal ? startColumn + i : startColumn;
+                
+                wordPath.push({ 
+                    r: r, c: c, letter: wordUpper[i], id: getCellId(r, c), isIntersection: false, isNewTile: true 
+                });
+            }
+        } else {
+            
+            // --- 2. PRE-VALIDATION CHECKS ---
+            
+            if (staging.length < 1) { return false; }
+
+            // Check connection (must connect to board)
+            let connected = staging.some(cell => {
+                if (cell.isIntersection) return true;
+                const neighbors = [ [0, 1], [0, -1], [1, 0], [-1, 0] ]; 
+                return neighbors.some(([rOffset, cOffset]) => {
+                    const neighborRow = cell.r + rOffset;
+                    const neighborCol = cell.c + cOffset;
+                    if (neighborRow >= 1 && neighborRow <= GRID_SIZE && neighborCol >= 1 && neighborCol <= GRID_SIZE) {
+                        const $neighbor = $(getCellId(neighborRow, neighborCol));
+                        if ($neighbor.hasClass('placed-letter') && !$neighbor.hasClass('staged-letter')) {
+                            return true; 
+                        }
+                    }
+                    return false;
+                });
+            });
+            
+            if (!connected) {
+                 $('#messages').removeClass('text-green-600').addClass('text-red-600');
+                 $('#messages').text(`Placement failed: The word must connect to the existing board.`);
+                 visualizeFailedPlacement(staging);
+                 return false;
+            }
+            
+            // --- 3. WORD COLLECTION ---
+            let wordsToValidate = [];
+            
+            if (direction && staging.length > 1) {
+                // 3a. MULTI-TILE MOVE (Primary Word + Cross-Words)
+                
+                const finalWordDetails = getFinalWordDetails();
+                
+                if (finalWordDetails.error || finalWordDetails.newLetterCount === 0) {
+                     $('#messages').removeClass('text-green-600').addClass('text-red-600');
+                     $('#messages').text(`Placement failed: ${finalWordDetails.error || 'You must place at least one new letter tile.'}`);
+                     visualizeFailedPlacement(staging);
+                     return false;
+                }
+                
+                wordUpper = finalWordDetails.fullWord;
+                wordPath = finalWordDetails.fullPath;
+                
+                // Primary Word
+                wordsToValidate.push({ word: wordUpper, validationResult: checkWordValidity(wordUpper) });
+                
+                // Cross Words
+                wordsToValidate.push(...getCrossWordValidationResults(wordPath, direction));
+
+            } else if (staging.length === 1) {
+                // 3b. SINGLE-TILE MOVE (Perpendicular Words Only)
+                
+                const stagedItem = staging[0];
+                
+                // Check horizontal word formed by this single tile
+                const horizontalWord = getPerpendicularWord(stagedItem, 'c');
+                if (horizontalWord) { wordsToValidate.push(horizontalWord); }
+
+                // Check vertical word formed by this single tile
+                const verticalWord = getPerpendicularWord(stagedItem, 'r');
+                
+                if (verticalWord && (!horizontalWord || horizontalWord.word !== verticalWord.word)) { 
+                    wordsToValidate.push(verticalWord); 
+                }
+                
+                if (wordsToValidate.length === 0) {
+                    $('#messages').removeClass('text-green-600').addClass('text-red-600');
+                    $('#messages').text(`Placement failed: Single tile placement must form at least one new word of length 2 or more.`);
+                    visualizeFailedPlacement(staging);
+                    return false;
+                }
+
+                wordPath = staging;
+
+            } else {
+                 $('#messages').removeClass('text-green-600').addClass('text-red-600');
+                 $('#messages').text(`Placement failed: Staged letters must be collinear.`);
+                 visualizeFailedPlacement(staging);
+                 return false;
+            }
+
+            // --- 4. VALIDATION AND SCORING (Unified Logic) ---
+            
+            let totalScore = 0;
+            let scoreBreakdown = [];
+
+            for (const check of wordsToValidate) {
+                const result = check.validationResult; 
+                
+                if (!result.success) {
+                    $('#messages').removeClass('text-green-600').addClass('text-red-600');
+                    $('#messages').text(`Placement failed because the word '${check.word}' is invalid. ${result.message}`);
+                    visualizeFailedPlacement(staging);
+                    $('#verify-placement').prop('disabled', false); 
+                    return false;
+                }
+                
+                const wordLength = check.word.length;
+                totalScore += wordLength;
+                scoreBreakdown.push(`'${check.word}' (${wordLength} points)`);
+            }
+            
+            score += totalScore;
+            renderScore();
+
+            $('#messages').removeClass('text-red-600').addClass('text-green-600');
+            $('#messages').text(`SUCCESS! Scored ${totalScore} points. Breakdown: ${scoreBreakdown.join(' + ')}.`);
+        } 
+
+        
+        // --- 5. EXECUTION (Commitment) ---
+        
+        const commitPath = isFirstWord ? wordPath : staging;
+
+        for (let i = 0; i < commitPath.length; i++) {
+            const cellToCommit = commitPath[i];
+            
+            // Only commit the tiles that are new for a regular move, or all tiles for the first word
+            if (isFirstWord || cellToCommit.isNewTile) { 
+                const $target = $(cellToCommit.id);
+
+                if (!isFirstWord) {
+                    // CRITICAL STEP for the single-letter fix: Set the committed flag on the original staging object
+                    commitPath[i].isCommitted = true;
+                }
+                
+                // 5a. Clean up staging styles 
+                $target.removeClass('highlight-failed staged-letter current-cell').removeAttr('style'); 
+                
+                // 5b. Set permanent attributes (text and class)
+                $target.text(cellToCommit.letter).addClass('placed-letter');
+                
+                // 5c. Apply intersection style for consistent look
+                $target.css({
+                    'background-color': '#3b82f6', // intersection-letter blue
+                    'color': 'white'
+                });
+                
+                $target.addClass('intersection-letter');
+            }
+        }
+        
+        // --- 6. Final State Management ---
+        if (!isFirstWord) {
+            clearStaging(); 
+            generateRack(); 
+            
+            // NEW: Log score after a successful player turn
+            logScoreToDatabase(); 
+            
+        } else {
+            // For the initial 'ENGLISH' word, just clear the temp state
+            staging = [];
+            currentCell = null;
+            direction = null;
+        }
+        
+        updateButtonStates();
+        return true;
+    }
+
+    function visualizeFailedPlacement(path) {
+        $('.staged-letter').addClass('highlight-failed');
+    }
+    
+    // --- Event Handlers ---
+    
+    $(document).ready(function() {
+        
+        // 0. LOGIN HANDLER
+        $('#start-game-button').on('click', function() {
+            const inputId = $('#student-id-input').val().trim();
+            if (inputId.length > 0) {
+                studentId = inputId;
+                $('#login-container').hide();
+                $('#game-container').removeClass('hidden');
+                loadDictionary(); // Start the game only after login
+            } else {
+                $('#login-message').text("Please enter your Student ID.");
+            }
+        });
+        
+        // NOTE: loadDictionary() is now called via the login button click.
+        
+        $('#clear-board').on('click', reinitializeGrid);
+        $('#clear-staging').on('click', clearStaging);
+        
+        // 1. VERIFY PLACEMENT BUTTON 
+        $('#verify-placement').on('click', function() {
+            if (staging.length < 1) return;
+            
+            placeWordCommit("", 0, 0, 0, 0, false);
+
+            updateButtonStates();
+        });
+
+        // 2. GRID CELL CLICK HANDLER
+        $('#button-grid').on('click', '.grid-button', function() {
+            clearFailedHighlights(); 
+            const $el = $(this);
+            const coords = getCoordsFromId($el.attr('id'));
+            
+            // A. HANDLE DELETION OF A STAGED LETTER
+            if ($el.hasClass('staged-letter') && !$el.hasClass('placed-letter')) {
+                
+                staging = staging.filter(p => p.id !== getCellId(coords.r, coords.c));
+                
+                $el.removeClass('staged-letter current-cell').removeAttr('style').text('');
+                
+                const checkResult = checkCollinearityAndContiguity();
+                direction = staging.length > 1 ? checkResult.direction : null;
+
+                $('#messages').removeClass('text-red-600 text-green-600').addClass('text-gray-700').text(`Letter removed from staged word. Word length: ${staging.length}.`);
+
+                if (!checkResult.isValid) {
+                    clearStaging();
+                    $('#messages').removeClass('text-green-600').addClass('text-red-600').text("Removing that letter broke contiguity. Staging cleared, please restart the word.");
+                }
+
+                currentCell = null; 
+                updateButtonStates();
+                return;
+            }
+            
+            // B. Do not allow selecting a permanent letter
+            if ($el.hasClass('placed-letter')) {
+                $('#messages').removeClass('text-green-600').addClass('text-red-600').text("You cannot modify permanent board letters.");
+                return; 
+            }
+            
+            // C. If the cell is currently selected, unselect it
+            $('.grid-button.current-cell').removeClass('current-cell');
+            
+            // D. Set current cell and highlight
+            $el.addClass('current-cell');
+            currentCell = coords;
+            
+            updateButtonStates();
+        });
+
+        // 3. RACK LETTER CLICK HANDLER
+        $('#letter-rack').on('click', '.rack-letter:not(.disabled)', function() {
+            clearFailedHighlights();
+            
+            if (!currentCell) {
+                $('#messages').removeClass('text-green-600').addClass('text-red-600').text("You must click a cell on the board first to select where this letter should go.");
+                return;
+            }
+            
+            const letter = $(this).attr('data-letter');
+            const cellId = getCellId(currentCell.r, currentCell.c);
+            const $targetCell = $(cellId);
+            const isPermanent = $targetCell.hasClass('placed-letter');
+
+            
+            // A. Check for Intersection conflict
+            if (isPermanent && $targetCell.text().trim() !== letter) {
+                $('#messages').removeClass('text-green-600').addClass('text-red-600').text(`Conflict: To intersect here, you must use the letter '${$targetCell.text().trim()}'.`);
+                $targetCell.removeClass('current-cell');
+                currentCell = null;
+                updateButtonStates();
+                return;
+            }
+            
+            // B. Prepare the staging array update
+            const newStagedItem = { 
+                r: currentCell.r, 
+                c: currentCell.c, 
+                letter: letter, 
+                id: cellId,
+                isIntersection: isPermanent,
+                isNewTile: !isPermanent,
+                isCommitted: false // New flag: set to true on successful commit only
+            };
+            
+            const existingIndex = staging.findIndex(p => p.id === newStagedItem.id);
+            if (existingIndex > -1) {
+                staging[existingIndex] = newStagedItem; 
+            } else {
+                staging.push(newStagedItem); 
+            }
+
+            // C. Check Collinearity and Contiguity
+            const checkResult = checkCollinearityAndContiguity();
+
+            if (!checkResult.isValid) {
+                // Logic to revert invalid staging
+                if (existingIndex === -1) { staging.pop(); }
+                
+                if (!isPermanent && existingIndex === -1) {
+                    $targetCell.text(''); 
+                    $targetCell.removeClass('staged-letter').removeAttr('style');
+                } else if (existingIndex > -1) {
+                    clearStaging();
+                    $('#messages').removeClass('text-green-600').addClass('text-red-600').text(checkResult.message + " Staging cleared, please restart the word.");
+                    updateButtonStates();
+                    return;
+                }
+                
+                $targetCell.removeClass('current-cell');
+                currentCell = null;
+                direction = null; 
+                
+                $('#messages').removeClass('text-green-600').addClass('text-red-600').text(checkResult.message);
+                updateButtonStates();
+                return;
+            }
+
+            // If valid, store the direction
+            direction = checkResult.direction;
+
+            // --- VISUAL PLACEMENT ---
+            
+            $targetCell.removeClass('current-cell'); 
+            $targetCell.text(letter); 
+            $targetCell.addClass('staged-letter'); 
+            
+            // INLINE STYLE ENFORCEMENT for maximum specificity
+            $targetCell.css({
+                'background-color': '#fcd34d', 
+                'color': '#333' 
+            });
+
+
+            // D. Final cleanup for step completion
+            currentCell = null; 
+            
+            updateButtonStates();
+        });
+    });
+</script>
+</body>
+</html>

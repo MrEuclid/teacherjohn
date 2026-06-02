@@ -225,6 +225,7 @@ Electrostatics</button></a>
 <a href = "logic/miniSudoku.html" target ="_blank"><button class = "btn btn-primary">Mini Sudoku 4x4</button></a>
 <a href = "4Colors/4color.php" target ="_blank"><button class = "btn btn-primary">4 Colors - 1</button></a>
 <a href = "4Colors/4colorOriginal.php" target ="_blank"><button class = "btn btn-primary">4 Colors - 2</button></a>
+<a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
 
 </div></div>
 

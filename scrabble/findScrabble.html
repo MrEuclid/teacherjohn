@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Data Table with Filtering & Sorting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .table-header {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            user-select: none;
+            position: sticky;
+            top: 0;
+            background-color: #3b82f6; /* Blue-600 */
+        }
+        .table-header:hover {
+            background-color: #2563eb; /* Blue-700 */
+        }
+        .table-row:nth-child(even) {
+            background-color: #f8fafc; /* Light grey for zebra striping */
+        }
+        .loading-spinner {
+            border-top-color: #3498db;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for small arrow indicator */
+        .sort-arrow {
+            display: inline-block;
+            margin-left: 0.5rem;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        .asc .sort-arrow {
+            border-width: 0 4px 6px 4px;
+            border-color: transparent transparent #fff transparent;
+        }
+        .desc .sort-arrow {
+            border-width: 6px 4px 0 4px;
+            border-color: #fff transparent transparent transparent;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2">
+            Word Builder Scores
+        </h1>
+
+        <div class="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
+            <input type="text" id="filterInput" placeholder="Filter: term1 & term2, term3 | -exclude"
+                   class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                   oninput="handleFilter(this.value)">
+            
+            <button id="deleteButton" onclick="deleteFilteredRecords()"
+                    class="px-4 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-150 whitespace-nowrap">
+                Delete Filtered Records 
+            </button>
+
+            <div class="flex flex-col md:flex-row md:items-center md:ml-auto gap-2">
+                <span id="recordCount" class="text-sm text-gray-600 font-medium"></span>
+                <span id="copyFeedback" class="text-sm font-semibold transition duration-300 opacity-0"></span>
+                <span id="lastUpdated" class="text-xs text-gray-400 ml-2"></span>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead id="tableHead" class="bg-blue-600 text-white sticky top-0">
+                    </thead>
+                <tbody id="tableBody" class="bg-white divide-y divide-gray-100">
+                    </tbody>
+            </table>
+        </div>
+
+        <div id="statusMessage" class="text-center p-10">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="loading-spinner w-6 h-6 border-4 border-gray-200 rounded-full"></div>
+                <span class="text-lg text-gray-600">Loading data...</span>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        // --- Application State ---
+        let originalData = [];
+        let filteredData = [];
+        // Default sort configuration (score descending)
+        let sortConfig = { key: 'score', direction: 'desc' };
+        
+        // --- Local Storage Keys ---
+        const LS_SORT_KEY = 'leaderboardSortConfig';
+        const LS_FILTER_KEY = 'leaderboardFilterText';
+
+        // --- State Management (Save/Load) ---
+
+        /**
+         * Loads the filter text and sort configuration from Local Storage.
+         * Sets defaults if no saved state is found.
+         */
+        function loadState() {
+            // Load Filter Text
+            const savedFilterText = localStorage.getItem(LS_FILTER_KEY);
+            const filterInput = document.getElementById('filterInput');
+            if (savedFilterText !== null) {
+                filterInput.value = savedFilterText;
+            }
+
+            // Load Sort Config
+            const savedSortConfig = localStorage.getItem(LS_SORT_KEY);
+            if (savedSortConfig) {
+                try {
+                    const parsedConfig = JSON.parse(savedSortConfig);
+                    if (parsedConfig.key && parsedConfig.direction) {
+                        sortConfig = parsedConfig;
+                    }
+                } catch (e) {
+                    console.error("Error parsing saved sort config:", e);
+                }
+            }
+        }
+
+        /**
+         * Saves the current filter text and sort configuration to Local Storage.
+         */
+        function saveState() {
+            localStorage.setItem(LS_FILTER_KEY, document.getElementById('filterInput').value.trim());
+            localStorage.setItem(LS_SORT_KEY, JSON.stringify(sortConfig));
+        }
+
+        // --- Utility Functions ---
+
+        /**
+         * Updates the record count display.
+         * @param {number} count 
+         */
+        function updateRecordCount(count) {
+             document.getElementById('recordCount').textContent = `Displaying ${count} of ${originalData.length} total records.`;
+        }
+        
+        /**
+         * Shows a temporary feedback message to the user.
+         * @param {string} message 
+         * @param {string} colorClass 
+         */
+        function showFeedback(message, colorClass) {
+            const feedbackElement = document.getElementById('copyFeedback');
+            feedbackElement.textContent = message;
+            // Set opacity to 100% and apply color
+            feedbackElement.className = `${colorClass} text-sm font-semibold transition duration-300 opacity-100`;
+
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                feedbackElement.className = `text-sm font-semibold transition duration-300 opacity-0`;
+            }, 3000);
+        }
+        
+        /**
+         * Formats column keys for display.
+         * @param {string} key 
+         */
+        function formatHeader(key) {
+            return key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
+        }
+        
+        /**
+         * Formats values (e.g., currency).
+         * @param {any} value 
+         */
+        function formatValue(value) {
+            // Check for potential number fields like score
+            if (typeof value === 'number' && (value >= 1000 || value <= -1000)) {
+                return `$${value.toLocaleString()}`;
+            }
+            return value;
+        }
+
+        /**
+         * Escapes a value according to standard CSV rules.
+         * @param {any} value 
+         * @returns {string} The CSV-escaped string.
+         */
+        function csvEscape(value) {
+            let str = String(value);
+            
+            // Step 1: Escape existing double quotes by doubling them
+            str = str.replace(/"/g, '""');
+            
+            // Step 2: Check if wrapping is necessary (contains comma, quote, or newline)
+            if (str.includes(',') || str.includes('\n') || str.includes('""')) {
+                return `"${str}"`;
+            }
+            return str;
+        }
+
+
+        // --- Core Logic ---
+
+        /**
+         * Applies the current sortConfig to the filteredData array.
+         */
+        function applyCurrentSort() {
+            if (!sortConfig.key) return; 
+
+            const key = sortConfig.key;
+            const direction = sortConfig.direction;
+
+            const sortedData = [...filteredData].sort((a, b) => {
+                const valA = a[key];
+                const valB = b[key];
+
+                const numA = parseFloat(valA);
+                const numB = parseFloat(valB);
+
+                let comparison = 0;
+
+                // Handle numeric sort for 'score' and other potential number fields
+                if (!isNaN(numA) && isFinite(numA) && !isNaN(numB) && isFinite(numB)) {
+                    if (numA > numB) comparison = 1;
+                    else if (numA < numB) comparison = -1;
+                } 
+                // Handle complex Grade sort
+                else if (key === 'Grade') {
+                    // Function to extract the numeric and alphanumeric parts
+                    const extractParts = (gradeStr) => {
+                        const str = String(gradeStr).toUpperCase().trim();
+                        const numericMatch = str.match(/\d+/); 
+                        // Use Infinity to push non-numeric grades to the end
+                        const numericPart = numericMatch ? parseInt(numericMatch[0], 10) : Infinity; 
+                        const alphaPart = str.replace(/\d+/g, ''); 
+                        return { numericPart, alphaPart };
+                    };
+                    
+                    const partsA = extractParts(valA);
+                    const partsB = extractParts(valB);
+                    
+                    // 1. Primary sort by number
+                    if (partsA.numericPart !== partsB.numericPart) {
+                        comparison = partsA.numericPart - partsB.numericPart;
+                    } else {
+                        // 2. Secondary sort by remaining string
+                        comparison = partsA.alphaPart.localeCompare(partsB.alphaPart);
+                    }
+                }
+                // Fallback to general string comparison
+                else {
+                    const strA = String(valA).toLowerCase();
+                    const strB = String(valB).toLowerCase();
+                    if (strA > strB) comparison = 1;
+                    else if (strA < strB) comparison = -1;
+                }
+
+                return direction === 'asc' ? comparison : comparison * -1;
+            });
+
+            filteredData = sortedData;
+        }
+        
+        /**
+         * Fetches JSON data from the specified API endpoint and updates the table.
+         * @param {boolean} [isInitialLoad=false] - True if this is the first call on page load.
+         */
+        async function fetchData(isInitialLoad = false) {
+            const statusMessage = document.getElementById('statusMessage');
+            const initialLoader = `
+                <div class="flex items-center justify-center space-x-2 p-10">
+                    <div class="loading-spinner w-6 h-6 border-4 border-gray-200 rounded-full"></div>
+                    <span class="text-lg text-gray-600">Loading data...</span>
+                </div>
+            `;
+            
+            // Only show the large loader on the very first load
+            if (isInitialLoad && statusMessage.innerHTML.trim() === '') {
+                 statusMessage.innerHTML = initialLoader;
+            } else if (!isInitialLoad) {
+                // Update the "Last Updated" status while fetching in the background
+                document.getElementById('lastUpdated').textContent = `Refreshing...`;
+            }
+
+            try {
+                const response = await fetch('makeFullLeaderBoard.php');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const json = await response.json();
+                
+                if (!Array.isArray(json) || (json.length > 0 && typeof json[0] !== 'object')) {
+                    throw new Error("API returned invalid data.");
+                }
+
+                originalData = json;
+                
+                // 1. Apply the filter based on the current filter input value
+                handleFilter(document.getElementById('filterInput').value.trim(), true); 
+
+                // 2. Apply the sort (from loadState or default)
+                applyCurrentSort(); 
+
+                // Clear the main status message (if present)
+                if (statusMessage.innerHTML.trim() === initialLoader.trim()) {
+                    statusMessage.innerHTML = '';
+                }
+
+                renderTable(filteredData);
+                updateRecordCount(filteredData.length);
+
+                document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('lastUpdated').textContent = `Failed to update.`;
+                if (isInitialLoad) {
+                    document.getElementById('statusMessage').innerHTML = `<p class="text-red-500 font-semibold p-10">Failed to load data: ${error.message}. Please check the console for details.</p>`;
+                }
+            }
+        }
+
+        /**
+         * Renders the table content and sets up sortable headers.
+         */
+        function renderTable(data) {
+            const tableBody = document.getElementById('tableBody');
+            const tableHead = document.getElementById('tableHead');
+            
+            // 1. Generate Header (only on first render)
+            if (originalData.length > 0 && tableHead.children.length === 0) {
+                const keys = Object.keys(originalData[0]);
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'table-row';
+                
+                keys.forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = formatHeader(key);
+                    th.className = 'table-header px-6 py-3 text-left text-xs font-medium uppercase tracking-wider whitespace-nowrap';
+                    th.dataset.key = key;
+                    th.addEventListener('click', () => handleSort(key));
+                    headerRow.appendChild(th);
+                });
+                tableHead.appendChild(headerRow);
+            }
+            
+            // 2. Generate Body
+            if (data.length === 0) {
+                const colSpanCount = Object.keys(originalData[0] || {}).length || 1; 
+                tableBody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center py-6 text-gray-500">No matching records found.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = data.map(item => {
+                const values = Object.values(item);
+                const keys = Object.keys(item); 
+
+                const cells = values.map((value, index) => {
+                    const displayValue = formatValue(value);
+                    const isScoreCell = (keys[index] === 'score');
+                    // Style the score column prominently
+                    const scoreClass = isScoreCell ? 'font-extrabold text-lg text-blue-600' : 'text-gray-700';
+
+                    return `<td class="px-6 py-4 whitespace-nowrap text-sm ${scoreClass}">${displayValue}</td>`;
+                }).join('');
+                return `<tr class="table-row hover:bg-gray-50 transition-colors">${cells}</tr>`;
+            }).join('');
+            
+            // 3. Update header arrows
+            updateHeaderArrows();
+        }
+
+        /**
+         * Updates the small arrow indicator on the currently sorted column.
+         */
+        function updateHeaderArrows() {
+            document.querySelectorAll('#tableHead th').forEach(th => {
+                th.classList.remove('asc', 'desc');
+                th.querySelector('.sort-arrow')?.remove();
+
+                if (th.dataset.key === sortConfig.key) {
+                    th.classList.add(sortConfig.direction);
+                    const arrow = document.createElement('span');
+                    arrow.className = `sort-arrow`;
+                    th.appendChild(arrow);
+                }
+            });
+        }
+        
+        /**
+         * Handles sorting logic when a header is clicked.
+         */
+        function handleSort(key) {
+            let direction = 'asc';
+            
+            if (sortConfig.key === key) {
+                direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+            } else if (key === 'score') {
+                // Default score to descending on first click
+                direction = 'desc'; 
+            }
+
+            sortConfig = { key, direction };
+            
+            saveState();
+
+            applyCurrentSort();
+            renderTable(filteredData);
+        }
+
+        /**
+         * Handles filtering logic based on the input text.
+         */
+        function handleFilter(filterText, isInitialLoad = false) {
+            const originalQuery = filterText.trim();
+
+            if (!originalQuery) {
+                filteredData = originalData;
+            } else {
+                // Split by OR operators (comma or pipe)
+                const orGroups = originalQuery.split(/,|\s*\|\s*/).filter(q => q.trim() !== '');
+
+                filteredData = originalData.filter(item => {
+                    // Item must match AT LEAST ONE OR group
+                    return orGroups.some(orGroup => {
+                        // Split each OR group into AND terms
+                        const terms = orGroup.split(/&|\s+/).filter(t => t.trim() !== '');
+                        
+                        // An OR group must match ALL of its terms
+                        return terms.every(term => {
+                            let isNegated = false;
+                            let cleanTerm = term.trim().toLowerCase();
+
+                            // Process Negation: Check for '-' or 'NOT ' prefix
+                            if (cleanTerm.startsWith('-')) {
+                                isNegated = true;
+                                cleanTerm = cleanTerm.substring(1).trim();
+                            } else if (cleanTerm.startsWith('not ')) {
+                                isNegated = true;
+                                cleanTerm = cleanTerm.substring(4).trim();
+                            }
+                            
+                            if (!cleanTerm) return true;
+
+                            const itemMatchesTerm = Object.values(item).some(value => {
+                                return String(value).toLowerCase().includes(cleanTerm);
+                            });
+                            
+                            // Apply Negation logic
+                            return isNegated ? !itemMatchesTerm : itemMatchesTerm;
+                        });
+                    });
+                });
+            }
+            
+            // Re-apply sort to the newly filtered data
+            if (sortConfig.key) {
+                applyCurrentSort(); 
+            }
+            
+            if (!isInitialLoad) {
+                saveState();
+                // When called by the user input, we must re-render manually
+                renderTable(filteredData);
+                updateRecordCount(filteredData.length);
+            }
+        }
+        
+        /**
+         * Deletes the currently filtered records by sending their IDs to the server.
+         * Assumes endpoint is 'deleteScrabble.php' and expects student IDs.
+         */
+       /**
+ * Deletes the currently filtered records by sending their IDs to the server.
+ * Assumes endpoint is 'deleteScrabble.php' and expects student IDs.
+ */
+async function deleteFilteredRecords() {
+    if (filteredData.length === 0) {
+        showFeedback("No records to delete.", 'text-yellow-500');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to permanently DELETE ${filteredData.length} filtered record(s)? This action cannot be undone.`)) {
+        return;
+    }
+    
+    // --- FIX APPLIED HERE: MAPPING TO 'Student_ID' ---
+    // The PHP join uses 'Student_ID' (from New_Students table) for the student identifier.
+    // We must use that key to map the IDs for deletion.
+    const studentIDsToDelete = filteredData.map(item => item.Student_ID); 
+    
+    showFeedback("Deleting records...", 'text-blue-500');
+    
+    try {
+        // NOTE: Endpoint path must be correct for your server setup
+        const response = await fetch('deleteScrabble.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ studentIDs: studentIDsToDelete }),
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Server responded with status ${response.status}`);
+        }
+        
+        const result = await response.json(); 
+        
+        if (result.success) {
+            showFeedback(`Successfully deleted ${result.deleted_count} record(s).`, 'text-green-600');
+            // Refresh data immediately after successful deletion
+            fetchData(false); 
+        } else {
+            // Log the detailed message returned by PHP
+            console.error("Deletion API reported failure:", result.message); 
+            throw new Error(result.message || "Deletion failed, check console for details.");
+        }
+
+    } catch (error) {
+        console.error("Deletion API error:", error);
+        showFeedback(`Deletion failed: ${error.message}`, 'text-red-600');
+    }
+}
+        function copyFilteredRecords() {
+            if (filteredData.length === 0) {
+                showFeedback("No data to copy.", 'text-red-500');
+                return;
+            }
+
+            const keys = Object.keys(originalData[0]);
+            
+            // 1. Create Header row (CSV format, delimited by comma)
+            const header = keys.map(key => formatHeader(key)).join(',');
+            
+            // 2. Create Data rows
+            const rows = filteredData.map(item => {
+                return keys.map(key => csvEscape(item[key])).join(',');
+            }).join('\n');
+            
+            const clipboardText = header + '\n' + rows;
+
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = clipboardText;
+            tempTextArea.style.position = 'fixed'; 
+            tempTextArea.style.left = '-9999px';
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showFeedback(`Copied ${filteredData.length} records (CSV)!`, 'text-green-600');
+                } else {
+                    showFeedback("Copy failed. Please try manually.", 'text-red-500');
+                }
+            } catch (err) {
+                showFeedback("Copy failed (Error).", 'text-red-500');
+                console.error('Copy to clipboard failed:', err);
+            } finally {
+                document.body.removeChild(tempTextArea);
+            }
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Load the filter and sort state from previous session
+            loadState(); 
+            
+            // 2. Initial fetch with isInitialLoad set to true
+            fetchData(true);
+            
+            // 3. Set up the 15-second automatic refresh (15000 milliseconds)
+            const refreshInterval = 15000; 
+            setInterval(fetchData, refreshInterval);
+        });
+
+    </script>
+</body>
+</html>

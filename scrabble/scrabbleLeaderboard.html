@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrabble Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <style>
+        /* Custom styles for a better table look */
+        .leaderboard-table th {
+            background-color: #3b82f6; /* Blue header */
+            color: white;
+            padding: 12px 24px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .leaderboard-table td {
+            padding: 12px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .leaderboard-table tr:nth-child(even) {
+            background-color: #f3f4f6; /* Light gray stripes */
+        }
+        .leaderboard-table tr:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6 text-center">
+            Student Scrabble Leaderboard
+        </h1>
+        
+        <div class="flex justify-between items-center mb-4">
+            <p id="last-updated" class="text-sm text-gray-500">
+                Last updated: Loading...
+            </p>
+            <button id="clear-scores-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow transition-all">
+                Clear All Scores
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full leaderboard-table rounded-lg shadow-lg">
+                <thead>
+                    <tr>
+                        <th class="rounded-tl-lg">Rank</th>
+                        <th>Student ID</th>
+                        <th class="rounded-tr-lg">Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const GET_SCORES_API = 'https://pio-students.net/scrabble/getScrabbleScores.php';
+        const CLEAR_SCORES_API = 'clearScrabbleScores.php';
+        const REFRESH_INTERVAL = 5000; // 5000 milliseconds = 5 seconds
+         const $btn = $('#clear-scores-btn');
+
+        /**
+         * Fetches scores from the API and renders the table.
+         */
+        async function refreshLeaderboard() {
+            try {
+                const response = await fetch(GET_SCORES_API);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const scores = await response.json();
+                const $body = $('#leaderboard-body');
+                $body.empty();
+                
+                if (scores.success && Array.isArray(scores.data) && scores.data.length > 0) {
+                    scores.data.forEach((item, index) => {
+                        $body.append(`
+                            <tr>
+                                <td class="font-bold text-lg">${index + 1}</td>
+                                <td>${item.studentID}</td>
+                                <td class="font-extrabold text-xl text-blue-600">${item.score}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    $body.append(`
+                        <tr>
+                            <td colspan="3" class="text-center text-gray-500 py-8">
+                                No scores recorded yet.
+                            </td>
+                        </tr>
+                    `);
+                }
+                
+                $('#last-updated').text(`Last updated: ${new Date().toLocaleTimeString()}`);
+                
+            } catch (error) {
+                console.error("Failed to fetch leaderboard:", error);
+                $('#last-updated').text(`Last updated: ERROR - ${error.message}`);
+            }
+        }
+
+        /**
+         * Clears all scores from the database and refreshes the table.
+         */
+        async function clearAllScores() {
+            if (!confirm("Are you sure you want to clear ALL student scores? This action cannot be undone.")) {
+                return;
+            }
+
+            try {
+               
+                $btn.prop('disabled', true).text('Clearing...');
+                
+                const response = await fetch(CLEAR_SCORES_API, {
+                    method: 'POST'
+                    // No body needed for a simple clear command
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert(result.message);
+                    refreshLeaderboard(); // Refresh to show the empty table
+                } else {
+                    throw new Error(result.error || 'Server error during clear operation.');
+                }
+                
+            } catch (error) {
+                console.error("Failed to clear scores:", error);
+                alert(`Error clearing scores: ${error.message}`);
+            } finally {
+                $btn.prop('disabled', false).text('Clear All Scores');
+            }
+        }
+
+        $(document).ready(function() {
+            // Initial load
+            refreshLeaderboard(); 
+
+            // Set up auto-refresh
+            setInterval(refreshLeaderboard, REFRESH_INTERVAL);
+
+            // Set up clear button handler
+            $('#clear-scores-btn').on('click', clearAllScores);
+        });
+    </script>
+</body>
+</html>

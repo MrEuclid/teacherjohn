@@ -17,15 +17,10 @@
         #app-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; align-items: center; position: relative; }
         
         #grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 20px; width: 100%; aspect-ratio: 1; position: relative; z-index: 10; }
-        .cell { aspect-ratio: 1; border: 2px solid #ccc; background: var(--empty); cursor: pointer; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .cell.active-diag { border-color: #333; } /* subtle diag border */
-        
-        #palette { display: flex; gap: 10px; margin-top: 20px; padding: 10px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; position: relative; width: 100%; box-sizing: border-box; justify-content: space-around; }
-        .swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.2s; }
-        .swatch.selected { border-color: #333; transform: scale(1.15); }
-        .swatch:hover { transform: scale(1.1); }
+        .cell { aspect-ratio: 1; border: 2px solid #ccc; background: var(--empty); cursor: pointer; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); transition: background 0.2s; }
+        .cell.active-diag { border-color: #333; font-weight: bold; } 
 
-        #controls { margin-top: 20px; z-index: 10; position: relative; }
+        #controls { margin-top: 30px; z-index: 10; position: relative; }
         button { padding: 10px 20px; font-size: 16px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.3s; margin: 0 10px; }
         #checkBtn { background-color: #4CAF50; color: white; }
         #checkBtn:hover { background-color: #45a049; }
@@ -63,16 +58,15 @@
             10% { transform: translateY(0px) rotateZ(45deg); opacity: 1; }
             100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
         }
+        
         @keyframes confetti-burst {
             0% { transform: scale(0) rotateZ(0deg); opacity: 1; }
             100% { transform: scale(1) translate(0, 110vh) rotateZ(360deg); opacity: 0; }
         }
 
-        /* Responsive grid sizes */
         @media (max-width: 500px) {
             #grid { grid-template-columns: repeat(5, calc(100% / 5.5)); gap: 2px; }
             .cell { width: 100%; }
-            .swatch { width: 30px; height: 30px; }
         }
     </style>
 </head>
@@ -83,15 +77,6 @@
 
         <div id="grid"></div>
 
-        <div id="palette">
-            <div class="swatch" style="background: var(--red);" onclick="selectColor('var(--red)', 1)"></div>
-            <div class="swatch" style="background: var(--blue);" onclick="selectColor('var(--blue)', 2)"></div>
-            <div class="swatch" style="background: var(--yellow);" onclick="selectColor('var(--yellow)', 3)"></div>
-            <div class="swatch" style="background: var(--green);" onclick="selectColor('var(--green)', 4)"></div>
-            <div class="swatch" style="background: var(--purple);" onclick="selectColor('var(--purple)', 5)"></div>
-            <div class="swatch" style="background: var(--empty); border: 1px solid #ccc;" onclick="selectColor('var(--empty)', 0)"></div>
-        </div>
-
         <div id="controls">
             <button id="checkBtn" onclick="checkLogic()">Check Solution</button>
             <button id="resetBtn" onclick="resetGrid()">Clear Grid</button>
@@ -101,12 +86,22 @@
     </div>
 
     <script>
-        let selectedColor = 'var(--empty)';
-        let selectedValue = 0;
         const gridData = Array(5).fill().map(() => Array(5).fill(0));
         const confettiWrapper = document.getElementById('confetti-wrapper');
-        const confettiCount = 150; // number of confetti pieces
+        const confettiCount = 150; 
         const confettiColors = ['#ff4d4d', '#4d94ff', '#ffdb4d', '#4dff88', '#d94dff'];
+
+        // Map values to CSS variables
+        const colorMap = ['var(--empty)', 'var(--red)', 'var(--blue)', 'var(--yellow)', 'var(--green)', 'var(--purple)'];
+
+        // Valid starting configuration mapping to both diagonals
+        const initialGrid = [
+            [1, 0, 0, 0, 5],
+            [0, 5, 0, 2, 0],
+            [0, 0, 4, 0, 0],
+            [0, 1, 0, 3, 0],
+            [3, 0, 0, 0, 2]
+        ];
 
         // Create Grid
         const gridEl = document.getElementById('grid');
@@ -114,35 +109,47 @@
             for (let c = 0; c < 5; c++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                if (r === c || r + c === 4) cell.classList.add('active-diag');
-                cell.onclick = (event) => {
-                    cell.style.background = selectedColor;
-                    gridData[r][c] = selectedValue;
-                    event.stopPropagation(); // prevent body click
-                };
+                
+                // If it's part of the pre-filled diagonals
+                if (initialGrid[r][c] !== 0) {
+                    cell.classList.add('active-diag');
+                    gridData[r][c] = initialGrid[r][c];
+                    cell.style.background = colorMap[initialGrid[r][c]];
+                    cell.style.cursor = 'not-allowed'; // Prevent user edits on clues
+                } else {
+                    // Standard empty editable cells with click-to-toggle logic
+                    cell.onclick = (event) => {
+                        // Increment value, wrap back to 0 if it goes past 5
+                        let currentValue = gridData[r][c];
+                        let newValue = (currentValue + 1) % 6; 
+                        
+                        gridData[r][c] = newValue;
+                        cell.style.background = colorMap[newValue];
+                        event.stopPropagation(); // prevent body click
+                    };
+                }
                 gridEl.appendChild(cell);
             }
         }
 
-        // Initialize empty swatch as selected
-        document.querySelector('.swatch[onclick*="0"]').classList.add('selected');
-
-        function selectColor(color, val) {
-            selectedColor = color;
-            selectedValue = val;
-            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-            event.target.classList.add('selected');
-        }
-
         function resetGrid() {
-            gridData.forEach((row, r) => row.fill(0));
-            document.querySelectorAll('.cell').forEach(cell => cell.style.background = 'var(--empty)');
+            document.querySelectorAll('.cell').forEach((cell, index) => {
+                const r = Math.floor(index / 5);
+                const c = index % 5;
+                
+                // Keep the diagonal values intact during reset
+                if (initialGrid[r][c] !== 0) {
+                    gridData[r][c] = initialGrid[r][c];
+                    cell.style.background = colorMap[initialGrid[r][c]];
+                } else {
+                    gridData[r][c] = 0;
+                    cell.style.background = 'var(--empty)';
+                }
+            });
             const status = document.getElementById('status');
             status.innerText = "Fill the grid: No duplicates in rows, columns, or main diagonals!";
             status.style.color = "inherit";
-            confettiWrapper.innerHTML = ''; // Clear any remaining confetti
-            // reset selected color/swatch (to empty)
-            selectColor('var(--empty)', 0);
+            confettiWrapper.innerHTML = ''; 
         }
 
         function checkLogic() {
@@ -152,7 +159,7 @@
             if (gridData.flat().includes(0)) {
                 status.innerText = "Keep going! Some squares are still empty.";
                 status.style.color = "orange";
-                confettiWrapper.innerHTML = ''; // Ensure no confetti from partial/incorrect check
+                confettiWrapper.innerHTML = ''; 
                 return;
             }
 
@@ -165,7 +172,7 @@
                 if (!isValid(row) || !isValid(col)) {
                     status.innerText = "Not quite! Check your rows and columns.";
                     status.style.color = "red";
-                    confettiWrapper.innerHTML = ''; // Ensure no confetti
+                    confettiWrapper.innerHTML = ''; 
                     return;
                 }
             }
@@ -175,7 +182,7 @@
             if (!isValid(diag1) || !isValid(diag2)) {
                 status.innerText = "Close! Check the diagonals.";
                 status.style.color = "red";
-                confettiWrapper.innerHTML = ''; // Ensure no confetti
+                confettiWrapper.innerHTML = ''; 
                 return;
             }
 
@@ -186,27 +193,23 @@
         }
 
         function triggerConfetti() {
-            confettiWrapper.innerHTML = ''; // Reset for potentially overlapping celebrations
+            confettiWrapper.innerHTML = ''; 
             for (let i = 0; i < confettiCount; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
                 piece.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
                 
-                // Random position above grid
                 piece.style.left = Math.random() * 100 + '%';
-                piece.style.top = Math.random() * -100 + 'px'; // Start above view
+                piece.style.top = Math.random() * -100 + 'px'; 
 
-                // Random animation delay & duration variation
                 const delay = Math.random() * 0.5 + 's';
                 piece.style.animationDelay = delay;
-                const fallDuration = (Math.random() * 1.5 + 1.5) + 's'; // 1.5s - 3s fall time
+                const fallDuration = (Math.random() * 1.5 + 1.5) + 's'; 
 
-                // Apply dynamic animation based on position or generic fall
-                // Randomize burst effect vs standard fall
                 if (Math.random() < 0.3) {
-                     piece.style.top = Math.random() * 20 + '%'; // Start closer conceptually burst
+                     piece.style.top = Math.random() * 20 + '%'; 
                      piece.style.animationName = 'confetti-burst';
-                     piece.style.animationDuration = (Math.random() * 1 + 1) + 's'; // shorter burst time
+                     piece.style.animationDuration = (Math.random() * 1 + 1) + 's'; 
                 } else {
                     piece.style.animationName = 'confetti-fall';
                     piece.style.animationDuration = fallDuration;
@@ -214,7 +217,6 @@
 
                 confettiWrapper.appendChild(piece);
                 
-                // Ensure pieces are cleaned up after animation ends
                 piece.addEventListener('animationend', () => piece.remove());
             }
         }

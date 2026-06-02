@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Blocks Puzzle</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 10px 20px;
+        }
+
+        h1 { color: #00796b; margin-bottom: 5px; font-size: 28px; }
+        
+        /* New Top Bar for Score and Controls */
+        #dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 350px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 3px solid #004d40;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        .dash-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00695c;
+        }
+
+        select {
+            font-size: 16px;
+            font-family: inherit;
+            padding: 3px;
+            border-radius: 4px;
+            border: 2px solid #00897b;
+            color: #004d40;
+            cursor: pointer;
+        }
+
+        #score-display {
+            font-size: 22px;
+            color: #d81b60;
+        }
+
+        #message {
+            height: 30px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #d81b60;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #game-container {
+            position: relative;
+            background-color: #ffffff;
+            border: 4px solid #004d40;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(12, 40px);
+            gap: 2px; 
+            background-color: #cfd8dc; 
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        #controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 350px;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 20px;
+            background-color: #00897b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #004d40;
+            font-family: inherit;
+        }
+        
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        #restart-btn {
+            background-color: #e53935;
+            box-shadow: 0 4px 0 #b71c1c;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        /* Block Colors */
+        .color-1 { background-color: #ffeb3b; border: 2px solid #fbc02d; } /* Yellow */
+        .color-2 { background-color: #03a9f4; border: 2px solid #0288d1; } /* Blue */
+        .color-3 { background-color: #9c27b0; border: 2px solid #7b1fa2; } /* Purple */
+        .color-4 { background-color: #ff9800; border: 2px solid #f57c00; } /* Orange */
+        .color-5 { background-color: #4caf50; border: 2px solid #388e3c; } /* Green */
+        .color-6 { background-color: #f06292; border: 2px solid #d81b60; } /* Pink */
+        
+        .ghost { opacity: 0.3; }
+    </style>
+</head>
+<body>
+
+    <h1>Pattern Blocks</h1>
+    
+    <div id="dashboard">
+        <div class="dash-text">
+            Level: 
+            <select id="level-select" onchange="changeLevel()">
+                <option value="1">1 (Easy)</option>
+                <option value="2">2 (Medium)</option>
+                <option value="3">3 (Hard)</option>
+            </select>
+        </div>
+        <div class="dash-text">
+            Blocks: <span id="score-display">0</span>
+        </div>
+    </div>
+
+    <div id="message"></div>
+
+    <div id="game-container">
+        <div id="board"></div>
+    </div>
+
+    <div id="controls">
+        <button onclick="movePiece(-1)">⬅️ Left</button>
+        <button onclick="rotatePiece()">🔄 Turn</button>
+        <button onclick="movePiece(1)">Right ➡️</button>
+        <button onclick="moveDown()">⬇️ Down</button>
+        <button id="restart-btn" onclick="resetLevel()">🗑️ Start Over</button>
+    </div>
+
+    <script>
+        const COLS = 8;
+        const ROWS = 12;
+        const board = [];
+        let dropInterval;
+        let currentPiece = null;
+        let currentLevel = 1;
+
+        // Shapes organized by difficulty levels
+        const SHAPE_LEVELS = {
+            1: [ // Easy: 1 to 3 blocks straight
+                { shape: [[1]], color: 6 },                   // Dot (Pink)
+                { shape: [[1, 1]], color: 2 },                // Horizontal Domino (Blue)
+                { shape: [[1], [1]], color: 2 },              // Vertical Domino (Blue)
+                { shape: [[1, 1, 1]], color: 5 }              // Short Line (Green)
+            ],
+            2: [ // Medium: 3 to 4 blocks, simple corners
+                { shape: [[1, 1], [1, 1]], color: 1 },        // Square (Yellow)
+                { shape: [[1, 0], [1, 1]], color: 4 },        // Small L (Orange)
+                { shape: [[0, 1], [1, 1]], color: 4 },        // Small L Reverse (Orange)
+                { shape: [[1, 1, 1, 1]], color: 2 }           // Long Line (Blue)
+            ],
+            3: [ // Hard: Classic 4-block Tetris shapes
+                { shape: [[0, 1, 0], [1, 1, 1]], color: 3 },  // T (Purple)
+                { shape: [[0, 0, 1], [1, 1, 1]], color: 4 },  // L (Orange)
+                { shape: [[1, 0, 0], [1, 1, 1]], color: 5 },  // J (Green)
+                { shape: [[1, 1], [1, 1]], color: 1 },        // Square (Yellow)
+                { shape: [[1, 1, 1, 1]], color: 2 }           // Long Line (Blue)
+            ]
+        };
+
+        function initBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            for (let r = 0; r < ROWS; r++) {
+                board[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    board[r][c] = 0;
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.id = `cell-${r}-${c}`;
+                    boardEl.appendChild(cell);
+                }
+            }
+            updateScore();
+        }
+
+        // Count how many squares on the board have blocks in them
+        function updateScore() {
+            let occupied = 0;
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c] !== 0) occupied++;
+                }
+            }
+            document.getElementById('score-display').innerText = occupied;
+        }
+
+        function changeLevel() {
+            currentLevel = parseInt(document.getElementById('level-select').value);
+            resetLevel(); // Automatically restart when they change levels
+        }
+
+        function resetLevel() {
+            showMessage(""); 
+            initBoard();
+            spawnPiece();
+            draw();
+        }
+
+        function spawnPiece() {
+            const activeShapes = SHAPE_LEVELS[currentLevel];
+            const randomIdx = Math.floor(Math.random() * activeShapes.length);
+            const template = activeShapes[randomIdx];
+            
+            currentPiece = {
+                shape: template.shape,
+                color: template.color,
+                x: Math.floor((COLS - template.shape[0].length) / 2),
+                y: 0
+            };
+
+            // If board is full and piece can't spawn, gentle reset
+            if (checkCollision(currentPiece.x, currentPiece.y, currentPiece.shape)) {
+                showMessage("Board is full! Let's clear it.");
+                setTimeout(() => { resetLevel(); }, 2000);
+            }
+        }
+
+        function checkCollision(x, y, shape) {
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c] !== 0) {
+                        let newX = x + c;
+                        let newY = y + r;
+                        if (newX < 0 || newX >= COLS || newY >= ROWS) return true;
+                        if (newY >= 0 && board[newY][newX] !== 0) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function getGhostY() {
+            let ghostY = currentPiece.y;
+            while (!checkCollision(currentPiece.x, ghostY + 1, currentPiece.shape)) {
+                ghostY++;
+            }
+            return ghostY;
+        }
+
+        function draw() {
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    cell.className = 'cell'; 
+                    if (board[r][c] !== 0) {
+                        cell.classList.add(`color-${board[r][c]}`);
+                    }
+                }
+            }
+
+            if (!currentPiece) return;
+
+            // Draw Ghost
+            const ghostY = getGhostY();
+            for (let r = 0; r < currentPiece.shape.length; r++) {
+                for (let c = 0; c < currentPiece.shape[r].length; c++) {
+                    if (currentPiece.shape[r][c] !== 0) {
+                        let drawY = ghostY + r;
+                        let drawX = currentPiece.x + c;
+                        if (drawY >= 0) {
+                            document.getElementById(`cell-${drawY}-${drawX}`).classList.add(`color-${currentPiece.color}`, 'ghost');
+                        }
+                    }
+                }
+            }
+
+            // Draw Active Piece
+            for (let r = 0; r < currentPiece.shape.length; r++) {
+                for (let c = 0; c < currentPiece.shape[r].length; c++) {
+                    if (currentPiece.shape[r][c] !== 0) {
+                        let drawY = currentPiece.y + r;
+                        let drawX = currentPiece.x + c;
+                        if (drawY >= 0) {
+                            const cell = document.getElementById(`cell-${drawY}-${drawX}`);
+                            cell.className = 'cell'; 
+                            cell.classList.add(`color-${currentPiece.color}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        function movePiece(dir) {
+            if (!checkCollision(currentPiece.x + dir, currentPiece.y, currentPiece.shape)) {
+                currentPiece.x += dir;
+                draw();
+            }
+        }
+
+        function moveDown() {
+            if (!checkCollision(currentPiece.x, currentPiece.y + 1, currentPiece.shape)) {
+                currentPiece.y++;
+            } else {
+                lockPiece();
+            }
+            draw();
+        }
+
+        function rotatePiece() {
+            const newShape = currentPiece.shape[0].map((val, index) => currentPiece.shape.map(row => row[index]).reverse());
+            if (!checkCollision(currentPiece.x, currentPiece.y, newShape)) {
+                currentPiece.shape = newShape;
+                draw();
+            }
+        }
+
+        function lockPiece() {
+            for (let r = 0; r < currentPiece.shape.length; r++) {
+                for (let c = 0; c < currentPiece.shape[r].length; c++) {
+                    if (currentPiece.shape[r][c] !== 0) {
+                        if (currentPiece.y + r >= 0) {
+                            board[currentPiece.y + r][currentPiece.x + c] = currentPiece.color;
+                        }
+                    }
+                }
+            }
+            
+            updateScore(); // Update the occupied blocks score
+            checkLines();
+            spawnPiece();
+        }
+
+        function checkLines() {
+            let linesCleared = 0;
+            for (let r = ROWS - 1; r >= 0; r--) {
+                let isFull = true;
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c] === 0) isFull = false;
+                }
+
+                if (isFull) {
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    linesCleared++;
+                    r++; 
+                }
+            }
+
+            if (linesCleared > 0) {
+                updateScore(); // Re-calculate score since blocks disappeared
+                showMessage("Great Job! ⭐");
+            }
+        }
+
+        function showMessage(text) {
+            const msgEl = document.getElementById('message');
+            msgEl.innerText = text;
+            setTimeout(() => {
+                if(msgEl.innerText === text) msgEl.innerText = "";
+            }, 3000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') movePiece(-1);
+            if (e.key === 'ArrowRight') movePiece(1);
+            if (e.key === 'ArrowDown') moveDown();
+            if (e.key === 'ArrowUp') rotatePiece();
+        });
+
+        // Initialize Game
+        initBoard();
+        spawnPiece();
+        draw();
+        
+        // Steady Drop Rate
+        dropInterval = setInterval(() => {
+            moveDown();
+        }, 1500);
+
+    </script>
+</body>
+</html>

@@ -17,24 +17,25 @@
 
         h1 { color: #00796b; margin-bottom: 5px; font-size: 28px; }
         
-        /* New Top Bar for Score and Controls */
         #dashboard {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 350px;
+            max-width: 380px;
             background: white;
             padding: 10px 15px;
             border-radius: 8px;
             border: 3px solid #004d40;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             box-sizing: border-box;
+            gap: 10px;
         }
 
         .dash-text {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #00695c;
         }
@@ -49,8 +50,8 @@
             cursor: pointer;
         }
 
-        #score-display {
-            font-size: 22px;
+        .highlight-text {
+            font-size: 18px;
             color: #d81b60;
         }
 
@@ -90,15 +91,15 @@
         #controls {
             margin-top: 15px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            max-width: 350px;
+            max-width: 380px;
         }
 
         button {
-            padding: 12px 20px;
-            font-size: 20px;
+            padding: 12px 16px;
+            font-size: 18px;
             background-color: #00897b;
             color: white;
             border: none;
@@ -106,6 +107,8 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #004d40;
             font-family: inherit;
+            flex-grow: 1;
+            text-align: center;
         }
         
         button:active {
@@ -113,12 +116,16 @@
             box-shadow: none;
         }
 
+        .speed-btn {
+            background-color: #ff9800;
+            box-shadow: 0 4px 0 #e65100;
+        }
+
         #restart-btn {
             background-color: #e53935;
             box-shadow: 0 4px 0 #b71c1c;
             width: 100%;
-            margin-top: 10px;
-            font-size: 18px;
+            margin-top: 5px;
         }
 
         /* Block Colors */
@@ -146,7 +153,10 @@
             </select>
         </div>
         <div class="dash-text">
-            Blocks: <span id="score-display">0</span>
+            Speed: <span id="speed-display" class="highlight-text">🚶 Normal</span>
+        </div>
+        <div class="dash-text" style="width: 100%; text-align: center; margin-top: 5px;">
+            Blocks Placed: <span id="score-display" class="highlight-text">0</span>
         </div>
     </div>
 
@@ -161,6 +171,10 @@
         <button onclick="rotatePiece()">🔄 Turn</button>
         <button onclick="movePiece(1)">Right ➡️</button>
         <button onclick="moveDown()">⬇️ Down</button>
+        
+        <button class="speed-btn" onclick="adjustSpeed(-1)">🐢 Slower</button>
+        <button class="speed-btn" onclick="adjustSpeed(1)">🐇 Faster</button>
+        
         <button id="restart-btn" onclick="resetLevel()">🗑️ Start Over</button>
     </div>
 
@@ -172,26 +186,30 @@
         let currentPiece = null;
         let currentLevel = 1;
 
-        // Shapes organized by difficulty levels
+        // Speed settings array: [Slow, Normal, Fast, Turbo] times in milliseconds
+        const SPEEDS = [2500, 1500, 800, 300];
+        const SPEED_LABELS = ["🐢 Slow", "🚶 Normal", "🐇 Fast", "🚀 Turbo"];
+        let currentSpeedIdx = 1; // Default to Normal (index 1)
+
         const SHAPE_LEVELS = {
-            1: [ // Easy: 1 to 3 blocks straight
-                { shape: [[1]], color: 6 },                   // Dot (Pink)
-                { shape: [[1, 1]], color: 2 },                // Horizontal Domino (Blue)
-                { shape: [[1], [1]], color: 2 },              // Vertical Domino (Blue)
-                { shape: [[1, 1, 1]], color: 5 }              // Short Line (Green)
+            1: [
+                { shape: [[1]], color: 6 },
+                { shape: [[1, 1]], color: 2 },
+                { shape: [[1], [1]], color: 2 },
+                { shape: [[1, 1, 1]], color: 5 }
             ],
-            2: [ // Medium: 3 to 4 blocks, simple corners
-                { shape: [[1, 1], [1, 1]], color: 1 },        // Square (Yellow)
-                { shape: [[1, 0], [1, 1]], color: 4 },        // Small L (Orange)
-                { shape: [[0, 1], [1, 1]], color: 4 },        // Small L Reverse (Orange)
-                { shape: [[1, 1, 1, 1]], color: 2 }           // Long Line (Blue)
+            2: [
+                { shape: [[1, 1], [1, 1]], color: 1 },
+                { shape: [[1, 0], [1, 1]], color: 4 },
+                { shape: [[0, 1], [1, 1]], color: 4 },
+                { shape: [[1, 1, 1, 1]], color: 2 }
             ],
-            3: [ // Hard: Classic 4-block Tetris shapes
-                { shape: [[0, 1, 0], [1, 1, 1]], color: 3 },  // T (Purple)
-                { shape: [[0, 0, 1], [1, 1, 1]], color: 4 },  // L (Orange)
-                { shape: [[1, 0, 0], [1, 1, 1]], color: 5 },  // J (Green)
-                { shape: [[1, 1], [1, 1]], color: 1 },        // Square (Yellow)
-                { shape: [[1, 1, 1, 1]], color: 2 }           // Long Line (Blue)
+            3: [
+                { shape: [[0, 1, 0], [1, 1, 1]], color: 3 },
+                { shape: [[0, 0, 1], [1, 1, 1]], color: 4 },
+                { shape: [[1, 0, 0], [1, 1, 1]], color: 5 },
+                { shape: [[1, 1], [1, 1]], color: 1 },
+                { shape: [[1, 1, 1, 1]], color: 2 }
             ]
         };
 
@@ -211,7 +229,6 @@
             updateScore();
         }
 
-        // Count how many squares on the board have blocks in them
         function updateScore() {
             let occupied = 0;
             for (let r = 0; r < ROWS; r++) {
@@ -224,15 +241,43 @@
 
         function changeLevel() {
             currentLevel = parseInt(document.getElementById('level-select').value);
-            resetLevel(); // Automatically restart when they change levels
+            resetLevel(); 
         }
 
         function resetLevel() {
             showMessage(""); 
+            
+            // Reset speed to Normal whenever the level resets
+            currentSpeedIdx = 1; 
+            applySpeed();
+
             initBoard();
             spawnPiece();
             draw();
         }
+
+        // --- NEW SPEED LOGIC ---
+        function adjustSpeed(change) {
+            currentSpeedIdx += change;
+            
+            // Prevent going out of bounds of the speed array
+            if (currentSpeedIdx < 0) currentSpeedIdx = 0;
+            if (currentSpeedIdx >= SPEEDS.length) currentSpeedIdx = SPEEDS.length - 1;
+            
+            applySpeed();
+        }
+
+        function applySpeed() {
+            // Update the text on screen
+            document.getElementById('speed-display').innerText = SPEED_LABELS[currentSpeedIdx];
+            
+            // Clear the old timer and start a new one with the new speed
+            clearInterval(dropInterval);
+            dropInterval = setInterval(() => {
+                moveDown();
+            }, SPEEDS[currentSpeedIdx]);
+        }
+        // -----------------------
 
         function spawnPiece() {
             const activeShapes = SHAPE_LEVELS[currentLevel];
@@ -246,7 +291,6 @@
                 y: 0
             };
 
-            // If board is full and piece can't spawn, gentle reset
             if (checkCollision(currentPiece.x, currentPiece.y, currentPiece.shape)) {
                 showMessage("Board is full! Let's clear it.");
                 setTimeout(() => { resetLevel(); }, 2000);
@@ -288,7 +332,6 @@
 
             if (!currentPiece) return;
 
-            // Draw Ghost
             const ghostY = getGhostY();
             for (let r = 0; r < currentPiece.shape.length; r++) {
                 for (let c = 0; c < currentPiece.shape[r].length; c++) {
@@ -302,7 +345,6 @@
                 }
             }
 
-            // Draw Active Piece
             for (let r = 0; r < currentPiece.shape.length; r++) {
                 for (let c = 0; c < currentPiece.shape[r].length; c++) {
                     if (currentPiece.shape[r][c] !== 0) {
@@ -353,7 +395,7 @@
                 }
             }
             
-            updateScore(); // Update the occupied blocks score
+            updateScore(); 
             checkLines();
             spawnPiece();
         }
@@ -375,7 +417,7 @@
             }
 
             if (linesCleared > 0) {
-                updateScore(); // Re-calculate score since blocks disappeared
+                updateScore(); 
                 showMessage("Great Job! ⭐");
             }
         }
@@ -399,11 +441,7 @@
         initBoard();
         spawnPiece();
         draw();
-        
-        // Steady Drop Rate
-        dropInterval = setInterval(() => {
-            moveDown();
-        }, 1500);
+        applySpeed(); // Starts the game at Normal speed timer
 
     </script>
 </body>

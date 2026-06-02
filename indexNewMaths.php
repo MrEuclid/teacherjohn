@@ -111,7 +111,7 @@
                   <a href="functionMachine/functionMachine.html"><button class="btn btn-danger">Func. Machine</button></a>
 
                <a href="crossNumber/crossNumberCalxulus"><button class="btn btn-danger">Crossnumber</button></a>
-                     <a href="crossNumber/crossNumberFractionsHarder"><button class="btn btn-success">Crossnumber fractions</button></a>
+                     <a href="crossNumber/crossNumberFractionsHarder.html"><button class="btn btn-success">Crossnumber fractions</button></a>
         </div>
 
         <div class="footer-text text-center">

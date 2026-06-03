@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Logic: Eleusis</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 { margin-top: 0; color: #2c3e50; text-align: center; }
+
+        #dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        select.level-select { font-size: 16px; padding: 5px; font-weight: bold; border-radius: 5px; }
+        
+        .stars { color: #f1c40f; font-size: 24px; letter-spacing: 2px; }
+        .stars.lost { color: #ccc; }
+
+        /* Palette */
+        #palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 800px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .shape-btn {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shape-btn:hover:not(:disabled) { border-color: #3498db; transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .shape-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Bins */
+        #bins {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 25px;
+        }
+
+        .bin {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 120px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px;
+        }
+
+        #true-bin { border-color: #2ecc71; }
+        #false-bin { border-color: #e74c3c; }
+        
+        .bin h3 { margin: 0 0 10px 0; width: 100%; text-align: center; color: #555; font-size: 18px; }
+
+        /* Guessing UI */
+        #guess-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .logic-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        select.attr-select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #bdc3c7;
+            outline: none;
+        }
+
+        .btn-submit {
+            padding: 10px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { background-color: #2980b9; }
+
+        /* Past Guesses */
+        #past-guesses { margin-top: 15px; font-size: 16px; color: #7f8c8d; text-align: center; }
+        .past-guess { text-decoration: line-through; margin-bottom: 5px; }
+
+        /* Feedback Messages */
+        #message { margin-top: 15px; font-weight: bold; font-size: 20px; height: 25px; }
+
+        /* Confetti */
+        #confetti-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 100;
+        }
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px; border-radius: 2px;
+            animation-duration: 3s; animation-timing-function: ease-out; opacity: 0;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Eleusis: Inductive Logic</h1>
+
+    <div id="dashboard">
+        <div>
+            Level: 
+            <select id="level-select" class="level-select" onchange="startLevel()">
+                <option value="1">1 (One Attribute)</option>
+                <option value="2">2 (A or B)</option>
+                <option value="3">3 ((A and B) or C)</option>
+                <option value="4">4 ((A or B) and C)</option>
+            </select>
+        </div>
+        <div>Tested: <span id="guess-count">0</span>/15</div>
+        <div id="stars-display" class="stars">★★★</div>
+    </div>
+
+    <div id="palette"></div>
+
+    <div id="bins">
+        <div id="true-bin" class="bin">
+            <h3>✅ Follows the Rule</h3>
+        </div>
+        <div id="false-bin" class="bin">
+            <h3>❌ Breaks the Rule</h3>
+        </div>
+    </div>
+
+    <div id="guess-section">
+        <h3>Guess the Secret Rule</h3>
+        <div id="dropdown-container" class="logic-row"></div>
+        <button class="btn-submit" onclick="submitGuess()">Check Rule</button>
+        <div id="message"></div>
+        <div id="past-guesses"></div>
+    </div>
+
+    <div id="confetti-wrapper"></div>
+
+    <script>
+        const colors = ['red', 'green', 'blue'];
+        const shapes = ['rectangle', 'square', 'triangle', 'circle', 'hexagon'];
+        const attributes = [...colors, ...shapes];
+
+        let secretRule = null;
+        let testCount = 0;
+        let currentLevel = 1;
+        let gameActive = true;
+
+        // Visual mapping for shapes using SVGs
+        function getSVG(color, shape, size = 40) {
+            const hex = color === 'red' ? '#e74c3c' : color === 'green' ? '#2ecc71' : '#3498db';
+            let inner = '';
+            if (shape === 'rectangle') inner = `<rect x="5" y="12.5" width="30" height="15" fill="${hex}"/>`;
+            if (shape === 'square') inner = `<rect x="10" y="10" width="20" height="20" fill="${hex}"/>`;
+            if (shape === 'circle') inner = `<circle cx="20" cy="20" r="12" fill="${hex}"/>`;
+            if (shape === 'triangle') inner = `<polygon points="20,5 35,30 5,30" fill="${hex}"/>`;
+            if (shape === 'hexagon') inner = `<polygon points="20,5 35,12.5 35,27.5 20,35 5,27.5 5,12.5" fill="${hex}"/>`;
+            return `<svg width="${size}" height="${size}" viewBox="0 0 40 40">${inner}</svg>`;
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // --- RULE GENERATOR (UPDATED FOR 4 LEVELS) ---
+        function generateSecretRule(level) {
+            if (level === 1) { // Single Attribute
+                return { type: 'single', a1: getRandom(attributes) };
+            } 
+            else if (level === 2) { // A OR B
+                let a1 = getRandom(attributes);
+                let a2 = getRandom(attributes.filter(a => a !== a1));
+                return { type: 'or', a1, a2 };
+            } 
+            else if (level === 3) { // (Color AND Shape) OR C
+                let a1 = getRandom(colors);
+                let a2 = getRandom(shapes);
+                let a3 = getRandom(attributes.filter(a => a !== a1 && a !== a2));
+                return { type: 'and_or', a1, a2, a3 };
+            } 
+            else if (level === 4) { // (Cat1 OR Cat1) AND Cat2
+                let cat = Math.random() < 0.5 ? 'color' : 'shape';
+                if (cat === 'color') {
+                    let a1 = getRandom(colors);
+                    let a2 = getRandom(colors.filter(c => c !== a1));
+                    let a3 = getRandom(shapes);
+                    return { type: 'or_and', a1, a2, a3 };
+                } else {
+                    let a1 = getRandom(shapes);
+                    let a2 = getRandom(shapes.filter(s => s !== a1));
+                    let a3 = getRandom(colors);
+                    return { type: 'or_and', a1, a2, a3 };
+                }
+            }
+        }
+
+        // --- BOOLEAN EVALUATOR ---
+        function hasAttr(attr, c, s) { return attr === c || attr === s; }
+
+        function evaluateRule(rule, c, s) {
+            switch(rule.type) {
+                case 'single': return hasAttr(rule.a1, c, s);
+                case 'or': return hasAttr(rule.a1, c, s) || hasAttr(rule.a2, c, s);
+                case 'and_or': return (hasAttr(rule.a1, c, s) && hasAttr(rule.a2, c, s)) || hasAttr(rule.a3, c, s);
+                case 'or_and': return (hasAttr(rule.a1, c, s) || hasAttr(rule.a2, c, s)) && hasAttr(rule.a3, c, s);
+            }
+            return false;
+        }
+
+        // --- INITIALIZATION ---
+        function startLevel() {
+            currentLevel = parseInt(document.getElementById('level-select').value);
+            secretRule = generateSecretRule(currentLevel);
+            testCount = 0;
+            gameActive = true;
+            
+            document.getElementById('guess-count').innerText = testCount;
+            updateStars();
+            
+            document.getElementById('true-bin').innerHTML = '<h3>✅ Follows the Rule</h3>';
+            document.getElementById('false-bin').innerHTML = '<h3>❌ Breaks the Rule</h3>';
+            document.getElementById('past-guesses').innerHTML = '';
+            showMessage("", "");
+            document.getElementById('confetti-wrapper').innerHTML = '';
+
+            buildPalette();
+            buildDropdowns();
+        }
+
+        function buildPalette() {
+            const palette = document.getElementById('palette');
+            palette.innerHTML = '';
+            colors.forEach(c => {
+                shapes.forEach(s => {
+                    let btn = document.createElement('button');
+                    btn.className = 'shape-btn';
+                    btn.innerHTML = getSVG(c, s);
+                    btn.onclick = () => testObject(btn, c, s);
+                    palette.appendChild(btn);
+                });
+            });
+        }
+
+        function buildDropdowns() {
+            const container = document.getElementById('dropdown-container');
+            container.innerHTML = '';
+            
+            const makeSelect = (id) => {
+                let sel = `<select id="${id}" class="attr-select"><option value="none">--Select--</option>`;
+                attributes.forEach(a => sel += `<option value="${a}">${capitalize(a)}</option>`);
+                sel += `</select>`;
+                return sel;
+            };
+
+            if (currentLevel === 1) {
+                container.innerHTML = makeSelect('d1');
+            } else if (currentLevel === 2) {
+                container.innerHTML = `${makeSelect('d1')} <span>OR</span> ${makeSelect('d2')}`;
+            } else if (currentLevel === 3) {
+                container.innerHTML = `( ${makeSelect('d1')} <span>AND</span> ${makeSelect('d2')} ) <span>OR</span> ${makeSelect('d3')}`;
+            } else if (currentLevel === 4) {
+                container.innerHTML = `( ${makeSelect('d1')} <span>OR</span> ${makeSelect('d2')} ) <span>AND</span> ${makeSelect('d3')}`;
+            }
+        }
+
+        // --- GAMEPLAY ---
+        function testObject(btn, color, shape) {
+            if (!gameActive) return;
+            btn.disabled = true; // Gray out in palette
+            testCount++;
+            
+            const isTrue = evaluateRule(secretRule, color, shape);
+            const clone = document.createElement('div');
+            clone.innerHTML = getSVG(color, shape, 30);
+            
+            if (isTrue) {
+                document.getElementById('true-bin').appendChild(clone);
+            } else {
+                document.getElementById('false-bin').appendChild(clone);
+            }
+
+            document.getElementById('guess-count').innerText = testCount;
+            updateStars();
+        }
+
+        function updateStars() {
+            let stars = '★★★';
+            if (testCount > 10) stars = '<span class="lost">★★★</span>';
+            else if (testCount > 8) stars = '★<span class="lost">★★</span>';
+            else if (testCount > 5) stars = '★★<span class="lost">★</span>';
+            
+            document.getElementById('stars-display').innerHTML = stars;
+        }
+
+        function getDropdownVal(id) {
+            let el = document.getElementById(id);
+            return el ? el.value : 'none';
+        }
+
+        function submitGuess() {
+            if (!gameActive) return;
+
+            // 1. Build User Rule Object (map structure to current level)
+            let userRule = {};
+            let d1 = getDropdownVal('d1'), d2 = getDropdownVal('d2'), d3 = getDropdownVal('d3');
+            
+            if (d1 === 'none' || (currentLevel >= 2 && d2 === 'none') || (currentLevel >= 3 && d3 === 'none')) {
+                showMessage("Please fill all dropdowns before guessing!", "#e74c3c");
+                return;
+            }
+
+            if (currentLevel === 1) userRule = { type: 'single', a1: d1 };
+            if (currentLevel === 2) userRule = { type: 'or', a1: d1, a2: d2 };
+            if (currentLevel === 3) userRule = { type: 'and_or', a1: d1, a2: d2, a3: d3 };
+            if (currentLevel === 4) userRule = { type: 'or_and', a1: d1, a2: d2, a3: d3 };
+
+            // 2. Truth Table Comparison (Compare every object against both rules)
+            let isCorrect = true;
+            for (let c of colors) {
+                for (let s of shapes) {
+                    if (evaluateRule(userRule, c, s) !== evaluateRule(secretRule, c, s)) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            // 3. Handle Result
+            if (isCorrect) {
+                gameActive = false;
+                showMessage("Well done, solved!", "#2ecc71");
+                triggerConfetti();
+            } else {
+                showMessage("Incorrect logic. Try testing more objects!", "#e74c3c");
+                
+                // Add to past guesses (greyed out)
+                let guessText = "";
+                if (currentLevel === 1) guessText = `${capitalize(d1)}`;
+                if (currentLevel === 2) guessText = `${capitalize(d1)} OR ${capitalize(d2)}`;
+                if (currentLevel === 3) guessText = `(${capitalize(d1)} AND ${capitalize(d2)}) OR ${capitalize(d3)}`;
+                if (currentLevel === 4) guessText = `(${capitalize(d1)} OR ${capitalize(d2)}) AND ${capitalize(d3)}`;
+                
+                document.getElementById('past-guesses').innerHTML += `<div class="past-guess">❌ ${guessText}</div>`;
+            }
+        }
+
+        function showMessage(text, color) {
+            const msgEl = document.getElementById('message');
+            msgEl.innerText = text;
+            msgEl.style.color = color;
+        }
+
+        function triggerConfetti() {
+            const wrapper = document.getElementById('confetti-wrapper');
+            const confColors = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6'];
+            wrapper.innerHTML = ''; 
+            for (let i = 0; i < 100; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.backgroundColor = confColors[Math.floor(Math.random() * confColors.length)];
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = Math.random() * -100 + 'px'; 
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.animationName = 'confetti-fall';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's'; 
+                wrapper.appendChild(piece);
+            }
+        }
+
+        // Start game on load
+        window.onload = startLevel;
+    </script>
+</body>
+</html>

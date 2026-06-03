@@ -64,7 +64,7 @@
     
     <div class="row game-header align-items-center">
         <div class="col-md-3 text-center text-md-start px-4 mb-3 mb-md-0">
-            <a href="indexSecondaryMaths.php" class="btn btn-light btn-sm me-2" title="Back">
+            <a href="../index.php" class="btn btn-light btn-sm me-2" title="Back">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
             <button id="retryBtn" class="btn btn-warning btn-sm fw-bold shadow-sm" style="display: none;">

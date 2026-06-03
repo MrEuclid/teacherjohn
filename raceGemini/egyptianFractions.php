@@ -6,31 +6,25 @@
 <!DOCTYPE html>
 <title>Egyptian Fractions - medium</title>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
 
-  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
-  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
-  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js"></script>
 
-
-
- <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/HTML-CSS"],
-    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-  });
-</script>   
-
- <script type="text/javascript">
-  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-</script>
-
-<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
  
 
+
+    <meta charset="utf-8">
+    
 
 <style type="text/css">
 

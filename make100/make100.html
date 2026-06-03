@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make 100! Math Puzzle</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #0056b3;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        p.instructions {
+            text-align: center;
+            max-width: 500px;
+            font-size: 18px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #b3d4fc;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 2x2 Grid Setup */
+        #grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #0056b3;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        input.digit-box {
+            width: 80px;
+            height: 80px;
+            font-size: 48px;
+            text-align: center;
+            border: 4px solid #fff;
+            border-radius: 12px;
+            background-color: #e6f2ff;
+            color: #0056b3;
+            font-family: inherit;
+            font-weight: bold;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input.digit-box:focus {
+            background-color: #fff;
+            border-color: #ffc107;
+            transform: scale(1.05);
+        }
+
+        /* Live Calculation Board */
+        #scoreboard {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 3px solid #28a745;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 20px;
+        }
+
+        .math-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 3px dashed #ccc;
+            font-size: 26px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        #status-message {
+            margin-top: 20px;
+            height: 35px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn-clear {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #a71d2a;
+        }
+
+        .btn-clear:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Confetti Overlay */
+        #confetti-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation-duration: 3s;
+            animation-timing-function: ease-out;
+            animation-iteration-count: 1;
+            opacity: 0;
+            transform-origin: center center;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
+            10% { transform: translateY(0px) rotateZ(45deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
+        }
+        
+        @keyframes confetti-burst {
+            0% { transform: scale(0) rotateZ(0deg); opacity: 1; }
+            100% { transform: scale(1) translate(0, 110vh) rotateZ(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Target: 100</h1>
+    <p class="instructions">
+        Put four <strong>different</strong> digits (from 1 to 9) in the boxes.<br>
+        Read the boxes across and down to make four 2-digit numbers.<br>
+        Make them add up to exactly 100!
+    </p>
+
+    <div id="game-container">
+        <div id="grid">
+            <input type="text" inputmode="numeric" class="digit-box" id="box-a" maxlength="1">
+            <input type="text" inputmode="numeric" class="digit-box" id="box-b" maxlength="1">
+            <input type="text" inputmode="numeric" class="digit-box" id="box-c" maxlength="1">
+            <input type="text" inputmode="numeric" class="digit-box" id="box-d" maxlength="1">
+        </div>
+
+        <div id="scoreboard">
+            <div class="math-line"><span>Top Row:</span> <span id="val-top">--</span></div>
+            <div class="math-line"><span>Bottom Row:</span> <span id="val-bottom">--</span></div>
+            <div class="math-line"><span>Left Column:</span> <span id="val-left">--</span></div>
+            <div class="math-line"><span>Right Column:</span> <span id="val-right">--</span></div>
+            <div class="total-line"><span>Total:</span> <span id="val-total">0</span></div>
+        </div>
+
+        <div id="status-message"></div>
+
+        <button class="btn-clear" onclick="clearGrid()">Clear Board</button>
+    </div>
+
+    <div id="confetti-wrapper"></div>
+
+    <script>
+        const boxes = [
+            document.getElementById('box-a'),
+            document.getElementById('box-b'),
+            document.getElementById('box-c'),
+            document.getElementById('box-d')
+        ];
+
+        const display = {
+            top: document.getElementById('val-top'),
+            bottom: document.getElementById('val-bottom'),
+            left: document.getElementById('val-left'),
+            right: document.getElementById('val-right'),
+            total: document.getElementById('val-total')
+        };
+
+        const statusMsg = document.getElementById('status-message');
+        const confettiWrapper = document.getElementById('confetti-wrapper');
+        const confettiColors = ['#ff4d4d', '#4d94ff', '#ffdb4d', '#4dff88', '#d94dff'];
+
+        // Add event listeners to all input boxes
+        boxes.forEach(box => {
+            box.addEventListener('input', function() {
+                // Force strict input: only numbers 1-9
+                this.value = this.value.replace(/[^1-9]/g, '').slice(0, 1);
+                evaluateGrid();
+            });
+        });
+
+        function clearGrid() {
+            boxes.forEach(box => box.value = '');
+            statusMsg.innerText = '';
+            confettiWrapper.innerHTML = '';
+            evaluateGrid();
+        }
+
+        function evaluateGrid() {
+            const a = boxes[0].value;
+            const b = boxes[1].value;
+            const c = boxes[2].value;
+            const d = boxes[3].value;
+
+            // Update individual readouts (show '--' if either part of the 2-digit number is missing)
+            const numTop = (a && b) ? parseInt(a + b) : null;
+            const numBottom = (c && d) ? parseInt(c + d) : null;
+            const numLeft = (a && c) ? parseInt(a + c) : null;
+            const numRight = (b && d) ? parseInt(b + d) : null;
+
+            display.top.innerText = numTop !== null ? numTop : '--';
+            display.bottom.innerText = numBottom !== null ? numBottom : '--';
+            display.left.innerText = numLeft !== null ? numLeft : '--';
+            display.right.innerText = numRight !== null ? numRight : '--';
+
+            // Calculate live running total of whatever is available
+            let runningTotal = 0;
+            if (numTop) runningTotal += numTop;
+            if (numBottom) runningTotal += numBottom;
+            if (numLeft) runningTotal += numLeft;
+            if (numRight) runningTotal += numRight;
+            
+            display.total.innerText = runningTotal;
+
+            // Logic Check only runs if all 4 boxes have digits
+            if (a && b && c && d) {
+                // Check if all digits are unique
+                const uniqueDigits = new Set([a, b, c, d]);
+                
+                if (uniqueDigits.size < 4) {
+                    statusMsg.innerText = "Careful! All four digits must be different.";
+                    statusMsg.style.color = "#dc3545"; // Red
+                    display.total.style.color = "#dc3545";
+                } 
+                else if (runningTotal === 100) {
+                    statusMsg.innerText = "Well done, solved!";
+                    statusMsg.style.color = "#28a745"; // Green
+                    display.total.style.color = "#28a745";
+                    triggerConfetti();
+                } 
+                else if (runningTotal < 100) {
+                    statusMsg.innerText = "Too low! Try bigger numbers.";
+                    statusMsg.style.color = "#ff8c00"; // Orange
+                    display.total.style.color = "#000";
+                } 
+                else {
+                    statusMsg.innerText = "Too high! Try smaller numbers.";
+                    statusMsg.style.color = "#ff8c00"; // Orange
+                    display.total.style.color = "#000";
+                }
+            } else {
+                // Clear messages if they delete a number
+                statusMsg.innerText = "";
+                display.total.style.color = "#000";
+                confettiWrapper.innerHTML = '';
+            }
+        }
+
+        function triggerConfetti() {
+            confettiWrapper.innerHTML = ''; 
+            for (let i = 0; i < 150; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = Math.random() * -100 + 'px'; 
+
+                const delay = Math.random() * 0.5 + 's';
+                piece.style.animationDelay = delay;
+                const fallDuration = (Math.random() * 1.5 + 1.5) + 's'; 
+
+                if (Math.random() < 0.3) {
+                     piece.style.top = Math.random() * 20 + '%'; 
+                     piece.style.animationName = 'confetti-burst';
+                     piece.style.animationDuration = (Math.random() * 1 + 1) + 's'; 
+                } else {
+                    piece.style.animationName = 'confetti-fall';
+                    piece.style.animationDuration = fallDuration;
+                }
+
+                confettiWrapper.appendChild(piece);
+                piece.addEventListener('animationend', () => piece.remove());
+            }
+        }
+    </script>
+</body>
+</html>

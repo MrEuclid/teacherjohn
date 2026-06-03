@@ -332,11 +332,12 @@ else
 
     $('#equation4').html(expr);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation4" ]);
-        x1 = a/p;
+        x1 = -a/p;
         x1 = round2DP(x1);
-        x2 = b/q;
+        x2 = -b/q;
         x2 = round2DP(x2);
         const largest = Math.max(x1, x2);
+        console.log(x1,x2)
         return largest;
         
     }

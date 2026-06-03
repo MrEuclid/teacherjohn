@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make 100! Math Puzzle</title>
+    <title>Make 100 Masterclass</title>
     <style>
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
@@ -12,26 +12,52 @@
             align-items: center;
             background-color: #f0f8ff;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             color: #333;
         }
 
-        h1 {
-            color: #0056b3;
-            margin-bottom: 5px;
-            text-align: center;
+        h1 { color: #0056b3; margin-bottom: 10px; text-align: center; }
+
+        /* Tabs for Modes */
+        #tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        p.instructions {
+        .tab-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #e0e0e0;
+            color: #555;
+            border: 2px solid #ccc;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab-btn.active {
+            background-color: #0056b3;
+            color: white;
+            border-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #instructions {
             text-align: center;
             max-width: 500px;
-            font-size: 18px;
-            margin-bottom: 25px;
+            font-size: 16px;
+            margin-bottom: 20px;
             background: white;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border: 2px solid #b3d4fc;
+            min-height: 60px;
         }
 
         #game-container {
@@ -40,14 +66,16 @@
             align-items: center;
             position: relative;
             z-index: 10;
+            width: 100%;
+            max-width: 400px;
         }
 
-        /* 2x2 Grid Setup */
+        /* 2x2 Grid */
         #grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background: #0056b3;
             padding: 15px;
             border-radius: 12px;
@@ -55,9 +83,9 @@
         }
 
         input.digit-box {
-            width: 80px;
-            height: 80px;
-            font-size: 48px;
+            width: 70px;
+            height: 70px;
+            font-size: 40px;
             text-align: center;
             border: 4px solid #fff;
             border-radius: 12px;
@@ -67,101 +95,103 @@
             font-weight: bold;
             outline: none;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
-        input.digit-box:focus {
-            background-color: #fff;
+        input.digit-box:focus { background-color: #fff; border-color: #ffc107; }
+        
+        /* Swapping highlight class */
+        input.digit-box.selected-swap {
+            background-color: #fff3cd;
             border-color: #ffc107;
-            transform: scale(1.05);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #ffc107;
         }
 
-        /* Live Calculation Board */
+        /* Number Line Gauge */
+        #gauge-container {
+            width: 100%;
+            margin-bottom: 20px;
+            display: none; /* Only show in Mode 3 */
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #gauge {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, #4caf50 0%, #ffeb3b 50%, #f44336 100%);
+            border-radius: 10px;
+            position: relative;
+            margin-top: 10px;
+            border: 2px solid #ccc;
+        }
+
+        #target-marker {
+            position: absolute;
+            left: 50%;
+            top: -10px;
+            height: 40px;
+            width: 4px;
+            background: #000;
+        }
+
+        #user-marker {
+            position: absolute;
+            top: -15px;
+            font-size: 24px;
+            transition: left 0.3s ease;
+        }
+
+        /* Scoreboard */
         #scoreboard {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             border: 3px solid #28a745;
             width: 100%;
-            max-width: 300px;
+            box-sizing: border-box;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-size: 20px;
+            font-size: 18px;
         }
 
-        .math-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            color: #555;
-        }
-
+        .math-line { display: flex; justify-content: space-between; margin-bottom: 5px; color: #555; }
         .total-line {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 3px dashed #ccc;
-            font-size: 26px;
-            font-weight: bold;
-            color: #000;
+            display: flex; justify-content: space-between; margin-top: 10px;
+            padding-top: 10px; border-top: 3px dashed #ccc; font-size: 22px; font-weight: bold; color: #000;
         }
 
         #status-message {
-            margin-top: 20px;
-            height: 35px;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
+            margin-top: 15px; height: 50px; font-size: 20px; font-weight: bold; text-align: center;
         }
 
-        .btn-clear {
-            margin-top: 20px;
-            padding: 12px 25px;
-            font-size: 18px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            box-shadow: 0 4px 0 #a71d2a;
+        .action-btns {
+            display: flex; gap: 10px; margin-top: 10px; width: 100%;
         }
 
-        .btn-clear:active {
-            transform: translateY(4px);
-            box-shadow: none;
+        button.btn-action {
+            flex: 1; padding: 12px; font-size: 16px; background-color: #28a745;
+            color: white; border: none; border-radius: 8px; cursor: pointer;
+            font-family: inherit; font-weight: bold; box-shadow: 0 4px 0 #1e7e34;
         }
+        button.btn-action:active { transform: translateY(4px); box-shadow: none; }
+        
+        button.btn-reset { background-color: #dc3545; box-shadow: 0 4px 0 #a71d2a; }
 
-        /* Confetti Overlay */
+        /* Confetti */
         #confetti-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 5;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 5;
         }
-
         .confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            animation-duration: 3s;
-            animation-timing-function: ease-out;
-            animation-iteration-count: 1;
-            opacity: 0;
-            transform-origin: center center;
+            position: absolute; width: 10px; height: 10px; border-radius: 2px;
+            animation-duration: 3s; animation-timing-function: ease-out; opacity: 0;
         }
 
         @keyframes confetti-fall {
             0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
-            10% { transform: translateY(0px) rotateZ(45deg); opacity: 1; }
             100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
         }
-        
         @keyframes confetti-burst {
             0% { transform: scale(0) rotateZ(0deg); opacity: 1; }
             100% { transform: scale(1) translate(0, 110vh) rotateZ(360deg); opacity: 0; }
@@ -170,12 +200,15 @@
 </head>
 <body>
 
-    <h1>Target: 100</h1>
-    <p class="instructions">
-        Put four <strong>different</strong> digits (from 1 to 9) in the boxes.<br>
-        Read the boxes across and down to make four 2-digit numbers.<br>
-        Make them add up to exactly 100!
-    </p>
+    <h1>Number Logic Labs</h1>
+    
+    <div id="tabs">
+        <button class="tab-btn active" onclick="setMode(1)">1. Make 100</button>
+        <button class="tab-btn" onclick="setMode(2)">2. Max Power</button>
+        <button class="tab-btn" onclick="setMode(3)">3. Target: 100</button>
+    </div>
+
+    <p id="instructions" class="instructions"></p>
 
     <div id="game-container">
         <div id="grid">
@@ -183,6 +216,14 @@
             <input type="text" inputmode="numeric" class="digit-box" id="box-b" maxlength="1">
             <input type="text" inputmode="numeric" class="digit-box" id="box-c" maxlength="1">
             <input type="text" inputmode="numeric" class="digit-box" id="box-d" maxlength="1">
+        </div>
+
+        <div id="gauge-container">
+            <div style="font-weight: bold; color: #555;">Target: 100</div>
+            <div id="gauge">
+                <div id="target-marker"></div>
+                <div id="user-marker">🔽</div>
+            </div>
         </div>
 
         <div id="scoreboard">
@@ -195,12 +236,19 @@
 
         <div id="status-message"></div>
 
-        <button class="btn-clear" onclick="clearGrid()">Clear Board</button>
+        <div class="action-btns">
+            <button id="btn-main" class="btn-action" onclick="checkSolution()">Check Solution</button>
+            <button id="btn-reset" class="btn-action btn-reset" onclick="resetBoard()">Clear Board</button>
+        </div>
     </div>
 
     <div id="confetti-wrapper"></div>
 
     <script>
+        let currentMode = 1;
+        let selectedBoxForSwap = null;
+        let currentRandomDigits = [];
+        
         const boxes = [
             document.getElementById('box-a'),
             document.getElementById('box-b'),
@@ -217,112 +265,238 @@
         };
 
         const statusMsg = document.getElementById('status-message');
+        const instructions = document.getElementById('instructions');
+        const gaugeContainer = document.getElementById('gauge-container');
+        const userMarker = document.getElementById('user-marker');
+        const btnMain = document.getElementById('btn-main');
+        const btnReset = document.getElementById('btn-reset');
         const confettiWrapper = document.getElementById('confetti-wrapper');
         const confettiColors = ['#ff4d4d', '#4d94ff', '#ffdb4d', '#4dff88', '#d94dff'];
 
-        // Add event listeners to all input boxes
+        // Core Math function based on grid positions
+        function getGridSum(arr) {
+            // arr is [a, b, c, d]
+            return (arr[0] * 20) + (arr[1] * 11) + (arr[2] * 11) + (arr[3] * 2);
+        }
+
+        // Setup Box Interaction (Typing vs Swapping)
         boxes.forEach(box => {
+            // Typing logic for Mode 1
             box.addEventListener('input', function() {
-                // Force strict input: only numbers 1-9
+                if (currentMode !== 1) return;
                 this.value = this.value.replace(/[^1-9]/g, '').slice(0, 1);
                 evaluateGrid();
             });
+
+            // Swapping logic for Mode 2 & 3
+            box.addEventListener('click', function(e) {
+                if (currentMode === 1) return; // Ignore clicks if in typing mode
+                
+                if (!selectedBoxForSwap) {
+                    // First click
+                    selectedBoxForSwap = this;
+                    this.classList.add('selected-swap');
+                } else {
+                    // Second click: swap!
+                    let temp = selectedBoxForSwap.value;
+                    selectedBoxForSwap.value = this.value;
+                    this.value = temp;
+                    
+                    selectedBoxForSwap.classList.remove('selected-swap');
+                    selectedBoxForSwap = null;
+                    
+                    evaluateGrid();
+                }
+            });
         });
 
-        function clearGrid() {
-            boxes.forEach(box => box.value = '');
+        function setMode(mode) {
+            currentMode = mode;
+            selectedBoxForSwap = null;
+            
+            // Update UI Tabs
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === mode);
+            });
+
+            // Configure UI based on mode
+            if (mode === 1) {
+                instructions.innerHTML = "<strong>Free Play:</strong> Type four different digits (1-9).<br>Make the total exactly 100!";
+                boxes.forEach(b => { b.readOnly = false; b.style.cursor = "text"; b.classList.remove('selected-swap'); });
+                gaugeContainer.style.display = "none";
+                btnMain.style.display = "none"; // Auto-checks
+                btnReset.innerText = "Clear Board";
+            } else if (mode === 2) {
+                instructions.innerHTML = "<strong>Max Power:</strong> Click to swap the numbers.<br>Find the arrangement that gives the HIGHEST total!";
+                boxes.forEach(b => { b.readOnly = true; b.style.cursor = "pointer"; b.classList.remove('selected-swap'); });
+                gaugeContainer.style.display = "none";
+                btnMain.style.display = "block";
+                btnMain.innerText = "Check Max Score";
+                btnReset.innerText = "New Numbers";
+            } else if (mode === 3) {
+                instructions.innerHTML = "<strong>Target 100:</strong> Click to swap the numbers.<br>Get the total as CLOSE to 100 as you possibly can!";
+                boxes.forEach(b => { b.readOnly = true; b.style.cursor = "pointer"; b.classList.remove('selected-swap'); });
+                gaugeContainer.style.display = "flex";
+                btnMain.style.display = "block";
+                btnMain.innerText = "Check Distance";
+                btnReset.innerText = "New Numbers";
+            }
+            resetBoard();
+        }
+
+        function resetBoard() {
             statusMsg.innerText = '';
             confettiWrapper.innerHTML = '';
+            
+            if (currentMode === 1) {
+                boxes.forEach(box => box.value = '');
+            } else {
+                // Generate 4 unique random digits for Mode 2 & 3
+                currentRandomDigits = [];
+                while(currentRandomDigits.length < 4) {
+                    let r = Math.floor(Math.random() * 9) + 1;
+                    if(currentRandomDigits.indexOf(r) === -1) currentRandomDigits.push(r);
+                }
+                boxes[0].value = currentRandomDigits[0];
+                boxes[1].value = currentRandomDigits[1];
+                boxes[2].value = currentRandomDigits[2];
+                boxes[3].value = currentRandomDigits[3];
+            }
             evaluateGrid();
         }
 
-        function evaluateGrid() {
-            const a = boxes[0].value;
-            const b = boxes[1].value;
-            const c = boxes[2].value;
-            const d = boxes[3].value;
+        function getCurrentValues() {
+            return boxes.map(b => b.value ? parseInt(b.value) : 0);
+        }
 
-            // Update individual readouts (show '--' if either part of the 2-digit number is missing)
-            const numTop = (a && b) ? parseInt(a + b) : null;
-            const numBottom = (c && d) ? parseInt(c + d) : null;
-            const numLeft = (a && c) ? parseInt(a + c) : null;
-            const numRight = (b && d) ? parseInt(b + d) : null;
+        function evaluateGrid() {
+            const vals = getCurrentValues();
+            const a = vals[0], b = vals[1], c = vals[2], d = vals[3];
+            
+            const numTop = (a && b) ? parseInt("" + a + b) : null;
+            const numBottom = (c && d) ? parseInt("" + c + d) : null;
+            const numLeft = (a && c) ? parseInt("" + a + c) : null;
+            const numRight = (b && d) ? parseInt("" + b + d) : null;
 
             display.top.innerText = numTop !== null ? numTop : '--';
             display.bottom.innerText = numBottom !== null ? numBottom : '--';
             display.left.innerText = numLeft !== null ? numLeft : '--';
             display.right.innerText = numRight !== null ? numRight : '--';
 
-            // Calculate live running total of whatever is available
             let runningTotal = 0;
-            if (numTop) runningTotal += numTop;
-            if (numBottom) runningTotal += numBottom;
-            if (numLeft) runningTotal += numLeft;
-            if (numRight) runningTotal += numRight;
-            
+            if(a&&b&&c&&d) runningTotal = getGridSum(vals);
             display.total.innerText = runningTotal;
+            display.total.style.color = "#000";
+            statusMsg.innerText = "";
 
-            // Logic Check only runs if all 4 boxes have digits
-            if (a && b && c && d) {
-                // Check if all digits are unique
+            // Gauge Update for Mode 3
+            if (currentMode === 3) {
+                // Number line goes from roughly 40 to 160. Center is 100.
+                let percentage = ((runningTotal - 40) / 120) * 100;
+                if (percentage < 0) percentage = 0;
+                if (percentage > 100) percentage = 100;
+                userMarker.style.left = `calc(${percentage}% - 12px)`;
+            }
+
+            // Auto-check for Mode 1
+            if (currentMode === 1 && a && b && c && d) {
                 const uniqueDigits = new Set([a, b, c, d]);
-                
                 if (uniqueDigits.size < 4) {
-                    statusMsg.innerText = "Careful! All four digits must be different.";
-                    statusMsg.style.color = "#dc3545"; // Red
-                    display.total.style.color = "#dc3545";
-                } 
-                else if (runningTotal === 100) {
-                    statusMsg.innerText = "Well done, solved!";
-                    statusMsg.style.color = "#28a745"; // Green
-                    display.total.style.color = "#28a745";
+                    statusMsg.innerText = "Careful! All 4 digits must be different.";
+                    statusMsg.style.color = "#dc3545";
+                } else if (runningTotal === 100) {
+                    statusMsg.innerText = "Brilliant! You made 100!";
+                    statusMsg.style.color = "#28a745";
                     triggerConfetti();
-                } 
-                else if (runningTotal < 100) {
-                    statusMsg.innerText = "Too low! Try bigger numbers.";
-                    statusMsg.style.color = "#ff8c00"; // Orange
-                    display.total.style.color = "#000";
-                } 
-                else {
-                    statusMsg.innerText = "Too high! Try smaller numbers.";
-                    statusMsg.style.color = "#ff8c00"; // Orange
-                    display.total.style.color = "#000";
+                } else {
+                    statusMsg.innerText = runningTotal > 100 ? "Too high!" : "Too low!";
+                    statusMsg.style.color = "#ff8c00";
                 }
-            } else {
-                // Clear messages if they delete a number
-                statusMsg.innerText = "";
-                display.total.style.color = "#000";
-                confettiWrapper.innerHTML = '';
+            }
+        }
+
+        // Helper to find all 24 permutations of 4 numbers
+        function getPermutations(arr) {
+            let result = [];
+            if (arr.length === 0) return [[]];
+            for (let i = 0; i < arr.length; i++) {
+                let rest = getPermutations(arr.slice(0, i).concat(arr.slice(i + 1)));
+                for (let j = 0; j < rest.length; j++) {
+                    result.push([arr[i]].concat(rest[j]));
+                }
+            }
+            return result;
+        }
+
+        function checkSolution() {
+            const vals = getCurrentValues();
+            const currentTotal = getGridSum(vals);
+            const perms = getPermutations(currentRandomDigits);
+
+            if (currentMode === 2) {
+                // Find Max
+                let maxPossible = 0;
+                perms.forEach(p => {
+                    let s = getGridSum(p);
+                    if (s > maxPossible) maxPossible = s;
+                });
+
+                if (currentTotal === maxPossible) {
+                    statusMsg.innerText = "Genius! " + maxPossible + " is the absolute maximum!";
+                    statusMsg.style.color = "#28a745";
+                    triggerConfetti();
+                } else {
+                    statusMsg.innerText = "Good try, but a higher score is hiding! Hint: Look at the Top-Left box.";
+                    statusMsg.style.color = "#dc3545";
+                }
+            } 
+            else if (currentMode === 3) {
+                // Find Closest to 100
+                let currentDiff = Math.abs(currentTotal - 100);
+                let minDiff = 999;
+                
+                perms.forEach(p => {
+                    let s = getGridSum(p);
+                    let d = Math.abs(s - 100);
+                    if (d < minDiff) minDiff = d;
+                });
+
+                if (currentDiff === minDiff) {
+                    statusMsg.innerText = "Amazing! This is the closest possible answer!";
+                    statusMsg.style.color = "#28a745";
+                    triggerConfetti();
+                } else {
+                    statusMsg.innerText = "Not quite! You are off by " + currentDiff + ", but there is a closer answer!";
+                    statusMsg.style.color = "#dc3545";
+                }
             }
         }
 
         function triggerConfetti() {
             confettiWrapper.innerHTML = ''; 
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 100; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
                 piece.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                
                 piece.style.left = Math.random() * 100 + '%';
                 piece.style.top = Math.random() * -100 + 'px'; 
-
-                const delay = Math.random() * 0.5 + 's';
-                piece.style.animationDelay = delay;
-                const fallDuration = (Math.random() * 1.5 + 1.5) + 's'; 
-
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                
                 if (Math.random() < 0.3) {
                      piece.style.top = Math.random() * 20 + '%'; 
                      piece.style.animationName = 'confetti-burst';
                      piece.style.animationDuration = (Math.random() * 1 + 1) + 's'; 
                 } else {
                     piece.style.animationName = 'confetti-fall';
-                    piece.style.animationDuration = fallDuration;
+                    piece.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's'; 
                 }
-
                 confettiWrapper.appendChild(piece);
                 piece.addEventListener('animationend', () => piece.remove());
             }
         }
+
+        // Initialize App
+        setMode(1);
     </script>
 </body>
 </html>

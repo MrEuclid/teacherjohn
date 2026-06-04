@@ -56,6 +56,8 @@
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
+    <a href = "arithmagons/arithmagons_junior.html" target="_blank"><button class = "btn btn-info">Arithmagons</button></a>
+
 </div>
 
 <div class = "row text-center">
@@ -83,7 +85,8 @@
        <a href="greenLight/greenLightApp.html" target="_blank"><button class="btn btn-success">Green Light</button></a>
            <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-success">Number Race</button></a>
            <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
-      
+<a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
+<a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
 
 </div>
 

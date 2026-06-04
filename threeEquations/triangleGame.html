@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>
+  <script type="text/javascript" src="../javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
+
+  <style type="text/css">
+ 
+ input[type=number]{
+    width: 75px;
+    text-align: center;
+} 
+
+input[type=text]{
+    width: 180px;
+    text-align: center;
+    background-color: lightgreen;
+    color: black;
+    font-size: 1em;
+} 
+
+
+#svg {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.shapes {
+   
+    vertical-align:middle;
+    text-align:center;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+
+.centred {text-align: center;
+margin-right: auto;
+margin-left: auto;
+margin: 0 ;}
+
+button {padding: 2px ; width: 120px ; margin-bottom: 5px ;margin-top: 2px;}
+
+button.smaller {padding: 2px ; width: 60px ; margin-bottom: 5px ;margin-top: 2px;}
+button.larger {padding: 2px ; width: 240px ; margin-bottom: 5px ;margin-top: 2px;}
+
+#equationA1,#equationA2 {color:white; background-color: red ;}
+#equationB1,#equationB2 {color:white; background-color: blue ;}
+#equationC1,#equationC2 {color:white; background-color: green ;}
+
+#equationX, #equationY , #equationZ {color: black ; background-color: 
+  white ;font-weight: bolder;}
+
+#buttons {position: absolute; top: 550px ;left: 0px; }
+#equations {position: absolute; top: 550px ;left: 300px; }
+
+
+  </style>
+
+
+</head>
+
+ 
+
+
+<body>
+
+
+ <div class = "container-fluid">
+<div class = "row">
+  <div class = "col-sm-1 centred">
+
+   <a href="../indexSecondaryMaths.php" class="btn btn-info btn-sm">
+          <span class="glyphicon glyphicon-arrow-left"></span>
+        </a>
+    </div>
+    <div class = "col-sm-10 centred">
+
+     <h3><label id = "team"></label></label> - Triangle Game v4 - <label id = "rank"></label></h3>
+     </div>
+     <div class = "col-sm-1 centred">
+    <a href="triangleGame.html" class="btn btn-info btn-sm">
+          <span class="glyphicon glyphicon-repeat"></span>
+        </a>
+   
+</div>
+
+ </div> <!-- row -->
+
+ <div id = "registration">
+ 
+    <div class = "row">
+    <div class = "col-sm- centred">
+        <label>Team name</label>
+    <input id = "teamName" type = "text">
+   <button id = "register">Go</button>
+ 
+</div></div>
+</div>
+
+ <div id = "menuButtons">
+ 
+<div class = "row">
+<div class = "col-sm-3 centred">
+<button id = "easy" class="btn btn-success btn-lg custom">
+  Easy
+</button>
+</div>
+
+<div class = "col-sm-3 centred">
+<button id = "medium" class="btn btn-danger btn-lg custom">
+  Medium
+</button>
+</div>
+
+<div class = "col-sm-3 centred">
+<button id = "hard" class="btn btn-info btn-lg custom">
+  Hard
+</button>
+</div>
+
+<div class = "col-sm-3 centred">
+<button id = "difficult" class="btn btn-warning btn-lg custom">
+  Difficult
+</button>
+</div>
+
+</div>
+</div> <!-- menu buttons -->
+
+<div id = "abc">
+
+<div class = "row">
+<div class = "col-sm-4 centred">
+
+<label>A</label>
+<br>
+<button class = "smaller" id = "aMinus"> 
+  <span class="glyphicon glyphicon-arrow-left"></span>
+</button>  
+<input type = "number" id = "startA" >
+<button class = "smaller" id = "aPlus"> 
+  <span class="glyphicon glyphicon-arrow-right"></span>
+</button>
+</div>
+
+<div class = "col-sm-4 centred">
+
+<label>B</label>
+<br>
+<button class = "smaller" id = "bMinus"> 
+  <span class="glyphicon glyphicon-arrow-left"></span>
+</button>  
+<input type = "number"  id = "startB" >
+<button class = "smaller" id = "bPlus"> 
+  <span class="glyphicon glyphicon-arrow-right"></span>
+</button>
+</div>
+
+<div class = "col-sm-4 centred">
+
+<label>C</label>
+<br>
+<button class = "smaller" id = "cMinus"> 
+  <span class="glyphicon glyphicon-arrow-left"></span>
+</button>  
+<input type = "number"  id = "startC" >
+<button class = "smaller" id = "cPlus"> 
+  <span class="glyphicon glyphicon-arrow-right"></span>
+</button>
+</div>
+
+</div> <!--- abc -->
+
+<div class = "row">
+<div class = "col-sm-12 centred">
+<svg id = "svgCanvas" height="320" width="600">
+ 
+
+    <circle id = "cA" cx="250" cy="75" r="40" class = "shapes"
+            stroke="red"
+            stroke-width="3"
+            fill="none"
+
+            />
+    <text id = "tA" x="250" y="85"  class = "shapes"
+          text-anchor="middle"
+          stroke="red"
+          stroke-width="1px"
+          font-size="24"
+         
+          >A
+       </text>
+
+      <text id = "letterA" x="250" y="30"  class = "shapes"
+          text-anchor="middle"
+          stroke="red"
+          stroke-width="1px"
+          font-size="24"
+         
+          >A
+    </text>     
+    
+    <circle id = "cB" cx="50" cy="250" r="40" 
+            stroke="blue" 
+            stroke-width="3"
+            fill="none"
+            />
+    <text id = "tB" x="50" y="260" 
+          text-anchor="middle" 
+          stroke="blue" 
+          stroke-width="1px"
+            font-size="24"
+          >B
+    </text>
+
+     <text id = "letterB" x="50" y="200" 
+          text-anchor="middle" 
+          stroke="blue" 
+          stroke-width="1px"
+            font-size="24"
+          >B
+    </text>
+
+    <circle  id = "cC" cx="450" cy="250" r="40" 
+            stroke="green" 
+            stroke-width="3" 
+            fill="none"
+            />
+    <text id = "tC" x="450" y="250" 
+          text-anchor="middle" 
+          stroke="green" 
+          stroke-width="1px"
+            font-size="24"
+          >C
+    </text>
+     
+      <text id = "letterC" x="450" y="200" 
+          text-anchor="middle" 
+          stroke="green" 
+          stroke-width="1px"
+            font-size="24"
+          >C
+    </text>
+
+        <rect id = "rX" x="120" y="120" width="60" height = "60" 
+             style="fill:blue;stroke:black;
+             stroke-width:3;
+             fill-opacity:0.1;
+             stroke-opacity:0.9" />
+
+    <text id = "tX" x="150" y="160" 
+          text-anchor="middle" 
+          stroke="green" 
+          stroke-width="1px"
+          >
+    </text>
+
+       <rect id = "rY" x="220" y="220" width="60" height = "60" 
+             style="fill:blue;stroke:black;
+             stroke-width:3;
+             fill-opacity:0.1;
+             stroke-opacity:0.9" />
+
+    <text id = "tY" x="250" y="260" 
+          text-anchor="middle" 
+          stroke="green" 
+          stroke-width="1px"
+          >
+    </text>
+
+   <rect id = "rZ" x="310" y="120" width="60" height = "60" 
+             style="fill:blue;stroke:black;
+             stroke-width:3;
+             fill-opacity:0.1;
+             stroke-opacity:0.9" />
+
+    <text id = "tZ" x="335" y="160" 
+          text-anchor="middle" 
+          stroke="green" 
+          stroke-width="1px"
+          >
+    </text>
+     
+</svg>
+
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-12 centred">
+
+
+<div>Equations
+<div class = "centred">
+
+<button id = "equationA1" class = "smaller">A</button>
+<button id = "equationPlus" class = "smaller">+</button> 
+<button  id = "equationB1" class = "smaller">B</button> 
+<button id = "equationEqual" class = "smaller">=</button> 
+<button  id = "equationX" class = "smaller">X</button>
+
+<br>
+<button  id = "equationB2" class = "smaller">B</button>
+<button id = "equationPlus" class = "smaller">+</button>
+<button  id = "equationC1" class = "smaller">C</button> 
+<button id = "equationEqual" class = "smaller">=</button>
+<button  id = "equationY" class = "smaller">Y</button>
+
+<br>
+<button  id = "equationA2" class = "smaller">A</button>
+<button id = "equationPlus" class = "smaller">+</button> 
+<button  id = "equationC2" class = "smaller">C</button>
+<button id = "equationEqual" class = "smaller">=</button>
+<button  id = "equationZ" class = "smaller">Z</button>
+
+
+</div>
+</div>
+
+</div> 
+
+
+
+</div></div>
+</div> <!-- container -->
+
+</body>
+</html>
+
+<script type="text/javascript">
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
+  </script>
+
+
+<script>
+function hideCanvas()
+{
+   
+$('#svgCanvas').hide() ;
+// document.getElementById('tX').style.fontSize = "24px";
+ $('[id^=equation]').hide() ;
+ $('[id^=start]').hide() ;
+
+  $('#aPlus').hide() ;
+ $('#aMinus').hide() ; 
+
+ $('#bPlus').hide() ;
+ $("#bMinus").hide() ;
+
+ $('#cPlus').hide() ;
+ $('#cMinus').hide() ;
+
+ $('#equationA1').text('A') ;
+ $('#equationA2').text('A') ;
+ $('#equationB1').text('B') ;
+ $('#equationB2').text('B') ;
+ $('#equationC1').text('C') ;
+ $('#equationC2').text('C') ;
+ $('[id^=start]').val(0) ;
+
+
+}
+</script>
+<script>
+function showCanvas()
+{
+   
+$('#svgCanvas').show() ;
+// document.getElementById('tX').style.fontSize = "24px";
+ $('[id^=equation]').show() ;
+ $('[id^=start]').show() ;
+
+  $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $("#bMinus").show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+
+ $('[id^=start]').val(0) ;
+ $('#equationA1').text('A') ;
+ $('#equationA2').text('A') ;
+ $('#equationB1').text('B') ;
+ $('#equationB2').text('B') ;
+ $('#equationC1').text('C') ;
+ $('#equationC2').text('C') ;
+
+
+}
+</script>
+
+<script type="text/javascript">
+  function checkAnswer()
+  {
+
+    var a = $('#startA').val() ;
+    var b = $('#startB').val() ;
+    var c = $('#startC').val() ;
+    var x = $('#tX').text() ;
+    var y = $('#tY').text() ;
+    var z = $('#tZ').text() ;
+
+    var resultX = false ;
+    var resultY = false ;
+    var resultZ = false ;
+    
+   // alert('Outcome for ' + a + ' ' + ' ' + b + ' ' + x) ; 
+   a = parseInt(a) ;
+   b = parseInt(b) ;
+   c = parseInt(c) ;
+
+   x = parseInt(x) ;
+   y = parseInt(y) ;
+   z = parseInt(z) ;
+
+   answerX = parseInt(a+b) ; 
+   answerY = parseInt(b+c) ;
+   answerZ = parseInt(a+c) ;
+
+   $('#equationX').html(answerX) ;
+   $('#equationY').html(answerY) ;
+   $('#equationZ').html(answerZ) ;
+
+   if (a + b == x)
+   {resultX = true ;}
+   else
+   {resultX = false ;} 
+
+    if (b + c == y)
+   {resultY = true ;}
+   else
+   {resultY = false ;} 
+
+  if (a + c == z)
+   {resultZ = true ;}
+   else
+   {resultZ = false ;} 
+   if (a + b == x )
+    {$('#equationX').css({"background-color":"orange","color":"white"}) ;
+     document.getElementById('tX').setAttribute("fill", "pink");}
+
+     
+  else 
+    {$('#equationX').css({"background-color":"white","color":"black"}) ;
+ document.getElementById('tX').setAttribute("fill", "black");
+}
+
+
+   if (b + c == y )
+     {$('#equationY').css({"background-color":"orange","color":"white"}) ;
+     document.getElementById('tY').setAttribute("fill", "pink");}
+
+     
+  else 
+    {$('#equationY').css({"background-color":"white","color":"black"}) ;
+ document.getElementById('tY').setAttribute("fill", "black");
+}
+
+   if (a + c == z )
+     {$('#equationZ').css({"background-color":"orange","color":"white"}) ;
+     document.getElementById('tZ').setAttribute("fill", "pink");}
+
+     
+  else 
+    {$('#equationZ').css({"background-color":"white","color":"black"}) ;
+ document.getElementById('tZ').setAttribute("fill", "black");
+}
+result = (resultX & resultY & resultZ); 
+if (result == 1) {
+  $('#svgCanvas').hide() ;
+  alert('You solved it!') ; 
+  score = level * 3 ;
+  writeData(team,score)
+  setTimeout(myTimeout2, 5000) ;
+
+function myTimeout2() {
+  hideCanvas() ;
+}
+
+}
+  return result;  
+  }
+
+</script>
+
+<script>
+
+  function writeData(team,score) {
+
+    //  alert("Calling write") ;
+          // write to countDownResults ;
+   //       console.log("writing",team,word) ;
+  $.ajax({
+  url: 'writeTriangleData.php',
+  type: 'POST',
+  data: {team:team,score:score }, 
+  datatype: 'json'
+})  // parameters
+.done(function (response) { 
+
+console.log("writing",team,score) ;
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+
+  }  // function
+</script>
+
+<script>
+
+  function getRank(team) {
+
+    //  alert("Calling write") ;
+          // write to countDownResults ;
+   //       console.log("writing",team,word) ;
+  $.ajax({
+  url: 'getTriangleRank.php',
+  type: 'POST',
+  data: {team:team}, 
+  datatype: 'json'
+})  // parameters
+.done(function (response) { 
+
+console.log("rank",response) ;
+
+})  //done
+.fail(function (jqXHR, textStatus, errorThrown) { 
+alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
+
+})  // fail
+
+
+  }  // function
+</script>
+
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#register').on('click', function(){
+          teamName = $('#teamName').val() ;
+         team = teamName ;
+        //  alert(teamName);
+           if (teamName.length > 0 )
+           {
+            var lowerLimit = 100 ; 
+            var upperLimit = 999 ;   
+            var n = Math.floor((Math.random() * upperLimit) + lowerLimit);   
+           teamName = teamName + '-#' + n ;
+           $('#ourTeam').text(teamName);
+
+
+    $('#registration').hide();
+    showCanvas() ;
+    hideCanvas() ;
+  $('#menuButtons').show() ;
+  $('#abc').show() ;
+  teamName = $('#teamName').val() ;
+  alert('Team = ' + teamName);
+  $('#team').text(teamName) ;
+
+        }
+else
+{
+    $('#error').text("Please write you team name") ;
+}
+
+        })
+    })
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  hideCanvas() ;
+  $('#menuButtons').hide() ;
+  $('#abc').hide() ;
+  level = 0 ;
+ score = 0 ;
+  
+
+
+})
+
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+
+   
+$("#easy").click(function() {
+
+ 
+  $('#svgCanvas').show() ;
+
+level = 1 ;
+$('[id^=equation]').show() ;
+$('[id^=start]').show() ;
+
+ $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $('#bMinus').show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+var min = 1 ;
+var max = 10 ;
+var numX = getRandomInt(min,max) ;
+var numY = getRandomInt(min,max) ;
+var numZ = getRandomInt(min,max) ;
+
+
+
+
+numX = numX * 2 ;
+numY = numY * 2 ;
+numZ = numZ * 2 ;
+
+    $('#tX').html(numX) ;
+    document.getElementById('tX').style.fontSize = "24px";
+     $('#tY').html(numY) ;
+    document.getElementById('tY').style.fontSize = "24px";
+     $('#tZ').html(numZ) ;
+    document.getElementById('tZ').style.fontSize = "24px";
+
+$('#equationX').html(numX) ;
+$('#equationY').html(numY) ;
+$('#equationZ').html(numZ) ;
+
+    var a = 0 ;
+    $('#startA').val(0);
+    $('#tA').html(a) ;
+
+     var b = 0 ;
+     $('#startB').val(0);
+    $('#tB').html(b) ;
+
+     var c = 0 ;
+     $('#startC').val(0);
+    $('#tC').html(c) ;
+
+});
+})
+
+</script>
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+ $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $('#bMinus').show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+
+$("#medium").click(function() {
+
+  level = 2 ;
+
+  $('#svgCanvas').show() ;
+
+$('#svgCanvas').show() ;
+$('[id^=equation]').show() ;
+$('[id^=start]').show() ;
+
+var min = 15 ;
+var max = 100 ;
+var numX = getRandomInt(min,max) ;
+var numY = getRandomInt(min,max) ;
+var numZ = getRandomInt(min,max) ;
+
+
+
+numX = numX * 2 ;
+numY = numY * 2 ;
+numZ = numZ * 2 ;
+
+    $('#tX').html(numX) ;
+    document.getElementById('tX').style.fontSize = "24px";
+     $('#tY').html(numY) ;
+    document.getElementById('tY').style.fontSize = "24px";
+     $('#tZ').html(numZ) ;
+    document.getElementById('tZ').style.fontSize = "24px";
+
+    $('#equationX').html(numX) ;
+$('#equationY').html(numY) ;
+$('#equationZ').html(numZ) ;
+
+    var a = min ;
+    $('#startA').val(min);
+    $('#tA').html(a) ;
+
+     var b = min ;
+     $('#startB').val(min);
+    $('#tB').html(b) ;
+
+     var c = min ;
+     $('#startC').val(min);
+    $('#tC').html(c) ;
+
+});
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+ $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $('#bMinus').show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+
+$("#hard").click(function() {
+
+  level = 3
+
+  $('#svgCanvas').show() ;
+
+$('#svgCanvas').show() ;
+$('[id^=equation]').show() ;
+$('[id^=start]').show() ;
+
+var min = -50 ;
+var max = 50 ;
+var numX = getRandomInt(min,max) ;
+var numY = getRandomInt(min,max) ;
+var numZ = getRandomInt(min,max) ;
+
+
+
+numX = numX * 2 ;
+numY = numY * 2 ;
+numZ = numZ * 2 ;
+
+    $('#tX').html(numX) ;
+    document.getElementById('tX').style.fontSize = "24px";
+     $('#tY').html(numY) ;
+    document.getElementById('tY').style.fontSize = "24px";
+     $('#tZ').html(numZ) ;
+    document.getElementById('tZ').style.fontSize = "24px";
+
+    $('#equationX').html(numX) ;
+$('#equationY').html(numY) ;
+$('#equationZ').html(numZ) ;
+    var a = min ;
+    $('#startA').val(a);
+    $('#tA').html(a) ;
+
+     var b = max ;
+     $('#startB').val(max);
+    $('#tB').html(b) ;
+
+     var c = min ;
+     $('#startC').val(min);
+
+    $('#tC').html(c) ;
+
+});
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+ $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $('#bMinus').show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+
+$("#difficult").click(function() {
+
+  $('#svgCanvas').show() ;
+  level = 4 ;
+
+$('#svgCanvas').show() ;
+$('[id^=equation]').show() ;
+$('[id^=start]').show() ;
+
+var min = -499 ;
+var max = 499 ;
+var numX = getRandomInt(min,max) ;
+var numY = getRandomInt(min,max) ;
+var numZ = getRandomInt(min,max) ;
+
+
+
+numX = numX * 2 ;
+numY = numY * 2 ;
+numZ = numZ * 2 ;
+
+    $('#tX').html(numX) ;
+    document.getElementById('tX').style.fontSize = "24px";
+     $('#tY').html(numY) ;
+    document.getElementById('tY').style.fontSize = "24px";
+     $('#tZ').html(numZ) ;
+    document.getElementById('tZ').style.fontSize = "24px";
+$('#equationX').html(numX) ;
+$('#equationY').html(numY) ;
+$('#equationZ').html(numZ) ;
+     var a = 0 ;
+    $('#startA').val(a);
+    $('#tA').html(a) ;
+
+     var b = 0;
+     $('#startB').val(b);
+    $('#tB').html(b) ;
+
+     var c = 0 ;
+     $('#startC').val(c);
+     
+    $('#tC').html(c) ;
+
+});
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#aPlus" ).click(function() {
+
+var a = $('#tA').html() ;
+    a = parseInt(a) ;
+    a = a + 1 ;
+    $('#tA').html(a) ;
+    $('#startA').val(a) ;
+    $('#equationA1').html(a) ;
+    $('#equationA2').html(a) ;
+var outcome = checkAnswer() ;
+});
+})
+
+</script>   
+
+<!--
+<script type="text/javascript">
+   $(document).ready(function(){
+ $('#aPlus').show() ;
+ $('#aMinus').show() ; 
+
+ $('#bPlus').show() ;
+ $('#bMinus').show() ;
+
+ $('#cPlus').show() ;
+ $('#cMinus').show() ;
+
+$("#easy").click(function() {
+
+$('#svgCanvas').show() ;
+$('[id^=equation]').show() ;
+$('[id^=start]').show() ;
+
+var min = 1 ;
+var max = 10 ;
+var numX = getRandomInt(min,max) ;
+var numY = getRandomInt(min,max) ;
+var numZ = getRandomInt(min,max) ;
+
+numX = numX * 2 ;
+numY = numY * 2 ;
+numZ = numZ * 2 ;
+
+    $('#tX').html(numX) ;
+    document.getElementById('tX').style.fontSize = "24px";
+     $('#tY').html(numY) ;
+    document.getElementById('tY').style.fontSize = "24px";
+     $('#tZ').html(numZ) ;
+    document.getElementById('tZ').style.fontSize = "24px";
+
+    var a = $('#startA').val(min);
+    $('#tA').html(a) ;
+
+     var b = $('#startB').val(min);
+    $('#tB').html(b) ;
+
+     var c = $('#startC').val(min);
+    $('#tC').html(c) ;
+
+});
+})
+
+</script>
+-->
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#aMinus" ).click(function() {
+
+var a = $('#tA').html() ;
+    a = parseInt(a) ;
+    a = a - 1 ;
+    $('#tA').html(a) ;
+    $('#startA').val(a) ;
+    $('#equationA1').html(a) ;
+
+var outcome = checkAnswer() ;
+
+
+});
+})
+
+</script>
+
+<script type="text/javascript">
+  
+   $(document).ready(function(){
+  
+
+$( "#startA" ).change(function() {
+
+var inputA = $('#startA').val() ;
+    inputA = parseInt(inputA) ;
+
+    $('#tA').html(inputA) ;
+    $('#equationA1').html(inputA) ;
+    $('#equationA2').html(inputA) ;
+
+    // check A + B = x and A + C = z
+    var outcome = checkAnswer() ;
+ 
+});
+})
+
+</script>
+
+
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#bPlus" ).click(function() {
+
+var b = $('#tB').html() ;
+    b = parseInt(b) ;
+    b = b + 1 ;
+    $('#tB').html(b) ;
+    $('#startB').val(b) ;
+    $('#equationB1').html(b) ;
+    $('#equationB2').html(b) ;
+var outcome = checkAnswer() ;
+});
+})
+
+</script>   
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#bMinus" ).click(function() {
+
+var b = $('#tB').html() ;
+    b = parseInt(b) ;
+    b = b - 1 ;
+    $('#tB').html(b) ;
+     $('#startB').val(b) ;
+     $('#equationB1').html(b) ;
+    $('#equationB2').html(b) ;
+var outcome = checkAnswer() ;
+});
+})
+
+</script>
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#startB" ).change(function() {
+
+var inputB = $('#startB').val() ;
+    inputB = parseInt(inputB) ;
+
+  
+    $('#tB').html(inputB) ;
+    $('#equationB1').html(inputB) ;
+    $('#equationB2').html(inputB) ;
+
+    var outcome = checkAnswer() ;
+});
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#cPlus" ).click(function() {
+
+var c = $('#tC').html() ;
+    c = parseInt(c) ;
+    c = c + 1 ;
+    $('#tC').html(c) ;
+    $('#startC').val(c) ;
+     $('#equationC1').html(c) ;
+    $('#equationC2').html(c) ;
+var outcome = checkAnswer() ;
+});
+})
+
+</script>   
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#cMinus" ).click(function() {
+
+var c = $('#tC').html() ;
+    c = parseInt(c) ;
+    c = c - 1 ;
+    $('#tC').html(c) ;
+     $('#startC').val(c) ;
+     $('#equationC1').html(c) ;
+    $('#equationC2').html(c) ;
+var outcome = checkAnswer() ;
+});
+})
+
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function(){
+  
+
+$( "#startC" ).change(function() {
+
+var inputC = $('#startC').val() ;
+    inputC = parseInt(inputC) ;
+  
+    $('#tC').html(inputC) ;
+   $('#equationC1').html(inputC) ;
+    $('#equationC2').html(inputC) ;
+    var outcome = checkAnswer() ;
+});
+})
+
+</script>

@@ -1,0 +1,51 @@
+
+ input[type=number]{
+    width: 50px;
+    text-align: center;
+} 
+
+input[type=text]{
+    width: 150px;
+    text-align: center;
+    background-color: lightgreen;
+    color: black;
+    font-size: 1em;
+} 
+
+
+#svg {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.shapes {
+   
+    vertical-align:middle;
+    text-align:center;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+
+.centred {text-align: center;
+margin-right: auto;
+margin-left: auto;
+margin: 0 ;}
+
+button {padding: 2px ; width: 120px ; margin-bottom: 5px ;margin-top: 2px;}
+
+button.smaller {padding: 2px ; width: 60px ; margin-bottom: 5px ;margin-top: 2px;}
+button.larger {padding: 2px ; width: 240px ; margin-bottom: 5px ;margin-top: 2px;}
+
+#equationA1,#equationA2 {color:white; background-color: red ;}
+#equationB1,#equationB2 {color:white; background-color: blue ;}
+#equationC1,#equationC2 {color:white; background-color: green ;}
+
+#equationX, #equationY , #equationZ {color: black ; background-color: 
+  white ;font-weight: bolder;}
+
+#buttons {position: absolute; top: 550px ;left: 0px; }
+#equations {position: absolute; top: 550px ;left: 300px; }

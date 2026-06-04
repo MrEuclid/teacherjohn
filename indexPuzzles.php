@@ -175,7 +175,7 @@ button {margin: 0.5em;}
 <a href = "crossNumber/crossNumberCalculus.html" target="_blank"><button class = "btn btn-danger">Crossnumbers Calculus</button></a>
 
 <a href = "crossNumber/crossnumber5x5.php" target="_blank"><button class = "btn btn-primary">Crossnumbers</button></a>
-
+<a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
   </div></div>
 
         </div>

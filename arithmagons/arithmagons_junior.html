@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmagons!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 { color: #0056b3; margin-bottom: 5px; }
+        
+        .instructions {
+            text-align: center;
+            max-width: 600px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 2px solid #b3d4fc;
+        }
+
+        #controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 2px solid #ccc;
+            outline: none;
+            font-weight: bold;
+        }
+
+        select:focus { border-color: #0056b3; }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1e7e34;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        #game-board {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* SVG lines connecting the shapes */
+        #lines-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        line {
+            stroke: #cbd5e1;
+            stroke-width: 6;
+            transition: stroke 0.3s ease;
+        }
+
+        line.solved { stroke: #4ade80; }
+
+        /* User input circles (Vertices) */
+        .vertex-input {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid #3b82f6;
+            background: white;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3a8a;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .vertex-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Target numbers on the edges */
+        .edge-label {
+            position: absolute;
+            background: #f1f5f9;
+            border: 3px solid #94a3b8;
+            color: #334155;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .edge-label.solved {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        #status-message {
+            margin-top: 20px;
+            height: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+        }
+
+        /* Confetti */
+        #confetti-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 100;
+        }
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px; border-radius: 2px;
+            animation-duration: 3s; animation-timing-function: ease-out; opacity: 0;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Arithmagons</h1>
+    <div class="instructions" id="instruction-text">
+        Fill in the circles so that the two circles on either end of a line <strong>ADD UP</strong> to the number in the square between them.
+    </div>
+
+    <div id="controls">
+        <select id="level-select" onchange="newGame()">
+            <option value="3">Level 1 (Triangle - 3 Sides)</option>
+            <option value="4">Level 2 (Square - 4 Sides)</option>
+            <option value="5">Level 3 (Pentagon - 5 Sides)</option>
+        </select>
+        
+        <select id="op-select" onchange="newGame()">
+            <option value="add">Addition (+)</option>
+            <option value="sub">Subtraction (-)</option>
+            <option value="mult">Multiplication (×)</option>
+        </select>
+
+        <button onclick="newGame()">New Puzzle</button>
+    </div>
+
+    <div id="game-board">
+        <svg id="lines-container"></svg>
+        <div id="elements-container"></div>
+    </div>
+
+    <div id="status-message"></div>
+    <div id="confetti-wrapper"></div>
+
+    <script>
+        const boardSize = 450;
+        const center = boardSize / 2;
+        const radius = 150; // How far the circles are from the center
+
+        let numSides = 3;
+        let operation = 'add';
+        let secretVertices = [];
+        let edgeTargets = [];
+
+        // Generate the puzzle math
+        function generatePuzzle() {
+            secretVertices = [];
+            edgeTargets = [];
+            
+            // 1. Generate hidden numbers
+            for (let i = 0; i < numSides; i++) {
+                if (operation === 'mult') {
+                    // Multiplication: numbers between 2 and 12
+                    secretVertices.push(Math.floor(Math.random() * 11) + 2);
+                } else {
+                    // Add/Sub: numbers between 1 and 20
+                    secretVertices.push(Math.floor(Math.random() * 20) + 1);
+                }
+            }
+
+            // 2. Calculate edge targets based on operation
+            for (let i = 0; i < numSides; i++) {
+                let v1 = secretVertices[i];
+                let v2 = secretVertices[(i + 1) % numSides]; // wraps around to the first vertex
+                
+                if (operation === 'add') {
+                    edgeTargets.push(v1 + v2);
+                } else if (operation === 'sub') {
+                    edgeTargets.push(Math.abs(v1 - v2)); // Absolute difference
+                } else if (operation === 'mult') {
+                    edgeTargets.push(v1 * v2);
+                }
+            }
+        }
+
+        // Draw the geometry on the screen
+        function renderBoard() {
+            const svg = document.getElementById('lines-container');
+            const container = document.getElementById('elements-container');
+            svg.innerHTML = '';
+            container.innerHTML = '';
+
+            const angleStep = (Math.PI * 2) / numSides;
+            const startAngle = -Math.PI / 2; // Start at the top
+
+            let coordinates = [];
+
+            // Calculate X and Y for all vertices using Trigonometry
+            for (let i = 0; i < numSides; i++) {
+                let angle = startAngle + (i * angleStep);
+                let x = center + radius * Math.cos(angle);
+                let y = center + radius * Math.sin(angle);
+                coordinates.push({x, y});
+            }
+
+            // Draw Edges (Lines and Labels)
+            for (let i = 0; i < numSides; i++) {
+                let p1 = coordinates[i];
+                let p2 = coordinates[(i + 1) % numSides];
+
+                // Draw SVG Line
+                let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', p1.x);
+                line.setAttribute('y1', p1.y);
+                line.setAttribute('x2', p2.x);
+                line.setAttribute('y2', p2.y);
+                line.setAttribute('id', `line-${i}`);
+                svg.appendChild(line);
+
+                // Draw Edge Label (Midpoint)
+                let midX = (p1.x + p2.x) / 2;
+                let midY = (p1.y + p2.y) / 2;
+                
+                let label = document.createElement('div');
+                label.className = 'edge-label';
+                label.id = `edge-${i}`;
+                label.innerText = edgeTargets[i];
+                label.style.left = `${midX}px`;
+                label.style.top = `${midY}px`;
+                container.appendChild(label);
+            }
+
+            // Draw Vertices (Input boxes) last so they are on top
+            for (let i = 0; i < numSides; i++) {
+                let p = coordinates[i];
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.inputMode = 'numeric';
+                input.className = 'vertex-input';
+                input.id = `vertex-${i}`;
+                input.style.left = `${p.x}px`;
+                input.style.top = `${p.y}px`;
+                input.maxLength = 3;
+                
+                // Add event listener to check math when user types
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, ''); // Allow only numbers
+                    checkSolutions();
+                });
+
+                container.appendChild(input);
+            }
+        }
+
+        // Evaluate user inputs
+        function checkSolutions() {
+            let solvedCount = 0;
+
+            for (let i = 0; i < numSides; i++) {
+                let v1Input = document.getElementById(`vertex-${i}`).value;
+                let v2Input = document.getElementById(`vertex-${(i + 1) % numSides}`).value;
+                
+                let edgeLabel = document.getElementById(`edge-${i}`);
+                let edgeLine = document.getElementById(`line-${i}`);
+                let target = edgeTargets[i];
+
+                // If both connected circles have numbers in them, evaluate the math
+                if (v1Input !== "" && v2Input !== "") {
+                    let val1 = parseInt(v1Input);
+                    let val2 = parseInt(v2Input);
+                    let isCorrect = false;
+
+                    if (operation === 'add' && (val1 + val2 === target)) isCorrect = true;
+                    if (operation === 'sub' && (Math.abs(val1 - val2) === target)) isCorrect = true;
+                    if (operation === 'mult' && (val1 * val2 === target)) isCorrect = true;
+
+                    if (isCorrect) {
+                        edgeLabel.classList.add('solved');
+                        edgeLine.classList.add('solved');
+                        solvedCount++;
+                    } else {
+                        edgeLabel.classList.remove('solved');
+                        edgeLine.classList.remove('solved');
+                    }
+                } else {
+                    edgeLabel.classList.remove('solved');
+                    edgeLine.classList.remove('solved');
+                }
+            }
+
+            // Check Win Condition
+            const statusMsg = document.getElementById('status-message');
+            if (solvedCount === numSides) {
+                statusMsg.innerText = "Brilliant! You solved the puzzle!";
+                triggerConfetti();
+                // Disable inputs on win
+                for(let i=0; i<numSides; i++) {
+                    document.getElementById(`vertex-${i}`).disabled = true;
+                }
+            } else {
+                statusMsg.innerText = "";
+            }
+        }
+
+        function updateInstructions() {
+            const inst = document.getElementById('instruction-text');
+            if (operation === 'add') {
+                inst.innerHTML = "Fill in the circles so that the two circles on either end of a line <strong>ADD UP</strong> to the number in the square between them.";
+            } else if (operation === 'sub') {
+                inst.innerHTML = "Fill in the circles so that the <strong>DIFFERENCE</strong> between two circles equals the number in the square between them.";
+            } else if (operation === 'mult') {
+                inst.innerHTML = "Fill in the circles so that multiplying the two circles equals the <strong>PRODUCT</strong> in the square between them.";
+            }
+        }
+
+        function newGame() {
+            numSides = parseInt(document.getElementById('level-select').value);
+            operation = document.getElementById('op-select').value;
+            
+            document.getElementById('status-message').innerText = "";
+            document.getElementById('confetti-wrapper').innerHTML = "";
+            
+            updateInstructions();
+            generatePuzzle();
+            renderBoard();
+        }
+
+        function triggerConfetti() {
+            const wrapper = document.getElementById('confetti-wrapper');
+            const confColors = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6'];
+            wrapper.innerHTML = ''; 
+            for (let i = 0; i < 80; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.backgroundColor = confColors[Math.floor(Math.random() * confColors.length)];
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = Math.random() * -100 + 'px'; 
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.animationName = 'confetti-fall';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's'; 
+                wrapper.appendChild(piece);
+            }
+        }
+
+        // Initialize on load
+        window.onload = newGame;
+
+    </script>
+</body>
+</html>

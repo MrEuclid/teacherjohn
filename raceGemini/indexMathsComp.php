@@ -346,13 +346,13 @@ document.addEventListener("visibilitychange", function() {
         window.location.href = "login.php?kicked=1"; 
     }
 });
-/*
+
 // Catch if they click outside the browser window (like onto a desktop app)
 window.addEventListener("blur", function() {
     window.location.href = "login.php?kicked=1";
 });
 
-*/
+
 </script>
 
 </body>

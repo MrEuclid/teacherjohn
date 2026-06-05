@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Logic Puzzles</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0fdf4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 { color: #166534; margin-bottom: 5px; text-align: center; }
+        
+        .instructions {
+            text-align: center;
+            max-width: 600px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 2px solid #bbf7d0;
+            font-size: 16px;
+        }
+
+        #controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #166534;
+            margin-bottom: 4px;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 2px solid #ccc;
+            outline: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        select:focus { border-color: #16a34a; }
+
+        button.primary {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 0 #15803d;
+            transition: transform 0.1s;
+            margin-top: 18px; /* align with dropdowns */
+        }
+
+        button.primary:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* The Grid */
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 5px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            border-radius: 8px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .sum-cell {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+        }
+
+        .empty-cell {
+            background-color: transparent;
+            border: none;
+        }
+
+        /* User Inputs */
+        #input-section {
+            display: flex;
+            gap: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .fruit-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 28px;
+        }
+
+        .fruit-input-group input {
+            width: 50px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
+            border: 3px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .fruit-input-group input:focus { border-color: #3b82f6; }
+        .fruit-input-group input.correct { border-color: #22c55e; background-color: #dcfce7; }
+        .fruit-input-group input.incorrect { border-color: #ef4444; background-color: #fee2e2; }
+
+        #btn-check {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 0 #2563eb;
+            font-size: 18px;
+        }
+        #btn-check:active { transform: translateY(4px); box-shadow: none; }
+
+        #status-message {
+            height: 40px;
+            font-size: 26px;
+            font-weight: bold;
+            color: #16a34a;
+            text-align: center;
+        }
+
+        /* Confetti */
+        #confetti-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; overflow: hidden; z-index: 100;
+        }
+        .confetti-piece {
+            position: absolute; width: 10px; height: 10px; border-radius: 2px;
+            animation-duration: 3s; animation-timing-function: ease-out; opacity: 0;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) rotateZ(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotateZ(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 500px) {
+            #game-board {
+                grid-template-columns: repeat(5, 50px);
+                grid-template-rows: repeat(5, 50px);
+            }
+            .cell { font-size: 24px; }
+            .sum-cell { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Fruit Logic</h1>
+    <div class="instructions">
+        The numbers on the right and bottom show the total sum of each row and column.<br>
+        <strong>Can you figure out the value of each fruit?</strong>
+    </div>
+
+    <div id="controls">
+        <div class="control-group">
+            <label>Difficulty (Grid Pattern)</label>
+            <select id="diff-select" onchange="newGame()">
+                <option value="easy">Easy (2 of each per row/col)</option>
+                <option value="medium">Medium (Up to 3 types, max 2 same)</option>
+                <option value="hard">Hard (Up to 3 same fruit per row/col)</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Number Range</label>
+            <select id="range-select" onchange="newGame()">
+                <option value="4">1 to 4</option>
+                <option value="8">1 to 8</option>
+                <option value="12">1 to 12</option>
+            </select>
+        </div>
+
+        <button class="primary" onclick="newGame()">New Puzzle</button>
+    </div>
+
+    <div id="game-board"></div>
+
+    <div id="input-section">
+        <div id="fruit-inputs"></div>
+        <button id="btn-check" onclick="checkAnswers()">Check Answers</button>
+    </div>
+
+    <div id="status-message"></div>
+    <div id="confetti-wrapper"></div>
+
+    <script>
+        const EMOJIS = ['🍎', '🍌', '🍉', '🍇', '🍓', '🍍', '🍒', '🥝'];
+
+        // Base Matrices ensure puzzles are always solvable and adhere to pedagogy
+        const BASES = {
+            easy: [
+                [0, 0, 1, 1],
+                [0, 0, 1, 1],
+                [2, 2, 3, 3],
+                [2, 2, 3, 3]
+            ],
+            medium: [
+                [0, 0, 1, 2],
+                [0, 1, 2, 2],
+                [3, 1, 1, 3],
+                [3, 0, 3, 1]
+            ],
+            hard: [
+                [0, 0, 0, 1],
+                [2, 0, 1, 1],
+                [2, 2, 3, 1],
+                [2, 3, 3, 3]
+            ]
+        };
+
+        let activeFruits = [];
+        let activeValues = [];
+        let puzzleMatrix = [];
+        let rowSums = [];
+        let colSums = [];
+        let gameLocked = false;
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function newGame() {
+            gameLocked = false;
+            document.getElementById('status-message').innerText = "";
+            document.getElementById('confetti-wrapper').innerHTML = "";
+            document.getElementById('btn-check').disabled = false;
+
+            // 1. Pick 4 random fruits
+            const shuffledEmojis = shuffle([...EMOJIS]);
+            activeFruits = shuffledEmojis.slice(0, 4);
+
+            // 2. Pick 4 distinct random values from the selected range
+            const maxVal = parseInt(document.getElementById('range-select').value);
+            let valuePool = [];
+            for (let i = 1; i <= maxVal; i++) valuePool.push(i);
+            activeValues = shuffle(valuePool).slice(0, 4);
+
+            // 3. Get Base Matrix and Shuffle it (Rows, then Columns)
+            const diff = document.getElementById('diff-select').value;
+            let baseMatrix = JSON.parse(JSON.stringify(BASES[diff])); // Deep copy
+            
+            // Shuffle Rows
+            baseMatrix = shuffle(baseMatrix);
+            
+            // Shuffle Columns
+            const colIndices = shuffle([0, 1, 2, 3]);
+            puzzleMatrix = baseMatrix.map(row => colIndices.map(i => row[i]));
+
+            // 4. Calculate Sums
+            rowSums = [0, 0, 0, 0];
+            colSums = [0, 0, 0, 0];
+            
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const fruitIndex = puzzleMatrix[r][c];
+                    const val = activeValues[fruitIndex];
+                    rowSums[r] += val;
+                    colSums[c] += val;
+                }
+            }
+
+            renderBoard();
+            renderInputs();
+        }
+
+        function renderBoard() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = "";
+
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+
+                    if (r < 4 && c < 4) {
+                        // Fruit Cell
+                        const fruitIndex = puzzleMatrix[r][c];
+                        cell.innerText = activeFruits[fruitIndex];
+                    } 
+                    else if (r < 4 && c === 4) {
+                        // Row Sum
+                        cell.className += ' sum-cell';
+                        cell.innerText = rowSums[r];
+                    } 
+                    else if (r === 4 && c < 4) {
+                        // Col Sum
+                        cell.className += ' sum-cell';
+                        cell.innerText = colSums[c];
+                    } 
+                    else {
+                        // Bottom Right Empty
+                        cell.className += ' empty-cell';
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        function renderInputs() {
+            const container = document.getElementById('fruit-inputs');
+            container.innerHTML = "";
+            container.style.display = "flex";
+            container.style.gap = "20px";
+
+            for (let i = 0; i < 4; i++) {
+                const group = document.createElement('div');
+                group.className = 'fruit-input-group';
+                
+                const span = document.createElement('span');
+                span.innerText = activeFruits[i] + " = ";
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.inputMode = 'numeric';
+                input.id = `input-${i}`;
+                input.maxLength = 2;
+                
+                // Clear colors on edit
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    this.classList.remove('correct', 'incorrect');
+                });
+
+                group.appendChild(span);
+                group.appendChild(input);
+                container.appendChild(group);
+            }
+        }
+
+        function checkAnswers() {
+            if (gameLocked) return;
+            let correctCount = 0;
+
+            for (let i = 0; i < 4; i++) {
+                const input = document.getElementById(`input-${i}`);
+                const guess = parseInt(input.value);
+                
+                input.classList.remove('correct', 'incorrect');
+                
+                if (guess === activeValues[i]) {
+                    input.classList.add('correct');
+                    correctCount++;
+                } else if (input.value !== "") {
+                    input.classList.add('incorrect');
+                }
+            }
+
+            if (correctCount === 4) {
+                gameLocked = true;
+                document.getElementById('status-message').innerText = "Brilliant! Puzzle Solved!";
+                document.getElementById('btn-check').disabled = true;
+                triggerConfetti();
+                
+                // Disable inputs
+                for (let i = 0; i < 4; i++) {
+                    document.getElementById(`input-${i}`).disabled = true;
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            const wrapper = document.getElementById('confetti-wrapper');
+            const confColors = ['#e74c3c', '#22c55e', '#3b82f6', '#eab308', '#a855f7'];
+            wrapper.innerHTML = ''; 
+            for (let i = 0; i < 100; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.backgroundColor = confColors[Math.floor(Math.random() * confColors.length)];
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.top = Math.random() * -100 + 'px'; 
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.animationName = 'confetti-fall';
+                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's'; 
+                wrapper.appendChild(piece);
+            }
+        }
+
+        // Initialize on load
+        window.onload = newGame;
+
+    </script>
+</body>
+</html>

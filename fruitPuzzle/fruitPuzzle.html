@@ -76,7 +76,7 @@
             border: none;
             box-shadow: 0 4px 0 #15803d;
             transition: transform 0.1s;
-            margin-top: 18px; /* align with dropdowns */
+            margin-top: 18px; 
         }
 
         button.primary:active {
@@ -239,9 +239,9 @@
     <div id="confetti-wrapper"></div>
 
     <script>
-        const EMOJIS = ['🍎', '🍌', '🍉', '🍇', '🍓', '🍍', '🍒', '🥝'];
+        // UPDATED: All fruits are now strictly singular objects to prevent "visual fractions"
+        const EMOJIS = ['🍎', '🍌', '🍉', '🍊', '🍓', '🍍', '🍋', '🥝'];
 
-        // Base Matrices ensure puzzles are always solvable and adhere to pedagogy
         const BASES = {
             easy: [
                 [0, 0, 1, 1],
@@ -298,7 +298,7 @@
 
             // 3. Get Base Matrix and Shuffle it (Rows, then Columns)
             const diff = document.getElementById('diff-select').value;
-            let baseMatrix = JSON.parse(JSON.stringify(BASES[diff])); // Deep copy
+            let baseMatrix = JSON.parse(JSON.stringify(BASES[diff])); 
             
             // Shuffle Rows
             baseMatrix = shuffle(baseMatrix);
@@ -334,22 +334,18 @@
                     cell.className = 'cell';
 
                     if (r < 4 && c < 4) {
-                        // Fruit Cell
                         const fruitIndex = puzzleMatrix[r][c];
                         cell.innerText = activeFruits[fruitIndex];
                     } 
                     else if (r < 4 && c === 4) {
-                        // Row Sum
                         cell.className += ' sum-cell';
                         cell.innerText = rowSums[r];
                     } 
                     else if (r === 4 && c < 4) {
-                        // Col Sum
                         cell.className += ' sum-cell';
                         cell.innerText = colSums[c];
                     } 
                     else {
-                        // Bottom Right Empty
                         cell.className += ' empty-cell';
                     }
                     board.appendChild(cell);
@@ -376,7 +372,6 @@
                 input.id = `input-${i}`;
                 input.maxLength = 2;
                 
-                // Clear colors on edit
                 input.addEventListener('input', function() {
                     this.value = this.value.replace(/[^0-9]/g, '');
                     this.classList.remove('correct', 'incorrect');
@@ -412,7 +407,6 @@
                 document.getElementById('btn-check').disabled = true;
                 triggerConfetti();
                 
-                // Disable inputs
                 for (let i = 0; i < 4; i++) {
                     document.getElementById(`input-${i}`).disabled = true;
                 }
@@ -436,7 +430,6 @@
             }
         }
 
-        // Initialize on load
         window.onload = newGame;
 
     </script>

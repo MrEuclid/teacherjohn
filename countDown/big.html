@@ -217,12 +217,12 @@ p { color: #636e72; font-size: 1.1rem; }
 -->
 <!-- set keyboard type and number of letters-->
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <p class = "c" id = "ourTeam"></p>
 </div></div>
 
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <div id = 'timer' class= 'round'>
     0:00
         </div>
@@ -234,7 +234,7 @@ p { color: #636e72; font-size: 1.1rem; }
 </div></div>
 
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 
 
 
@@ -242,7 +242,7 @@ p { color: #636e72; font-size: 1.1rem; }
 </div></div>
 
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 
 <div id = "gameArea">
 <input id = "guess" type = "text" readonly = "TRUE"> 
@@ -340,19 +340,19 @@ p { color: #636e72; font-size: 1.1rem; }
 </div>
 </div>
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <p id = "words"></p>
 </div></div>
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <p id = "maxWords"></p>
 </div></div>
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <p id = "results"></p>
 </div></div>
 <div class = "row">
-    <div class = "col-sm-12 c">
+    <div class = "col-sm-12 text-center">
 <p id = "answers"></p>
 
 </div></div>
@@ -523,7 +523,7 @@ writeData(team,word) ;
     $(document).ready(function(){
         $('#register').on('click', function(){
           teamName = $('#teamName').val() ;
-          alert(teamName);
+       //   alert(teamName);
            if (teamName.length > 0 )
            {
             var lowerLimit = 100 ; 
@@ -572,7 +572,7 @@ $(document).ready(function(){
         
 
         jQuery(function ($) {
-            var fiveMinutes = 60 * 20,
+            var fiveMinutes = 60 * 45,
                 display = $('#timer');
             startTimer(fiveMinutes, display);
         });
@@ -630,11 +630,11 @@ $(document).ready(function(){
                // $('#words').append(word + ' - ');
                 
                writeData(teamName,word) ;
-                alert("writing " + teamName + " " + word) ;
+             //   alert("writing " + teamName + " " + word) ;
             }  // dup == -1
         else
         {
-            alert('You have already used ' + word + '!');
+           // alert('You have already used ' + word + '!');
         }
         
     }  // word index <> 0

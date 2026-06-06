@@ -552,7 +552,7 @@ else
 
 gameLevel  = parseInt(firedButton.substr(5)) ;
 
-alert('Level = ' + gameLevel) ;
+// alert('Level = ' + gameLevel) ;
 
 $('#timer').show() ;
 $('#total').show() ;
@@ -679,11 +679,11 @@ alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
                // $('#words').append(word + ' - ');
                 
                writeData(teamName,word) ;
-                alert("writing " + teamName + " " + word) ;
+             //   alert("writing " + teamName + " " + word) ;
             }  // dup == -1
         else
         {
-            alert('You have already used ' + word + '!');
+      //      alert('You have already used ' + word + '!');
         }
         
     }  // word index <> 0
@@ -819,13 +819,13 @@ $('#results').append(cnt + ' words possible' + '<br>') ;
 document.addEventListener("visibilitychange", function() {
     if (document.hidden) {
         // Instantly redirect without an alert blocking the thread
-        window.location.href = "/countDown/countDownWords.html"; 
+        window.location.href = "countDownWords.html"; 
     }
 });
 
 // Catch if they click outside the browser window (like onto a desktop app)
 window.addEventListener("blur", function() {
-    window.location.href = "/countDown/countDownWords.html";
+    window.location.href = "countDownWords.html";
 });
 
 </script>

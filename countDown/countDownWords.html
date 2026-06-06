@@ -436,7 +436,7 @@ $('#answers').hide() ;
 .done(function (response) { 
 
  // alert('Success') ;
-console.log("response",response,response.length) ;
+// console.log("response",response,response.length) ;
 data = JSON.parse(response) ;
 data = data.map(function(x){ return x.toUpperCase(); })
 
@@ -781,7 +781,7 @@ alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
     $(document).ready(function(){
         $('#maxWords').on('click', function(){
 var cnt = 0 ;
-            console.log("letters",chosen,data[3]) ;
+        //    console.log("letters",chosen,data[3]) ;
     // check that for each word, all of its letters are in letters
     for (var i = 0 ; i < data.length ; i++)
 

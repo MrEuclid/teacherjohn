@@ -1,8 +1,8 @@
 <?php
- $wordLength = $_POST['wordLength'] ;
+ $wordLength = 8 ;
 
 
-include "../connectTempleDB.php" ;
+include "../connectTeacherJohn.php" ;
 $query = "SELECT DISTINCT word FROM spellingWords2
 WHERE LENGTH(word) >= '$wordLength' ORDER BY word  " ;
 

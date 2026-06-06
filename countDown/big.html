@@ -683,3 +683,21 @@ $(document).ready(function(){
  //   })
 </script>
 
+
+<script>
+
+// --- Anti-Cheat: Prevent Tab Switching or Minimizing ---
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        // Instantly redirect without an alert blocking the thread
+        window.location.href = "countDownWords.html"; 
+    }
+});
+
+// Catch if they click outside the browser window (like onto a desktop app)
+window.addEventListener("blur", function() {
+    window.location.href = "countDownWords.html";
+});
+
+</script>
+

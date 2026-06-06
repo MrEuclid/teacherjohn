@@ -266,7 +266,8 @@ Electrostatics</button></a>
 
        
        <a href =  "puzzleTournament/index.php" target = "_blank"><button class = "btn btn-info" title = "Puzzle Tournament">Puzzle Tournament</button></a>
-  
+<a href = "scrabble/scrabble.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
+
       </div></div>
         </div>
       </div>

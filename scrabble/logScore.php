@@ -17,7 +17,7 @@ if (empty($data) || !isset($data['student_id']) || !isset($data['current_score']
     exit();
 }
 
-include "connectTempleDB.php"; // Make sure this connection is successful and stored in $dbServer
+include "../connectTeacherJohn.php"; // Make sure this connection is successful and stored in $dbServer
 
 
 

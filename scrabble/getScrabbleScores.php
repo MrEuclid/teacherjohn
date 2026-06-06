@@ -2,7 +2,7 @@
 // Set the content type header for JSON response
 header('Content-Type: application/json');
 
-include "connectTempleDB.php"; // Ensure this connects and provides $dbServer
+include "../connectTeacherJohn.php"; // Ensure this connects and provides $dbServer
 
 // The query to select all results, ordered by score descending.
 $query = "SELECT studentID, score FROM scrabbleResults ORDER BY score DESC";

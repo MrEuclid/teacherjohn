@@ -147,6 +147,7 @@ button {margin: 0.5em;}
         </div>
       </div>
     </div>
+    <!--
     <div class="card">
       <div class="card-header text-center">
         <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseThree">
@@ -182,7 +183,7 @@ button {margin: 0.5em;}
       </div>
     </div>
 
-
+-->
     <div class="card">
       <div class="card-header text-center">
         <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseFour">

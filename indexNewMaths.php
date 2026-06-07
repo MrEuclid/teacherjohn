@@ -86,7 +86,6 @@
            <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-success">Number Race</button></a>
            <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
 <a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
-<a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
 <a href = "fruitPuzzle/fruitPuzzle.html" target="_blank"><button class = "btn btn-success">Fruit Puzzle</button></a>
 
 </div>

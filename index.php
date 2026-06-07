@@ -66,14 +66,14 @@
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "hangman/hangman.html"><button class = "btn btm sm btn-info">Find the word (G5 - G6)</button></a>
+  <a href = "fruitPuzzle/fruitPuzzle.html"><button class = "btn btm sm btn-info">Fruit puzzle</button></a>
 
  <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
 <a href="escape/escape.html">
     <button class="btn btn-success">Escape</button></a>
     
-<a href = "scrabble/scrabble.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
+<a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
 <a href = "watPhnom/dashboard.php" target = "_blank"><button class = "btn btn-info">Wat Phnom</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
  <a href = "https://docs.google.com/document/d/1bmKyn9a4v3X64fZCoJMxkxrMsE9OIE299Yob4z9m7gQ/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Monopoly report</button></a>

@@ -496,7 +496,9 @@ if (correct)
 
 }
 
-if (clicksMedium >= 3 & !correct) {alert('Not correct - clear and try again'); 
+if (clicksMedium >= 3 & !correct)
+   {
+  //  alert('Not correct - clear and try again') ; 
 $('#clear').show() ;
 }
 

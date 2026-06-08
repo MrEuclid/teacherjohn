@@ -444,7 +444,7 @@ if (correct && clicksEasy == 2)
 {
     $('#clear').hide() ;
 
-  alert("solved");
+ // alert("solved");
             
             // 1. UPDATE THIS WINDOW'S UI (Just like checkAnswer does)
             $('#feedback').removeClass('text-danger text-warning').addClass('text-success').html('✅ CORRECT! The door is open!');
@@ -470,7 +470,9 @@ if (correct && clicksEasy == 2)
  
 }
 
-if (clicksEasy == 2 & !correct) {alert('Not correct - clear and try again'); 
+if (clicksEasy == 2 & !correct)
+   {
+  //  alert('Not correct - clear and try again') ; 
 $('#clear').show() ;
 }
 

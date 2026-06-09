@@ -57,6 +57,7 @@
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
     <a href = "arithmagons/arithmagons_junior.html" target="_blank"><button class = "btn btn-info">Arithmagons</button></a>
+<a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
 
 </div>
 
@@ -87,7 +88,7 @@
            <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
 <a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
 <a href = "fruitPuzzle/fruitPuzzle.html" target="_blank"><button class = "btn btn-success">Fruit Puzzle</button></a>
-
+<a href = "make100/make100.html" target="_blank"><button class = "btn btn-success">Make 100</button></a>
 </div>
 
 

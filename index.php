@@ -67,14 +67,18 @@
         <div class="col-12 text-center">
 
   <a href = "fruitPuzzle/fruitPuzzle.html"><button class = "btn btm sm btn-info">Fruit puzzle</button></a>
-
+  <a href = "deduction/deduction.html"><button class = "btn btm sm btn-info">Deduction</button></a>
  <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
    <a href = "juniperGreen/jg2.html" target = "_blank"><button title = "Factors and Multiples" class = "btn btn-info">Factors and Multiples</button></a>
 <a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
-    <div class="row mt-3">
-        <div class="col-12 text-center">
+<a href = "countDown/countDownWords.html" target = "_blank">
+        <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
+<a href = "arithmagons/arithmagons.html" target = "_blank">
+        <button class = "btn btn-info" title = "Arithmagons">Arithmagons</button> </a>
+
+ <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>
             <a href="indexEbooks.html"><button class="btn btn-warning">eBooks</button></a>
             <a href="https://lichess.org" target="_blank"><button class="btn btn-info">Li-chess</button></a>

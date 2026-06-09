@@ -247,7 +247,6 @@ Electrostatics</button></a>
 
  <div class = "row">
   <div clas s= "col-12 text-center">
-      <a href = "/scrabble/scrabbleComp2.html" target="_blank"><button title = "Build words on a grid. A simple version of Scrabble. Grade 5+." class = "btn btn-success">Word builder</button></a>
       <a href = "watPhnom/index.php" target = "_blank"><button class = "btn btn-danger" title = "Play in teams and win a trip to the National Museum.">Race to Wat Phnom</button></a>
 
     <a href =   "jimmyGame/jimmyMath.html" target = "_blank"><button class = "btn btn-info" title = "Revised version of Jimmy's Game">New Jimmy</button>
@@ -261,9 +260,8 @@ Electrostatics</button></a>
       
       <a href =  "raceGemini/login.php" target = "_blank">
         <button class = "btn btn-info" title = "Maths contests">Maths Contests</button> </a>
-
-
-
+<a href = "countDown/countDownWords.html" target = "_blank">
+        <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
        
        <a href =  "puzzleTournament/index.php" target = "_blank"><button class = "btn btn-info" title = "Puzzle Tournament">Puzzle Tournament</button></a>
 <a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>

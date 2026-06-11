@@ -15,19 +15,19 @@
 <body>
 
     <h1>AI Color Detector</h1>
-    <p>Train Teachable Machine, then hold up a red, blue, or green card!</p>
+    <p>Train Teachable Machine, then hold up a red, blue, or yellow card!</p>
     
     <button id="target-button">MAGIC BUTTON</button>
     <div id="webcam-container"></div>
     <div id="label-container">Waiting for model to load...</div>
 
     <!-- Load TensorFlow.js and Teachable Machine Image libraries -->
-    <script src="https://jsdelivr.net"></script>
-    <script src="https://jsdelivr.net"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
     <script>
         // 1. Paste your Teachable Machine shareable link here (Must end with a forward slash '/')
-        const URL = "YOUR_MODEL_URL_HERE/"; 
+        const URL = "https://teachablemachine.withgoogle.com/models/IM7RckHP4/"; 
 
         let model, webcam, labelContainer, maxPredictions;
         const targetButton = document.getElementById("target-button");
@@ -84,12 +84,12 @@
                 labelContainer.innerHTML = `Seeing: <b>${bestClass}</b> (${(highestConfidence * 100).toFixed(0)}% confidence)`;
                 
                 // Change the button color based on the predicted class name
-                if (bestClass === "red") {
+                if (bestClass === "Red") {
                     targetButton.style.backgroundColor = "red";
-                } else if (bestClass === "blue") {
+                } else if (bestClass === "Blue") {
                     targetButton.style.backgroundColor = "blue";
-                } else if (bestClass === "green") {
-                    targetButton.style.backgroundColor = "green";
+                } else if (bestClass === "Yellow") {
+                    targetButton.style.backgroundColor = "yellow";
                 } else {
                     targetButton.style.backgroundColor = "#777"; // Default gray if background is detected
                 }

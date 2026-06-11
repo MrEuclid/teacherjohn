@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro to ML: Color Detector with Hardware Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        #webcam-container { margin: 20px auto; width: 200px; height: 200px; border: 2px solid #ccc; border-radius: 10px; overflow: hidden; }
+        #target-button { padding: 15px 40px; font-size: 20px; font-weight: bold; color: white; background-color: #777; border: none; border-radius: 8px; transition: background-color 0.3s ease; }
+        #connect-button { padding: 10px 20px; font-size: 16px; font-weight: bold; color: white; background-color: #0056b3; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
+        #connect-button:hover { background-color: #004494; }
+        #label-container { margin-top: 20px; font-size: 18px; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h1>AI Color Detector & Hardware</h1>
+    <p>Connect your Arduino, then hold up a red, blue, or yellow card to light up the LEDs!</p>
+    
+    <button id="connect-button">🔌 Connect to Arduino</button>
+    <br>
+    
+    <button id="target-button">COLOR INDICATOR</button>
+    <div id="webcam-container"></div>
+    <div id="label-container">Waiting for model to load...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+    <script>
+        const URL = "https://teachablemachine.withgoogle.com/models/IM7RckHP4/"; 
+
+        let model, webcam, labelContainer, maxPredictions;
+        const targetButton = document.getElementById("target-button");
+        const connectButton = document.getElementById("connect-button");
+
+        // --- Web Serial Variables ---
+        let port;
+        let writer;
+        let lastSentColor = ""; // Used to prevent spamming the serial port
+
+        // 1. Connect to the Arduino via Web Serial
+        connectButton.addEventListener('click', async () => {
+            try {
+                // Prompt user to select an Arduino port
+                port = await navigator.serial.requestPort();
+                // Match the baud rate set in the Arduino sketch
+                await port.open({ baudRate: 9600 });
+                
+                // Set up the writer stream
+                const textEncoder = new TextEncoderStream();
+                const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+                writer = textEncoder.writable.getWriter();
+                
+                connectButton.innerText = "✅ Arduino Connected!";
+                connectButton.style.backgroundColor = "green";
+                console.log("Solved! Serial connection established.");
+            } catch (error) {
+                console.error("Connection failed:", error);
+                alert("Could not connect to the Arduino. Make sure it's plugged in and you select the correct port.");
+            }
+        });
+
+        // 2. Initialize the model and webcam automatically
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            const flip = true; 
+            webcam = new tmImage.Webcam(200, 200, flip); 
+            await webcam.setup(); 
+            await webcam.play();
+            
+            window.requestAnimationFrame(loop);
+
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = "Model Ready! Show a color card.";
+        }
+
+        // 3. Continuous render loop
+        async function loop() {
+            webcam.update(); 
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        // 4. Predict and communicate with Arduino
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            
+            let highestConfidence = 0;
+            let bestClass = "";
+
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].probability > highestConfidence) {
+                    highestConfidence = prediction[i].probability;
+                    bestClass = prediction[i].className.toLowerCase().trim();
+                }
+            }
+
+            if (highestConfidence > 0.80) {
+                labelContainer.innerHTML = `Seeing: <b>${bestClass}</b> (${(highestConfidence * 100).toFixed(0)}% confidence)`;
+                
+                // --- Hardware Communication Logic ---
+                // Only send a command if the color has changed since the last frame
+                if (bestClass !== lastSentColor) {
+                    lastSentColor = bestClass; // Update the tracker
+                    
+                    // Update UI Button
+                    if (bestClass === "red") targetButton.style.backgroundColor = "red";
+                    else if (bestClass === "blue") targetButton.style.backgroundColor = "blue";
+                    else if (bestClass === "yellow") targetButton.style.backgroundColor = "yellow";
+                    else targetButton.style.backgroundColor = "#777";
+
+                    // Send command to Arduino if connected
+                    if (writer) {
+                        try {
+                            if (bestClass === "red") await writer.write("R");
+                            else if (bestClass === "blue") await writer.write("B");
+                            else if (bestClass === "yellow") await writer.write("Y");
+                            else await writer.write("O"); // Send 'O' for off/background
+                            
+                            console.log("Command sent to Arduino:", bestClass);
+                        } catch (error) {
+                            console.error("Error writing to serial port:", error);
+                        }
+                    }
+                }
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>

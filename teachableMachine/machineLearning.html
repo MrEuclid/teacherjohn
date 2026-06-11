@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro to ML: Color Detector</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+        #webcam-container { margin: 20px auto; width: 200px; height: 200px; border: 2px solid #ccc; border-radius: 10px; overflow: hidden; }
+        #target-button { padding: 15px 40px; font-size: 20px; font-weight: bold; color: white; background-color: #777; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease; }
+        #label-container { margin-top: 20px; font-size: 18px; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h1>AI Color Detector</h1>
+    <p>Train Teachable Machine, then hold up a red, blue, or green card!</p>
+    
+    <button id="target-button">MAGIC BUTTON</button>
+    <div id="webcam-container"></div>
+    <div id="label-container">Waiting for model to load...</div>
+
+    <!-- Load TensorFlow.js and Teachable Machine Image libraries -->
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
+
+    <script>
+        // 1. Paste your Teachable Machine shareable link here (Must end with a forward slash '/')
+        const URL = "YOUR_MODEL_URL_HERE/"; 
+
+        let model, webcam, labelContainer, maxPredictions;
+        const targetButton = document.getElementById("target-button");
+
+        // 2. Initialize the model and webcam automatically
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // Load the machine learning model
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Setup the webcam stream
+            const flip = true; 
+            webcam = new tmImage.Webcam(200, 200, flip); 
+            await webcam.setup(); 
+            await webcam.play();
+            
+            // Loop the webcam frame updates
+            window.requestAnimationFrame(loop);
+
+            // Append webcam element to the webpage DOM
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = "Model Ready! Show a color card.";
+        }
+
+        // 3. Continuous render loop for webcam frames
+        async function loop() {
+            webcam.update(); 
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        // 4. Run webcam frames through the model and change UI elements
+        async function predict() {
+            // Predict returns an array of objects: [{className: "red", probability: 0.95}, ...]
+            const prediction = await model.predict(webcam.canvas);
+            
+            let highestConfidence = 0;
+            let bestClass = "";
+
+            // Find the class with the highest probability score
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].probability > highestConfidence) {
+                    highestConfidence = prediction[i].probability;
+                    bestClass = prediction[i].className.toLowerCase().trim();
+                }
+            }
+
+            // Only change color if the model is confident (over 80% certainty)
+            if (highestConfidence > 0.80) {
+                labelContainer.innerHTML = `Seeing: <b>${bestClass}</b> (${(highestConfidence * 100).toFixed(0)}% confidence)`;
+                
+                // Change the button color based on the predicted class name
+                if (bestClass === "red") {
+                    targetButton.style.backgroundColor = "red";
+                } else if (bestClass === "blue") {
+                    targetButton.style.backgroundColor = "blue";
+                } else if (bestClass === "green") {
+                    targetButton.style.backgroundColor = "green";
+                } else {
+                    targetButton.style.backgroundColor = "#777"; // Default gray if background is detected
+                }
+            }
+        }
+
+        // Trigger initialization when the page finishes loading
+        window.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>

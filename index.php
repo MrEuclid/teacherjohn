@@ -84,6 +84,10 @@
             <a href="https://lichess.org" target="_blank"><button class="btn btn-info">Li-chess</button></a>
             <a href="https://chess.com" target="_blank"><button class="btn btn-info">chess.com</button></a>
             <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
+         <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
+<a href = "https://nrich.maths.org/problems/crossing-bridge" target = "_blank"><button class="btn btn-info">Cross the Bridge</button></a>
+f
+      
         </div>
     </div>
 

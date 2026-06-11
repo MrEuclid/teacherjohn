@@ -229,7 +229,7 @@ Electrostatics</button></a>
 <a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
 <a href = "make100/make100.html" target ="_blank"><button class = "btn btn-info">Make 100</button></a>
 <a href = "deduction/deduction.html" target ="_blank"><button class = "btn btn-warning">Deduction</button></a>
-
+<a href = "https://nrich.maths.org/problems/crossing-bridge" target = "_blank"><button class="btn btn-info">Cross the Bridge</button></a>
 </div></div>
 
         </div>

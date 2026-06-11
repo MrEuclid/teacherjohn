@@ -16,7 +16,7 @@
 <body>
 
     <h1>AI Color Detector & Hardware</h1>
-    <p>Connect your Arduino, then hold up a red, blue, or yellow card to light up the LEDs!</p>
+    <p>Connect your Arduino, then hold up a red, green, or yellow card to light up the LEDs!</p>
     
     <button id="connect-button">🔌 Connect to Arduino</button>
     <br>
@@ -113,7 +113,7 @@
                     
                     // Update UI Button
                     if (bestClass === "red") targetButton.style.backgroundColor = "red";
-                    else if (bestClass === "blue") targetButton.style.backgroundColor = "blue";
+                    else if (bestClass === "green") targetButton.style.backgroundColor = "green";
                     else if (bestClass === "yellow") targetButton.style.backgroundColor = "yellow";
                     else targetButton.style.backgroundColor = "#777";
 
@@ -121,7 +121,7 @@
                     if (writer) {
                         try {
                             if (bestClass === "red") await writer.write("R");
-                            else if (bestClass === "blue") await writer.write("B");
+                            else if (bestClass === "green") await writer.write("G");
                             else if (bestClass === "yellow") await writer.write("Y");
                             else await writer.write("O"); // Send 'O' for off/background
                             

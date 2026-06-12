@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Chatbot Experiment</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; display: flex; justify-content: center; }
+        #chat-container { width: 100%; max-width: 400px; background: white; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; }
+        #chatbox { height: 300px; border: 1px solid #ccc; border-radius: 5px; overflow-y: auto; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+        .message { margin: 8px 0; padding: 8px 12px; border-radius: 15px; width: fit-content; max-width: 80%; }
+        .user-msg { background-color: #007bff; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
+        .bot-msg { background-color: #e9ecef; color: black; margin-right: auto; border-bottom-left-radius: 2px; }
+        .input-area { display: flex; gap: 10px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <h2 style="text-align: center; margin-top: 0;">Logic Bot 1.0</h2>
+        <div id="chatbox">
+            <div class="message bot-msg">Hello! I am a simple logic bot. Try saying hi!</div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. The Bot's "Brain" - Students modify this function!
+        function getBotResponse(input) {
+            // Convert everything to lowercase so "Hello" and "hello" are treated the same
+            let text = input.toLowerCase().trim();
+
+            if (text.includes("hello") || text.includes("hi")) {
+                return "Hello there! Ready to write some code?";
+            } 
+            else if (text.includes("how are you")) {
+                return "I am just a few lines of JavaScript, but I'm doing great!";
+            } 
+            else if (text.includes("password") || text.includes("secret")) {
+                return "Solved! You found my hidden keyword. Well done!";
+            }
+            // A fallback response if the bot doesn't understand
+            else {
+                return "I don't know that word yet. You'll need to program me to understand it!";
+            }
+        }
+
+        // 2. UI Logic - Handles displaying the messages
+        function sendMessage() {
+            const inputField = document.getElementById("userInput");
+            const chatbox = document.getElementById("chatbox");
+            const userText = inputField.value;
+
+            if (userText === "") return; // Don't send empty messages
+
+            // Display User Message
+            chatbox.innerHTML += `<div class="message user-msg">${userText}</div>`;
+            inputField.value = ""; // Clear input
+
+            // Scroll to bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Add a tiny delay to make it feel like the bot is "thinking"
+            setTimeout(() => {
+                const botReply = getBotResponse(userText);
+                chatbox.innerHTML += `<div class="message bot-msg">${botReply}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }, 400);
+        }
+
+        // Allow pressing "Enter" to send
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>

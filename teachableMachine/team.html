@@ -53,7 +53,7 @@
     
     <script type="text/javascript">
         // Your Teachable Machine model URL
-        const URL = "https://teachablemachine.withgoogle.com/models/5EU9GDsFE/";
+        const URL = "https://teachablemachine.withgoogle.com/models/XjDx1U4LY/";
         
         let model, webcam, maxPredictions;
         let isScanning = false;
@@ -122,7 +122,7 @@
                 // uncomment the line below and change "Background" to your exact class name 
                 // so it doesn't accidentally grant access to an empty chair!
                 //
-                // if (prediction[i].className === "Background") continue; 
+                 if (prediction[i].className === "9999-Plain") continue; 
 
                 // Check if any recognized class hits 90% (0.90) certainty
                 if (prediction[i].probability >= 0.90) {

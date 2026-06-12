@@ -38,6 +38,36 @@
             border-radius: 5px;
         }
         button:hover { background-color: #0056b3; }
+
+        /* --- New Progress Bar Styles --- */
+        #label-container {
+            width: 80%;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: left;
+        }
+        .bar-wrapper {
+            margin-bottom: 12px;
+        }
+        .bar-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+        }
+        .bar-background {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 20px;
+            width: 100%;
+        }
+        .bar-fill {
+            background-color: #007bff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.1s ease-out; /* Smooth snapping animation */
+        }
     </style>
 </head>
 <body>
@@ -46,13 +76,15 @@
     <button type="button" onclick="init()" id="startBtn">Start Face Scan</button>
     
     <div id="webcam-container"></div>
+    
+    <div id="label-container"></div>
+
     <div id="message">Click "Start Face Scan" to verify identity.</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     
     <script type="text/javascript">
-        // Your Teachable Machine model URL
         const URL = "https://teachablemachine.withgoogle.com/models/XjDx1U4LY/";
         
         let model, webcam, maxPredictions;
@@ -67,80 +99,112 @@
             const modelURL = URL + "model.json";
             const metadataURL = URL + "metadata.json";
 
-            // Load the model
             model = await tmImage.load(modelURL, metadataURL);
             maxPredictions = model.getTotalClasses();
 
-            // Set up the webcam
             const flip = true; 
-            webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-            await webcam.setup(); // request access to the webcam
+            webcam = new tmImage.Webcam(200, 200, flip);
+            await webcam.setup();
             await webcam.play();
             
             isScanning = true;
             window.requestAnimationFrame(loop);
 
-            // Append webcam to the DOM
             document.getElementById("webcam-container").appendChild(webcam.canvas);
             document.getElementById("message").innerText = "Scanning face... Please hold still. (10s)";
 
-            // Timer: Give the user 10 seconds for their image to be processed
+            // --- Generate Progress Bars dynamically based on loaded model ---
+            const labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = ""; 
+            
+            for (let i = 0; i < maxPredictions; i++) {
+                const wrapper = document.createElement("div");
+                wrapper.className = "bar-wrapper";
+
+                const label = document.createElement("div");
+                label.className = "bar-label";
+                label.innerText = model.getClassLabels()[i] + ": 0%";
+
+                const bg = document.createElement("div");
+                bg.className = "bar-background";
+
+                const fill = document.createElement("div");
+                fill.className = "bar-fill";
+                fill.id = "bar-fill-" + i;
+
+                bg.appendChild(fill);
+                wrapper.appendChild(label);
+                wrapper.appendChild(bg);
+                labelContainer.appendChild(wrapper);
+            }
+
+            // 10-second timer
             setTimeout(() => {
                 if (isScanning) {
-                    isScanning = false; // Stop scanning
+                    isScanning = false; 
                     
                     const msgDiv = document.getElementById("message");
                     msgDiv.innerText = "Permission Denied. Face not recognized.";
                     msgDiv.className = "denied";
                     
-                    // Stop the webcam to save resources
                     webcam.stop();
 
-                    // Redirect to Google after a brief 2-second pause so they see the message
                     setTimeout(() => {
                         window.location.href = "https://google.com";
                     }, 2000);
                 }
-            }, 10000); // 10000 ms = 10 seconds (change this if you want to give them more/less time)
+            }, 10000);
         }
 
         async function loop() {
             if (!isScanning) return;
-            webcam.update(); // Update the webcam frame
+            webcam.update();
             await predict();
             window.requestAnimationFrame(loop);
         }
 
         async function predict() {
-            // Predict what is in the current webcam frame
             const prediction = await model.predict(webcam.canvas);
             
+            // --- 1. Update the visual bars first ---
             for (let i = 0; i < maxPredictions; i++) {
+                const percent = Math.round(prediction[i].probability * 100);
                 
-                // IMPORTANT NOTE: 
-                // If your model has a class for an empty room (e.g. named "Background" or "Nobody"), 
-                // uncomment the line below and change "Background" to your exact class name 
-                // so it doesn't accidentally grant access to an empty chair!
-                //
-                 if (prediction[i].className === "9999-Plain") continue; 
+                const barFill = document.getElementById("bar-fill-" + i);
+                if (barFill) {
+                    barFill.style.width = percent + "%";
+                    
+                    // Change the color dynamically based on confidence
+                    if (percent >= 90) {
+                        barFill.style.backgroundColor = "#5cb85c"; // Green
+                    } else {
+                        barFill.style.backgroundColor = "#007bff"; // Blue
+                    }
 
-                // Check if any recognized class hits 90% (0.90) certainty
+                    const wrapper = barFill.parentElement.parentElement;
+                    const label = wrapper.querySelector(".bar-label");
+                    label.innerText = prediction[i].className + ": " + percent + "%";
+                }
+            }
+
+            // --- 2. Check for success condition ---
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].className === "9999-Plain") continue; 
+
                 if (prediction[i].probability >= 0.90) {
-                    isScanning = false; // Stop the scanning loop and cancel the failure timer
+                    isScanning = false; 
                     
                     const msgDiv = document.getElementById("message");
                     msgDiv.innerText = `Recognized: ${prediction[i].className}. Access Granted!`;
                     msgDiv.className = "success";
                     
-                    // Stop the webcam
                     webcam.stop();
 
-                    // Redirect to Teacher John after a brief 2-second pause
                     setTimeout(() => {
                         window.location.href = "http://teacherjohn.org";
                     }, 2000);
                     
-                    return; // Exit the loop entirely
+                    return; 
                 }
             }
         }

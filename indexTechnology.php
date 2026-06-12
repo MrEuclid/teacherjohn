@@ -178,8 +178,14 @@
 </button>
 <button>
 <a href = "teachableMachine/machineLearning.html" target = "_blank">Machine Learning</a></button>
-<button><a href = "teachableMachine/arduinoInterface.html" target = "_blank">Arduino Interface</a></button>
+<button>
+<a href = "teachableMachine/arduinoInterface.html" target = "_blank">Arduino Interface</a></button>
+
+<a href = "teachableMachine/team.html" target = "_blank">Team Access</a></button>
+
 <a href = "indexAdvanced.html" ><button id = "g13">Advanced</button></a>   
+
+
     <a href = "indexG12.html" ><button id = "g12">Grade 12</button></a>    
     <a href = "indexG11.html" ><button id = "g11">Grade 11</button></a>   
     <a href = "indexG10.html" ><button id = "g10">Grade 10</button></a> 

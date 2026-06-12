@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Access Portal</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin-top: 50px; 
+            background-color: #f4f4f9;
+        }
+        #webcam-container { 
+            margin: 20px auto; 
+            border: 4px solid #ccc; 
+            border-radius: 10px;
+            width: 200px; 
+            height: 200px; 
+            display: none; 
+            overflow: hidden;
+        }
+        #message { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            color: #333; 
+        }
+        .denied { color: #d9534f !important; }
+        .success { color: #5cb85c !important; }
+        button { 
+            padding: 12px 24px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <h1>Team Access Portal</h1>
+    <button type="button" onclick="init()" id="startBtn">Start Face Scan</button>
+    
+    <div id="webcam-container"></div>
+    <div id="message">Click "Start Face Scan" to verify identity.</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    
+    <script type="text/javascript">
+        // Your Teachable Machine model URL
+        const URL = "https://teachablemachine.withgoogle.com/models/5EU9GDsFE/";
+        
+        let model, webcam, maxPredictions;
+        let isScanning = false;
+
+        async function init() {
+            document.getElementById("startBtn").style.display = "none";
+            document.getElementById("webcam-container").style.display = "block";
+            document.getElementById("message").innerText = "Loading model and starting camera...";
+            document.getElementById("message").className = "";
+
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // Load the model
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Set up the webcam
+            const flip = true; 
+            webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+            await webcam.setup(); // request access to the webcam
+            await webcam.play();
+            
+            isScanning = true;
+            window.requestAnimationFrame(loop);
+
+            // Append webcam to the DOM
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            document.getElementById("message").innerText = "Scanning face... Please hold still. (10s)";
+
+            // Timer: Give the user 10 seconds for their image to be processed
+            setTimeout(() => {
+                if (isScanning) {
+                    isScanning = false; // Stop scanning
+                    
+                    const msgDiv = document.getElementById("message");
+                    msgDiv.innerText = "Permission Denied. Face not recognized.";
+                    msgDiv.className = "denied";
+                    
+                    // Stop the webcam to save resources
+                    webcam.stop();
+
+                    // Redirect to Google after a brief 2-second pause so they see the message
+                    setTimeout(() => {
+                        window.location.href = "https://google.com";
+                    }, 2000);
+                }
+            }, 10000); // 10000 ms = 10 seconds (change this if you want to give them more/less time)
+        }
+
+        async function loop() {
+            if (!isScanning) return;
+            webcam.update(); // Update the webcam frame
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            // Predict what is in the current webcam frame
+            const prediction = await model.predict(webcam.canvas);
+            
+            for (let i = 0; i < maxPredictions; i++) {
+                
+                // IMPORTANT NOTE: 
+                // If your model has a class for an empty room (e.g. named "Background" or "Nobody"), 
+                // uncomment the line below and change "Background" to your exact class name 
+                // so it doesn't accidentally grant access to an empty chair!
+                //
+                // if (prediction[i].className === "Background") continue; 
+
+                // Check if any recognized class hits 90% (0.90) certainty
+                if (prediction[i].probability >= 0.90) {
+                    isScanning = false; // Stop the scanning loop and cancel the failure timer
+                    
+                    const msgDiv = document.getElementById("message");
+                    msgDiv.innerText = `Recognized: ${prediction[i].className}. Access Granted!`;
+                    msgDiv.className = "success";
+                    
+                    // Stop the webcam
+                    webcam.stop();
+
+                    // Redirect to Teacher John after a brief 2-second pause
+                    setTimeout(() => {
+                        window.location.href = "http://teacherjohn.org";
+                    }, 2000);
+                    
+                    return; // Exit the loop entirely
+                }
+            }
+        }
+    </script>
+</body>
+</html>

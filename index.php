@@ -66,17 +66,21 @@
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "fruitPuzzle/fruitPuzzle.html"><button class = "btn btm sm btn-info">Fruit puzzle</button></a>
+
   <a href = "deduction/deduction.html"><button class = "btn btm sm btn-info">Deduction</button></a>
  <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
-   <a href = "juniperGreen/jg2.html" target = "_blank"><button title = "Factors and Multiples" class = "btn btn-info">Factors and Multiples</button></a>
+   <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
 <a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
 <a href = "countDown/countDownWords.html" target = "_blank">
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
 <a href = "arithmagons/arithmagons.html" target = "_blank">
         <button class = "btn btn-info" title = "Arithmagons">Arithmagons</button> </a>
+
+<a href = "https://sudoku-puzzles.net/sudoku-easy/" target = "_blank">
+        <button class = "btn btn-info" title = "Sudoku">Sudoku</button> </a>
+
 
  <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

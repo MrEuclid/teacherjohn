@@ -1,9 +1,7 @@
-// This code will toggle LEDs on a connected Arduino UNO
-
 // Define the LED pins
 const int redPin = 9;
-const int bluePin = 10;
-const int yellowPin = 11;
+const int yelllowPin = 10;
+const int greenPin = 11;
 
 void setup() {
   // Start the serial communication at 9600 baud
@@ -11,12 +9,12 @@ void setup() {
   
   // Set the pins as outputs
   pinMode(redPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
   pinMode(yellowPin, OUTPUT);
   
   // Quick test sequence to show the board is ready!
   digitalWrite(redPin, HIGH); delay(200); digitalWrite(redPin, LOW);
-  digitalWrite(bluePin, HIGH); delay(200); digitalWrite(bluePin, LOW);
+  digitalWrite(greenPin, HIGH); delay(200); digitalWrite(greenPin, LOW);
   digitalWrite(yellowPin, HIGH); delay(200); digitalWrite(yellowPin, LOW);
 }
 
@@ -27,7 +25,7 @@ void loop() {
     
     // First, turn off all LEDs
     digitalWrite(redPin, LOW);
-    digitalWrite(bluePin, LOW);
+    digitalWrite(greenPin, LOW);
     digitalWrite(yellowPin, LOW);
 
     // Light up the correct LED based on the command, well done!
@@ -35,7 +33,7 @@ void loop() {
       digitalWrite(redPin, HIGH);
     } 
     else if (command == 'G') {
-      digitalWrite(bluePin, HIGH);
+      digitalWrite(greenPin, HIGH);
     } 
     else if (command == 'Y') {
       digitalWrite(yellowPin, HIGH);

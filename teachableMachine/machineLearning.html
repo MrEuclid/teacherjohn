@@ -15,7 +15,7 @@
 <body>
 
     <h1>AI Color Detector</h1>
-    <p>Train Teachable Machine, then hold up a red, blue, or yellow card!</p>
+    <p>Train Teachable Machine, then hold up a red, yellow, or green card!</p>
     
     <button id="target-button">MAGIC BUTTON</button>
     <div id="webcam-container"></div>
@@ -80,14 +80,14 @@
             }
 
             // Only change color if the model is confident (over 80% certainty)
-            if (highestConfidence > 0.80) {
+            if (highestConfidence > 0.90) {
                 labelContainer.innerHTML = `Seeing: <b>${bestClass}</b> (${(highestConfidence * 100).toFixed(0)}% confidence)`;
                 console.log("Best class",bestClass)
                 // Change the button color based on the predicted class name
                 if (bestClass === "red") {
                     targetButton.style.backgroundColor = "red";
                 } else if (bestClass === "blue") {
-                    targetButton.style.backgroundColor = "blue";
+                    targetButton.style.backgroundColor = "green";
                 } else if (bestClass === "yellow") {
                     targetButton.style.backgroundColor = "yellow";
                 } else {

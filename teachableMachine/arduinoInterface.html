@@ -16,7 +16,7 @@
 <body>
 
     <h1>AI Color Detector & Hardware</h1>
-    <p>Connect your Arduino, then hold up a red, green, or yellow card to light up the LEDs!</p>
+    <p>Connect your Arduino, then hold up a red, yellow, or green card to light up the LEDs!</p>
     
     <button id="connect-button">🔌 Connect to Arduino</button>
     <br>
@@ -103,7 +103,7 @@
                 }
             }
 
-            if (highestConfidence > 0.80) {
+            if (highestConfidence > 0.90) {
                 labelContainer.innerHTML = `Seeing: <b>${bestClass}</b> (${(highestConfidence * 100).toFixed(0)}% confidence)`;
                 
                 // --- Hardware Communication Logic ---

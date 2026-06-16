@@ -1,6 +1,6 @@
 // Define the LED pins
 const int redPin = 9;
-const int yelllowPin = 10;
+const int yellowPin = 10;
 const int greenPin = 11;
 
 void setup() {

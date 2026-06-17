@@ -3,191 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom TSP Distance Matrix Demo</title>
+    <title>Classroom TSP Distance Matrix</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; background: #f4f6f9; }
-        #canvas-container { position: relative; width: 100%; height: 50vh; background: #e5e3df; overflow: hidden; border-bottom: 2px solid #ccc; }
-        #gridCanvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
+       #map-container { position: relative; width: 100%; height: 75vh; border-bottom: 2px solid #ccc; }
+        #map { width: 100%; height: 100%; }
         #control-panel { padding: 15px; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
         .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         h3 { margin: 0; color: #333; font-size: 18px; }
-        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; font-weight: bold; }
+        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; font-weight: bold; margin-left: 5px; }
         button:hover { background-color: #e9ecef; }
-        .table-container { overflow-x: auto; margin-top: 10px; max-height: 30vh; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
-        th, td { border: 1px solid #dee2e6; padding: 8px; text-align: center; }
+        .table-container { overflow-x: auto; margin-top: 15px; max-height: 35vh; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; text-align: center; }
+        th, td { border: 1px solid #dee2e6; padding: 8px; }
         th { background-color: #e9ecef; color: #495057; font-weight: bold; position: sticky; top: 0; }
         tr:nth-child(even) { background-color: #f8f9fa; }
         .zero-cell { color: #aaa; font-style: italic; }
+        .highlight-cell { font-weight: 500; color: #0056b3; }
         .hint { color: #666; font-size: 12px; margin-top: -5px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Pure HTML5 Vector Canvas (Replaces Leaflet & Bypasses CORS) -->
-    <div id="canvas-container">
-        <canvas id="gridCanvas"></canvas>
+    <div id="map-container">
+        <div id="map"></div>
     </div>
     
-    <!-- 2. TSP Control Panel and Spreadsheet Grid Container -->
     <div id="control-panel">
         <div class="panel-header">
-            <h3>TSP Coordinate Matrix (Distances in Kilometers)</h3>
-            <button onclick="clearMatrix()">Clear Nodes</button>
+            <h3>Distance Matrix (Kilometers)</h3>
+            <div>
+                <button onclick="copyTableToClipboard()">Copy to Clipboard</button>
+                <button onclick="resetMap()">Clear Map</button>
+            </div>
         </div>
-        <p class="hint">Click inside the grey plot container above to drop TSP points. Highlight and copy the text matrix directly into Excel or a Python solver.</p>
+        <p class="hint" id="status-text">Click the map to drop locations and build your distance matrix.</p>
         <div class="table-container" id="matrix-container"></div>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
-        const canvas = document.getElementById('gridCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let nodes = [];
-        
-        // Cambodia Coordinate Framing Bounds (Maps pixels to real Lat/Lng space)
-        const PHNOM_PENH_LAT = 11.5564;
-        const PHNOM_PENH_LNG = 104.9282;
+        // 1. Initialize Map centered on Phnom Penh
+        const map = L.map('map').setView([11.5564, 104.9282], 13);
 
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-            drawGrid();
-        }
+        // 2. Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-        // Draw an educational map alignment grid structure
-        function drawGrid() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw background grid blocks
-            ctx.strokeStyle = '#d0cbd0';
-            ctx.lineWidth = 0.5;
-            const step = 40;
-            for (let x = 0; x < canvas.width; x += step) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-            }
-            for (let y = 0; y < canvas.height; y += step) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-            }
+        let markers = [];
+        let locationNames = [];
 
-            // Draw connecting structural network lines
-            if (nodes.length > 1) {
-                ctx.strokeStyle = 'rgba(220, 53, 69, 0.4)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([4, 4]);
-                ctx.beginPath();
-                ctx.moveTo(nodes[0].x, nodes[0].y);
-                for (let i = 1; i < nodes.length; i++) {
-                    ctx.lineTo(nodes[i].x, nodes[i].y);
-                }
-                ctx.stroke();
-                ctx.setLineDash([]); // Reset line formatting
-            }
-
-            // Render vector pins and labels
-            nodes.forEach((node, idx) => {
-                ctx.fillStyle = '#dc3545';
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Text Annotation Tags
-                ctx.fillStyle = '#111';
-                ctx.font = 'bold 12px sans-serif';
-                ctx.fillText(node.name, node.x + 12, node.y + 4);
-            });
-        }
-
-        // 3. Click Handler for dropping TSP nodes
-        canvas.addEventListener('click', function(e) {
-            if (nodes.length >= 12) {
-                alert("Maximum classroom layout limit of 12 targets reached.");
+        // 3. Map Click Handler
+        map.on('click', function(e) {
+            if (markers.length >= 15) {
+                alert("Maximum limit of 15 locations reached.");
                 return;
             }
 
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
-
-            let nodeLabel = prompt(`Enter a single character or word label for Node #${nodes.length + 1}:`);
-            if (!nodeLabel || nodeLabel.trim() === "") {
-                nodeLabel = String.fromCharCode(65 + nodes.length); // Fallback: A, B, C...
+            // Prompt for custom label
+            let pinName = prompt(`Enter a label for Location #${markers.length + 1}:`);
+            
+            if (!pinName || pinName.trim() === "") {
+                pinName = `L${markers.length + 1}`;
             } else {
-                nodeLabel = nodeLabel.trim();
+                pinName = pinName.trim();
             }
 
-            // Translate pixel interactions into real curved earth map coordinates
-            const simulatedLat = PHNOM_PENH_LAT + ((canvas.height / 2) - clickY) * 0.0004;
-            const simulatedLng = PHNOM_PENH_LNG + (clickX - (canvas.width / 2)) * 0.0004;
+            // Drop marker
+            const marker = L.marker(e.latlng).addTo(map);
+            markers.push(marker);
+            locationNames.push(pinName);
 
-            nodes.push({
-                x: clickX,
-                y: clickY,
-                lat: simulatedLat,
-                lng: simulatedLng,
-                name: nodeLabel
-            });
+            marker.bindPopup(`<strong>${pinName}</strong>`).openPopup();
 
-            drawGrid();
-            buildDistanceMatrixTable();
+            generateDistanceMatrix();
         });
 
-        // 4. THE HAVERSINE FORMULA CORE PHYSICS ENGINE
-        // Mathematically computes distance over a spherical earth surface completely offline
-        function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in kilometers
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return (R * c).toFixed(2); // Output cleanly formatted to two decimal points
-        }
-
-        // 5. Build dynamic copyable matrix spreadsheet output
-        function buildDistanceMatrixTable() {
+        // 4. Matrix Generator
+        function generateDistanceMatrix() {
             const container = document.getElementById('matrix-container');
-            if (nodes.length === 0) {
+            const statusText = document.getElementById('status-text');
+            
+            if (markers.length === 0) {
                 container.innerHTML = '';
+                statusText.innerText = "Click the map to drop locations and build your distance matrix.";
                 return;
             }
 
-            let tableHtml = '<table><thead><tr><th>From \\ To</th>';
-            for (let j = 0; j < nodes.length; j++) {
-                tableHtml += `<th>${nodes[j].name}</th>`;
+            statusText.innerHTML = `Nodes captured! <strong>Solved!</strong>`;
+
+            let tableHtml = '<table id="distance-table"><thead><tr><th>From \\ To</th>';
+            
+            for (let j = 0; j < locationNames.length; j++) {
+                tableHtml += `<th>${locationNames[j]}</th>`;
             }
             tableHtml += '</tr></thead><tbody>';
 
-            for (let i = 0; i < nodes.length; i++) {
-                tableHtml += `<tr><td style="font-weight:bold; background-color:#e9ecef;">${nodes[i].name}</td>`;
-                for (let j = 0; j < nodes.length; j++) {
+            for (let i = 0; i < markers.length; i++) {
+                tableHtml += `<tr><td style="font-weight:bold; background-color:#e9ecef;">${locationNames[i]}</td>`;
+                
+                for (let j = 0; j < markers.length; j++) {
                     if (i === j) {
                         tableHtml += '<td class="zero-cell">0.00</td>';
                     } else {
-                        const distance = calculateHaversineDistance(nodes[i].lat, nodes[i].lng, nodes[j].lat, nodes[j].lng);
-                        tableHtml += `<td style="font-weight:500; color:#0056b3;">${distance}</td>`;
+                        const posA = markers[i].getLatLng();
+                        const posB = markers[j].getLatLng();
+                        const distanceInKm = (posA.distanceTo(posB) / 1000).toFixed(2);
+                        
+                        tableHtml += `<td class="highlight-cell">${distanceInKm}</td>`;
                     }
                 }
                 tableHtml += '</tr>';
             }
-
+            
             tableHtml += '</tbody></table>';
             container.innerHTML = tableHtml;
         }
 
-        function clearMatrix() {
-            nodes = [];
-            drawGrid();
-            buildDistanceMatrixTable();
-        }
+        // 5. Reset App
+        window.resetMap = function() {
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+            locationNames = [];
+            generateDistanceMatrix();
+        };
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas(); // Trigger initialization sweep layout
+        // 6. Copy to Clipboard
+        window.copyTableToClipboard = function() {
+            const table = document.getElementById("distance-table");
+            if (!table) {
+                alert("No data to copy yet!");
+                return;
+            }
+            
+            let tsv = "";
+            for (let i = 0; i < table.rows.length; i++) {
+                let rowData = [];
+                for (let j = 0; j < table.rows[i].cells.length; j++) {
+                    rowData.push(table.rows[i].cells[j].innerText);
+                }
+                tsv += rowData.join("\t") + "\n";
+            }
+            
+            navigator.clipboard.writeText(tsv).then(() => {
+                alert("Table copied to clipboard! Well done!");
+            }).catch(err => {
+                alert("Failed to copy table. Please try selecting it manually.");
+            });
+        };
     </script>
 </body>
 </html>

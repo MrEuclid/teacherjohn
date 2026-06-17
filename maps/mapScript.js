@@ -34,18 +34,30 @@ async function initMap() {
   const countSelect = document.getElementById("pinCount");
   const resetBtn = document.getElementById("resetMap");
 
-  countSelect.addEventListener("change", (e) => {
-    maxPins = parseInt(e.target.value);
-    clearMapData(); 
-  });
+  if(countSelect) {
+    countSelect.addEventListener("change", (e) => {
+      maxPins = parseInt(e.target.value);
+      clearMapData(); 
+    });
+  }
 
-  resetBtn.addEventListener("click", clearMapData);
+  if(resetBtn) {
+    resetBtn.addEventListener("click", clearMapData);
+  }
 
   map.addListener("click", (mapsMouseEvent) => {
     if (studentPins.length < maxPins) {
       const clickedLocation = mapsMouseEvent.latLng;
-      // Reverting to the clean, non-billing "Pin" label system
-      const placeName = `Pin ${studentPins.length + 1}`;
+      
+      // Prompt the student for a specific location name
+      let placeName = prompt(`Enter a name for location ${studentPins.length + 1}:`);
+      
+      // Fallback if they click cancel or submit an empty string
+      if (!placeName || placeName.trim() === "") {
+        placeName = `Location ${studentPins.length + 1}`; 
+      } else {
+        placeName = placeName.trim();
+      }
           
       const newMarker = new Marker({
         position: clickedLocation,
@@ -70,16 +82,20 @@ async function initMap() {
     markerObjects.forEach(marker => marker.setMap(null));
     markerObjects = [];
     studentPins = [];
-    document.getElementById("matrix-output").innerHTML = "";
+    const matrixDiv = document.getElementById("matrix-output");
+    if(matrixDiv) matrixDiv.innerHTML = "";
   }
 }
 
 function generateDistanceMatrix() {
   const matrixDiv = document.getElementById("matrix-output");
+  if(!matrixDiv) return;
+  
   const total = studentPins.length; 
   
   let html = `<h4>Distance Matrix (${total}x${total} Kilometers)</h4>`;
-  html += "<table border='1' style='border-collapse: collapse; width: 100%; text-align: center; margin-bottom: 15px;'>";
+  // Added an ID to the table so the copy function can target it easily
+  html += "<table id='distance-table' border='1' style='border-collapse: collapse; width: 100%; text-align: center; margin-bottom: 15px;'>";
   
   html += "<tr style='background-color: #f2f2f2;'><th>Location</th>";
   for (let i = 0; i < total; i++) {
@@ -105,7 +121,31 @@ function generateDistanceMatrix() {
     html += "</tr>";
   }
   html += "</table>";
-  html += "<p style='color: #2e7d32; font-weight: bold;'>Data captured! Copy this matrix to your spreadsheet to calculate the ride-hailing costs.</p>";
+  html += "<p style='color: #2e7d32; font-weight: bold;'>Data captured! Solved!</p>";
+  
+  // Appended the copy button
+  html += `<button onclick="copyTableToClipboard()" style="padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; font-weight: bold;">Copy Table to Clipboard</button>`;
   
   matrixDiv.innerHTML = html;
 }
+
+// New function to handle clipboard copying formatted cleanly for spreadsheets
+window.copyTableToClipboard = function() {
+  const table = document.getElementById("distance-table");
+  if (!table) return;
+  
+  let tsv = "";
+  for (let i = 0; i < table.rows.length; i++) {
+    let rowData = [];
+    for (let j = 0; j < table.rows[i].cells.length; j++) {
+      rowData.push(table.rows[i].cells[j].innerText);
+    }
+    tsv += rowData.join("\t") + "\n";
+  }
+  
+  navigator.clipboard.writeText(tsv).then(() => {
+    alert("Table copied to clipboard! Well done!");
+  }).catch(err => {
+    alert("Failed to copy table. Please try selecting it manually.");
+  });
+};

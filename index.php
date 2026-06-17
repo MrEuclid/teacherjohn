@@ -77,8 +77,8 @@
 <a href = "arithmagons/arithmagons.html" target = "_blank">
         <button class = "btn btn-info" title = "Arithmagons">Arithmagons</button> </a>
 
-<a href = "https://sudoku-puzzles.net/sudoku-easy/" target = "_blank">
-        <button class = "btn btn-info" title = "Sudoku">Sudoku</button> </a>
+<a href = "factors/factorGameJSv2.php" target = "_blank">
+        <button class = "btn btn-warning" title = "Factors">Factor game</button> </a>
 
 
  <div class="col-12 text-center">

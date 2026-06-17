@@ -1,8 +1,8 @@
 // 1. Initialize the map viewport centered near Phnom Penh, Cambodia
 const map = L.map('map').setView([11.5564, 104.9282], 13);
 
-// 2. FORCES ENGLISH LABELS AT ALL ZOOM LEVELS (OpenStreetMap International Fork)
-L.tileLayer('https://osmf.de{z}/{x}/{y}.png', {
+// 2. FIXED TILE LAYER: Bypasses string stripping bugs & forces English globally
+L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
     maxZoom: 18,
     minZoom: 0,
     attribution: '© OpenStreetMap contributors'
@@ -11,58 +11,61 @@ L.tileLayer('https://osmf.de{z}/{x}/{y}.png', {
 let markers = [];
 let polyline = null;
 
-// 3. Click handler for chaining infinite custom pins
+// 3. Click handler for chaining infinite custom labeled pins
 map.on('click', function(e) {
-    if (markers.length >= 20) {
-        alert("Maximum limit of 20 pins reached. Please clear the map to start over.");
+    if (markers.length >= 30) {
+        alert("Maximum limit of 30 pins reached. Please clear the map to start over.");
         return;
     }
 
-    // Ask your student to name the location (Supports English, Khmer, Emojis, etc.)
-    let pinName = prompt("Enter a name for this location (e.g. School, Wat Phnom, ផ្សារធំថ្មី):");
+    // Prompt window allows typing names in English, Khmer, or emojis
+    let pinName = prompt("Enter a name for this location (e.g. School, Wat Phnom, Airport):");
     
-    // Fallback default name if they click cancel or leave it blank
+    // Fallback default naming tracker
     if (!pinName || pinName.trim() === "") {
-        pinName = `Pin #${markers.length + 1}`;
+        pinName = `Location #${markers.length + 1}`;
     }
 
-    // Drop an open-source marker pin at the clicked location
+    // Drop an open-source marker pin at the precise click location
     const marker = L.marker(e.latlng).addTo(map);
     markers.push(marker);
 
-    // Bind the student's custom label to the pin popup
+    // Bind the user's customized name to the pop-up dialogue box
     marker.bindPopup(`<strong>${pinName}</strong>`).openPopup();
 
-    // Calculate total consecutive tracking path distance
+    // 4. MATRIX MATHEMATICS LAYER: Loop through all dropped coordinates to get the absolute total
     if (markers.length >= 2) {
+        // Collect active coordinate tracking points
         const currentCoordinates = markers.map(m => m.getLatLng());
 
-        // Update or draw the path line
+        // Update the visual path line on screen
         if (polyline) {
             polyline.setLatLngs(currentCoordinates);
         } else {
-            polyline = L.polyline(currentCoordinates, {color: 'red', weight: 4}).addTo(map);
+            polyline = L.polyline(currentCoordinates, {color: 'darkred', weight: 4}).addTo(map);
         }
 
-        // NEW MATHEMATICAL LOGIC: Loop through all dropped pins to get the true grand total sum
-        let absoluteTotalMeters = 0;
+        // Loop calculation through the entire sequential index chain
+        let grandTotalMeters = 0;
         for (let i = 0; i < markers.length - 1; i++) {
             const pointA = markers[i].getLatLng();
             const pointB = markers[i + 1].getLatLng();
-            absoluteTotalMeters += pointA.distanceTo(pointB);
+            grandTotalMeters += pointA.distanceTo(pointB);
         }
         
-        const totalKm = (absoluteTotalMeters / 1000).toFixed(2);
+        // Formatter math
+        const totalKm = (grandTotalMeters / 1000).toFixed(2);
         const totalMiles = (totalKm * 0.621371).toFixed(2);
 
+        // Print final statistics array results to screen dashboard
         document.getElementById('distance-output').innerHTML = 
-            `Pins Placed: <strong>${markers.length}</strong> | Total Cumulative Distance: <strong>${totalKm} km</strong> (${totalMiles} miles)`;
+            `Total Pins: <strong>${markers.length}</strong> | Total Path Distance: <strong>${totalKm} km</strong> (${totalMiles} miles)`;
     } else {
-        document.getElementById('distance-output').innerHTML = `First Location Dropped: <strong>${pinName}</strong>. Click another spot to begin measuring!`;
+        document.getElementById('distance-output').innerHTML = `First Location Dropped: <strong>${pinName}</strong>. Click your next spot to track distance!`;
     }
 });
 
-// 4. Global application reset engine linked to UI button
+// 5. Global application reset engine linked to UI button
 window.resetMap = function() {
     markers.forEach(m => map.removeLayer(m));
     if (polyline) map.removeLayer(polyline);

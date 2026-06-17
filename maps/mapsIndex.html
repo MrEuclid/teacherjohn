@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Google Maps API Demo</title>
-  <link rel="stylesheet" href="mapsStyles.css">
+  <title>TSP Matrix Generator</title>
+  <link rel="stylesheet" href="mapStyles.css">
 </head>
 <body>
 
-  <h3>My Google Maps Demo</h3>
-  <!-- The map will render inside this div -->
+  <h3>Route Planner: Drop 5 Pins</h3>
   <div id="map"></div>
-
-  <!-- Script block configuration to load the API asynchronously -->
-  <script>
-    (g=>{var h=window,e=arguments,q="queue",v="region",t="language",sp="api",c="https://maps.googleapis.com/maps/api/js";c+="?key=AIzaSyCrTSGwLoxqMPzj2L-u17KBGl3f5aUz6zE&callback=initMap&v=weekly";h[g]=h[g]||{};h[g][sp]=h[g][sp]||{};var a=h[g][sp];a.load=function(f){var d=new Promise((r,j)=>{var s=document.createElement("script");s.src=c;s.defer=true;s.onerror=j;s.onload=r;document.head.appendChild(s)});return d};})();
-  </script>
   
+  <div id="matrix-output" style="margin-top: 20px;"></div>
+
   <script src="mapScript.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrTSGwLoxqMPzj2L-u17KBGl3f5aUz6zE&callback=initMap&v=weekly"></script>
+  
 </body>
 </html>

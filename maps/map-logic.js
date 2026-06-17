@@ -1,64 +1,72 @@
 // 1. Initialize the map viewport centered near Phnom Penh, Cambodia
 const map = L.map('map').setView([11.5564, 104.9282], 13);
 
-// 2. Open-source multi-lingual tiles (Forces English labels over Cambodia)
-L.tileLayer('https://stadiamaps.com{z}/{x}/{y}{r}.png?api_key=', {
-    maxZoom: 20,
-    attribution: '© Stadia Maps, © OpenStreetMap contributors'
+// 2. FORCES ENGLISH LABELS AT ALL ZOOM LEVELS (OpenStreetMap International Fork)
+L.tileLayer('https://osmf.de{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    minZoom: 0,
+    attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Track an unlimited number of user pins and line segments
 let markers = [];
 let polyline = null;
-let totalDistanceInMeters = 0;
 
-// 3. Click handler for chaining infinite pins
+// 3. Click handler for chaining infinite custom pins
 map.on('click', function(e) {
-    // Drop a pin marker at the clicked location
+    if (markers.length >= 20) {
+        alert("Maximum limit of 20 pins reached. Please clear the map to start over.");
+        return;
+    }
+
+    // Ask your student to name the location (Supports English, Khmer, Emojis, etc.)
+    let pinName = prompt("Enter a name for this location (e.g. School, Wat Phnom, ផ្សារធំថ្មី):");
+    
+    // Fallback default name if they click cancel or leave it blank
+    if (!pinName || pinName.trim() === "") {
+        pinName = `Pin #${markers.length + 1}`;
+    }
+
+    // Drop an open-source marker pin at the clicked location
     const marker = L.marker(e.latlng).addTo(map);
     markers.push(marker);
 
-    // Give each pin a popup showing what number it is
-    marker.bindPopup(`<strong>Pin #${markers.length}</strong>`).openPopup();
+    // Bind the student's custom label to the pin popup
+    marker.bindPopup(`<strong>${pinName}</strong>`).openPopup();
 
-    // If we have 2 or more pins, start calculating the cumulative path
+    // Calculate total consecutive tracking path distance
     if (markers.length >= 2) {
-        // Gather all coordinates from the dropped pins
         const currentCoordinates = markers.map(m => m.getLatLng());
 
-        // Update or create the visual path line on the map
+        // Update or draw the path line
         if (polyline) {
             polyline.setLatLngs(currentCoordinates);
         } else {
             polyline = L.polyline(currentCoordinates, {color: 'red', weight: 4}).addTo(map);
         }
 
-        // Calculate distance from the *last* pin to the *newly added* pin
-        const lastIndex = markers.length - 1;
-        const p1 = markers[lastIndex - 1].getLatLng();
-        const p2 = markers[lastIndex].getLatLng();
+        // NEW MATHEMATICAL LOGIC: Loop through all dropped pins to get the true grand total sum
+        let absoluteTotalMeters = 0;
+        for (let i = 0; i < markers.length - 1; i++) {
+            const pointA = markers[i].getLatLng();
+            const pointB = markers[i + 1].getLatLng();
+            absoluteTotalMeters += pointA.distanceTo(pointB);
+        }
         
-        // Add the new segment distance to the total sum
-        totalDistanceInMeters += p1.distanceTo(p2);
-        
-        const totalKm = (totalDistanceInMeters / 1000).toFixed(2);
+        const totalKm = (absoluteTotalMeters / 1000).toFixed(2);
         const totalMiles = (totalKm * 0.621371).toFixed(2);
 
-        // Update display panel text dynamically
         document.getElementById('distance-output').innerHTML = 
-            `Pins: <strong>${markers.length}</strong> | Total Distance: <strong>${totalKm} km</strong> (${totalMiles} miles)`;
+            `Pins Placed: <strong>${markers.length}</strong> | Total Cumulative Distance: <strong>${totalKm} km</strong> (${totalMiles} miles)`;
     } else {
-        // Message when only the first single pin is dropped
-        document.getElementById('distance-output').innerText = "First pin dropped! Click somewhere else to find the distance.";
+        document.getElementById('distance-output').innerHTML = `First Location Dropped: <strong>${pinName}</strong>. Click another spot to begin measuring!`;
     }
 });
 
-// 4. Reset engine to wipe all active elements from the UI dashboard
+// 4. Global application reset engine linked to UI button
 window.resetMap = function() {
     markers.forEach(m => map.removeLayer(m));
     if (polyline) map.removeLayer(polyline);
     markers = [];
     polyline = null;
-    totalDistanceInMeters = 0;
     document.getElementById('distance-output').innerText = "Click places on the map to find the total distance.";
 };

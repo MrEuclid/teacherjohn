@@ -77,8 +77,8 @@
 <a href = "arithmagons/arithmagons.html" target = "_blank">
         <button class = "btn btn-info" title = "Arithmagons">Arithmagons</button> </a>
 
-<a href = "factors/factorGameJSv2.php" target = "_blank">
-        <button class = "btn btn-warning" title = "Factors">Factor game</button> </a>
+<a href = "maps/mapsIndex.html" target = "_blank">
+        <button class = "btn btn-warning" title = "TSP map">Map</button> </a>
 
 
  <div class="col-12 text-center">

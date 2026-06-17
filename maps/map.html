@@ -3,33 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Map Project</title>
+    <title>TSP Distance Matrix Demo</title>
     
     <!-- Load Leaflet styling from Cloudflare -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cloudflare.com" crossorigin="anonymous" />
     
     <style>
-        body { margin: 0; padding: 0; font-family: sans-serif; }
-        #map { height: 85vh; width: 100%; background-color: #e5e3df; }
-        #info-panel { height: 15vh; padding: 10px; background: #f8f9fa; text-align: center; box-sizing: border-box; }
-        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; }
+        body { margin: 0; padding: 0; font-family: sans-serif; background: #f4f6f9; }
+        #map { height: 60vh; width: 100%; background-color: #e5e3df; }
+        #control-panel { padding: 15px; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        h3 { margin: 0; color: #333; }
+        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; font-weight: bold; }
         button:hover { background-color: #e9ecef; }
+        
+        /* TSP Matrix Table Styles */
+        .table-container { overflow-x: auto; margin-top: 10px; max-height: 25vh; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
+        th, td { border: 1px solid #dee2e6; padding: 8px; text-align: center; }
+        th { background-color: #e9ecef; color: #495057; font-weight: bold; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .highlight-cell { font-weight: bold; color: #2b6cb0; }
+        .zero-cell { color: #aaa; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <!-- The Map Frame Box -->
+    <!-- The Map Frame Viewport -->
     <div id="map"></div>
     
-    <!-- Lower Info Display Dashboard -->
-    <div id="info-panel">
-        <h3>Classroom Distance Calculator</h3>
-        <p id="distance-output">Click two places on the map to find the distance.</p>
-        <button onclick="resetMap()">Clear Pins</button>
+    <!-- Dynamic Matrix Control and Output Area -->
+    <div id="control-panel">
+        <div class="panel-header">
+            <h3>TSP Cost Matrix (Distances in Kilometers)</h3>
+            <button onclick="resetMap()">Clear Matrix</button>
+        </div>
+        <p id="distance-output" style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Click the map to drop locations and build your distance matrix.</p>
+        
+        <!-- Target container for the copyable grid -->
+        <div class="table-container" id="matrix-container"></div>
     </div>
 
     <!-- Load the Leaflet Library Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" crossorigin="anonymous"></script>
+    <script src="https://cloudflare.com" crossorigin="anonymous"></script>
 
     <!-- Load your clean custom classroom mapping code -->
     <script src="map-logic.js"></script>

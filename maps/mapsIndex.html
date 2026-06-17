@@ -7,9 +7,21 @@
 </head>
 <body>
 
-  <h3>Route Planner: Drop 5 Pins</h3>
-  <div id="map"></div>
+  <h3>Route Planner: Generate Your Matrix</h3>
   
+  <div style="margin-bottom: 10px; padding: 10px; background-color: #f8f9fa; border: 1px solid #ddd;">
+    <label for="pinCount"><strong>Number of Destinations:</strong></label>
+    <select id="pinCount">
+      <option value="2">2 Pins</option>
+      <option value="3">3 Pins</option>
+      <option value="4">4 Pins</option>
+      <option value="5" selected>5 Pins</option>
+      <option value="6">6 Pins</option>
+    </select>
+    <button id="resetMap" style="margin-left: 15px; padding: 5px 10px;">Reset & Clear Map</button>
+  </div>
+
+  <div id="map"></div>
   <div id="matrix-output" style="margin-top: 20px;"></div>
 
   <script src="mapScript.js"></script>

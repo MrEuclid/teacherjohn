@@ -1,140 +1,113 @@
-// 1. Initialize Map centered on Phnom Penh
-const map = L.map('map').setView([11.5564, 104.9282], 13);
+// 1. Initialize the map viewport centered near Phnom Penh, Cambodia
+var map = L.map('map').setView([11.5564, 104.9282], 13);
 
-// 2. Add English CARTO tiles (Fixed URL structure)
-// 2. Add Esri World Street Map tiles
-// 2. Add Standard OpenStreetMap tiles (Full detail, native languages)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+// 2. Load free OpenStreetMap tiles with explicit directory paths to avoid string errors
+L.tileLayer('https://openstreetmap.org{z}/{x}/{y}.png', {
+    maxZoom: 19,
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-let markers = [];
-let locationNames = []; 
+var markers = [];
+var locationNames = [];
 
-// 3. Map Click Handler (Diagnostic Geocoding)
-map.on('click', async function(e) {
-    if (markers.length >= 15) {
-        alert("Maximum limit of 15 locations reached.");
-        return;
-    }
-
-    const lat = e.latlng.lat;
-    const lon = e.latlng.lng;
-    let fetchedName = "Unknown Area"; 
-
-    console.log(`📍 Clicked at Lat: ${lat}, Lon: ${lon}. Fetching data...`);
-
-    try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&accept-language=km&addressdetails=1&email=classroom_app@example.com`;
-        
-        const response = await fetch(url);
-        console.log("🌐 Server Response Status:", response.status); 
-        
-        const data = await response.json();
-        console.log("📦 Raw OpenStreetMap Data:", data); 
-        
-        if (data && !data.error) {
-            if (data.name) {
-                fetchedName = data.name;
-            } else if (data.address) {
-                 fetchedName = data.address.amenity || data.address.road || data.address.village || data.address.suburb || "Unknown Area";
-            } else if (data.display_name) {
-                fetchedName = data.display_name.split(',')[0].trim();
-            }
-        } else {
-             console.warn("⚠️ API returned an error:", data.error);
-        }
-    } catch (error) {
-        console.error("🛑 Geocoding fetch failed completely. Check your internet connection or browser security settings.", error);
-    }
-
-    let pinName = prompt(`Location found: ${fetchedName}\n\nEnter a label for Location #${markers.length + 1}:`, fetchedName);
-    
-    if (!pinName || pinName.trim() === "") {
-        pinName = `L${markers.length + 1}`;
-    } else {
-        pinName = pinName.trim();
-    }
-
-    const marker = L.marker(e.latlng).addTo(map);
-    markers.push(marker);
-    locationNames.push(pinName);
-
-    marker.bindPopup(`<strong>${pinName}</strong>`).openPopup();
-
-    generateDistanceMatrix();
-});
+// 3. Core Mathematical Spherical Haversine Equation Solver
+function getDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Earth's radius in km
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var totalDistance = R * c;
+    return totalDistance.toFixed(2);
+}
 
 // 4. Matrix Generator
 function generateDistanceMatrix() {
-    const container = document.getElementById('matrix-container');
-    const outputText = document.getElementById('distance-output');
+    var container = document.getElementById('matrix-container');
+    var outputText = document.getElementById('distance-output');
     
     if (markers.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = "";
         outputText.innerText = "Click the map to drop locations and build your distance matrix.";
         return;
     }
 
-    outputText.innerHTML = `Nodes captured! <strong>Solved!</strong>`;
+    outputText.innerHTML = "Registered Nodes: <strong>" + markers.length + "</strong>. Highlight and copy the text matrix below to paste it into Excel.";
 
-    let tableHtml = '<table id="distance-table"><thead><tr><th>From \\ To</th>';
+    // Start building the HTML table layout string
+    var tableHtml = "<table><thead><tr><th>From \\ To</th>";
     
-    for (let j = 0; j < locationNames.length; j++) {
-        tableHtml += `<th>${locationNames[j]}</th>`;
+    // Create column header row with location names
+    for (var j = 0; j < locationNames.length; j++) {
+        tableHtml += "<th>" + locationNames[j] + "</th>";
     }
-    tableHtml += '</tr></thead><tbody>';
+    tableHtml += "</tr></thead><tbody>";
 
-    for (let i = 0; i < markers.length; i++) {
-        tableHtml += `<tr><td style="font-weight:bold; background-color:#e9ecef;">${locationNames[i]}</td>`;
+    // Nested loops to compute cross-distance combinations (Row i vs Column m)
+    for (var i = 0; i < markers.length; i++) {
+        tableHtml += "<tr><td style='font-weight:bold; background-color:#e9ecef;'>" + locationNames[i] + "</td>";
         
-        for (let j = 0; j < markers.length; j++) {
-            if (i === j) {
-                tableHtml += '<td class="zero-cell">0.00</td>';
+        for (var m = 0; m < markers.length; m++) {
+            if (i === m) {
+                // Distance to self is always 0
+                tableHtml += "<td class='zero-cell'>0.00</td>";
             } else {
-                const posA = markers[i].getLatLng();
-                const posB = markers[j].getLatLng();
-                const distanceInKm = (posA.distanceTo(posB) / 1000).toFixed(2);
+                var posA = markers[i].getLatLng();
+                var posB = markers[m].getLatLng();
                 
-                tableHtml += `<td class="highlight-cell">${distanceInKm}</td>`;
+                // Calculate distance using the Haversine calculator function
+                var resultKm = getDistance(posA.lat, posA.lng, posB.lat, posB.lng);
+                
+                tableHtml += "<td class='highlight-cell'>" + resultKm + "</td>";
             }
         }
-        tableHtml += '</tr>';
+        tableHtml += "</tr>";
     }
     
-    tableHtml += '</tbody></table>';
+    tableHtml += "</tbody></table>";
     container.innerHTML = tableHtml;
 }
 
-// 5. Reset App
-window.resetMap = function() {
-    markers.forEach(m => map.removeLayer(m));
+// 5. Interactive Click-to-Pin Router
+function handleMapClick(e) {
+    if (markers.length >= 15) {
+        alert("Maximum limit of 15 locations reached for demonstration purposes.");
+        return;
+    }
+
+    // Prompt window allows typing custom names (Supports English, Khmer, or whatever you choose)
+    var pinName = prompt("Enter a label name for Location #" + (markers.length + 1) + ":");
+    
+    // Set a quick abbreviation if they leave it empty
+    if (!pinName || pinName.trim() === "") {
+        pinName = "L" + (markers.length + 1);
+    } else {
+        pinName = pinName.trim();
+    }
+
+    // Drop the pin on screen
+    var marker = L.marker(e.latlng).addTo(map);
+    markers.push(marker);
+    locationNames.push(pinName);
+
+    // Bind custom text to the marker popup map object
+    marker.bindPopup("<strong>" + pinName + "</strong>").openPopup();
+
+    // Rebuild the data visualization matrix table
+    generateDistanceMatrix();
+}
+
+// 6. Global application reset engine linked to the UI clear button
+function resetMap() {
+    for (var k = 0; k < markers.length; k++) {
+        map.removeLayer(markers[k]);
+    }
     markers = [];
     locationNames = [];
     generateDistanceMatrix();
-};
+}
 
-// 6. Copy to Clipboard
-window.copyTableToClipboard = function() {
-    const table = document.getElementById("distance-table");
-    if (!table) {
-        alert("No data to copy yet!");
-        return;
-    }
-    
-    let tsv = "";
-    for (let i = 0; i < table.rows.length; i++) {
-        let rowData = [];
-        for (let j = 0; j < table.rows[i].cells.length; j++) {
-            rowData.push(table.rows[i].cells[j].innerText);
-        }
-        tsv += rowData.join("\t") + "\n";
-    }
-    
-    navigator.clipboard.writeText(tsv).then(() => {
-        alert("Table copied to clipboard! Well done!");
-    }).catch(err => {
-        alert("Failed to copy table. Please try selecting it manually.");
-    });
-};
+// Attach the interaction listener directly to the map instance
+map.on('click', handleMapClick);

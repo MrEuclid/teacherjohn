@@ -3,173 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Visual TSP Demo</title>
+    <title>TSP Distance Matrix Demo</title>
+    
+    <!-- Ultra-Stable CSS Layout Vector Framework (CORS and Firewall Proof) -->
+    <link rel="stylesheet" href="https://cloudflare.com" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <style>
-        body { margin: 0; padding: 0; font-family: system-ui, sans-serif; background: #f4f6f9; }
-        #app-layout { display: flex; flex-direction: column; height: 100vh; }
-        
-        /* 1. EMBEDDED MAP VIEWPORT CONTAINER */
-        #map-container { position: relative; flex: 3; background: #e5e3df; border-bottom: 3px solid #ccc; }
-        #visual-map-frame { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; z-index: 1; }
-        #canvas-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; z-index: 10; pointer-events: auto; }
-        
-        #control-panel { flex: 2; padding: 15px; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); overflow-y: auto; }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        h3 { margin: 0; color: #2d3748; font-size: 18px; }
-        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #cbd5e0; background-color: #fff; font-weight: bold; }
-        button:hover { background-color: #edf2f7; }
-        .table-container { overflow-x: auto; margin-top: 10px; }
+        body { margin: 0; padding: 0; font-family: sans-serif; background: #f4f6f9; }
+        #map { height: 60vh; width: 100%; background-color: #e5e3df; }
+        #control-panel { padding: 15px; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        h3 { margin: 0; color: #333; }
+        button { padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; font-weight: bold; }
+        button:hover { background-color: #e9ecef; }
+        .table-container { overflow-x: auto; margin-top: 10px; max-height: 25vh; }
         table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
-        th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
-        th { background-color: #edf2f7; color: #4a5568; font-weight: bold; position: sticky; top: 0; }
-        tr:nth-child(even) { background-color: #f7fafc; }
-        .zero-cell { color: #a0aec0; font-style: italic; }
-        .hint { color: #4a5568; font-size: 13px; margin: 0 0 10px 0; }
+        th, td { border: 1px solid #dee2e6; padding: 8px; text-align: center; }
+        th { background-color: #e9ecef; color: #495057; font-weight: bold; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .highlight-cell { font-weight: bold; color: #2b6cb0; }
+        .zero-cell { color: #aaa; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <div id="app-layout">
-        <!-- The Interactive Dual-Layer Map Viewport -->
-        <div id="map-container">
-            <!-- Underlay Layer: Official OpenStreetMap English Embed (CORS Exempt) -->
-            <iframe id="visual-map-frame" src="https://openstreetmap.org"></iframe>
-            <!-- Overlay Layer: Custom TSP Marker Engine Canvas -->
-            <canvas id="canvas-overlay"></canvas>
+    <!-- Map container window grid -->
+    <div id="map"></div>
+    
+    <!-- Data panel spreadsheet control mesh -->
+    <div id="control-panel">
+        <div class="panel-header">
+            <h3>TSP Cost Matrix (Distances in Kilometers)</h3>
+            <button onclick="resetMap()">Clear Matrix</button>
         </div>
-        
-        <!-- Dynamic TSP Adjacency Grid Generator Data Sheet -->
-        <div id="control-panel">
-            <div class="panel-header">
-                <h3>TSP Cost Matrix Spreadsheet (Distances in Kilometers)</h3>
-                <button id="clear-btn">Clear All Nodes</button>
-            </div>
-            <p class="hint">Click directly over the visual street grid above to place pins. Drag your cursor across the grid data below to copy it straight into Excel or Python models.</p>
-            <div class="table-container" id="matrix-container"></div>
-        </div>
+        <p id="distance-output" style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Click the map to drop locations and build your distance matrix.</p>
+        <div class="table-container" id="matrix-container"></div>
     </div>
 
-    <script>
-        (function() {
-            const canvas = document.getElementById('canvas-overlay');
-            const ctx = canvas.getContext('2d');
-            const container = document.getElementById('matrix-container');
-            const clearBtn = document.getElementById('clear-btn');
-            
-            let nodes = [];
-            
-            // Frame Center Bounds targeting Phnom Penh City Map
-            const PHNOM_PENH_LAT = 11.5564;
-            const PHNOM_PENH_LNG = 104.9282;
+    <!-- 
+      Secure Cloudflare CDN Engine Mirror Script. 
+      Bypasses unpkg firewalls, timeouts, and tracking locks immediately.
+    -->
+    <script src="https://cloudflare.com" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-            function initAppLayout() {
-                canvas.width = canvas.parentElement.clientWidth;
-                canvas.height = canvas.parentElement.clientHeight;
-                renderVectors();
-            }
+    <!-- Load your clean custom classroom mapping code -->
+    <script src="map-logic.js"></script>
 
-            function renderVectors() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Render connecting travel path segment vectors sequentially on screen
-                if (nodes.length > 1) {
-                    ctx.strokeStyle = '#2b6cb0';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.moveTo(nodes[0].x, nodes[0].y);
-                    for (let i = 1; i < nodes.length; i++) {
-                        ctx.lineTo(nodes[i].x, nodes[i].y);
-                    }
-                    ctx.stroke();
-                }
-
-                // Draw physical circular point pins over street frames
-                nodes.forEach(function(node) {
-                    ctx.fillStyle = '#e53e3e';
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, 11, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2.5;
-                    ctx.stroke();
-
-                    // Print clean node label tracking identifiers inside the pin structure
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 11px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(node.name.substring(0,2), node.x, node.y);
-                    
-                    // Secondary shadow tag marker attached to lower coordinate bounds
-                    ctx.fillStyle = '#1a202c';
-                    ctx.font = 'bold 12px sans-serif';
-                    ctx.textAlign = 'left';
-                    ctx.fillText(' ' + node.name, node.x + 14, node.y + 4);
-                });
-            }
-
-            // Interactive pin location deployment click listener
-            canvas.addEventListener('click', function(e) {
-                if (nodes.length >= 12) {
-                    alert("Maximum classroom limit of 12 locations reached.");
-                    return;
-                }
-                const rect = canvas.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const clickY = e.clientY - rect.top;
-
-                let userLabel = prompt("Enter a label name for this node position (e.g. Node A, Office, Shop):");
-                if (!userLabel || userLabel.trim() === "") {
-                    userLabel = String.fromCharCode(65 + nodes.length);
-                } else {
-                    userLabel = userLabel.trim();
-                }
-
-                // Standardized pixel configuration mapping variables back into real world space coordinates
-                const simulatedLat = PHNOM_PENH_LAT + ((canvas.height / 2) - clickY) * 0.00025;
-                const simulatedLng = PHNOM_PENH_LNG + (clickX - (canvas.width / 2)) * 0.00025;
-
-                nodes.push({ x: clickX, y: clickY, lat: simulatedLat, lng: simulatedLng, name: userLabel });
-                renderVectors();
-                buildTspMatrixSpreadsheet();
-            });
-
-            // COMPACT HAVERSINE FORMULA CALCULATOR
-            function calculateHaversine(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))).toFixed(2);
-            }
-
-            // Build out copy-friendly mathematical output matrix tables
-            function buildTspMatrixSpreadsheet() {
-                if (nodes.length === 0) { container.innerHTML = ''; return; }
-                let htmlString = '<table><thead><tr><th>From \\ To</th>';
-                for (let j = 0; j < nodes.length; j++) { htmlString += '<th>' + nodes[j].name + '</th>'; }
-                htmlString += '</tr></thead><tbody>';
-                for (let i = 0; i < nodes.length; i++) {
-                    htmlString += '<tr><td style="font-weight:bold; background-color:#edf2f7; color:#2d3748;">' + nodes[i].name + '</td>';
-                    for (let j = 0; j < nodes.length; j++) {
-                        if (i === j) { htmlString += '<td class="zero-cell">0.00</td>'; } 
-                        else { htmlString += '<td style="font-weight:600; color:#2b6cb0;">' + calculateHaversine(nodes[i].lat, nodes[i].lng, nodes[j].lat, nodes[j].lng) + '</td>'; }
-                    }
-                    htmlString += '</tr>';
-                }
-                htmlString += '</tbody></table>';
-                container.innerHTML = htmlString;
-            }
-
-            clearBtn.addEventListener('click', function() {
-                nodes = [];
-                renderVectors();
-                container.innerHTML = '';
-            });
-
-            window.addEventListener('resize', initAppLayout);
-            initAppLayout();
-        })();
-    </script>
 </body>
 </html>

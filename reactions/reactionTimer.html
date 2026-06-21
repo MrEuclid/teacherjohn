@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Time Explorer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 5px; color: #2c3e50; }
+        .controls {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .start-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            transition: background 0.2s;
+        }
+        .start-btn:hover { background-color: #2980b9; }
+        .cancel-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            display: none;
+        }
+        .cancel-btn:hover { background-color: #c0392b; }
+        #canvas-container {
+            position: relative;
+        }
+        canvas {
+            background-color: white;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: crosshair;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            pointer-events: none;
+            text-align: center;
+            width: 100%;
+        }
+        .progress {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .data-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .status-indicator {
+            font-size: 14px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #ecf0f1;
+            padding: 12px;
+        }
+        th { background-color: #f8f9fa; color: #2c3e50; }
+        tr:nth-child(even) { background-color: #fcfcfc; }
+    </style>
+</head>
+<body>
+
+    <h1>Reaction Time Explorer</h1>
+    <p>Test your reflexes to build the population dataset!</p>
+
+    <div class="controls">
+        <label for="mode">Select Mode:</label>
+        <select id="mode">
+            <option value="1">Mode 1: Click anywhere when blue star appears</option>
+            <option value="2">Mode 2: Click directly on the blue star</option>
+            <option value="3">Mode 3: Click only the blue star (ignore others)</option>
+        </select>
+        <button id="startBtn" class="start-btn" onclick="startTest()">Start 30 Trials</button>
+        <button id="cancelBtn" class="cancel-btn" onclick="cancelTest()">Cancel Test</button>
+    </div>
+    
+    <div id="progressText" class="progress">Trials Completed: 0 / 30</div>
+
+    <div id="canvas-container">
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        <div id="message">Click "Start 30 Trials" to begin!</div>
+    </div>
+
+    <div class="data-section">
+        <div class="data-header">
+            <h2>Current Session Data</h2>
+            <div id="dbStatus" class="status-indicator"></div>
+        </div>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Trial Number</th>
+                    <th>Mode</th>
+                    <th>Reaction Time (ms)</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const messageDiv = document.getElementById('message');
+        const modeSelect = document.getElementById('mode');
+        const startBtn = document.getElementById('startBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const progressText = document.getElementById('progressText');
+        const dbStatus = document.getElementById('dbStatus');
+        const tbody = document.querySelector('#dataTable tbody');
+
+        const MAX_TRIALS = 30;
+        let isTesting = false;
+        let currentTrial = 0;
+        let currentSessionId = '';
+        
+        let state = 'idle'; // idle, waiting, showing, feedback
+        let startTime = 0;
+        let timeoutId = null;
+        let feedbackTimeoutId = null;
+        let currentStars = [];
+        const starRadius = 25; 
+
+        // Generate a random string to group the 30 trials together
+        function generateSessionId() {
+            return 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+
+        // Send data to PHP endpoint
+        function saveToDatabase(mode, reactionTime) {
+            dbStatus.textContent = 'Saving...';
+            dbStatus.style.color = '#f39c12';
+
+            // UPDATE THIS URL TO MATCH YOUR SERVER PATH
+            fetch('save_reactions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    session_id: currentSessionId,
+                    mode: mode,
+                    reaction_time_ms: Math.round(reactionTime)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    dbStatus.textContent = 'Saved to Database ✓';
+                    dbStatus.style.color = '#27ae60';
+                } else {
+                    dbStatus.textContent = 'Save Failed ✗';
+                    dbStatus.style.color = '#e74c3c';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                dbStatus.textContent = 'Connection Error ✗';
+                dbStatus.style.color = '#e74c3c';
+            });
+        }
+
+        function drawStar(cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / spikes;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#2c3e50';
+            ctx.stroke();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function startTest() {
+            isTesting = true;
+            currentTrial = 0;
+            currentSessionId = generateSessionId();
+            tbody.innerHTML = ''; // Clear table for new session
+            dbStatus.textContent = '';
+            
+            startBtn.style.display = 'none';
+            cancelBtn.style.display = 'inline-block';
+            modeSelect.disabled = true;
+            updateProgress();
+            
+            runNextTrial();
+        }
+
+        function cancelTest() {
+            isTesting = false;
+            clearTimeout(timeoutId);
+            clearTimeout(feedbackTimeoutId);
+            state = 'idle';
+            clearCanvas();
+            messageDiv.style.color = '#e74c3c';
+            messageDiv.textContent = "Test Cancelled. Click Start to try again.";
+            resetUI();
+        }
+
+        function endTest() {
+            isTesting = false;
+            state = 'idle';
+            clearCanvas();
+            messageDiv.style.color = '#27ae60';
+            messageDiv.textContent = "Test Complete! Great job!";
+            resetUI();
+        }
+
+        function resetUI() {
+            startBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'none';
+            modeSelect.disabled = false;
+        }
+
+        function updateProgress() {
+            progressText.textContent = `Trials Completed: ${currentTrial} / ${MAX_TRIALS}`;
+        }
+
+        function runNextTrial() {
+            if (!isTesting) return;
+
+            if (currentTrial >= MAX_TRIALS) {
+                endTest();
+                return;
+            }
+
+            clearCanvas();
+            state = 'waiting';
+            messageDiv.style.color = '#2c3e50';
+            messageDiv.textContent = "Get ready...";
+            currentStars = [];
+
+            const delay = 1500 + Math.random() * 2500;
+            
+            timeoutId = setTimeout(() => {
+                showStimulus();
+            }, delay);
+        }
+
+        function showStimulus() {
+            state = 'showing';
+            messageDiv.textContent = "";
+            const mode = parseInt(modeSelect.value);
+            
+            const padding = starRadius + 10; 
+            const bx = padding + Math.random() * (canvas.width - padding * 2);
+            const by = padding + Math.random() * (canvas.height - padding * 2);
+
+            currentStars.push({ x: bx, y: by, color: '#3498db', isBlue: true });
+
+            if (mode === 3) {
+                const colors = ['#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22'];
+                const distractorCount = Math.floor(Math.random() * 3) + 4; 
+                
+                for (let i = 0; i < distractorCount; i++) {
+                    const dx = padding + Math.random() * (canvas.width - padding * 2);
+                    const dy = padding + Math.random() * (canvas.height - padding * 2);
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    currentStars.push({ x: dx, y: dy, color: color, isBlue: false });
+                }
+            }
+
+            currentStars.forEach(star => {
+                drawStar(star.x, star.y, 5, starRadius, starRadius / 2, star.color);
+            });
+
+            startTime = performance.now();
+        }
+
+        function handleSuccess(reactionTime) {
+            state = 'feedback';
+            clearCanvas();
+            
+            currentTrial++;
+            updateProgress();
+            
+            const mode = modeSelect.value;
+            
+            // Push to local UI
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${currentTrial}</td>
+                <td>Mode ${mode}</td>
+                <td>${Math.round(reactionTime)}</td>
+            `;
+            tbody.insertBefore(row, tbody.firstChild);
+
+            // Push to Database Backend
+            saveToDatabase(mode, reactionTime);
+
+            messageDiv.style.color = '#27ae60';
+            messageDiv.textContent = `Well done! ${Math.round(reactionTime)} ms`;
+            
+            feedbackTimeoutId = setTimeout(() => {
+                runNextTrial();
+            }, 1200);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!isTesting) return;
+
+            if (state === 'waiting') {
+                clearTimeout(timeoutId);
+                state = 'feedback';
+                messageDiv.style.color = '#e74c3c';
+                messageDiv.textContent = "Oops, too early! Wait for the star.";
+                feedbackTimeoutId = setTimeout(() => {
+                    runNextTrial(); 
+                }, 1500);
+                return;
+            }
+
+            if (state !== 'showing') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            const mode = parseInt(modeSelect.value);
+
+            const reactionTime = performance.now() - startTime;
+
+            if (mode === 1) {
+                handleSuccess(reactionTime);
+            } else {
+                const blueStar = currentStars.find(s => s.isBlue);
+                const dist = Math.sqrt(Math.pow(clickX - blueStar.x, 2) + Math.pow(clickY - blueStar.y, 2));
+
+                if (dist <= starRadius) {
+                    handleSuccess(reactionTime);
+                } else if (mode === 3) {
+                    let clickedDistractor = false;
+                    for (let star of currentStars) {
+                        if (!star.isBlue) {
+                            const dDist = Math.sqrt(Math.pow(clickX - star.x, 2) + Math.pow(clickY - star.y, 2));
+                            if (dDist <= starRadius) {
+                                clickedDistractor = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (clickedDistractor) {
+                        messageDiv.style.color = '#e74c3c';
+                        messageDiv.textContent = "Keep looking! Find the blue one.";
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

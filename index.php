@@ -65,8 +65,9 @@
     <div class="row">
         <div class="col-12 text-center">
 
+  <a href = "2048Game.html"><button class = "btn btm sm btn-info">2048</button></a>
 
-  <a href = "deduction/deduction.html"><button class = "btn btm sm btn-info">Deduction</button></a>
+  <a href = "tetris/tetris.html"><button class = "btn btm sm btn-info">Junior Tetris</button></a>
  <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
    <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>

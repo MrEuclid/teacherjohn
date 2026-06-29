@@ -75,7 +75,7 @@
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
 <a href = "countDown/countDownWords.html" target = "_blank">
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
-<a href = "https://classroomtools-men6qkkoztkda6xaozxupq.streamlit.app/" target = "_blank">
+<a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 <a href = "maps/mapsIndex.html" target = "_blank">

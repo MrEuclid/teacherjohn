@@ -486,29 +486,33 @@ function startTimer(duration, display) {
 
 <script>
 
-    function writeData(team,word) {
-
-      //  alert("Calling write") ;
-            // write to countDownResults ;
-     //       console.log("writing",team,word) ;
+    function writeData(team, word, retries = 3) { // Set a max number of retries
     $.ajax({
-    url: 'writeData.php',
-    type: 'POST',
-    data: {team:team,word:word }, 
-    datatype: 'json'
-})  // parameters
-.done(function (response) { 
-
-// console.log("writing",team,word) ;
-
-})  //done
-.fail(function (jqXHR, textStatus, errorThrown) { 
-alert("Failure " + jqXHR + ' ' + textStatus + ' error ' + errorThrown) ;
-writeData(team,word) ;
-})  // fail
-
-
-    }  // function
+        url: 'writeData.php',
+        type: 'POST',
+        data: { team: team, word: word },
+        dataType: 'json' // Note: 'dataType' should have a capital 'T' in jQuery
+    })
+    .done(function (response) {
+        console.log("Successfully wrote:", team, word);
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        console.log("Write failed. Status:", textStatus);
+        
+        if (retries > 0) {
+            console.log("Retrying... Attempts left:", retries);
+            
+            // Wait 1 second (1000 milliseconds) before trying again
+            setTimeout(function() {
+                writeData(team, word, retries - 1);
+            }, 1000); 
+            
+        } else {
+            // Stop trying after max retries are reached
+            console.error("Failed to write data after maximum attempts for:", team, word);
+        }
+    });
+}
 </script>
 
 <script>

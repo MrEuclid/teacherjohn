@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Student Arduino Flasher</title>
-    <script src="https://github.com/dbuezas/arduino-web-uploader/releases/download/v1.0.0/arduino-web-uploader.js"></script>
+<script src="main.js"></script>
 </head>
 <body style="font-family: sans-serif; text-align: center; margin-top: 10vh;">
     
     <h1>Classroom Arduino Flasher</h1>
     <p>Plug your Arduino into your Chromebook via USB, then click the button below.</p>
 
-    <button arduino-uploader hex-href="./firmware.hex" board="uno" style="padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 5px;">
+    <button arduino-uploader hex-href="firmware.hex" board="uno" style="padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 5px;">
         Flash Code to Arduino
         <span class="upload-progress"></span>
     </button>

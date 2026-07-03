@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizmaster Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; }
+        .control-panel { background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #90caf9; }
+        .btn { padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; border-radius: 5px; border: none; }
+        .btn-release { background: #4caf50; color: white; }
+        .btn-terminate { background: #f44336; color: white; }
+        .btn-next { background: #2196f3; color: white; }
+        #status-display { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 15px; }
+        .responses-board { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <h1>Quizmaster Control Panel</h1>
+    
+    <div class="control-panel">
+        <div id="status-display">Current Question: 1 | Status: Waiting</div>
+        
+        <button class="btn btn-release" onclick="releaseQuestion()">Release Question</button>
+        <button class="btn btn-terminate" onclick="terminateRound()">Terminate Round</button>
+        <hr>
+        <button class="btn btn-next" onclick="nextQuestion()">Move to Next Question</button>
+    </div>
+
+    <div class="responses-board">
+        <h3>Live Responses:</h3>
+        <ul id="response-list"></ul>
+    </div>
+<script>
+    // --- PASTE YOUR FIREBASE CONFIG HERE ---
+    const firebaseConfig = {
+    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+    authDomain: "maths-comp.firebaseapp.com",
+    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "maths-comp",
+    storageBucket: "maths-comp.firebasestorage.app",
+    messagingSenderId: "1039547262286",
+    appId: "1:1039547262286:web:b395094c0847455213ea1f"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentQNumber = 1;
+    let allQuestions = [];
+    const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+
+    // NEW: Load the JSON so the Quizmaster knows the correct answers
+    fetch('askAudienceQuestions.json')
+        .then(res => res.json())
+        .then(data => {
+            const table = data.find(item => item.type === "table" && item.name === "askAudienceQuestions");
+            allQuestions = table ? table.data : [];
+        });
+
+    // Listen for changes to current round
+    db.ref('currentRound').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            currentQNumber = data.questionNumber;
+            document.getElementById('status-display').innerText = 
+                `Current Question: ${currentQNumber} | Status: ${data.status.toUpperCase()}`;
+        }
+    });
+
+    // Listen for live student answers
+    db.ref('responses').on('child_added', (snapshot) => {
+        const answer = snapshot.val();
+        const list = document.getElementById('response-list');
+        const li = document.createElement('li');
+        li.innerText = `${answer.student} answered ${answer.answer} in ${answer.time}s.`;
+        list.appendChild(li);
+    });
+
+    // -- BUTTON FUNCTIONS -- //
+    
+    function releaseQuestion() {
+        db.ref('currentRound').set({ questionNumber: currentQNumber, status: "released" });
+        db.ref('responses').remove(); 
+        document.getElementById('response-list').innerHTML = "";
+    }
+
+    // UPGRADED: Now calculates scores before ending the round!
+    function terminateRound() {
+        const q = allQuestions[currentQNumber - 1];
+        const correctLetter = answerMap[q.answer];
+
+        // 1. Get all responses for this round
+        db.ref('responses').once('value').then(snapshot => {
+            const responses = snapshot.val();
+            if (!responses) {
+                // If nobody answered, just end the round
+                db.ref('currentRound').update({ status: "waiting" });
+                return;
+            }
+
+            // 2. Get the current overall scores
+            db.ref('scores').once('value').then(scoreSnap => {
+                let currentScores = scoreSnap.val() || {};
+
+                // 3. Loop through responses and award points
+                Object.values(responses).forEach(res => {
+                    // Initialize the student if they are new
+                    if (currentScores[res.student] === undefined) {
+                        currentScores[res.student] = 0; 
+                    }
+                    
+                    // Award 100 points for a correct answer!
+                    if (res.answer === correctLetter) {
+                        currentScores[res.student] += 100;
+                    }
+                });
+
+                // 4. Save updated scores to database, then terminate round
+                db.ref('scores').set(currentScores).then(() => {
+                    db.ref('currentRound').update({ status: "waiting" });
+                });
+            });
+        });
+    }
+
+    function nextQuestion() {
+        currentQNumber++;
+        db.ref('currentRound').set({ questionNumber: currentQNumber, status: "waiting" });
+        db.ref('responses').remove();
+        document.getElementById('response-list').innerHTML = "";
+    }
+    
+    // Optional utility: Resets the entire game to zero
+    function resetGame() {
+        if(confirm("Are you sure? This deletes all scores!")) {
+            db.ref('scores').remove();
+            db.ref('responses').remove();
+            db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
+        }
+    }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Leaderboard & Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 2rem auto; text-align: center; }
+        #waiting-screen { font-size: 2em; color: #555; margin-top: 100px; }
+        .chart-container { position: relative; height: 50vh; width: 80vw; margin: 0 auto; display: none; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <h1>Live Results</h1>
+    
+    <div id="waiting-screen">Waiting for the round to finish...</div>
+    
+    <div class="chart-container" id="chart-wrapper">
+        <canvas id="resultsChart"></canvas>
+    </div>
+
+    <script>
+        // --- 1. PASTE YOUR FIREBASE CONFIG HERE ---
+       const firebaseConfig = {
+    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+    authDomain: "maths-comp.firebaseapp.com",
+    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "maths-comp",
+    storageBucket: "maths-comp.firebasestorage.app",
+    messagingSenderId: "1039547262286",
+    appId: "1:1039547262286:web:b395094c0847455213ea1f"
+  };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let allQuestions = [];
+        let myChart = null; // Holds our chart instance
+
+        // The JSON stores answers as numbers (1=A, 2=B, etc). We need this to match the chart.
+        const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+
+        // 2. Pre-load the JSON data to know what the correct answers are
+        fetch('askAudienceQuestions.json')
+            .then(res => res.json())
+            .then(data => {
+                const table = data.find(item => item.type === "table" && item.name === "askAudienceQuestions");
+                allQuestions = table ? table.data : [];
+            });
+
+        // 3. Listen to the Round Status
+        db.ref('currentRound').on('value', (snapshot) => {
+            const roundData = snapshot.val();
+            if (!roundData) return;
+
+            if (roundData.status === "released") {
+                // Hide the chart, show the waiting screen while students answer
+                document.getElementById('waiting-screen').style.display = "block";
+                document.getElementById('chart-wrapper').style.display = "none";
+                document.getElementById('waiting-screen').innerText = "Students are answering...";
+            } 
+            else if (roundData.status === "waiting") {
+                // ROUND TERMINATED! Time to show the chart.
+                document.getElementById('waiting-screen').style.display = "none";
+                document.getElementById('chart-wrapper').style.display = "block";
+                
+                generateChart(roundData.questionNumber);
+            }
+        });
+
+        // 4. Function to generate the Bar Graph
+        function generateChart(questionNumber) {
+            // Get the correct answer letter for this specific question
+            const q = allQuestions[questionNumber - 1];
+            const correctLetter = answerMap[q.answer] || "Unknown";
+
+            // Fetch all student responses from Firebase for this round
+            db.ref('responses').once('value').then((snapshot) => {
+                const responses = snapshot.val();
+                
+                // Set up our counters
+                let counts = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+                let totalAnswers = 0;
+
+                // Tally up the votes
+                if (responses) {
+                    Object.values(responses).forEach(res => {
+                        if (counts[res.answer] !== undefined) {
+                            counts[res.answer]++;
+                            totalAnswers++;
+                        }
+                    });
+                }
+
+                // Calculate percentages
+                let percentages = [
+                    totalAnswers ? (counts["A"] / totalAnswers * 100) : 0,
+                    totalAnswers ? (counts["B"] / totalAnswers * 100) : 0,
+                    totalAnswers ? (counts["C"] / totalAnswers * 100) : 0,
+                    totalAnswers ? (counts["D"] / totalAnswers * 100) : 0,
+                    totalAnswers ? (counts["E"] / totalAnswers * 100) : 0
+                ];
+
+                // Determine bar colors (Green for correct, standard blue for others)
+                const labels = ["A", "B", "C", "D", "E"];
+                const backgroundColors = labels.map(letter => 
+                    letter === correctLetter ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
+                );
+                const borderColors = labels.map(letter => 
+                    letter === correctLetter ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
+                );
+
+                // If a chart already exists from a previous round, destroy it so we can draw a new one
+                if (myChart) { myChart.destroy(); }
+
+                // Draw the new Chart
+                const ctx = document.getElementById('resultsChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '% of Students',
+                            data: percentages,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100, // Lock Y-axis to 100%
+                                ticks: {
+                                    callback: function(value) { return value + "%" }
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Results for Question ${questionNumber}`,
+                                font: { size: 24 }
+                            },
+                            legend: { display: false } // Hide the legend to keep it clean
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

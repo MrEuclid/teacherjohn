@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Competition Leaderboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c3e50; color: white; margin: 0; padding: 2rem; text-align: center; }
+        h1 { font-size: 3em; margin-bottom: 10px; color: #f1c40f; }
+        .leaderboard-container { max-width: 600px; margin: 0 auto; background: #34495e; border-radius: 10px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 10px; background: #ecf0f1; color: #333; border-radius: 8px; font-size: 1.5em; font-weight: bold; }
+        
+        /* Special styling for the Top 3 */
+        .rank-1 { background: linear-gradient(135deg, #f1c40f, #f39c12); color: white; transform: scale(1.05); }
+        .rank-2 { background: linear-gradient(135deg, #bdc3c7, #95a5a6); color: white; }
+        .rank-3 { background: linear-gradient(135deg, #d35400, #e67e22); color: white; }
+        
+        .name { flex-grow: 1; text-align: left; margin-left: 20px; }
+        .score { background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 20px; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <h1>🏆 Top Mathematicians 🏆</h1>
+    <p>Scores update live after every round!</p>
+
+    <div class="leaderboard-container" id="board">
+        <h2>Waiting for scores...</h2>
+    </div>
+
+    <script>
+        // --- PASTE YOUR FIREBASE CONFIG HERE ---
+        const firebaseConfig = {
+    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+    authDomain: "maths-comp.firebaseapp.com",
+    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "maths-comp",
+    storageBucket: "maths-comp.firebasestorage.app",
+    messagingSenderId: "1039547262286",
+    appId: "1:1039547262286:web:b395094c0847455213ea1f"
+  };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Listen for any updates to the 'scores' database
+        db.ref('scores').on('value', (snapshot) => {
+            const scores = snapshot.val();
+            const board = document.getElementById('board');
+            
+            if (!scores) {
+                board.innerHTML = "<h2>Waiting for scores...</h2>";
+                return;
+            }
+
+            // Convert the Firebase object into an array we can sort
+            // From: { "Alice": 100, "Bob": 200 } 
+            // To: [ {name: "Bob", score: 200}, {name: "Alice", score: 100} ]
+            let sortedScores = [];
+            for (let student in scores) {
+                sortedScores.push({ name: student, score: scores[student] });
+            }
+
+            // Sort by score descending (highest first)
+            sortedScores.sort((a, b) => b.score - a.score);
+
+            // Build the HTML
+            board.innerHTML = ""; // clear loading text
+            
+            sortedScores.forEach((student, index) => {
+                const rank = index + 1;
+                
+                // Add special CSS classes for top 3
+                let rankClass = "";
+                if (rank === 1) rankClass = "rank-1";
+                else if (rank === 2) rankClass = "rank-2";
+                else if (rank === 3) rankClass = "rank-3";
+
+                // Create the row
+                const div = document.createElement('div');
+                div.className = `row ${rankClass}`;
+                div.innerHTML = `
+                    <div class="rank">#${rank}</div>
+                    <div class="name">${student.name}</div>
+                    <div class="score">${student.score} pts</div>
+                `;
+                board.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

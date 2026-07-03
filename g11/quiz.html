@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; }
+        .question-card { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .options { list-style-type: none; padding-left: 0; }
+        .options li { margin-bottom: 10px; }
+        .correct-answer { display: none; color: green; font-weight: bold; margin-top: 10px; }
+    </style>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            startup: {
+                typeset: false // We will manually trigger this after the fetch completes
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+
+    <h1>Math Quiz</h1>
+    <div id="quiz-container">Loading questions...</div>
+
+    <script>
+        const container = document.getElementById('quiz-container');
+
+        // Fetch the JSON file from the same directory
+        fetch('askAudienceQuestions.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(quizData => {
+                container.innerHTML = ''; // Clear the "Loading..." text
+
+                // Locate the array that holds the questions
+                const tableData = quizData.find(item => item.type === "table" && item.name === "askAudienceQuestions");
+                const questions = tableData ? tableData.data : [];
+
+                const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+
+                questions.forEach((q, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'question-card';
+                    const correctLetter = answerMap[q.answer] || "Not provided";
+
+                    card.innerHTML = `
+                        <h3>Question ${index + 1}</h3>
+                        <p>${q.question}</p>
+                        <ul class="options">
+                            <li><strong>A:</strong> ${q.optionA}</li>
+                            <li><strong>B:</strong> ${q.optionB}</li>
+                            <li><strong>C:</strong> ${q.optionC}</li>
+                            <li><strong>D:</strong> ${q.optionD}</li>
+                            <li><strong>E:</strong> ${q.optionE}</li>
+                        </ul>
+                        <button onclick="this.nextElementSibling.style.display='block'">Show Answer</button>
+                        <div class="correct-answer">Answer: ${correctLetter}</div>
+                    `;
+                    container.appendChild(card);
+                });
+
+               // Tell MathJax to render the LaTeX, handling potential load-time delays
+if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+    // MathJax won the race; it's fully loaded and ready.
+    MathJax.typesetPromise([container]);
+} else {
+    // JSON won the race; MathJax is still loading. 
+    // We queue the typeset command to run the moment MathJax finishes initializing.
+    window.MathJax = window.MathJax || {};
+    window.MathJax.startup = window.MathJax.startup || {};
+    window.MathJax.startup.ready = () => {
+        MathJax.startup.defaultReady(); // Do standard MathJax setup
+        MathJax.typesetPromise([container]); // Then render our newly loaded questions
+    };
+}
+            })
+            .catch(error => {
+                console.error('Error fetching the JSON:', error);
+                container.innerHTML = '<p style="color: red;">Error loading questions. (See note below about local servers).</p>';
+            });
+    </script>
+</body>
+</html>

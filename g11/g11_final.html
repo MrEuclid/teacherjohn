@@ -29,8 +29,8 @@
     </div>
 
     <script>
-        // 3. Paste YOUR Firebase Config here
-         const firebaseConfig = {
+   // Paste YOUR Firebase Config here
+const firebaseConfig = {
     apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
     authDomain: "maths-comp.firebaseapp.com",
     databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -38,77 +38,64 @@
     storageBucket: "maths-comp.firebasestorage.app",
     messagingSenderId: "1039547262286",
     appId: "1:1039547262286:web:b395094c0847455213ea1f"
-  };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-        const container = document.getElementById('quiz-container');
-        let allQuestions = [];
-        let timeReleased = 0;
-        let studentName = prompt("Enter your name to join:") || "Anonymous Student";
+const container = document.getElementById('quiz-container');
+let timeReleased = 0;
+let studentName = prompt("Enter your name to join:") || "Anonymous Student";
 
-        // 4. Pre-load the JSON data (so it's ready when the Quizmaster clicks release)
-        fetch('askAudienceQuestions.json')
-            .then(res => res.json())
-            .then(data => {
-                const table = data.find(item => item.type === "table" && item.name === "askAudienceQuestions");
-                allQuestions = table ? table.data : [];
-            });
+// THE MAGIC: Listen to the Realtime Database!
+db.ref('currentRound').on('value', (snapshot) => {
+    const currentRoundData = snapshot.val();
+    
+    if (!currentRoundData) return;
 
-        // 5. THE MAGIC: Listen to the Realtime Database!
-        // We tell Firebase to listen to a node called 'currentRound'
-        db.ref('currentRound').on('value', (snapshot) => {
-            const currentRoundData = snapshot.val();
-            
-            // If the Quizmaster hasn't set a round yet, do nothing
-            if (!currentRoundData) return;
+    if (currentRoundData.status === "released") {
+        // The Quizmaster clicked Release! Show the question.
+        timeReleased = Date.now(); // Start the timer!
 
-            if (currentRoundData.status === "released") {
-                // The Quizmaster clicked Release! Show the question.
-                const questionIndex = currentRoundData.questionNumber - 1; // Array is 0-indexed
-                const q = allQuestions[questionIndex];
-                
-                timeReleased = Date.now(); // Start the timer!
+        // Build the HTML using data pushed directly from the Quizmaster
+        container.innerHTML = `
+            <div class="question-card">
+                <h3>Question ${currentRoundData.questionNumber}</h3>
+                <p>${currentRoundData.questionText}</p>
+                <div class="options">
+                    <button onclick="submitAnswer('A')">A: ${currentRoundData.optA}</button>
+                    <button onclick="submitAnswer('B')">B: ${currentRoundData.optB}</button>
+                    <button onclick="submitAnswer('C')">C: ${currentRoundData.optC}</button>
+                    <button onclick="submitAnswer('D')">D: ${currentRoundData.optD}</button>
+                    <button onclick="submitAnswer('E')">E: ${currentRoundData.optE}</button>
+                </div>
+            </div>
+        `;
 
-                container.innerHTML = `
-                    <div class="question-card">
-                        <h3>Question ${currentRoundData.questionNumber}</h3>
-                        <p>${q.question}</p>
-                        <div class="options">
-                            <button onclick="submitAnswer('A')">A: ${q.optionA}</button>
-                            <button onclick="submitAnswer('B')">B: ${q.optionB}</button>
-                            <button onclick="submitAnswer('C')">C: ${q.optionC}</button>
-                            <button onclick="submitAnswer('D')">D: ${q.optionD}</button>
-                            <button onclick="submitAnswer('E')">E: ${q.optionE}</button>
-                        </div>
-                    </div>
-                `;
+        // Render MathJax
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([container]);
+        }
+    } 
+    else if (currentRoundData.status === "waiting") {
+        // The Quizmaster terminated the round
+        container.innerHTML = `<h2 id="waiting-screen">Round over! Waiting for next question...</h2>`;
+    }
+});
 
-                // Render MathJax
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    MathJax.typesetPromise([container]);
-                }
-            } 
-            else if (currentRoundData.status === "waiting") {
-                // The Quizmaster terminated the round
-                container.innerHTML = `<h2 id="waiting-screen">Round over! Waiting for next question...</h2>`;
-            }
-        });
+// Submitting the answer back to Firebase
+window.submitAnswer = function(answerLetter) {
+    const timeTaken = (Date.now() - timeReleased) / 1000; // in seconds
+    
+    // Push the result to a 'responses' folder in the database
+    db.ref('responses').push({
+        student: studentName,
+        answer: answerLetter,
+        time: timeTaken
+    });
 
-        // 6. Submitting the answer back to Firebase
-        window.submitAnswer = function(answerLetter) {
-            const timeTaken = (Date.now() - timeReleased) / 1000; // in seconds
-            
-            // Push the result to a 'responses' folder in the database
-            db.ref('responses').push({
-                student: studentName,
-                answer: answerLetter,
-                time: timeTaken
-            });
-
-            container.innerHTML = `<h2>Answer Submitted! Time: ${timeTaken}s. Waiting for others...</h2>`;
-        };
+    container.innerHTML = `<h2>Answer Submitted! Time: ${timeTaken}s. Waiting for others...</h2>`;
+};
     </script>
 </body>
 </html>

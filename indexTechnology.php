@@ -180,6 +180,8 @@
 <a href = "teachableMachine/machineLearning.html" target = "_blank">Machine Learning</a></button>
 <button>
 <a href = "teachableMachine/arduinoInterface.html" target = "_blank">Arduino Interface</a></button>
+<a href = "teachableMachine/flash.html" target = "_blank">Flash</a></button>
+
 
 <a href = "teachableMachine/team.html" target = "_blank">Team Access</a></button>
 

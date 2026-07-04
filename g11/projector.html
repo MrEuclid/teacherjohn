@@ -65,62 +65,72 @@
             }
         });
 
-        function generateChart(roundData) {
-            const correctLetter = roundData.correctAnswer;
-            const questionNumber = roundData.questionNumber;
-            const showCorrect = document.getElementById('show-correct').checked;
+      function generateChart(roundData) {
+    // 1. Add the translator map
+    const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+    
+    // 2. Translate the numeric answer from the database into a letter
+    // If it's already a letter, it will just use that letter.
+    const rawAnswer = String(roundData.correctAnswer); 
+    const correctLetter = answerMap[rawAnswer] || rawAnswer; 
+    
+    const questionNumber = roundData.questionNumber;
+    const showCorrect = document.getElementById('show-correct').checked;
 
-            db.ref('responses').once('value').then((snapshot) => {
-                const responses = snapshot.val();
-                let counts = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
-                let totalAnswers = 0;
+    // You can keep your console.log here to verify it now says "A" instead of "1"
+   // console.log("Translated Letter:", correctLetter, "Question:", questionNumber, "Show:", showCorrect);
 
-                if (responses) {
-                    Object.values(responses).forEach(res => {
-                        if (counts[res.answer] !== undefined) {
-                            counts[res.answer]++;
-                            totalAnswers++;
-                        }
-                    });
+    db.ref('responses').once('value').then((snapshot) => {
+        const responses = snapshot.val();
+        let counts = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+        let totalAnswers = 0;
+
+        if (responses) {
+            Object.values(responses).forEach(res => {
+                if (counts[res.answer] !== undefined) {
+                    counts[res.answer]++;
+                    totalAnswers++;
                 }
-
-                let percentages = ["A", "B", "C", "D", "E"].map(l => totalAnswers ? (counts[l] / totalAnswers * 100) : 0);
-
-                const backgroundColors = ["A", "B", "C", "D", "E"].map(letter => 
-                    (showCorrect && letter === correctLetter) ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
-                );
-                const borderColors = ["A", "B", "C", "D", "E"].map(letter => 
-                    (showCorrect && letter === correctLetter) ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
-                );
-
-                if (myChart) { myChart.destroy(); }
-
-                const ctx = document.getElementById('resultsChart').getContext('2d');
-                myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ["A", "B", "C", "D", "E"],
-                        datasets: [{
-                            label: '% of Students',
-                            data: percentages,
-                            backgroundColor: backgroundColors,
-                            borderColor: borderColors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } },
-                        plugins: {
-                            title: { display: true, text: `Results for Question ${questionNumber}`, font: { size: 24 } },
-                            legend: { display: false }
-                        }
-                    }
-                });
             });
         }
 
+        let percentages = ["A", "B", "C", "D", "E"].map(l => totalAnswers ? (counts[l] / totalAnswers * 100) : 0);
+
+        // Now "A" === "A" will be TRUE, and the bar will turn green!
+        const backgroundColors = ["A", "B", "C", "D", "E"].map(letter => 
+            (showCorrect && letter === correctLetter) ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
+        );
+        const borderColors = ["A", "B", "C", "D", "E"].map(letter => 
+            (showCorrect && letter === correctLetter) ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
+        );
+
+        if (myChart) { myChart.destroy(); }
+
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["A", "B", "C", "D", "E"],
+                datasets: [{
+                    label: '% of Students',
+                    data: percentages,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } },
+                plugins: {
+                    title: { display: true, text: `Results for Question ${questionNumber}`, font: { size: 24 } },
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+}
         function refreshChart() {
             if (lastRoundData) {
                 generateChart(lastRoundData);

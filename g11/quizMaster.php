@@ -155,16 +155,18 @@
             const currentQuestionData = allQuestions[currentQNumber - 1];
 
             // Push the actual text to Firebase so students don't need the JSON file!
-            db.ref('currentRound').set({ 
-                status: "released",
-                questionNumber: currentQNumber,
-                questionText: currentQuestionData.question,
-                optA: currentQuestionData.optionA,
-                optB: currentQuestionData.optionB,
-                optC: currentQuestionData.optionC,
-                optD: currentQuestionData.optionD,
-                optE: currentQuestionData.optionE
-            });
+           // Inside releaseQuestion() in quizMaster.php
+db.ref('currentRound').set({ 
+    status: "released",
+    questionNumber: currentQNumber,
+    questionText: currentQuestionData.question,
+    optA: currentQuestionData.optionA,
+    optB: currentQuestionData.optionB,
+    optC: currentQuestionData.optionC,
+    optD: currentQuestionData.optionD,
+    optE: currentQuestionData.optionE,
+    correctAnswer: currentQuestionData.answer // ADD THIS LINE
+});
             
             // Clear out old responses for the new round
             db.ref('responses').remove(); 

@@ -43,10 +43,10 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 c">
-            <a href="/monopoly/mBooks/mBooksAdmin.php" target="_blank"><button class="btn btn-warning">mBooks Admin</button></a>
-            <a href="/monopoly/mBooks/mbooksv2.php" target="_blank"><button class="btn btn-warning">mBooks login</button></a>
-            <a href="/askTheAudience/indexTeacher.php" target="_blank"><button class="btn btn-info">Teacher</button></a> 
-            <a href="/askTheAudience/indexStudent.php" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
+            <a href="/g11/quizMaster.php" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
+            <a href="/g11/projector.html" target="_blank"><button class="btn btn-warning">Projector</button></a>
+            <a href="/g11/leaderboard.html" target="_blank"><button class="btn btn-info">Board</button></a> 
+            <a href="/g11/g11_final.html" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
             <a href="https://docs.google.com/spreadsheets/d/1lEj53GVNF-46u-Jsn2Kl7CsHeh7zxI8XkQgVSfC71AE/edit?usp=sharing" target="_blank"><button class="btn btn-info">Timetable</button></a>
         </div>

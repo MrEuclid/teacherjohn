@@ -45,7 +45,7 @@
         <div class="col-md-12 c">
             <a href="/g11/quizMaster.php" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
             <a href="/g11/projector.html" target="_blank"><button class="btn btn-warning">Projector</button></a>
-            <a href="/g11/leaderboard.html" target="_blank"><button class="btn btn-info">Board</button></a> 
+            <a href="/g11/leaderboard.html" target="_blank"><button class="btn btn-war">Board</button></a> 
             <a href="/g11/g11_final.html" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
             <a href="https://docs.google.com/spreadsheets/d/1lEj53GVNF-46u-Jsn2Kl7CsHeh7zxI8XkQgVSfC71AE/edit?usp=sharing" target="_blank"><button class="btn btn-info">Timetable</button></a>

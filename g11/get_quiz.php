@@ -1,32 +1,28 @@
 <?php
 // get_quiz.php
-// This tells the browser we are sending JSON data, not HTML
 header('Content-Type: application/json');
 
 // Get the gameID from the URL (e.g., get_quiz.php?gameID=105)
 $gameID = isset($_GET['gameID']) ? intval($_GET['gameID']) : 0;
 
-include "../conenctTeacherjohn.php"
-// Database connection details (using 'euclid_test' from your SQL file)
-$server = 'localhost';
-$username = 'euclid_test';
-$password = 'pythagoras1950'; 
-$database = 'euclid_test';
-
+// Include your existing MySQLi database connection file
+// Make sure this path is correct based on where get_quiz.php is saved!
+include "../connectTeacherJohn.php"; 
 
 try {
-    // Connect to the database
-    $pdo = new PDO("mysql:host=$server;dbname=$database;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Fetch all questions for the selected gameID, sorted by their original questionID
-    $stmt = $pdo->prepare("SELECT * FROM askAudienceQuestions WHERE gameID = ? ORDER BY questionID ASC");
-    $stmt->execute([$gameID]);
-    $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // We use $dbServer which was created inside connectTeacherJohn.php
+    $stmt = $dbServer->prepare("SELECT * FROM askAudienceQuestions WHERE gameID = ? ORDER BY questionID ASC");
+    
+    // Bind the gameID as an integer ("i")
+    $stmt->bind_param("i", $gameID);
+    $stmt->execute();
+    
+    // Get the results
+    $result = $stmt->get_result();
+    $questions = $result->fetch_all(MYSQLI_ASSOC);
 
     if (count($questions) > 0) {
-        // Format the output to exactly match your original JSON file structure!
-        // This ensures you don't have to rewrite your JavaScript.
+        // Format the output exactly like your old JSON file
         $response = [
             [
                 "type" => "table",
@@ -39,7 +35,12 @@ try {
     } else {
         echo json_encode(["error" => "No questions found for this game ID."]);
     }
-} catch (PDOException $e) {
-    echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
+
+    // Clean up
+    $stmt->close();
+
+} catch (Exception $e) {
+    // Catch any MySQLi errors
+    echo json_encode(["error" => "Database query failed: " . $e->getMessage()]);
 }
 ?>

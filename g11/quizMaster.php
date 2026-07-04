@@ -27,12 +27,32 @@
     <h1>Quizmaster Control Panel</h1>
     
     <div class="control-panel">
-        <label for="topic-select"><strong>Choose Topic (Game ID): </strong></label>
-        <select id="topic-select" onchange="loadTopic()">
-            <option value="">-- Select a Topic --</option>
-            <option value="105">Maths Challenge (Game 105)</option>
-            <option value="106">Topic 2 (Game 106)</option>
-        </select>
+     
+<label for="topic-select"><strong>Choose Topic (Game ID): </strong></label>
+<select id="topic-select" onchange="loadTopic()">
+    <option value="">-- Select a Topic --</option>
+    <?php
+    require_once '../connectTeacherJohn.php';
+    
+    // Debug: Check if the connection variable is recognized
+    if (!isset($dbServer)) {
+        echo "<option>Error: $dbServer is not defined</option>";
+    }
+
+    $query = "SELECT id, title FROM gameTitles ORDER BY id DESC";
+    $result = mysqli_query($dbServer, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $id = htmlspecialchars($row['id']);
+            $title = htmlspecialchars($row['title']);
+            echo "<option value='$id'>$title (Game $id)</option>";
+        }
+    } else {
+        echo "<option>No games found in database</option>";
+    }
+    ?>
+</select>
 
         <div id="status-display">Please select a topic to start.</div>
         
@@ -51,15 +71,15 @@
 
     <script>
         // --- 1. PASTE YOUR FIREBASE CONFIG HERE ---
-        const firebaseConfig = {
-            // apiKey: "YOUR_API_KEY",
-            // authDomain: "your-project.firebaseapp.com",
-            // databaseURL: "https://your-project.firebaseio.com", 
-            // projectId: "your-project",
-            // storageBucket: "your-project.appspot.com",
-            // messagingSenderId: "123456789",
-            // appId: "1:123456789:web:abc"
-        };
+     const firebaseConfig = {
+    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+    authDomain: "maths-comp.firebaseapp.com",
+    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "maths-comp",
+    storageBucket: "maths-comp.firebasestorage.app",
+    messagingSenderId: "1039547262286",
+    appId: "1:1039547262286:web:b395094c0847455213ea1f"
+  };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 

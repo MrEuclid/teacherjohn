@@ -17,7 +17,7 @@
         .responses-board { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
         ul { list-style-type: none; padding-left: 0; }
         li { padding: 8px; border-bottom: 1px solid #eee; }
-        /* Toast Notification Styles */
+        
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -43,7 +43,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
     </style>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -52,30 +51,21 @@
     <h1>Quizmaster Control Panel</h1>
     
     <div class="control-panel">
-     
         <label for="topic-select"><strong>Choose Topic (Game ID): </strong></label>
         <select id="topic-select" onchange="loadTopic()">
             <option value="">-- Select a Topic --</option>
             <?php
             require_once '../connectTeacherJohn.php';
-            
-            // Debug: Check if the connection variable is recognized
-            if (!isset($dbServer)) {
-                echo "<option>Error: \$dbServer is not defined</option>";
-            }
-
+            if (!isset($dbServer)) echo "<option>Error: \$dbServer is not defined</option>";
             $query = "SELECT id, title FROM gameTitles ORDER BY id DESC";
             $result = mysqli_query($dbServer, $query);
-
             if ($result && mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $id = htmlspecialchars($row['id']);
                     $title = htmlspecialchars($row['title']);
                     echo "<option value='$id'>$title (Game $id)</option>";
                 }
-            } else {
-                echo "<option>No games found in database</option>";
-            }
+            } else { echo "<option>No games found in database</option>"; }
             ?>
         </select>
 
@@ -98,7 +88,6 @@
     </div>
 
     <script>
-        // --- 1. PASTE YOUR FIREBASE CONFIG HERE ---
         const firebaseConfig = {
             apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
             authDomain: "maths-comp.firebaseapp.com",
@@ -111,9 +100,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // --- Live Anti-Cheat Monitor ---
+        // Toast logic
         const dashboardLoadTime = Date.now(); 
-
         db.ref('warnings').on('child_added', (snapshot) => {
             const warning = snapshot.val();
             if (warning.timestamp && warning.timestamp > dashboardLoadTime) {
@@ -126,21 +114,17 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerText = message;
-            
             container.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.opacity = '0'; 
                 setTimeout(() => toast.remove(), 500); 
             }, 6000);
         }
 
-        // State Variables
         let currentQNumber = 1;
         let allQuestions = [];
         const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
 
-        // --- 2. LOAD DATA FROM MYSQL (VIA PHP) ---
         function loadTopic() {
             const gameID = document.getElementById('topic-select').value;
             if (!gameID) return;
@@ -148,37 +132,21 @@
             fetch(`get_quiz.php?gameID=${gameID}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-
+                    if (data.error) return alert(data.error);
                     const table = data.find(item => item.type === "table" && item.name === "askAudienceQuestions");
                     allQuestions = table ? table.data : [];
-                    
-                    if(allQuestions.length === 0) {
-                        alert("No questions found for this topic!");
-                        return;
-                    }
-
+                    if(allQuestions.length === 0) return alert("No questions found for this topic!");
                     currentQNumber = 1;
                     db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
-                    
                     alert(`Loaded ${allQuestions.length} questions for Game ${gameID}!`);
-                })
-                .catch(err => {
-                    console.error("Failed to load topic:", err);
-                    alert("Failed to load questions. Check your PHP script connection.");
-                });
+                }).catch(err => { console.error("Failed:", err); });
         }
 
-        // --- 3. LISTEN TO FIREBASE ---
         db.ref('currentRound').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 currentQNumber = data.questionNumber;
-                document.getElementById('status-display').innerText = 
-                    `Current Question: ${currentQNumber} | Status: ${data.status.toUpperCase()}`;
+                document.getElementById('status-display').innerText = `Current Question: ${currentQNumber} | Status: ${data.status.toUpperCase()}`;
             }
         });
 
@@ -190,150 +158,92 @@
             list.appendChild(li);
         });
 
-        // --- 4. QUIZMASTER ACTIONS ---
         function releaseQuestion() {
-            if (allQuestions.length === 0) {
-                alert("Please select a topic from the dropdown first!");
-                return;
-            }
-
+            if (allQuestions.length === 0) return alert("Select a topic first!");
             const currentQuestionData = allQuestions[currentQNumber - 1];
-
             db.ref('currentRound').set({ 
-                status: "released",
-                questionNumber: currentQNumber,
+                status: "released", questionNumber: currentQNumber,
                 questionText: currentQuestionData.question,
-                optA: currentQuestionData.optionA,
-                optB: currentQuestionData.optionB,
-                optC: currentQuestionData.optionC,
-                optD: currentQuestionData.optionD,
-                optE: currentQuestionData.optionE,
-                correctAnswer: currentQuestionData.answer 
+                optA: currentQuestionData.optionA, optB: currentQuestionData.optionB,
+                optC: currentQuestionData.optionC, optD: currentQuestionData.optionD,
+                optE: currentQuestionData.optionE, correctAnswer: currentQuestionData.answer 
             });
-            
             db.ref('responses').remove(); 
             document.getElementById('response-list').innerHTML = "";
         }
 
         function terminateRound() {
             if (allQuestions.length === 0) return;
-
             const q = allQuestions[currentQNumber - 1];
             const correctLetter = answerMap[q.answer] || q.answer; 
 
-            // 1. Get all responses for this round
-         // ... inside terminateRound() ...
-db.ref('responses').once('value').then(snapshot => {
-    const responses = snapshot.val();
-    
-    // FETCH SCORES
-    db.ref('scores').once('value').then(scoreSnapshot => {
-        let currentScores = scoreSnapshot.val() || {};
-
-        if (responses) {
-            let archiveUpdates = {}; // NEW: Create an archive object
-
-            Object.keys(responses).forEach(key => {
-                let res = responses[key];
-                let studentKey = res.student;
-
-                if (!studentKey || typeof studentKey !== 'string' || studentKey.trim() === "") {
-                    return; 
-                }
-
-                // --- NEW: Tag the response for the archive ---
-                res.questionNumber = currentQNumber;
-                res.correctAnswer = correctLetter;
-                archiveUpdates[key] = res; // Add to archive list
-                // ---------------------------------------------
-
-                studentKey = studentKey.replace(/[.#$/\[\]]/g, "_");
-
-                if (currentScores[studentKey] === undefined) {
-                    currentScores[studentKey] = 0; 
-                }
+            db.ref('responses').once('value').then(snapshot => {
+                const responses = snapshot.val();
                 
-                if (res.answer === correctLetter) {
-                    currentScores[studentKey] += 10; 
-                }
-            });
+                db.ref('scores').once('value').then(scoreSnapshot => {
+                    let currentScores = scoreSnapshot.val() || {};
 
-            // NEW: Push the tagged responses to the permanent archive
-            db.ref('allResponses').update(archiveUpdates);
-        }
+                    if (responses) {
+                        let archiveUpdates = {}; 
+                        Object.keys(responses).forEach(key => {
+                            let res = responses[key];
+                            let studentKey = res.student;
 
-        // Save updated scores and terminate
-        db.ref('scores').set(currentScores).then(() => {
-            db.ref('currentRound').update({ status: "waiting" });
-        });
-    }); 
-});
-                    // 4. Save updated scores to database, then terminate round
+                            if (!studentKey || typeof studentKey !== 'string' || studentKey.trim() === "") return; 
+
+                            res.questionNumber = currentQNumber;
+                            res.correctAnswer = correctLetter;
+                            archiveUpdates[key] = res; 
+
+                            studentKey = studentKey.replace(/[.#$/\[\]]/g, "_");
+                            if (currentScores[studentKey] === undefined) currentScores[studentKey] = 0; 
+                            if (res.answer === correctLetter) currentScores[studentKey] += 10; 
+                        });
+                        db.ref('allResponses').update(archiveUpdates);
+                    }
+
                     db.ref('scores').set(currentScores).then(() => {
                         db.ref('currentRound').update({ status: "waiting" });
-                    }).catch(err => {
-                        console.error("Failed to save scores:", err);
-                        alert("Error saving scores. Check the console.");
                     });
-                }); // Closes the scores fetch
-            }); // Closes the responses fetch
+                }); 
+            }); 
         }
 
         function nextQuestion() {
-            if (currentQNumber >= allQuestions.length) {
-                alert("You have reached the end of this topic!");
-                return;
-            }
-            
+            if (currentQNumber >= allQuestions.length) return alert("Reached the end!");
             currentQNumber++;
             db.ref('currentRound').set({ questionNumber: currentQNumber, status: "waiting" });
             db.ref('responses').remove();
             document.getElementById('response-list').innerHTML = "";
         }
         
-      function resetGame() {
-    if(confirm("Are you sure? This will delete all student scores and start over at Question 1!")) {
-        db.ref('scores').remove();
-        db.ref('responses').remove();
-        db.ref('allResponses').remove(); // NEW: Clear the archive!
-        db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
-        document.getElementById('response-list').innerHTML = "";
-    }
-}
-
-       function exportResponses() {
-    // 1. Fetch from the new archive instead of the live responses
-    db.ref('allResponses').once('value').then(snapshot => {
-        const allRes = snapshot.val();
-        if (!allRes) {
-            alert("No historical responses found to export!");
-            return;
+        function resetGame() {
+            if(confirm("Are you sure? This deletes ALL scores and archive data!")) {
+                db.ref('scores').remove();
+                db.ref('responses').remove();
+                db.ref('allResponses').remove(); 
+                db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
+                document.getElementById('response-list').innerHTML = "";
+            }
         }
 
-        // 2. Set up CSV Headers
-        let csvContent = "data:text/csv;charset=utf-8,Name,Question,Response,Correct Answer,Time(s)\n";
-        
-        // 3. Loop through all historical responses
-        Object.values(allRes).forEach(res => {
-            const name = `"${res.student}"`;
-            const answer = `"${res.answer}"`;
-            const correct = `"${res.correctAnswer}"`;
-            const time = res.time.toFixed(2);
-            
-            // Note: We now use res.questionNumber from the archive!
-            csvContent += `${name},Question ${res.questionNumber},${answer},${correct},${time}\n`;
-        });
-
-        // Trigger browser download
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Full_Game_Responses.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
-}
+        function exportResponses() {
+            db.ref('allResponses').once('value').then(snapshot => {
+                const allRes = snapshot.val();
+                if (!allRes) return alert("No historical responses found to export!");
+                let csvContent = "data:text/csv;charset=utf-8,Name,Question,Response,Correct Answer,Time(s)\n";
+                Object.values(allRes).forEach(res => {
+                    csvContent += `"${res.student}",Question ${res.questionNumber},"${res.answer}","${res.correctAnswer}",${res.time.toFixed(2)}\n`;
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "Full_Game_Responses.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
     </script>
 </body>
 </html>

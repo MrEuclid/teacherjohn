@@ -13,10 +13,10 @@
 
         /* Focus Warning Overlay Styles */
         #warning-overlay {
-            display: none; /* Hidden by default */
+            display: none; 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 152, 0, 0.95); /* A friendly warning orange */
+            background: rgba(255, 152, 0, 0.95); 
             color: white;
             z-index: 1000;
             flex-direction: column;
@@ -44,7 +44,6 @@
         window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, startup: { typeset: false } };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -62,7 +61,6 @@
     </div>
 
     <script>
-        // Paste YOUR Firebase Config here
         const firebaseConfig = {
             apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
             authDomain: "maths-comp.firebaseapp.com",
@@ -72,16 +70,14 @@
             messagingSenderId: "1039547262286",
             appId: "1:1039547262286:web:b395094c0847455213ea1f"
         };
-        
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         const container = document.getElementById('quiz-container');
         let timeReleased = 0;
-        let isMonitoring = false; // 1. Start with monitoring OFF
+        let isMonitoring = false; 
 
-        // 2. The while loop traps them here until they enter a valid name
+        // Trap the user until they enter a valid name
         let studentName = "";
         while (!studentName || studentName.trim() === "") {
             studentName = prompt("Enter your name to join the Maths Challenge:");
@@ -90,17 +86,12 @@
             }
         }
 
-        // 3. Delay turning on the monitor by 1 second to let the browser settle
-        setTimeout(() => {
-            isMonitoring = true; 
-        }, 1000);
+        // Delay turning on the monitor to let the browser settle
+        setTimeout(() => { isMonitoring = true; }, 1000);
 
-        // --- Anti-Cheat Functions ---
         function handleDistraction() {
             if (!isMonitoring) return; 
-
             document.getElementById('warning-overlay').style.display = 'flex';
-
             if (typeof studentName !== 'undefined' && studentName !== null && studentName !== "") {
                 db.ref('warnings').push({
                     student: studentName,
@@ -116,24 +107,17 @@
         };
 
         document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                handleDistraction();
-            }
+            if (document.hidden) handleDistraction();
         });
 
-        window.addEventListener("blur", function() {
-            handleDistraction();
-        });
+        window.addEventListener("blur", function() { handleDistraction(); });
 
-        // --- Firebase Listeners ---
         db.ref('currentRound').on('value', (snapshot) => {
             const currentRoundData = snapshot.val();
-            
             if (!currentRoundData) return;
 
             if (currentRoundData.status === "released") {
                 timeReleased = Date.now(); 
-
                 container.innerHTML = `
                     <div class="question-card">
                         <h3>Question ${currentRoundData.questionNumber}</h3>
@@ -147,7 +131,6 @@
                         </div>
                     </div>
                 `;
-
                 if (window.MathJax && window.MathJax.typesetPromise) {
                     MathJax.typesetPromise([container]);
                 }
@@ -157,17 +140,14 @@
             }
         });
 
-        // Submitting the answer back to Firebase
         window.submitAnswer = function(answerLetter) {
             const timeTaken = (Date.now() - timeReleased) / 1000; 
-            
             db.ref('responses').push({
                 student: studentName,
                 answer: answerLetter,
                 time: timeTaken
             });
-
-            container.innerHTML = `<h2>Solved! Time: ${timeTaken}s. Waiting for others...</h2>`;
+            container.innerHTML = `<h2>Answer Submitted! Time: ${timeTaken}s. Waiting for others...</h2>`;
         };
     </script>
 </body>

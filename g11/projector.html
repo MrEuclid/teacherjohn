@@ -10,7 +10,6 @@
         #waiting-screen { font-size: 2em; color: #555; margin-top: 100px; }
         .chart-container { position: relative; height: 50vh; width: 80vw; margin: 0 auto; display: none; }
         
-        /* New styles for the question display */
         #question-display { 
             margin-top: 30px; 
             font-size: 1.5em; 
@@ -22,32 +21,16 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            display: none; /* Hidden by default until data arrives */
+            display: none; 
         }
-        .option-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            list-style: none;
-            padding: 0;
-            margin-top: 15px;
-        }
-        .option-list li {
-            background: #fff;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+        .option-list { display: flex; flex-wrap: wrap; gap: 15px; list-style: none; padding: 0; margin-top: 15px; }
+        .option-list li { background: #fff; padding: 10px 15px; border: 1px solid #ccc; border-radius: 5px; }
     </style>
 
     <script>
-        window.MathJax = { 
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, 
-            startup: { typeset: false } 
-        };
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, startup: { typeset: false } };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -55,7 +38,6 @@
 <body>
 
     <h1>Live Results</h1>
-    
     <div id="waiting-screen">Waiting for the round to finish...</div>
     
     <div style="margin-top: 10px;">
@@ -70,7 +52,6 @@
     <div id="question-display"></div>
 
     <script>
-        // 1. Firebase Initialization
         const firebaseConfig = {
             apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
             authDomain: "maths-comp.firebaseapp.com",
@@ -84,17 +65,14 @@
         const db = firebase.database();
 
         let myChart = null;
-        let lastRoundData = null; // Store for manual checkbox toggling
+        let lastRoundData = null; 
 
-        // 2. Listen to the Round Status
         db.ref('currentRound').on('value', (snapshot) => {
             const roundData = snapshot.val();
             if (!roundData) return;
 
             lastRoundData = roundData;
             const questionContainer = document.getElementById('question-display');
-
-            // Build the HTML for the question text and options
             const questionHTML = `
                 <strong>Question ${roundData.questionNumber}:</strong> ${roundData.questionText}
                 <ul class="option-list">
@@ -107,7 +85,6 @@
             `;
 
             if (roundData.status === "released") {
-                // Round started: Reset UI, hide chart, show waiting and question
                 document.getElementById('show-correct').checked = false;
                 document.getElementById('waiting-screen').style.display = "block";
                 document.getElementById('chart-wrapper').style.display = "none";
@@ -115,30 +92,20 @@
                 
                 questionContainer.style.display = "block";
                 questionContainer.innerHTML = questionHTML;
-                
-                // Render MathJax equations
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    MathJax.typesetPromise([questionContainer]);
-                }
+                if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise([questionContainer]);
             } 
             else if (roundData.status === "waiting") {
-                // Round ended: Hide waiting, show chart, keep question visible
                 document.getElementById('waiting-screen').style.display = "none";
                 document.getElementById('chart-wrapper').style.display = "block";
                 
                 questionContainer.style.display = "block";
                 questionContainer.innerHTML = questionHTML;
-                
-                // Render MathJax equations
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    MathJax.typesetPromise([questionContainer]);
-                }
+                if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise([questionContainer]);
 
                 generateChart(roundData);
             }
         });
 
-        // 3. Generate Chart Logic
         function generateChart(roundData) {
             const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
             const rawAnswer = String(roundData.correctAnswer);
@@ -162,8 +129,6 @@
                 }
 
                 let percentages = ["A", "B", "C", "D", "E"].map(l => totalAnswers ? (counts[l] / totalAnswers * 100) : 0);
-
-                // Highlight correct answer in green ONLY if checkbox is checked
                 const backgroundColors = ["A", "B", "C", "D", "E"].map(letter => 
                     (showCorrect && letter === correctLetter) ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
                 );
@@ -171,7 +136,7 @@
                     (showCorrect && letter === correctLetter) ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
                 );
 
-                if (myChart) { myChart.destroy(); }
+                if (myChart) myChart.destroy(); 
 
                 const ctx = document.getElementById('resultsChart').getContext('2d');
                 myChart = new Chart(ctx, {
@@ -187,8 +152,7 @@
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } },
                         plugins: {
                             title: { display: true, text: `Results for Question ${questionNumber}`, font: { size: 24 } },
@@ -199,11 +163,8 @@
             });
         }
 
-        // 4. Manual Refresh for Checkbox
         function refreshChart() {
-            if (lastRoundData) {
-                generateChart(lastRoundData);
-            }
+            if (lastRoundData) generateChart(lastRoundData);
         }
     </script>
 </body>

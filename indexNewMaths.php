@@ -97,7 +97,7 @@
 <div class = "row text-center">
     <p class = "h2">G9 - G10</p>
     <div class="math-grid">
-           <a href="crossNumber/crossNumberHarder"><button class="btn btn-warning">Crossnumber</button></a>
+           <a href="crossNumber/crossNumberHarder.html"><button class="btn btn-warning">Crossnumber</button></a>
               <a href="crossNumber/crossNumberFractions"><button class="btn btn-success">Crossnumber fractions</button></a>
     <a href="egyptian/egyptianFractions.php"><button class="btn btn-warning">Egyptian fractions</button></a>
       <a href="escape/escape.html"><button class="btn btn-warning">Escape</button></a>
@@ -114,7 +114,7 @@
         <div class="math-grid">
                   <a href="functionMachine/functionMachine.html"><button class="btn btn-danger">Func. Machine</button></a>
 
-               <a href="crossNumber/crossNumberCalxulus"><button class="btn btn-danger">Crossnumber</button></a>
+               <a href="crossNumber/crossNumberCalculus.html"><button class="btn btn-danger">Crossnumber</button></a>
                      <a href="crossNumber/crossNumberFractionsHarder.html"><button class="btn btn-success">Crossnumber fractions</button></a>
         </div>
 

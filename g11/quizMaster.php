@@ -62,6 +62,7 @@
         <button class="btn btn-next" onclick="nextQuestion()">Move to Next Question</button>
         <br>
         <button class="btn btn-reset" onclick="resetGame()">Danger: Reset Entire Game & Scores</button>
+        <button class="btn btn-export" onclick="exportResponses()" style="background: #9c27b0; color: white;">Export Responses (CSV)</button>
     </div>
 
     <div class="responses-board">
@@ -199,7 +200,7 @@
                         
                         // Award 100 points for a correct answer!
                         if (res.answer === correctLetter) {
-                            currentScores[res.student] += 100;
+                            currentScores[res.student] += 10;
                         }
                     });
 
@@ -231,6 +232,37 @@
                 document.getElementById('response-list').innerHTML = "";
             }
         }
+
+    function exportResponses() {
+    db.ref('responses').once('value').then(snapshot => {
+        const responses = snapshot.val();
+        if (!responses) {
+            alert("No responses found to export!");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,Name,Question,Response,Time(s)\n";
+        
+        Object.values(responses).forEach(res => {
+            // Escape commas in names/answers to keep CSV formatting intact
+            const name = `"${res.student}"`;
+            const answer = `"${res.answer}"`;
+            const time = res.time.toFixed(2);
+            // Note: Since 'question' text isn't in 'responses', 
+            // we use the currentQuestionNumber for reference
+            csvContent += `${name},Question ${currentQNumber},${answer},${time}\n`;
+        });
+
+        // Trigger browser download
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "quiz_responses.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+}
     </script>
 </body>
 </html>

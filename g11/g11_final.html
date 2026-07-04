@@ -10,6 +10,34 @@
         .options { list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 10px; }
         .options button { padding: 15px; font-size: 16px; cursor: pointer; }
         #waiting-screen { color: #555; font-style: italic; margin-top: 50px; }
+
+        /* Focus Warning Overlay Styles */
+        #warning-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 152, 0, 0.95); /* A friendly warning orange */
+            color: white;
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #warning-overlay h2 { font-size: 2.5em; margin-bottom: 10px; }
+        #warning-overlay p { font-size: 1.5em; margin-bottom: 30px; }
+        #warning-overlay button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: #ff9800;
+        }
     </style>
 
     <script>
@@ -21,7 +49,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-
+    <div id="warning-overlay">
+        <h2>⚠️ Focus Requested ⚠️</h2>
+        <p>Please keep this tab open and active to ensure your score is recorded properly.</p>
+        <button onclick="dismissWarning()">I understand, return to quiz</button>
+    </div>
+    
     <h1>Live Math Competition</h1>
     
     <div id="quiz-container">
@@ -29,73 +62,113 @@
     </div>
 
     <script>
-   // Paste YOUR Firebase Config here
-const firebaseConfig = {
-    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
-    authDomain: "maths-comp.firebaseapp.com",
-    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "maths-comp",
-    storageBucket: "maths-comp.firebasestorage.app",
-    messagingSenderId: "1039547262286",
-    appId: "1:1039547262286:web:b395094c0847455213ea1f"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+        // Paste YOUR Firebase Config here
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+            authDomain: "maths-comp.firebaseapp.com",
+            databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "maths-comp",
+            storageBucket: "maths-comp.firebasestorage.app",
+            messagingSenderId: "1039547262286",
+            appId: "1:1039547262286:web:b395094c0847455213ea1f"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-const container = document.getElementById('quiz-container');
-let timeReleased = 0;
-let studentName = prompt("Enter your name to join:") || "Anonymous Student";
+        const container = document.getElementById('quiz-container');
+        let timeReleased = 0;
+        let isMonitoring = false; // 1. Start with monitoring OFF
 
-// THE MAGIC: Listen to the Realtime Database!
-db.ref('currentRound').on('value', (snapshot) => {
-    const currentRoundData = snapshot.val();
-    
-    if (!currentRoundData) return;
-
-    if (currentRoundData.status === "released") {
-        // The Quizmaster clicked Release! Show the question.
-        timeReleased = Date.now(); // Start the timer!
-
-        // Build the HTML using data pushed directly from the Quizmaster
-        container.innerHTML = `
-            <div class="question-card">
-                <h3>Question ${currentRoundData.questionNumber}</h3>
-                <p>${currentRoundData.questionText}</p>
-                <div class="options">
-                    <button onclick="submitAnswer('A')">A: ${currentRoundData.optA}</button>
-                    <button onclick="submitAnswer('B')">B: ${currentRoundData.optB}</button>
-                    <button onclick="submitAnswer('C')">C: ${currentRoundData.optC}</button>
-                    <button onclick="submitAnswer('D')">D: ${currentRoundData.optD}</button>
-                    <button onclick="submitAnswer('E')">E: ${currentRoundData.optE}</button>
-                </div>
-            </div>
-        `;
-
-        // Render MathJax
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            MathJax.typesetPromise([container]);
+        // 2. The while loop traps them here until they enter a valid name
+        let studentName = "";
+        while (!studentName || studentName.trim() === "") {
+            studentName = prompt("Enter your name to join the Maths Challenge:");
+            if (!studentName || studentName.trim() === "") {
+                alert("You must enter a valid name to play!");
+            }
         }
-    } 
-    else if (currentRoundData.status === "waiting") {
-        // The Quizmaster terminated the round
-        container.innerHTML = `<h2 id="waiting-screen">Round over! Waiting for next question...</h2>`;
-    }
-});
 
-// Submitting the answer back to Firebase
-window.submitAnswer = function(answerLetter) {
-    const timeTaken = (Date.now() - timeReleased) / 1000; // in seconds
-    
-    // Push the result to a 'responses' folder in the database
-    db.ref('responses').push({
-        student: studentName,
-        answer: answerLetter,
-        time: timeTaken
-    });
+        // 3. Delay turning on the monitor by 1 second to let the browser settle
+        setTimeout(() => {
+            isMonitoring = true; 
+        }, 1000);
 
-    container.innerHTML = `<h2>Answer Submitted! Time: ${timeTaken}s. Waiting for others...</h2>`;
-};
+        // --- Anti-Cheat Functions ---
+        function handleDistraction() {
+            if (!isMonitoring) return; 
+
+            document.getElementById('warning-overlay').style.display = 'flex';
+
+            if (typeof studentName !== 'undefined' && studentName !== null && studentName !== "") {
+                db.ref('warnings').push({
+                    student: studentName,
+                    timestamp: Date.now(),
+                    timeFormatted: new Date().toLocaleTimeString(),
+                    message: "Navigated away or minimized the quiz window."
+                });
+            }
+        }
+
+        window.dismissWarning = function() {
+            document.getElementById('warning-overlay').style.display = 'none';
+        };
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                handleDistraction();
+            }
+        });
+
+        window.addEventListener("blur", function() {
+            handleDistraction();
+        });
+
+        // --- Firebase Listeners ---
+        db.ref('currentRound').on('value', (snapshot) => {
+            const currentRoundData = snapshot.val();
+            
+            if (!currentRoundData) return;
+
+            if (currentRoundData.status === "released") {
+                timeReleased = Date.now(); 
+
+                container.innerHTML = `
+                    <div class="question-card">
+                        <h3>Question ${currentRoundData.questionNumber}</h3>
+                        <p>${currentRoundData.questionText}</p>
+                        <div class="options">
+                            <button onclick="submitAnswer('A')">A: ${currentRoundData.optA}</button>
+                            <button onclick="submitAnswer('B')">B: ${currentRoundData.optB}</button>
+                            <button onclick="submitAnswer('C')">C: ${currentRoundData.optC}</button>
+                            <button onclick="submitAnswer('D')">D: ${currentRoundData.optD}</button>
+                            <button onclick="submitAnswer('E')">E: ${currentRoundData.optE}</button>
+                        </div>
+                    </div>
+                `;
+
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([container]);
+                }
+            } 
+            else if (currentRoundData.status === "waiting") {
+                container.innerHTML = `<h2 id="waiting-screen">Round over! Waiting for next question...</h2>`;
+            }
+        });
+
+        // Submitting the answer back to Firebase
+        window.submitAnswer = function(answerLetter) {
+            const timeTaken = (Date.now() - timeReleased) / 1000; 
+            
+            db.ref('responses').push({
+                student: studentName,
+                answer: answerLetter,
+                time: timeTaken
+            });
+
+            container.innerHTML = `<h2>Solved! Time: ${timeTaken}s. Waiting for others...</h2>`;
+        };
     </script>
 </body>
 </html>

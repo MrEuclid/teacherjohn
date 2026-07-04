@@ -12,7 +12,6 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -20,128 +19,113 @@
     <h1>Live Results</h1>
     
     <div id="waiting-screen">Waiting for the round to finish...</div>
+    
     <div style="margin-top: 10px;">
-    <input type="checkbox" id="show-correct" checked onchange="refreshChart()">
-    <label for="show-correct">Show Correct Answer</label>
-</div>
+        <input type="checkbox" id="show-correct" onchange="refreshChart()">
+        <label for="show-correct">Show Correct Answer</label>
+    </div>
+
     <div class="chart-container" id="chart-wrapper">
         <canvas id="resultsChart"></canvas>
     </div>
 
     <script>
-        // --- 1. PASTE YOUR FIREBASE CONFIG HERE ---
-       const firebaseConfig = {
-    apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
-    authDomain: "maths-comp.firebaseapp.com",
-    databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "maths-comp",
-    storageBucket: "maths-comp.firebasestorage.app",
-    messagingSenderId: "1039547262286",
-    appId: "1:1039547262286:web:b395094c0847455213ea1f"
-  };
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8c_2XHR5TOD2MnOUFqp5lA73YZd-qcd0",
+            authDomain: "maths-comp.firebaseapp.com",
+            databaseURL: "https://maths-comp-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "maths-comp",
+            storageBucket: "maths-comp.firebasestorage.app",
+            messagingSenderId: "1039547262286",
+            appId: "1:1039547262286:web:b395094c0847455213ea1f"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let allQuestions = [];
-        let myChart = null; // Holds our chart instance
+        let myChart = null;
+        let lastRoundData = null; // Store data to allow manual refreshes
 
-        // The JSON stores answers as numbers (1=A, 2=B, etc). We need this to match the chart.
-        const answerMap = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
-
-        // 2. Pre-load the JSON data to know what the correct answers are
-        fetch('askAudienceQuestions.json')
-            .then(res => res.json())
-            .then(data => {
-                const table = data.find(item => item.type === "table" && item.name === "askAudienceQuestions");
-                allQuestions = table ? table.data : [];
-            });
-
-        // 3. Listen to the Round Status
+        // Listen to the Round Status
         db.ref('currentRound').on('value', (snapshot) => {
             const roundData = snapshot.val();
             if (!roundData) return;
 
+            lastRoundData = roundData;
+
             if (roundData.status === "released") {
-                // Hide the chart, show the waiting screen while students answer
+                document.getElementById('show-correct').checked = false;
                 document.getElementById('waiting-screen').style.display = "block";
                 document.getElementById('chart-wrapper').style.display = "none";
                 document.getElementById('waiting-screen').innerText = "Students are answering...";
             } 
             else if (roundData.status === "waiting") {
-                // ROUND TERMINATED! Time to show the chart.
                 document.getElementById('waiting-screen').style.display = "none";
                 document.getElementById('chart-wrapper').style.display = "block";
-                
-                generateChart(roundData.questionNumber);
+                generateChart(roundData);
             }
         });
-// Add a global variable to store the last question number
-let lastQuestionNumber = null;
 
-function generateChart(questionNumber) {
-    lastQuestionNumber = questionNumber; // Store for the toggle refresh
-    const q = allQuestions[questionNumber - 1];
-    const correctLetter = answerMap[q.answer] || "Unknown";
-    const showCorrect = document.getElementById('show-correct').checked;
+        function generateChart(roundData) {
+            const correctLetter = roundData.correctAnswer;
+            const questionNumber = roundData.questionNumber;
+            const showCorrect = document.getElementById('show-correct').checked;
 
-    db.ref('responses').once('value').then((snapshot) => {
-        const responses = snapshot.val();
-        let counts = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
-        let totalAnswers = 0;
+            db.ref('responses').once('value').then((snapshot) => {
+                const responses = snapshot.val();
+                let counts = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+                let totalAnswers = 0;
 
-        if (responses) {
-            Object.values(responses).forEach(res => {
-                if (counts[res.answer] !== undefined) {
-                    counts[res.answer]++;
-                    totalAnswers++;
+                if (responses) {
+                    Object.values(responses).forEach(res => {
+                        if (counts[res.answer] !== undefined) {
+                            counts[res.answer]++;
+                            totalAnswers++;
+                        }
+                    });
                 }
+
+                let percentages = ["A", "B", "C", "D", "E"].map(l => totalAnswers ? (counts[l] / totalAnswers * 100) : 0);
+
+                const backgroundColors = ["A", "B", "C", "D", "E"].map(letter => 
+                    (showCorrect && letter === correctLetter) ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
+                );
+                const borderColors = ["A", "B", "C", "D", "E"].map(letter => 
+                    (showCorrect && letter === correctLetter) ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
+                );
+
+                if (myChart) { myChart.destroy(); }
+
+                const ctx = document.getElementById('resultsChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["A", "B", "C", "D", "E"],
+                        datasets: [{
+                            label: '% of Students',
+                            data: percentages,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } },
+                        plugins: {
+                            title: { display: true, text: `Results for Question ${questionNumber}`, font: { size: 24 } },
+                            legend: { display: false }
+                        }
+                    }
+                });
             });
         }
 
-        let percentages = ["A", "B", "C", "D", "E"].map(l => totalAnswers ? (counts[l] / totalAnswers * 100) : 0);
-
-        // Logic: Highlight ONLY if checkbox is checked
-        const backgroundColors = ["A", "B", "C", "D", "E"].map(letter => 
-            (showCorrect && letter === correctLetter) ? 'rgba(76, 175, 80, 0.8)' : 'rgba(33, 150, 243, 0.8)'
-        );
-        const borderColors = ["A", "B", "C", "D", "E"].map(letter => 
-            (showCorrect && letter === correctLetter) ? 'rgba(56, 142, 60, 1)' : 'rgba(25, 118, 210, 1)'
-        );
-
-        if (myChart) { myChart.destroy(); }
-
-        const ctx = document.getElementById('resultsChart').getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["A", "B", "C", "D", "E"],
-                datasets: [{
-                    label: '% of Students',
-                    data: percentages,
-                    backgroundColor: backgroundColors,
-                    borderColor: borderColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + "%" } } },
-                plugins: {
-                    title: { display: true, text: `Results for Question ${questionNumber}`, font: { size: 24 } },
-                    legend: { display: false }
-                }
+        function refreshChart() {
+            if (lastRoundData) {
+                generateChart(lastRoundData);
             }
-        });
-    });
-}
-
-// Helper to refresh chart without waiting for database trigger
-function refreshChart() {
-    if (lastQuestionNumber) {
-        generateChart(lastQuestionNumber);
-    }
-}
+        }
     </script>
 </body>
 </html>

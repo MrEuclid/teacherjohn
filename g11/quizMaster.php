@@ -222,34 +222,52 @@
             const correctLetter = answerMap[q.answer] || q.answer; 
 
             // 1. Get all responses for this round
-            db.ref('responses').once('value').then(snapshot => {
-                const responses = snapshot.val();
+         // ... inside terminateRound() ...
+db.ref('responses').once('value').then(snapshot => {
+    const responses = snapshot.val();
+    
+    // FETCH SCORES
+    db.ref('scores').once('value').then(scoreSnapshot => {
+        let currentScores = scoreSnapshot.val() || {};
+
+        if (responses) {
+            let archiveUpdates = {}; // NEW: Create an archive object
+
+            Object.keys(responses).forEach(key => {
+                let res = responses[key];
+                let studentKey = res.student;
+
+                if (!studentKey || typeof studentKey !== 'string' || studentKey.trim() === "") {
+                    return; 
+                }
+
+                // --- NEW: Tag the response for the archive ---
+                res.questionNumber = currentQNumber;
+                res.correctAnswer = correctLetter;
+                archiveUpdates[key] = res; // Add to archive list
+                // ---------------------------------------------
+
+                studentKey = studentKey.replace(/[.#$/\[\]]/g, "_");
+
+                if (currentScores[studentKey] === undefined) {
+                    currentScores[studentKey] = 0; 
+                }
                 
-                // 2. Fetch the current scores from Firebase before updating them
-                db.ref('scores').once('value').then(scoreSnapshot => {
-                    let currentScores = scoreSnapshot.val() || {};
+                if (res.answer === correctLetter) {
+                    currentScores[studentKey] += 10; 
+                }
+            });
 
-                    if (responses) {
-                        Object.values(responses).forEach(res => {
-                            let studentKey = res.student;
+            // NEW: Push the tagged responses to the permanent archive
+            db.ref('allResponses').update(archiveUpdates);
+        }
 
-                            if (!studentKey || typeof studentKey !== 'string' || studentKey.trim() === "") {
-                                console.warn("Ignored a blank submission");
-                                return; 
-                            }
-
-                            studentKey = studentKey.replace(/[.#$/\[\]]/g, "_");
-
-                            if (currentScores[studentKey] === undefined) {
-                                currentScores[studentKey] = 0; 
-                            }
-                            
-                            if (res.answer === correctLetter) {
-                                currentScores[studentKey] += 10; 
-                            }
-                        });
-                    }
-
+        // Save updated scores and terminate
+        db.ref('scores').set(currentScores).then(() => {
+            db.ref('currentRound').update({ status: "waiting" });
+        });
+    }); 
+});
                     // 4. Save updated scores to database, then terminate round
                     db.ref('scores').set(currentScores).then(() => {
                         db.ref('currentRound').update({ status: "waiting" });
@@ -273,41 +291,49 @@
             document.getElementById('response-list').innerHTML = "";
         }
         
-        function resetGame() {
-            if(confirm("Are you sure? This will delete all student scores and start over at Question 1!")) {
-                db.ref('scores').remove();
-                db.ref('responses').remove();
-                db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
-                document.getElementById('response-list').innerHTML = "";
-            }
+      function resetGame() {
+    if(confirm("Are you sure? This will delete all student scores and start over at Question 1!")) {
+        db.ref('scores').remove();
+        db.ref('responses').remove();
+        db.ref('allResponses').remove(); // NEW: Clear the archive!
+        db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
+        document.getElementById('response-list').innerHTML = "";
+    }
+}
+
+       function exportResponses() {
+    // 1. Fetch from the new archive instead of the live responses
+    db.ref('allResponses').once('value').then(snapshot => {
+        const allRes = snapshot.val();
+        if (!allRes) {
+            alert("No historical responses found to export!");
+            return;
         }
 
-        function exportResponses() {
-            db.ref('responses').once('value').then(snapshot => {
-                const responses = snapshot.val();
-                if (!responses) {
-                    alert("No responses found to export!");
-                    return;
-                }
+        // 2. Set up CSV Headers
+        let csvContent = "data:text/csv;charset=utf-8,Name,Question,Response,Correct Answer,Time(s)\n";
+        
+        // 3. Loop through all historical responses
+        Object.values(allRes).forEach(res => {
+            const name = `"${res.student}"`;
+            const answer = `"${res.answer}"`;
+            const correct = `"${res.correctAnswer}"`;
+            const time = res.time.toFixed(2);
+            
+            // Note: We now use res.questionNumber from the archive!
+            csvContent += `${name},Question ${res.questionNumber},${answer},${correct},${time}\n`;
+        });
 
-                let csvContent = "data:text/csv;charset=utf-8,Name,Question,Response,Time(s)\n";
-                
-                Object.values(responses).forEach(res => {
-                    const name = `"${res.student}"`;
-                    const answer = `"${res.answer}"`;
-                    const time = res.time.toFixed(2);
-                    csvContent += `${name},Question ${currentQNumber},${answer},${time}\n`;
-                });
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "quiz_responses.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-        }
+        // Trigger browser download
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Full_Game_Responses.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+}
     </script>
 </body>
 </html>

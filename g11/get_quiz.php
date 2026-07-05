@@ -11,7 +11,7 @@ include "../connectTeacherJohn.php";
 
 try {
     // We use $dbServer which was created inside connectTeacherJohn.php
-    $stmt = $dbServer->prepare("SELECT * FROM askAudienceQuestions WHERE gameID = ? ORDER BY questionID ASC");
+    $stmt = $dbServer->prepare("SELECT * FROM askAudienceQuestions WHERE gameID = ? AND gameID <> '15x' ORDER BY questionID ASC");
     
     // Bind the gameID as an integer ("i")
     $stmt->bind_param("i", $gameID);

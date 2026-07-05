@@ -41,7 +41,7 @@
     <div id="waiting-screen">Waiting for the round to finish...</div>
     
     <div style="margin-top: 10px;">
-        <input type="checkbox" id="show-correct" onchange="refreshChart()">
+        <input type="checkbox" id="show-correct" onchange="refreshChart()".checked>
         <label for="show-correct">Show Correct Answer</label>
     </div>
 
@@ -85,7 +85,7 @@
             `;
 
             if (roundData.status === "released") {
-                document.getElementById('show-correct').checked = false;
+                document.getElementById('show-correct').checked = true;
                 document.getElementById('waiting-screen').style.display = "block";
                 document.getElementById('chart-wrapper').style.display = "none";
                 document.getElementById('waiting-screen').innerText = "Students are answering...";

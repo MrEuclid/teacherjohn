@@ -16,13 +16,10 @@ $response = [
 ];
 
 // --- 1. Database Connection ---
-$server = 'localhost' ;
-$username = 'teacherj_euclid';
-$password = 'puthisastra2024' ;
-$database = 'teacherj_temple' ; // Assuming the scores/game state are in 'teacherj_temple'
+include "../connectTeacherJohn.php"; // Ensure this file sets $server, $username, $password, and $database
 
-$conn = mysqli_connect($server, $username, $password, $database);
-if (!$conn) {
+
+if (!$dbServer) {
     $response['message'] = 'Database connection failed: ' . mysqli_connect_error();
     echo json_encode($response);
     exit;
@@ -36,31 +33,31 @@ $student_id = isset($data['student_id']) ? $data['student_id'] : null;
 
 if (empty($student_id)) {
     $response['message'] = 'Invalid or missing student ID.';
-    $conn->close();
+    $dbServer->close();
     echo json_encode($response);
     exit;
 }
 
 // --- 3. Prepare and Execute SQL Deletion ---
 // NOTE: Assuming your table is named 'scrabbleResults2' (or whatever table holds the saved state)
-$student_id_safe = mysqli_real_escape_string($conn, $student_id);
+$student_id_safe = mysqli_real_escape_string($dbServer, $student_id);
 
 // Delete the record for this student from the score/game state table
 $query = "DELETE FROM scrabbleResults WHERE studentID = '{$student_id_safe}'";
 
-if (mysqli_query($conn, $query)) {
-    $deleted_count = mysqli_affected_rows($conn);
+if (mysqli_query($dbServer, $query)) {
+    $deleted_count = mysqli_affected_rows($dbServer);
     
     $response['success'] = true;
     $response['deleted_count'] = $deleted_count;
     $response['message'] = "Successfully deleted {$deleted_count} records for student ID {$student_id}.";
 
 } else {
-    $response['message'] = 'Database deletion query failed: ' . mysqli_error($conn);
+    $response['message'] = 'Database deletion query failed: ' . mysqli_error($dbServer);
 }
 
 // --- 4. Clean up and Output ---
-$conn->close();
+
 echo json_encode($response);
 
 ?>

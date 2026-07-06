@@ -16,7 +16,7 @@ if (empty($data) || !isset($data['student_id']) || !isset($data['current_score']
     exit();
 }
 
-include "connectTempleDB.php"; 
+include "../connectTeacherJohn.php"; // Make sure this connection is successful and stored in $dbServer
 
 // 2. Extract and sanitize variables (same as before)
 $team = mysqli_real_escape_string($dbServer, $data['student_id']);

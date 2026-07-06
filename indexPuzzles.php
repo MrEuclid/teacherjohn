@@ -264,7 +264,7 @@ Electrostatics</button></a>
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
        
        <a href =  "puzzleTournament/index.php" target = "_blank"><button class = "btn btn-info" title = "Puzzle Tournament">Puzzle Tournament</button></a>
-<a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
+<a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
 
       </div></div>
         </div>

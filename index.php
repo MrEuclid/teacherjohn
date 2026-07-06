@@ -71,7 +71,7 @@
  <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
  
    <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
-<a href = "scrabble/scrabbleComp.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
+<a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
  <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
 <a href = "countDown/countDownWords.html" target = "_blank">
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>

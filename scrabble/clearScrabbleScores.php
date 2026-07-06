@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-include "connectTempleDB.php"; // Ensure this connects and provides $dbServer
+include "../connectTeacherJohn.php"; // Ensure this connects and provides $dbServer
 
 // Query to set the score for ALL students to 0
 // NOTE: If you want to delete the records entirely, use: "DELETE FROM scrabbleResults"

@@ -12,7 +12,7 @@ if (empty($data) || !isset($data['student_id'])) {
     exit();
 }
 
-include "connectTempleDB.php"; 
+include "../connectTeacherJohn.php"; 
 
 // 2. Extract and sanitize variables
 $team = mysqli_real_escape_string($dbServer, $data['student_id']);

@@ -29,7 +29,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
     <script>
-        const URL = "https://teachablemachine.withgoogle.com/models/JWObCpRn1/"; 
+        // Set the default URL here
+        const DEFAULT_URL = "https://teachablemachine.withgoogle.com/models/JWObCpRn1/"; 
+        let currentModelURL = "";
 
         let model, webcam, labelContainer, maxPredictions;
         const targetButton = document.getElementById("target-button");
@@ -64,8 +66,20 @@
 
         // 2. Initialize the model and webcam automatically
         async function init() {
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
+            // Prompt the student for their URL
+            let userInput = prompt("Enter your Teachable Machine model URL (leave blank to use the default model):");
+            
+            // Check if they entered something
+            if (userInput && userInput.trim() !== "") {
+                // Ensure the URL ends with a slash (common student copy-paste error)
+                currentModelURL = userInput.endsWith("/") ? userInput : userInput + "/";
+            } else {
+                // If they hit cancel or left it empty, use the default
+                currentModelURL = DEFAULT_URL;
+            }
+
+            const modelURL = currentModelURL + "model.json";
+            const metadataURL = currentModelURL + "metadata.json";
 
             model = await tmImage.load(modelURL, metadataURL);
             maxPredictions = model.getTotalClasses();

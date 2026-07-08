@@ -10,7 +10,6 @@ include "../connectTeacherJohn.php";
 $questions = [];
 
 try {
-    // FIXED: Replaced '105' with a '?' so bind_param has a place to inject the $gameID
     $stmt = $dbServer->prepare("SELECT * FROM askAudienceQuestions WHERE gameID = ? ORDER BY questionID ASC");
     $stmt->bind_param("i", $gameID);
     $stmt->execute();
@@ -47,38 +46,42 @@ try {
     <style>
         body { 
             font-family: Arial, sans-serif; 
-            max-width: 800px; 
+            max-width: 900px; /* Made slightly wider to fit more text on one line */
             margin: 20px auto; 
-            line-height: 1.6; 
+            line-height: 1.5; 
             padding: 20px;
         }
         .question-block { 
-            margin-bottom: 30px; 
+            margin-bottom: 15px; /* Reduced to save paper */
             page-break-inside: avoid; 
             border-bottom: 1px solid #ccc; 
-            padding-bottom: 15px; 
+            padding-bottom: 10px; /* Reduced to save paper */
         }
-        .choices { 
-            margin-left: 20px; 
-            list-style-type: upper-alpha; 
+        .choices-inline { 
+            margin: 10px 0; 
+        }
+        .choice-item {
+            display: inline-block; /* Prevents a single choice from wrapping awkwardly */
+            margin-right: 25px; /* Spacing between A, B, C, D, E */
+            margin-bottom: 5px; /* Adds space if the screen is narrow and they stack to two lines */
         }
         .correct-answer { 
             font-weight: bold; 
             color: #2e7d32; 
-            margin-top: 10px; 
+            margin-top: 5px; 
             background: #e8f5e9; 
-            padding: 8px; 
+            padding: 5px 8px; 
             display: inline-block;
             border-radius: 4px;
+            font-size: 14px; /* Slightly smaller to save space */
         }
         .error { color: red; font-weight: bold; }
         
         @media print {
             .no-print { display: none; }
-            body { margin: 0; padding: 0; border: none; }
+            body { margin: 0; padding: 0; border: none; max-width: 100%; }
         }
     </style>
-</head>
 </head>
 <body>
 
@@ -86,7 +89,7 @@ try {
         <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">🖨️ Save as PDF</button>
     </div>
 
-    <h1>Quiz Answer Key (Game ID: <?php echo htmlspecialchars($gameID); ?>)</h1>
+    <h2>Quiz Answer Key (Game ID: <?php echo htmlspecialchars($gameID); ?>)</h2>
 
     <?php if (isset($errorMsg)): ?>
         <p class="error"><?php echo htmlspecialchars($errorMsg); ?></p>
@@ -94,15 +97,16 @@ try {
     <?php elseif (count($questions) > 0): ?>
         <?php foreach ($questions as $index => $q): ?>
             <div class="question-block">
-                <p><strong>Q<?php echo $index + 1; ?>.</strong> <?php echo $q['question']; ?></p>
+                <p style="margin: 0 0 5px 0;"><strong>Q<?php echo $index + 1; ?>.</strong> <?php echo $q['question']; ?></p>
                 
-                <ul class="choices">
-                    <li><?php echo $q['optionA']; ?></li>
-                    <li><?php echo $q['optionB']; ?></li>
-                    <li><?php echo $q['optionC']; ?></li>
-                    <li><?php echo $q['optionD']; ?></li>
-                    <li><?php echo $q['optionE']; ?></li>
-                </ul>
+                <!-- Changed from a vertical list to an inline div -->
+                <div class="choices-inline">
+                    <span class="choice-item"><strong>A)</strong> <?php echo $q['optionA']; ?></span>
+                    <span class="choice-item"><strong>B)</strong> <?php echo $q['optionB']; ?></span>
+                    <span class="choice-item"><strong>C)</strong> <?php echo $q['optionC']; ?></span>
+                    <span class="choice-item"><strong>D)</strong> <?php echo $q['optionD']; ?></span>
+                    <span class="choice-item"><strong>E)</strong> <?php echo $q['optionE']; ?></span>
+                </div>
                 
                 <div class="correct-answer">
                     Correct Answer: <?php echo $q['answer']; ?>

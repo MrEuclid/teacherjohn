@@ -65,22 +65,19 @@
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "2048Game.html"><button class = "btn btm sm btn-info">2048</button></a>
-
-  <a href = "tetris/tetris.html"><button class = "btn btm sm btn-info">Junior Tetris</button></a>
- <a href="jimmyGame/jimmyMath.html"><button class="btn btn-success">Jimmy Contest</button></a> 
+  
  
    <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
 <a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
- <a href = "raceGemini/login.php" target = "_blank"><button class = "btn btn-info">Maths contest</button></a>
-<a href = "countDown/countDownWords.html" target = "_blank">
+ <a href = "countDown/countDownWords.html" target = "_blank">
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 <a href = "maps/mapsIndex.html" target = "_blank">
         <button class = "btn btn-warning" title = "TSP map">Map</button> </a>
-
+<a href = "maps/map.html" target = "_blank">
+        <button class = "btn btn-warning" title = "TSP map">Map KH</button> </a>
 
  <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

@@ -45,31 +45,36 @@ async function initMap() {
     resetBtn.addEventListener("click", clearMapData);
   }
 
+  // FIXED: Single click listener
   map.addListener("click", (mapsMouseEvent) => {
     if (studentPins.length < maxPins) {
       const clickedLocation = mapsMouseEvent.latLng;
       
-      // Prompt the student for a specific location name
-      let placeName = prompt(`Enter a name for location ${studentPins.length + 1}:`);
-      
-      // Fallback if they click cancel or submit an empty string
-      if (!placeName || placeName.trim() === "") {
-        placeName = `Location ${studentPins.length + 1}`; 
-      } else {
-        placeName = placeName.trim();
+      // 1. Prompt the user for a name
+      let siteName = prompt("Enter a name for this site:");
+
+      // 2. Check if they clicked Cancel (which returns null)
+      if (siteName === null) {
+          return; 
+      }
+
+      // Optional: Check if they clicked 'OK' but left it blank
+      if (siteName.trim() === "") {
+          siteName = "Unnamed Site"; 
       }
           
+      // 3. Drop the marker using siteName
       const newMarker = new Marker({
         position: clickedLocation,
         map: map,
-        title: placeName 
+        title: siteName // Fixed: changed from placeName to siteName
       });
           
       markerObjects.push(newMarker);
           
       studentPins.push({
         latLng: clickedLocation,
-        title: placeName
+        title: siteName // Fixed: changed from placeName to siteName
       });
 
       if (studentPins.length === maxPins) {

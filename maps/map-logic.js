@@ -1,8 +1,6 @@
 // 1. Initialize Map centered on Phnom Penh
 const map = L.map('map').setView([11.5564, 104.9282], 13);
 
-// 2. Add English CARTO tiles (Fixed URL structure)
-// 2. Add Esri World Street Map tiles
 // 2. Add Standard OpenStreetMap tiles (Full detail, native languages)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -51,7 +49,13 @@ map.on('click', async function(e) {
 
     let pinName = prompt(`Location found: ${fetchedName}\n\nEnter a label for Location #${markers.length + 1}:`, fetchedName);
     
-    if (!pinName || pinName.trim() === "") {
+    // FIXED: Explicitly check for null (Cancel button clicked)
+    if (pinName === null) {
+        return; // Exit the function immediately without dropping a pin
+    }
+
+    // Handle empty strings if they clicked OK but cleared the input
+    if (pinName.trim() === "") {
         pinName = `L${markers.length + 1}`;
     } else {
         pinName = pinName.trim();

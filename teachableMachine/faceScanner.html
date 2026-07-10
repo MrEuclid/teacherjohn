@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            margin-top: 40px;
+        }
+        h1 {
+            color: #333;
+        }
+        #webcam-container {
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+            border: 4px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #start-button {
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #start-button:hover {
+            background-color: #004494;
+        }
+        #message-container {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            min-width: 300px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Dynamic Styles for Recognized vs Unknown */
+        .analyzing {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .recognized {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Face Recognition Security</h1>
+    <p>Look into the camera to scan your face.</p>
+    
+    <button id="start-button" type="button" onclick="init()">Start Scanner</button>
+    
+    <div id="webcam-container"></div>
+    <div id="message-container" class="analyzing">Waiting for camera...</div>
+
+    <!-- Load TensorFlow.js and Teachable Machine libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+    <script>
+        // Set your default Teachable Machine model URL here
+        const DEFAULT_URL = "https://teachablemachine.withgoogle.com/models/_IPItBI9z/";
+        let currentModelURL = "";
+
+        let model, webcam, maxPredictions;
+        const messageContainer = document.getElementById("message-container");
+        const startButton = document.getElementById("start-button");
+
+        async function init() {
+            // 1. Prompt the student for their URL
+            let userInput = prompt("Enter your Teachable Machine model URL (leave blank to use the default model):");
+            
+            // 2. Check if they entered something and sanitize it
+            if (userInput && userInput.trim() !== "") {
+                // Ensure the URL ends with a slash (common student copy-paste error)
+                currentModelURL = userInput.endsWith("/") ? userInput : userInput + "/";
+            } else {
+                // If they hit cancel or left it empty, use the default
+                currentModelURL = DEFAULT_URL;
+            }
+
+            // Disable button after clicking to prevent multiple loads
+            startButton.disabled = true;
+            startButton.innerText = "Loading Model...";
+            
+            // Use the determined URL to fetch the JSON files
+            const modelURL = currentModelURL + "model.json";
+            const metadataURL = currentModelURL + "metadata.json";
+
+            // Load the model and metadata
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Set up the webcam
+            const flip = true; 
+            webcam = new tmImage.Webcam(300, 300, flip); 
+            await webcam.setup(); 
+            await webcam.play();
+            
+            window.requestAnimationFrame(loop);
+
+            // Append webcam to the DOM
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+            
+            startButton.style.display = "none"; 
+            messageContainer.innerText = "Analyzing face...";
+        }
+
+        async function loop() {
+            webcam.update(); 
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            
+            let highestConfidence = 0;
+            let bestClass = "";
+
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].probability > highestConfidence) {
+                    highestConfidence = prediction[i].probability;
+                    bestClass = prediction[i].className;
+                }
+            }
+
+            if (highestConfidence > 0.80) {
+                
+                if (bestClass.toLowerCase().trim() === "unknown") {
+                    messageContainer.innerHTML = "⚠️ WARNING: Face Unknown!";
+                    messageContainer.className = "warning";
+                } else {
+                    let personName = bestClass;
+                    
+                    if (bestClass.includes("-")) {
+                        personName = bestClass.split("-").slice(1).join("-").trim();
+                    }
+                    
+                    messageContainer.innerHTML = `Welcome, <b>${personName}</b>!`;
+                    messageContainer.className = "recognized";
+                }
+                
+            } else {
+                messageContainer.innerHTML = "Analyzing...";
+                messageContainer.className = "analyzing";
+            }
+        }
+    </script>
+</body>
+</html>

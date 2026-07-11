@@ -83,7 +83,8 @@
     <div id="toast-container"></div>
     
     <div class="responses-board">
-        <h3>Live Responses:</h3>
+        <!-- Added a span to hold the number of answers -->
+        <h3>Live Responses: <span id="response-count" style="color: #2196f3;">0</span></h3>
         <ul id="response-list"></ul>
     </div>
 
@@ -156,6 +157,9 @@
             const li = document.createElement('li');
             li.innerText = `${answer.student} answered ${answer.answer} in ${answer.time}s.`;
             list.appendChild(li);
+            
+            // Update the counter automatically based on the number of list items
+            document.getElementById('response-count').innerText = list.children.length;
         });
 
         function releaseQuestion() {
@@ -170,6 +174,7 @@
             });
             db.ref('responses').remove(); 
             document.getElementById('response-list').innerHTML = "";
+            document.getElementById('response-count').innerText = "0"; // Reset counter
         }
 
         function terminateRound() {
@@ -215,6 +220,7 @@
             db.ref('currentRound').set({ questionNumber: currentQNumber, status: "waiting" });
             db.ref('responses').remove();
             document.getElementById('response-list').innerHTML = "";
+            document.getElementById('response-count').innerText = "0"; // Reset counter
         }
         
         function resetGame() {
@@ -224,6 +230,7 @@
                 db.ref('allResponses').remove(); 
                 db.ref('currentRound').set({ questionNumber: 1, status: "waiting" });
                 document.getElementById('response-list').innerHTML = "";
+                document.getElementById('response-count').innerText = "0"; // Reset counter
             }
         }
 

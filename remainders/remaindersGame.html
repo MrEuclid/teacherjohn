@@ -20,6 +20,8 @@
         .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background-color: var(--primary); color: white; }
         .btn-danger { background-color: #dc3545; }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #218838; }
         
         /* Game Elements */
         #divisors-container { margin: 20px 0; padding: 15px; background: #e9ecef; border-radius: 8px; }
@@ -35,6 +37,9 @@
         /* Stats Bar */
         .stats-bar { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
         
+        /* Post-Game Actions */
+        #post-game-actions { margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 8px; border: 2px solid #c3e6cb; }
+        
         /* Modal for Help Sieve */
         #help-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: #fff; padding: 30px; border-radius: 12px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; }
@@ -46,10 +51,10 @@
         .grid-num { width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; background: #d4edda; color: #155724; font-weight: bold; border-radius: 4px; border: 1px solid #c3e6cb; }
         .grid-num.eliminated { background: #f8d7da; color: #721c24; text-decoration: line-through; opacity: 0.5; border-color: #f5c6cb; }
         
-        #message-box { font-size: 18px; font-weight: bold; margin: 15px 0; padding: 10px; border-radius: 6px; }
-        .msg-error { background: #f8d7da; color: #721c24; }
-        .msg-success { background: #d4edda; color: #155724; }
-        .msg-warn { background: #fff3cd; color: #856404; }
+        #message-box { font-size: 20px; font-weight: bold; margin: 15px 0; padding: 15px; border-radius: 6px; }
+        .msg-error { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .msg-success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .msg-warn { background: #fff3cd; color: #856404; border: 2px solid #ffeeba; }
     </style>
 </head>
 <body>
@@ -70,7 +75,7 @@
     <div id="game-screen" class="hidden">
         <div class="stats-bar">
             <span id="level-display">Level 1</span>
-            <span id="score-display">Score: 1000</span>
+            <span id="clue-display">Clues Used: 0</span>
         </div>
         
         <p>I am thinking of a number between 1 and <span id="max-n-display">30</span>.</p>
@@ -86,16 +91,25 @@
 
         <div id="message-box" class="hidden"></div>
 
-        <div class="guess-section">
+        <!-- ACTIVE GUESSING AREA -->
+        <div id="guess-section" class="guess-section">
             <button class="btn-outline" onclick="openHelpSieve()">🛠️ Open Help Sieve</button>
             <br><br>
             <label for="guess-input"><strong>Your Guess:</strong></label>
             <input type="number" id="guess-input" min="1">
             <button onclick="submitGuess()">Submit Answer</button>
+            
+            <br><br>
+            <button class="btn-danger" style="font-size: 14px;" onclick="returnToMenu()">Quit to Menu</button>
         </div>
-        
-        <br>
-        <button class="btn-danger" onclick="returnToMenu()">Quit to Menu</button>
+
+        <!-- POST GAME ACTIONS (Hidden during play) -->
+        <div id="post-game-actions" class="hidden">
+            <h3>What's next?</h3>
+            <button class="btn-success" onclick="startGame(currentLevel)">🔄 Play Again (Same Level)</button>
+            <button id="btn-level-up" class="btn-outline" onclick="startGame(currentLevel + 1)">⬆️ Level Up!</button>
+            <button class="btn-danger" onclick="returnToMenu()">🏠 Main Menu</button>
+        </div>
     </div>
 
     <!-- HELP SIEVE MODAL -->
@@ -127,21 +141,26 @@
         let currentLevel = 1;
         let maxN = 30;
         let secretNumber = 0;
-        let score = 1000;
-        let clues = []; // Array of objects {d: divisor, r: remainder}
+        let clues = []; 
         let availableDivisors = [];
-
-        // Constants
-        const PENALTY_CLUE = 25;
-        const PENALTY_WRONG_GUESS = 200;
-        const PENALTY_WILD_GUESS = 300; // Guessing correctly but when multiple options remain
+        
+        // Stats for Star Calculation
+        let cluesUsed = 0;
+        let wrongGuesses = 0;
+        let wildGuesses = 0;
 
         function startGame(level) {
             currentLevel = level;
-            score = 1000;
             clues = [];
-            document.getElementById('message-box').className = 'hidden';
+            cluesUsed = 0;
+            wrongGuesses = 0;
+            wildGuesses = 0;
+            
+            // Clear inputs and messages
             document.getElementById('guess-input').value = '';
+            document.getElementById('message-box').className = 'hidden';
+            document.getElementById('post-game-actions').classList.add('hidden');
+            document.getElementById('guess-section').classList.remove('hidden');
 
             // Set Level Parameters
             if (level === 1) { maxN = 30; availableDivisors = [2,3,4,5,6,7,8,9,10]; }
@@ -153,7 +172,7 @@
             // Update UI
             document.getElementById('level-display').innerText = `Level ${level}`;
             document.getElementById('max-n-display').innerText = maxN;
-            updateScoreDisplay();
+            updateClueDisplay();
             
             document.getElementById('menu-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
@@ -185,9 +204,8 @@
         }
 
         function askDivisor(d) {
-            // Deduct points
-            score -= PENALTY_CLUE;
-            updateScoreDisplay();
+            cluesUsed++;
+            updateClueDisplay();
             
             // Disable the button so it can't be clicked twice
             document.getElementById(`btn-div-${d}`).disabled = true;
@@ -205,9 +223,7 @@
             });
         }
 
-        // Logic for Level 3: Computer picks clues until 1 unique solution remains
         function generateLevel3Clues() {
-            // Shuffle the available divisors array to pick them randomly
             let pool = [...availableDivisors].sort(() => Math.random() - 0.5);
             
             for (let d of pool) {
@@ -235,8 +251,11 @@
         }
 
         function submitGuess() {
-            const guess = parseInt(document.getElementById('guess-input').value);
-            const msgBox = document.getElementById('message-box');
+            const guessInput = document.getElementById('guess-input');
+            const guess = parseInt(guessInput.value);
+            
+            // Clear input box immediately after submitting
+            guessInput.value = '';
             
             if (!guess || guess < 1 || guess > maxN) {
                 showMessage("Please enter a valid number within the range.", "msg-error");
@@ -247,21 +266,54 @@
 
             if (guess === secretNumber) {
                 if (possibleCount > 1 && currentLevel !== 3) {
-                    // Correct, but was a wild guess
-                    score -= PENALTY_WILD_GUESS;
-                    updateScoreDisplay();
-                    showMessage(`You got it! It was ${secretNumber}. <br><small>However, you lost ${PENALTY_WILD_GUESS} points because there were still ${possibleCount} possible answers remaining. Don't guess wildly!</small>`, "msg-warn");
-                } else {
-                    // Perfect logic
-                    showMessage(`Brilliant! The number was ${secretNumber}. You scored ${score} points!`, "msg-success");
+                    wildGuesses++;
                 }
-                // Disable game until restart
-                document.getElementById('divisors-container').classList.add('hidden');
+                handleWin(possibleCount);
             } else {
-                // Wrong guess
-                score -= PENALTY_WRONG_GUESS;
-                updateScoreDisplay();
-                showMessage(`Incorrect! That costs ${PENALTY_WRONG_GUESS} points. Keep trying!`, "msg-error");
+                wrongGuesses++;
+                showMessage(`Incorrect! That is not the secret number. (Penalty Applied)`, "msg-error");
+            }
+        }
+
+        function handleWin(possibleCount) {
+            let starAward = "❌ No Star";
+            let message = `Brilliant! The number was ${secretNumber}.`;
+            let msgClass = "msg-success";
+
+            // Determine Star Rating
+            if (wrongGuesses > 0) {
+                starAward = "❌ No Star (Penalty for incorrect guess)";
+            } else if (wildGuesses > 0) {
+                starAward = "🥉 Bronze Star";
+                message = `You got it! It was ${secretNumber}.<br><small>However, there were still ${possibleCount} possible answers remaining. Avoid wild guesses to earn Silver or Gold!</small>`;
+                msgClass = "msg-warn";
+            } else {
+                // Perfect logic - no wild guesses, no wrong answers
+                if (currentLevel === 1) {
+                    starAward = (cluesUsed <= 3) ? "🥇 Gold Star" : (cluesUsed <= 5) ? "🥈 Silver Star" : "🥉 Bronze Star";
+                } else if (currentLevel === 2) {
+                    starAward = (cluesUsed <= 4) ? "🥇 Gold Star" : (cluesUsed <= 6) ? "🥈 Silver Star" : "🥉 Bronze Star";
+                } else {
+                    // Level 3 gives exact clues, so guessing it perfectly the first time is automatic gold
+                    starAward = "🥇 Gold Star";
+                }
+            }
+
+            showMessage(`${message}<br><br><strong>Award: ${starAward}</strong>`, msgClass);
+            
+            // Hide guessing section and show post-game options
+            document.getElementById('guess-section').classList.add('hidden');
+            document.getElementById('divisors-container').classList.add('hidden');
+            
+            const postGameArea = document.getElementById('post-game-actions');
+            postGameArea.classList.remove('hidden');
+            
+            // Show or hide the "Level Up" button based on current level
+            const btnLevelUp = document.getElementById('btn-level-up');
+            if (currentLevel < 3) {
+                btnLevelUp.classList.remove('hidden');
+            } else {
+                btnLevelUp.classList.add('hidden');
             }
         }
 
@@ -271,8 +323,8 @@
             msgBox.className = className;
         }
 
-        function updateScoreDisplay() {
-            document.getElementById('score-display').innerText = `Score: ${score}`;
+        function updateClueDisplay() {
+            document.getElementById('clue-display').innerText = `Clues Used: ${cluesUsed}`;
         }
 
         function returnToMenu() {
@@ -286,7 +338,6 @@
         function openHelpSieve() {
             document.getElementById('help-modal').classList.remove('hidden');
             
-            // Populate divisor dropdown
             const divSelect = document.getElementById('sieve-div');
             divSelect.innerHTML = '<option value="">Select...</option>';
             availableDivisors.forEach(d => {
@@ -325,14 +376,10 @@
             
             if (isNaN(d) || isNaN(r)) return;
 
-            // Loop through grid and visually eliminate non-matching numbers
             for (let i = 1; i <= maxN; i++) {
                 const box = document.getElementById(`grid-num-${i}`);
                 if (i % d !== r) {
                     box.classList.add('eliminated');
-                } else {
-                    // Optional: Remove eliminated class if it matches this specific test
-                    // box.classList.remove('eliminated'); 
                 }
             }
         }

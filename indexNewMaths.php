@@ -89,6 +89,8 @@
 <a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
 <a href = "fruitPuzzle/fruitPuzzle.html" target="_blank"><button class = "btn btn-success">Fruit Puzzle</button></a>
 <a href = "make100/make100.html" target="_blank"><button class = "btn btn-success">Make 100</button></a>
+<a href = "remainders/remaindersGame.html" target="_blank"><button class = "btn btn-success">Remainders</button></a>
+
 </div>
 
 

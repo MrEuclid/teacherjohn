@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Remainders Game</title>
+    <style>
+        :root { --primary: #0056b3; --bg: #f4f6f9; --text: #333; --panel: #fff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); text-align: center; margin: 0; padding: 20px; }
+        h1, h2, h3 { color: var(--primary); }
+        
+        /* Layout Containers */
+        #menu-screen, #game-screen { max-width: 800px; margin: 0 auto; background: var(--panel); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .hidden { display: none !important; }
+        
+        /* Buttons */
+        button { padding: 10px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 6px; background-color: var(--primary); color: white; transition: 0.2s; margin: 5px; }
+        button:hover { background-color: #004494; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background-color: var(--primary); color: white; }
+        .btn-danger { background-color: #dc3545; }
+        
+        /* Game Elements */
+        #divisors-container { margin: 20px 0; padding: 15px; background: #e9ecef; border-radius: 8px; }
+        .divisor-btn { font-size: 18px; padding: 10px 15px; margin: 5px; background: #28a745; }
+        .divisor-btn:hover { background: #218838; }
+        
+        #clues-log { text-align: left; background: #fff8cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; min-height: 80px; border: 1px solid #ffeeba; }
+        .clue-item { font-size: 18px; margin: 5px 0; border-bottom: 1px dashed #ccc; padding-bottom: 5px;}
+        
+        .guess-section { margin-top: 20px; padding: 20px; border-top: 2px solid #eee; }
+        input[type="number"] { padding: 10px; font-size: 18px; width: 100px; text-align: center; border: 2px solid #ccc; border-radius: 6px; }
+        
+        /* Stats Bar */
+        .stats-bar { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
+        
+        /* Modal for Help Sieve */
+        #help-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 12px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        
+        .sieve-controls { margin-bottom: 20px; background: #e9ecef; padding: 15px; border-radius: 8px;}
+        .sieve-controls select { padding: 8px; font-size: 16px; margin: 0 10px; }
+        
+        #number-grid { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 20px; }
+        .grid-num { width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; background: #d4edda; color: #155724; font-weight: bold; border-radius: 4px; border: 1px solid #c3e6cb; }
+        .grid-num.eliminated { background: #f8d7da; color: #721c24; text-decoration: line-through; opacity: 0.5; border-color: #f5c6cb; }
+        
+        #message-box { font-size: 18px; font-weight: bold; margin: 15px 0; padding: 10px; border-radius: 6px; }
+        .msg-error { background: #f8d7da; color: #721c24; }
+        .msg-success { background: #d4edda; color: #155724; }
+        .msg-warn { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+
+    <!-- MAIN MENU -->
+    <div id="menu-screen">
+        <h1>🔢 The Remainders Game</h1>
+        <p>Use your knowledge of division and remainders to find the secret number!</p>
+        
+        <div style="margin-top: 30px;">
+            <button onclick="startGame(1)">Level 1 (Numbers 1 to 30)</button><br><br>
+            <button onclick="startGame(2)">Level 2 (Numbers 1 to 100)</button><br><br>
+            <button onclick="startGame(3)">Level 3 (Computer Clues, 1 to 120)</button>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="hidden">
+        <div class="stats-bar">
+            <span id="level-display">Level 1</span>
+            <span id="score-display">Score: 1000</span>
+        </div>
+        
+        <p>I am thinking of a number between 1 and <span id="max-n-display">30</span>.</p>
+        
+        <div id="divisors-container">
+            <strong>Ask the computer to divide by:</strong><br><br>
+            <div id="divisor-buttons"></div>
+        </div>
+
+        <div id="clues-log">
+            <em>Your clues will appear here...</em>
+        </div>
+
+        <div id="message-box" class="hidden"></div>
+
+        <div class="guess-section">
+            <button class="btn-outline" onclick="openHelpSieve()">🛠️ Open Help Sieve</button>
+            <br><br>
+            <label for="guess-input"><strong>Your Guess:</strong></label>
+            <input type="number" id="guess-input" min="1">
+            <button onclick="submitGuess()">Submit Answer</button>
+        </div>
+        
+        <br>
+        <button class="btn-danger" onclick="returnToMenu()">Quit to Menu</button>
+    </div>
+
+    <!-- HELP SIEVE MODAL -->
+    <div id="help-modal" class="hidden">
+        <div class="modal-content">
+            <h2>🛠️ Number Sieve</h2>
+            <p>Test a divisor to see which numbers would be eliminated.</p>
+            
+            <div class="sieve-controls">
+                <label>Divisor:</label>
+                <select id="sieve-div" onchange="updateSieveRemainders()"></select>
+                
+                <label>Remainder:</label>
+                <select id="sieve-rem"></select>
+                
+                <button onclick="applySieve()">Test Filter</button>
+                <button class="btn-outline" onclick="resetSieve()">Reset Grid</button>
+            </div>
+            
+            <div id="number-grid"></div>
+            
+            <br>
+            <button class="btn-danger" onclick="closeHelpSieve()">Close Help</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State Variables
+        let currentLevel = 1;
+        let maxN = 30;
+        let secretNumber = 0;
+        let score = 1000;
+        let clues = []; // Array of objects {d: divisor, r: remainder}
+        let availableDivisors = [];
+
+        // Constants
+        const PENALTY_CLUE = 25;
+        const PENALTY_WRONG_GUESS = 200;
+        const PENALTY_WILD_GUESS = 300; // Guessing correctly but when multiple options remain
+
+        function startGame(level) {
+            currentLevel = level;
+            score = 1000;
+            clues = [];
+            document.getElementById('message-box').className = 'hidden';
+            document.getElementById('guess-input').value = '';
+
+            // Set Level Parameters
+            if (level === 1) { maxN = 30; availableDivisors = [2,3,4,5,6,7,8,9,10]; }
+            else if (level === 2) { maxN = 100; availableDivisors = [2,3,4,5,6,7,8,9,10]; }
+            else if (level === 3) { maxN = 120; availableDivisors = [2,3,4,5,6,7,8,9,10,11]; }
+
+            secretNumber = Math.floor(Math.random() * maxN) + 1;
+
+            // Update UI
+            document.getElementById('level-display').innerText = `Level ${level}`;
+            document.getElementById('max-n-display').innerText = maxN;
+            updateScoreDisplay();
+            
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            renderDivisorButtons();
+            
+            const cluesLog = document.getElementById('clues-log');
+            if (level === 3) {
+                document.getElementById('divisors-container').classList.add('hidden');
+                cluesLog.innerHTML = "<strong>Computer is generating clues...</strong><br>";
+                generateLevel3Clues();
+            } else {
+                document.getElementById('divisors-container').classList.remove('hidden');
+                cluesLog.innerHTML = "<em>Your clues will appear here...</em>";
+            }
+        }
+
+        function renderDivisorButtons() {
+            const container = document.getElementById('divisor-buttons');
+            container.innerHTML = '';
+            availableDivisors.forEach(d => {
+                const btn = document.createElement('button');
+                btn.className = 'divisor-btn';
+                btn.innerText = `÷ ${d}`;
+                btn.id = `btn-div-${d}`;
+                btn.onclick = () => askDivisor(d);
+                container.appendChild(btn);
+            });
+        }
+
+        function askDivisor(d) {
+            // Deduct points
+            score -= PENALTY_CLUE;
+            updateScoreDisplay();
+            
+            // Disable the button so it can't be clicked twice
+            document.getElementById(`btn-div-${d}`).disabled = true;
+
+            const remainder = secretNumber % d;
+            clues.push({ d: d, r: remainder });
+            renderClues();
+        }
+
+        function renderClues() {
+            const log = document.getElementById('clues-log');
+            log.innerHTML = '';
+            clues.forEach(clue => {
+                log.innerHTML += `<div class="clue-item">N ÷ <strong>${clue.d}</strong> leaves a remainder of <strong>${clue.r}</strong></div>`;
+            });
+        }
+
+        // Logic for Level 3: Computer picks clues until 1 unique solution remains
+        function generateLevel3Clues() {
+            // Shuffle the available divisors array to pick them randomly
+            let pool = [...availableDivisors].sort(() => Math.random() - 0.5);
+            
+            for (let d of pool) {
+                clues.push({ d: d, r: secretNumber % d });
+                let possibleCount = getPossibleAnswersCount(maxN, clues);
+                
+                // Stop when exactly 1 answer is possible
+                if (possibleCount === 1) break;
+            }
+            renderClues();
+        }
+
+        function getPossibleAnswersCount(max, currentClues) {
+            let count = 0;
+            for (let i = 1; i <= max; i++) {
+                let isValid = true;
+                for (let clue of currentClues) {
+                    if (i % clue.d !== clue.r) {
+                        isValid = false; break;
+                    }
+                }
+                if (isValid) count++;
+            }
+            return count;
+        }
+
+        function submitGuess() {
+            const guess = parseInt(document.getElementById('guess-input').value);
+            const msgBox = document.getElementById('message-box');
+            
+            if (!guess || guess < 1 || guess > maxN) {
+                showMessage("Please enter a valid number within the range.", "msg-error");
+                return;
+            }
+
+            const possibleCount = getPossibleAnswersCount(maxN, clues);
+
+            if (guess === secretNumber) {
+                if (possibleCount > 1 && currentLevel !== 3) {
+                    // Correct, but was a wild guess
+                    score -= PENALTY_WILD_GUESS;
+                    updateScoreDisplay();
+                    showMessage(`You got it! It was ${secretNumber}. <br><small>However, you lost ${PENALTY_WILD_GUESS} points because there were still ${possibleCount} possible answers remaining. Don't guess wildly!</small>`, "msg-warn");
+                } else {
+                    // Perfect logic
+                    showMessage(`Brilliant! The number was ${secretNumber}. You scored ${score} points!`, "msg-success");
+                }
+                // Disable game until restart
+                document.getElementById('divisors-container').classList.add('hidden');
+            } else {
+                // Wrong guess
+                score -= PENALTY_WRONG_GUESS;
+                updateScoreDisplay();
+                showMessage(`Incorrect! That costs ${PENALTY_WRONG_GUESS} points. Keep trying!`, "msg-error");
+            }
+        }
+
+        function showMessage(text, className) {
+            const msgBox = document.getElementById('message-box');
+            msgBox.innerHTML = text;
+            msgBox.className = className;
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').innerText = `Score: ${score}`;
+        }
+
+        function returnToMenu() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('menu-screen').classList.remove('hidden');
+        }
+
+        // ==========================================
+        // HELP SIEVE LOGIC
+        // ==========================================
+        function openHelpSieve() {
+            document.getElementById('help-modal').classList.remove('hidden');
+            
+            // Populate divisor dropdown
+            const divSelect = document.getElementById('sieve-div');
+            divSelect.innerHTML = '<option value="">Select...</option>';
+            availableDivisors.forEach(d => {
+                divSelect.innerHTML += `<option value="${d}">${d}</option>`;
+            });
+            
+            document.getElementById('sieve-rem').innerHTML = '<option value="">...</option>';
+            resetSieve();
+        }
+
+        function closeHelpSieve() {
+            document.getElementById('help-modal').classList.add('hidden');
+        }
+
+        function updateSieveRemainders() {
+            const d = parseInt(document.getElementById('sieve-div').value);
+            const remSelect = document.getElementById('sieve-rem');
+            remSelect.innerHTML = '';
+            if (!d) return;
+            for (let i = 0; i < d; i++) {
+                remSelect.innerHTML += `<option value="${i}">${i}</option>`;
+            }
+        }
+
+        function resetSieve() {
+            const grid = document.getElementById('number-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= maxN; i++) {
+                grid.innerHTML += `<div class="grid-num" id="grid-num-${i}">${i}</div>`;
+            }
+        }
+
+        function applySieve() {
+            const d = parseInt(document.getElementById('sieve-div').value);
+            const r = parseInt(document.getElementById('sieve-rem').value);
+            
+            if (isNaN(d) || isNaN(r)) return;
+
+            // Loop through grid and visually eliminate non-matching numbers
+            for (let i = 1; i <= maxN; i++) {
+                const box = document.getElementById(`grid-num-${i}`);
+                if (i % d !== r) {
+                    box.classList.add('eliminated');
+                } else {
+                    // Optional: Remove eliminated class if it matches this specific test
+                    // box.classList.remove('eliminated'); 
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <?php
-include "../connectTempleDB.php" ;
+include "../connectTTeacherJohn.php" ;
 
 
 $title = $_POST['title'];

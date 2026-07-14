@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+  
+  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+    <title>Make a question</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question-block {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question-block label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .question-block input[type="text"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .question-block .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .question-block .option-input {
+            display: flex;
+            align-items: center;
+        }
+        .question-block .option-input label {
+            margin-right: 5px;
+            min-width: 20px; /* To align labels */
+            text-align: right;
+        }
+        .question-block .option-input input {
+            flex-grow: 1;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .remove-question-btn {
+            background-color: #dc3545;
+            float: right;
+        }
+        .remove-question-btn:hover {
+            background-color: #c82333;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e2e2e2;
+            border-radius: 8px;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        #questionTitle  {background-color:white;
+            text-align: center;;
+            font-weight: bold;
+            color:black;
+            width:32em;
+            margin: 1em;}
+
+        #questionText {
+            display: block;
+        
+            width:80%;
+              display: block;
+            margin-left: auto;
+            margin-right: auto;
+}
+   
+  
+    </style>
+</head>
+<body>
+    <?php include "navbar.html"; ?>
+  <div class  = "container-fluid">
+
+        <div class = "row">
+            <div class = "col-12 h2 text-info text-center">
+
+Make a question
+</div></div>
+  <div class = "row">
+            <div class = "col- h2 text-success text-center">
+Add the title
+</div></div>
+  <div class = "row">
+            <div class = "col- text-center">
+        <input id = "questionTitle" placeholder="Describe the question">
+    </div></div>
+
+      <div class = "row">
+            <div class = "col- h2 text-success text-center">
+        Add text (optional) <button id = "toggleBtn">Show / Hide</button>
+      </div></div>
+
+        <div class = "row">
+            <div class = "col- text-center"> 
+            <textarea id = "questionText" placeholder="Text or images - can use html and Latex"  rows="10">
+            </textarea>
+     </div></div>   
+
+       <div class = "row">
+            <div class = "col- h2 text-success text-center">
+        Multiple Choice Questions
+    </div></div>
+
+    <div class = "row">
+        <div class = "col- text-center">
+        <div id="questions-container"></div>
+        <button id="add-question-btn">Add New Question</button>
+        <button id="generate-json-btn">View questions</button>
+        <button id="export-btn">Send data</button>
+    </div></div>
+
+      <div class = "row">
+            <div class = "col- h2 text-info text-center">
+        Output Data
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionsContainer = document.getElementById('questions-container');
+            const addQuestionBtn = document.getElementById('add-question-btn');
+            const generateJsonBtn = document.getElementById('generate-json-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const outputDiv = document.getElementById('output');
+            let questionCount = 0;
+            questionsData = [];
+
+            function addQuestionBlock() {
+                questionCount++;
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.innerHTML = `
+                    <button class="remove-question-btn" data-question-id="${questionCount}">Remove Question</button>
+                    <label for="question-${questionCount}">Question ${questionCount}:</label>
+                    <input type="text" id="question-${questionCount}" placeholder="Enter your question here" required>
+
+                    <div class="options-grid">
+                        <div class="option-input">
+                            <label for="option-a-${questionCount}">A:</label>
+                            <input type="text" id="option-a-${questionCount}" placeholder="Option A" required>
+                        </div>
+                        <div class="option-input">
+                            <label for="option-b-${questionCount}">B:</label>
+                            <input type="text" id="option-b-${questionCount}" placeholder="Option B" required>
+                        </div>
+                        <div class="option-input">
+                            <label for="option-c-${questionCount}">C:</label>
+                            <input type="text" id="option-c-${questionCount}" placeholder="Option C" required>
+                        </div>
+                        <div class="option-input">
+                            <label for="option-d-${questionCount}">D:</label>
+                            <input type="text" id="option-d-${questionCount}" placeholder="Option D" required>
+                        </div>
+                        <div class="option-input">
+                            <label for="option-e-${questionCount}">E:</label>
+                            <input type="text" id="option-e-${questionCount}" placeholder="Option E" required>
+                        </div>
+                    </div>
+
+                    <label for="correct-answer-${questionCount}">Correct Answer (A, B, C, D, or E):</label>
+                    <input type="text" id="correct-answer-${questionCount}" placeholder="e.g., A" maxlength="1" pattern="[A-Ea-e]" required>
+                `;
+                questionsContainer.appendChild(questionBlock);
+
+                // Add event listener for the new remove button
+                questionBlock.querySelector('.remove-question-btn').addEventListener('click', (event) => {
+                    event.target.closest('.question-block').remove();
+                    reindexQuestions();
+                });
+            }
+
+            function reindexQuestions() {
+                const blocks = questionsContainer.querySelectorAll('.question-block');
+                questionCount = 0; // Reset count to re-evaluate
+                blocks.forEach((block, index) => {
+                    questionCount = index + 1;
+                    const questionId = questionCount;
+
+                    // Update labels and input IDs
+                    block.querySelector('label[for^="question-"]').htmlFor = `question-${questionId}`;
+                    block.querySelector('label[for^="question-"]').textContent = `Question ${questionId}:`;
+                    block.querySelector('input[id^="question-"]').id = `question-${questionId}`;
+
+                    const optionLabels = ['a', 'b', 'c', 'd', 'e'];
+                    optionLabels.forEach(letter => {
+                        block.querySelector(`label[for^="option-${letter}-"]`).htmlFor = `option-${letter}-${questionId}`;
+                        block.querySelector(`input[id^="option-${letter}-"]`).id = `option-${letter}-${questionId}`;
+                    });
+
+                    block.querySelector('label[for^="correct-answer-"]').htmlFor = `correct-answer-${questionId}`;
+                    block.querySelector('input[id^="correct-answer-"]').id = `correct-answer-${questionId}`;
+
+                    // Update remove button data-question-id
+                    block.querySelector('.remove-question-btn').dataset.questionId = questionId;
+                });
+            }
+
+            function generateJson() {
+             //   const questionsData = [];
+                const questionBlocks = questionsContainer.querySelectorAll('.question-block');
+                questionsData = [];
+                questionBlocks.forEach((block, index) => {
+                    const questionText = block.querySelector(`input[id^="question-"]`).value.trim();
+                    const options = {
+                        A: block.querySelector(`input[id^="option-a-"]`).value.trim(),
+                        B: block.querySelector(`input[id^="option-b-"]`).value.trim(),
+                        C: block.querySelector(`input[id^="option-c-"]`).value.trim(),
+                        D: block.querySelector(`input[id^="option-d-"]`).value.trim(),
+                        E: block.querySelector(`input[id^="option-e-"]`).value.trim()
+                    };
+                    const correctAnswer = block.querySelector(`input[id^="correct-answer-"]`).value.trim().toUpperCase();
+
+                    // Basic validation
+                    if (!questionText || Object.values(options).some(opt => !opt) || !correctAnswer) {
+                        alert(`Please fill in all fields for Question ${index + 1}.`);
+                        outputDiv.textContent = '';
+                        return; // Stop generation if any field is empty
+                    }
+                    if (!['A', 'B', 'C', 'D', 'E'].includes(correctAnswer)) {
+                        alert(`Correct Answer for Question ${index + 1} must be A, B, C, D, or E.`);
+                        outputDiv.textContent = '';
+                        return; // Stop generation if correct answer is invalid
+                    }
+
+                    questionsData.push({
+                        question: questionText,
+                        options: options,
+                        correctAnswer: correctAnswer
+                    });
+                });
+
+console.log(questionsData);
+
+                if (questionsData.length === questionBlocks.length) { // Only show output if all validations passed
+                   outputDiv.textContent = JSON.stringify(questionsData, null, 2);
+                   
+                }
+            }
+
+            addQuestionBtn.addEventListener('click', addQuestionBlock);
+            generateJsonBtn.addEventListener('click', generateJson);
+
+            // Add an initial question when the page loads
+            addQuestionBlock();
+        });
+    </script>
+</body>
+</html>
+
+<script>
+        // Ensure the DOM is fully loaded before running the script
+        $(document).ready(function() {
+            questionsData = [];
+            // Attach a click event listener to the button with id 'loadDataBtn'
+            $('#toggleBtn').on('click', function() {
+         //   alert(this.id);
+                $('#questionText').toggle();
+    });
+})
+    </script>
+<script>
+        // Ensure the DOM is fully loaded before running the script
+        $(document).ready(function() {
+
+            // Attach a click event listener to the button with id 'loadDataBtn'
+            $('#export-btn').on('click', function() {
+              //  alert(questionsData.length);
+
+                let title = $('#questionTitle').val();
+                let questionText = $('#questionText').val();
+            //    let questions = $('#output').text();
+                // Optional: Show a loading message
+                $('#result').text('Loading...');
+              
+                console.log("Title",title);
+                console.log("Text",questionText);
+               console.log("The questions",questionsData);
+               console.log(questionsData[0].question);
+              
+               let arrK =     Object.keys(questionsData);
+               let arrV =   Object.values(questionsData);
+           console.log("arrV",arrV);
+           console.log("1st",questionsData);
+         //  alert(questionsData[1].options.E);
+              
+               //alert(arr[0].question);
+                $('#output').text(questionsData[0].options.E);
+                // Make an AJAX GET request
+                $.ajax({
+                    url: 'addQuestions.php', // The URL of your server-side script
+                    method: 'POST',   // The HTTP method (GET, POST, etc.)
+                    dataType: 'text', // The type of data you expect back (text, html, json, xml)
+                    data: {title:title, questionText:questionText, questionsData:questionsData},
+                    // Function to run if the request is successful
+                    success: function(response) {
+                        // 'response' contains the data returned by data.php
+                       $('#output').text(response);
+                       console.log("Response",response);
+
+                    },
+
+                    // Function to run if the request fails
+                    error: function(xhr, status, error) {
+                        // Log the error details to the console
+                        console.error("AJAX Error:", status, error);
+                        console.error("XHR object:", xhr);
+                        $('#result').text('Error loading data: ' + status);
+                    },
+
+                    // Function to run regardless of success or failure (e.g., to hide a loader)
+                    complete: function() {
+                        console.log("AJAX request completed.");
+
+                    }
+                });
+            });
+        });
+    </script>
+

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="raceGeminiStyles.css">
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
+    <meta charset="utf-8">
+ 
 
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            extensions: ["tex2jax.js"],
-            jax: ["input/TeX","output/HTML-CSS"],
-            tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-        });
-    </script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <title>Make ask the audience questions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+
+ <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+  
+  <script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+    <title>Make a question</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,19 +104,72 @@
             white-space: pre-wrap; /* Preserve whitespace and line breaks */
             word-wrap: break-word; /* Break long words */
         }
+
+        #questionTitle  {background-color:white;
+            text-align: center;;
+            font-weight: bold;
+            color:black;
+            width:32em;
+            margin: 1em;}
+
+        #questionText {
+            display: block;
+        
+            width:80%;
+              display: block;
+            margin-left: auto;
+            margin-right: auto;
+}
+   
+  
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Multiple Choice Question Creator</h1>
-        <div id="questions-container">
-            </div>
-        <button id="add-question-btn">Add New Question</button>
-        <button id="generate-json-btn">Generate JSON</button>
+    <?php include "navbar.html"; ?>
+  <div class  = "container-fluid">
 
-        <h2>Generated Data</h2>
-        <div id="output">
-            </div>
+        <div class = "row">
+            <div class = "col-12 h2 text-info text-center">
+
+Make a question
+</div></div>
+  <div class = "row">
+            <div class = "col- h2 text-success text-center">
+Add the title
+</div></div>
+  <div class = "row">
+            <div class = "col- text-center">
+        <input id = "questionTitle" placeholder="Describe the question">
+    </div></div>
+
+      <div class = "row">
+            <div class = "col- h2 text-success text-center">
+        Add text (optional) <button id = "toggleBtn">Show / Hide</button>
+      </div></div>
+
+        <div class = "row">
+            <div class = "col- text-center"> 
+            <textarea id = "questionText" placeholder="Text or images - can use html and Latex"  rows="10">
+            </textarea>
+     </div></div>   
+
+       <div class = "row">
+            <div class = "col- h2 text-success text-center">
+        Multiple Choice Questions
+    </div></div>
+
+    <div class = "row">
+        <div class = "col- text-center">
+        <div id="questions-container"></div>
+        <button id="add-question-btn">Add New Question</button>
+        <button id="generate-json-btn">View questions</button>
+        <button id="export-btn">Send data</button>
+    </div></div>
+
+      <div class = "row">
+            <div class = "col- h2 text-info text-center">
+        Output Data
+        <div id="output"></div>
     </div>
 
     <script>
@@ -120,8 +177,10 @@
             const questionsContainer = document.getElementById('questions-container');
             const addQuestionBtn = document.getElementById('add-question-btn');
             const generateJsonBtn = document.getElementById('generate-json-btn');
+            const exportBtn = document.getElementById('export-btn');
             const outputDiv = document.getElementById('output');
             let questionCount = 0;
+            questionsData = [];
 
             function addQuestionBlock() {
                 questionCount++;
@@ -194,9 +253,9 @@
             }
 
             function generateJson() {
-                const questionsData = [];
+             //   const questionsData = [];
                 const questionBlocks = questionsContainer.querySelectorAll('.question-block');
-
+                questionsData = [];
                 questionBlocks.forEach((block, index) => {
                     const questionText = block.querySelector(`input[id^="question-"]`).value.trim();
                     const options = {
@@ -227,8 +286,11 @@
                     });
                 });
 
+console.log(questionsData);
+
                 if (questionsData.length === questionBlocks.length) { // Only show output if all validations passed
-                    outputDiv.textContent = JSON.stringify(questionsData, null, 2);
+                   outputDiv.textContent = JSON.stringify(questionsData, null, 2);
+                   
                 }
             }
 
@@ -245,22 +307,53 @@
 <script>
         // Ensure the DOM is fully loaded before running the script
         $(document).ready(function() {
+            questionsData = [];
+            // Attach a click event listener to the button with id 'loadDataBtn'
+            $('#toggleBtn').on('click', function() {
+         //   alert(this.id);
+                $('#questionText').toggle();
+    });
+})
+    </script>
+<script>
+        // Ensure the DOM is fully loaded before running the script
+        $(document).ready(function() {
 
             // Attach a click event listener to the button with id 'loadDataBtn'
-            $('#loadDataBtn').on('click', function() {
+            $('#export-btn').on('click', function() {
+              //  alert(questionsData.length);
+
+                let title = $('#questionTitle').val();
+                let questionText = $('#questionText').val();
+            //    let questions = $('#output').text();
                 // Optional: Show a loading message
                 $('#result').text('Loading...');
-
+              
+                console.log("Title",title);
+                console.log("Text",questionText);
+               console.log("The questions",questionsData);
+               console.log(questionsData[0].question);
+              
+               let arrK =     Object.keys(questionsData);
+               let arrV =   Object.values(questionsData);
+           console.log("arrV",arrV);
+           console.log("1st",questionsData);
+         //  alert(questionsData[1].options.E);
+              
+               //alert(arr[0].question);
+                $('#output').text(questionsData[0].options.E);
                 // Make an AJAX GET request
                 $.ajax({
-                    url: 'data.php', // The URL of your server-side script
-                    method: 'GET',   // The HTTP method (GET, POST, etc.)
+                    url: 'addQuestions.php', // The URL of your server-side script
+                    method: 'POST',   // The HTTP method (GET, POST, etc.)
                     dataType: 'text', // The type of data you expect back (text, html, json, xml)
-
+                    data: {title:title, questionText:questionText, questionsData:questionsData},
                     // Function to run if the request is successful
                     success: function(response) {
                         // 'response' contains the data returned by data.php
-                        $('#result').text(response);
+                       $('#output').text(response);
+                       console.log("Response",response);
+
                     },
 
                     // Function to run if the request fails
@@ -274,6 +367,7 @@
                     // Function to run regardless of success or failure (e.g., to hide a loader)
                     complete: function() {
                         console.log("AJAX request completed.");
+
                     }
                 });
             });

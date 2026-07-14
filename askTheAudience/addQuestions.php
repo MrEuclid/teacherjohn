@@ -1,9 +1,9 @@
 <?php
-include "../connectTTeacherJohn.php" ;
+include "../connectTeacherJohn.php"; 
 
 
 $title = $_POST['title'];
-$questionText = $_POST['questionText'];
+$questionText = "";
  $questions =$_POST['questionsData']; // questionData is JSON array
 
 

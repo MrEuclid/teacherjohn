@@ -42,8 +42,11 @@
   
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12 c">
+        <div class="col-md-12 text-center">
+            <a href=" askTheAudience/inputScreen.html" target="_blank"><button class="btn btn-warning">Make questions</button></a>
+" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
             <a href="/askTheAudience/quizMaster.php" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
+          
             <a href="/askTheAudience/projector.html" target="_blank"><button class="btn btn-warning">Projector</button></a>
             <a href="/askTheAudience/leaderboard.html" target="_blank"><button class="btn btn-warning">Board</button></a> 
             <a href="/askTheAudience/g11_final.html" target="_blank"><button class="btn btn-info">What do you know?</button></a> 

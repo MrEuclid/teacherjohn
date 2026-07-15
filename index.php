@@ -44,7 +44,7 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <a href=" askTheAudience/inputScreen.html" target="_blank"><button class="btn btn-warning">Make questions</button></a>
-" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
+
             <a href="/askTheAudience/quizMaster.php" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
           
             <a href="/askTheAudience/projector.html" target="_blank"><button class="btn btn-warning">Projector</button></a>

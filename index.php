@@ -79,8 +79,8 @@
 
 <a href = "maps/mapsIndex.html" target = "_blank">
         <button class = "btn btn-warning" title = "TSP map">Map</button> </a>
-<a href = "https://teacherjohn.org/teachableMachine/faceScanner.html" target = "_blank">
-        <button class = "btn btn-warning" title = "TSP map">Face scanner</button> </a>
+<a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank">
+        <button class = "btn btn-warning" title = "TSP map">Remainders game</button> </a>
 
  <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

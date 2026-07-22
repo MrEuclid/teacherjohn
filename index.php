@@ -72,7 +72,7 @@
  
    <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
 <a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
- <a href = "countDown/countDownWords.html" target = "_blank">
+ <a href = "wordRace/countDownWords.html" target = "_blank">
         <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>

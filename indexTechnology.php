@@ -104,13 +104,13 @@
  App Inventor</button></a> 
   <a href = "https://code.org/" target = "_blank"><button id = "app6">
   <img id = "icon6" src = "images/code.svg"><br>  
-  Code</button></a> 
+  CodeAI</button></a> 
 
  
     <a href = "https://posit.cloud/" target = "_blank"><button id = "app7">
     <img id = "icon7" src = "images/rstudio.jpeg"><br>    
     
-    RStudio</button></a> 
+    Posit Cloud</button></a> 
 
    <a href = "/monopoly/mBooks/mbooksv2.php" target = "_blank">
       <button id = "app10">

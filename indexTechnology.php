@@ -1,195 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
- 
-
+<head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <title>Temple of Technology</title>
+  
+  <!-- CSS Dependencies -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/templeStyles.css">
+  <link rel="stylesheet" href="css/newTempleStyles.css">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .header-section {
+      padding: 20px 0;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eaeaea;
+    }
+
+    /* App Dashboard Flex Grid */
+    .app-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    /* Modernized App Button */
+    .app-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: orange;
+      color: black;
+      font-weight: bolder;
+      text-decoration: none;
+      padding: 15px;
+      border-radius: 12px;
+      width: 130px;
+      height: 130px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .app-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      color: black;
+    }
+
+    .app-btn img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 12px;
+      object-fit: contain;
+    }
+
+    /* Secondary Action Buttons */
+    .action-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container-fluid">
+    
+    <!-- Header -->
+    <div class="row header-section">
+      <div class="col-12 text-center">
+        <a href="index.php" class="btn btn-success btn-lg px-5 shadow-sm">Home</a>
+      </div>
+    </div>
+
+    <!-- Main App Buttons -->
+    <div class="row">
+      <div class="col-12">
+        <div class="app-grid">
+          <a href="https://webmail.pio-students.net" target="_blank" class="app-btn">
+            <img src="images/roundcube_logo.png" alt="Email"> Email
+          </a>    
+          <a href="https://lunapic.com" target="_blank" class="app-btn">
+            <img src="images/lunapic.png" alt="Lunapic"> Lunapic
+          </a>   
+          <a href="https://pixlr.com" target="_blank" class="app-btn">
+            <img src="images/x-icon.svg" alt="Pixlr-X"> Pixlr-X
+          </a> 
+          <a href="https://scratch.mit.edu/" target="_blank" class="app-btn">
+            <img src="images/cat.png" alt="Scratch"> Scratch
+          </a> 
+          <a href="https://appinventor.mit.edu/" target="_blank" class="app-btn">
+            <img src="images/mit.png" alt="App Inventor"> App Inventor
+          </a> 
+          <a href="https://code.org/" target="_blank" class="app-btn">
+            <img src="images/code.svg" alt="CodeAI"> CodeAI
+          </a> 
+          <a href="https://posit.cloud/" target="_blank" class="app-btn">
+            <img src="images/rstudio.jpeg" alt="Posit Cloud"> Posit Cloud
+          </a> 
+          <a href="/monopoly/mBooks/mbooksv2.php" target="_blank" class="app-btn">
+            <img src="monopoly/images/accountsImage.jpeg" alt="MBooks"> MBooks
+          </a>
+          <a href="https://microbit.org/" target="_blank" class="app-btn">
+            <img src="images/microbit.png" alt="Microbit"> Microbit
+          </a> 
+          <a href="https://teachablemachine.withgoogle.com/" target="_blank" class="app-btn">
+            <img src="images/tm.png" alt="ML"> ML
+          </a> 
+          <a href="https://pio-students.net/remote/indexRemote.php" target="_blank" class="app-btn">
+            <img src="images/arduino.png" alt="Sensors"> Sensors
+          </a> 
+          <a href="https://pio-students.net/arduino/index.php" target="_blank" class="app-btn">
+            <img src="images/arduino.png" alt="Arduino"> Arduino
+          </a> 
+          <a href="https://trinket.io" target="_blank" class="app-btn">
+            <img src="images/python.jpeg" alt="Python"> Python
+          </a> 
+          <a href="https://www.microsoft.com/en-us/microsoft-365/free-office-online-for-the-web" target="_blank" class="app-btn">
+            <img src="images/ms365.svg" alt="Office 365"> Office 365
+          </a> 
+          <a href="https://canva.com" target="_blank" class="app-btn">
+            <img src="images/canva.svg" alt="Canva"> Canva
+          </a> 
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Database and Tools Links -->
+    <div class="row mb-5">
+      <div class="col-12 action-links">
+        <a href="https://pio-students.net/photocertificates/viewStudents.html" target="_blank" class="btn btn-info text-white shadow-sm">View class</a>
+        <a href="https://pio-students.net/certificates/studentLogin.php" target="_blank" class="btn btn-secondary shadow-sm">Certificates Database</a>
+        <a href="https://pio-students.net/certificates/photoviewer.php" target="_blank" class="btn btn-secondary shadow-sm">Certificates Photos</a>
+        <a href="https://pio-students.net/certificates/onePDFOutput.html" target="_blank" class="btn btn-secondary shadow-sm">Certificates</a>
+        <a href="https://pio-students.net/certificates/synchCertificates.php" target="_blank" class="btn btn-secondary shadow-sm">Synch Table</a>
+        <a href="teachableMachine/machineLearning.html" target="_blank" class="btn btn-secondary shadow-sm">Machine Learning</a>
+        <a href="teachableMachine/arduinoInterface.html" target="_blank" class="btn btn-secondary shadow-sm">Arduino Interface</a>
+        <a href="teachableMachine/flash.html" target="_blank" class="btn btn-secondary shadow-sm">Flash</a>
+        <a href="teachableMachine/team.html" target="_blank" class="btn btn-secondary shadow-sm">Team Access</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.com/libraries/mathjs"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
-    
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/HTML-CSS"],
-    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
-  });
-</script>
-<script type="text/javascript" src="javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
-
-<link rel="stylesheet" href="css/templeStyles.css">
-<link rel="stylesheet" href="css/newTempleStyles.css">
- 
-
-
-    <meta charset="utf-8">
-    
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <title>Temple of Technology</title>
-
-<style type="text/css">
-
-#two {font-weight: bolder;color: red ; font-size: 24pt ;}
-
-[id^=pio] {width:50px ; height:50px ;}
-
-.responsive {
-  max-width: 100%;
-  height: auto;
-}
-
-#g13  {background-color:orange; color:black;}
-#g12  {background-color:blue; color:white;}
-#g11 {background-color:yellow; color:blue;}
-#g10 {background-color:green; color:yellow;}
-#g9 {background-color:red; color:white;}
-
-.music {background-color:black; color:white; text-align: center; font-weight: bold;}
-
-[id^=app] {
-            background-color:orange; 
-            color:black;
-            margin:10px;
-            font-size:1em;
-            font-weight:bolder;
-        
-          }
-
-    [id^=icon]  {width:50px ; height:50px ;}
-.books {background-color:lightblue; color:black; font-weight:bold; font-size"1.2em; width:auto;} 
-.books {background-color:lightblue; color:black; font-weight:bold; font-size"1.2em; width:auto;} 
-
-</style>
-
-
-  </head>
-  <body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
   
-    <div class  = "container-fluid">
-      <div class = "row">
-        <div class = "col-sm-12 c">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>
+  <script type="text/javascript" src="javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
 
-<a href = "index.php" target = "_blank" >
- <button type="button" class="btn btn-success">
-  Home
-</button></a>
-
-</h2>
-</div></div>
-
-
-<div class = "row">
-        <div class = "col-12 text-center">
-
-    <a href = "https://webmail.pio-students.net" target = "_blank">
-      <button id = "app1" >
-      <img id = "icon1" src = "images/roundcube_logo.png"><br> 
-      Email</button>
-    </a>    
-    <a href = "https://lunapic.com" target = "_blank">
-      <button id = "app2">
-      <img id = "icon2" src = "images/lunapic.png"><br>   
-      Lunapic</button></a>   
-    <a href = "https://pixlr.com" target = "_blank"><button id = "app3">
-     <img id = "icon3" src = "images/x-icon.svg"><br>     
-    Pixlr-X</button></a> 
-    <a href = "https://scratch.mit.edu/" target = "_blank"><button id = "app4">
-       <img id = "icon4" src = "images/cat.png"><br>  
-    Scratch</button></a> 
- <a href = "https://appinventor.mit.edu/" target = "_blank"><button id = "app5">
-   <img id = "icon5" src = "images/mit.png"><br> 
- App Inventor</button></a> 
-  <a href = "https://code.org/" target = "_blank"><button id = "app6">
-  <img id = "icon6" src = "images/code.svg"><br>  
-  CodeAI</button></a> 
-
- 
-    <a href = "https://posit.cloud/" target = "_blank"><button id = "app7">
-    <img id = "icon7" src = "images/rstudio.jpeg"><br>    
-    
-    Posit Cloud</button></a> 
-
-   <a href = "/monopoly/mBooks/mbooksv2.php" target = "_blank">
-      <button id = "app10">
-      <img id = "icon10" src = "monopoly/images/accountsImage.jpeg"><br> MBooks
-    </button></a>
-    <a href = "https://microbit.org/" target = "_blank">
-      <button id = "app8">
-      <img id = "icon8" src = "images/microbit.png"><br>  
-   Microbit</button></a> 
-<a href = "https://teachablemachine.withgoogle.com/" target = "_blank">
-      <button id = "app8">
-      <img id = "icon8" src = "images/tm.png"><br>  
-   ML</button></a> 
-<!--
-   
--->
-    <a href = "https://pio-students.net/remote/indexRemote.php" target = "_blank">
-      <button id = "app9">
-      <img id = "icon9" src = "images/arduino.png"><br>  
-   Sensors</button></a> 
-
-    <a href = "https://pio-students.net/arduino/index.php" target = "_blank">
-      <button id = "app10">
-      <img id = "icon9" src = "images/arduino.png"><br>  
-   Arduino</button></a> 
-
-
-
- <a href = "https://trinket.io" target = "_blank">
-      <button id = "app10">
-      <img id = "icon10" src = "images/python.jpeg"><br>  
-   Python</button></a> 
-   
-    <a href = "https://www.microsoft.com/en-us/microsoft-365/free-office-online-for-the-web" target = "_blank">
-      <button id = "app9">
-      <img id = "icon9" src = "images/ms365.svg"><br>  
-   Office 365</button></a> 
-
-    <a href = "https://canva.com" target = "_blank">
-      <button id = "app9">
-      <img id = "icon9" src = "images/canva.svg"><br>  
-   Canva</button></a> 
-   
-</div></div>
-
-<div class = "row">
-        <div class = "col-12 text-center">
-  <button class = "btn-sm btn-info" >
-    <a href = "https://pio-students.net/photocertificates/viewStudents.html" target = "_blank">View class</a>
-  </button>
-       <button>  
-<a href = "https://pio-students.net/certificates/studentLogin.php" target = "_blank">Certificates Database</a>
-</button>
-
-  <button>
-<a href = "https://pio-students.net/certificates/photoviewer.php" target = "_blank">Certificates Photos</a>
-</button>
-
- <button>
-<a href = "https://pio-students.net/certificates/onePDFOutput.html" target = "_blank">Certificates</a>
-</button>
-<button>
-<a href = "https://pio-students.net/certificates/synchCertificates.php" target = "_blank">Synch Table</a>
-
-</button>
-<button>
-<a href = "teachableMachine/machineLearning.html" target = "_blank">Machine Learning</a></button>
-<button>
-<a href = "teachableMachine/arduinoInterface.html" target = "_blank">Arduino Interface</a></button>
-<a href = "teachableMachine/flash.html" target = "_blank">Flash</a></button>
-
-
-<a href = "teachableMachine/team.html" target = "_blank">Team Access</a></button>
-
-</div></div>
-</div>
-  </body>
+</body>
 </html>
-
-
-
-

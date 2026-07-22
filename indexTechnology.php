@@ -82,7 +82,7 @@
 
 
 <div class = "row">
-        <div class = "col-xs-12 c">
+        <div class = "col-12 text-center">
 
     <a href = "https://webmail.pio-students.net" target = "_blank">
       <button id = "app1" >
@@ -157,7 +157,7 @@
 </div></div>
 
 <div class = "row">
-        <div class = "col-xs-12 text-center">
+        <div class = "col-12 text-center">
   <button class = "btn-sm btn-info" >
     <a href = "https://pio-students.net/photocertificates/viewStudents.html" target = "_blank">View class</a>
   </button>
@@ -184,14 +184,6 @@
 
 
 <a href = "teachableMachine/team.html" target = "_blank">Team Access</a></button>
-
-<a href = "indexAdvanced.html" ><button id = "g13">Advanced</button></a>   
-
-
-    <a href = "indexG12.html" ><button id = "g12">Grade 12</button></a>    
-    <a href = "indexG11.html" ><button id = "g11">Grade 11</button></a>   
-    <a href = "indexG10.html" ><button id = "g10">Grade 10</button></a> 
-        <a href = "indexG9.html" ><button id = "g9">Grade 9</button></a> 
 
 </div></div>
 </div>

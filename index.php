@@ -72,13 +72,11 @@
  
    <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
 <a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
- <a href = "wordRace/countDownWords.html" target = "_blank">
-        <button class = "btn btn-info" title = "Spelling contests">Word race</button> </a>
+
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
-<a href = "maps/mapsIndex.html" target = "_blank">
-        <button class = "btn btn-warning" title = "TSP map">Map</button> </a>
+
 <a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank">
         <button class = "btn btn-warning" title = "TSP map">Remainders game</button> </a>
 
@@ -88,7 +86,7 @@
             <a href="https://lichess.org" target="_blank"><button class="btn btn-info">Li-chess</button></a>
             <a href="https://chess.com" target="_blank"><button class="btn btn-info">chess.com</button></a>
          <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
-<a href = "https://nrich.maths.org/problems/crossing-bridge" target = "_blank"><button class="btn btn-info">Cross the Bridge</button></a>
+<a href = "logic/miniSudoku.html" target = "_blank"><button class="btn btn-info">Mini Sudoku</button></a>
 
       
         </div>

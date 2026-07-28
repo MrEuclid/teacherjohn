@@ -88,8 +88,9 @@ try {
     <div class="no-print" style="text-align: right; margin-bottom: 20px;">
         <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">🖨️ Save as PDF</button>
     </div>
+    <h2>Name: <?php echo "______________________________________________"; ?></h2>
 
-    <h2>Quiz Answer Key (Game ID: <?php echo htmlspecialchars($gameID); ?>)</h2>
+    <h2>Quiz  (Game ID: <?php echo htmlspecialchars($gameID); ?>)</h2>
 
     <?php if (isset($errorMsg)): ?>
         <p class="error"><?php echo htmlspecialchars($errorMsg); ?></p>
@@ -112,7 +113,7 @@ try {
                     Correct Answer: 
                     <?php 
                  //   echo $q['answer'];
-                    echo "?" ;
+                    echo "______" ;
                      ?>
                 </div>
             </div>

@@ -1,0 +1,28 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+# Dental Data
+```{r setup, include = TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+# Load the necessary packages
+library(tidyverse)
+ 
+# Read the dental screening data
+dental_data <- dental
+```
+
+## Statistics
+```{r}
+
+df <- data.frame(dental_data)
+attach(df)
+x <- summary(age)
+print(x)
+m <- mean(age)
+print(m)
+hist(age)
+
+```

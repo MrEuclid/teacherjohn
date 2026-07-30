@@ -88,7 +88,8 @@
          <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
 <a href = "logic/miniSudoku.html" target = "_blank"><button class="btn btn-info">Mini Sudoku</button></a>
 
-      
+    <a href = "https://docs.google.com/document/d/1YPN-pLiewTq81Sq3YjJpymzjt7E_9xt78DeBU0c0458/edit?usp=sharing">
+        <button>XAMPP</button></a>  
         </div>
     </div>
 

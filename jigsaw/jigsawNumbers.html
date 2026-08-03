@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Detective: 1-100 Puzzle</title>
+
+    <!-- Include jQuery and jQuery UI for Drag and Drop -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background-color: #f0fdf4; /* Light green background */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #166534;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #374151;
+            margin-bottom: 20px;
+        }
+        #game-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        /* The 10x10 Target Board */
+        #board-container {
+            flex-shrink: 0;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid #bbf7d0;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 2px;
+            background-color: #e5e7eb;
+            border: 2px solid #9ca3af;
+        }
+        .board-cell {
+            width: 50px;
+            height: 50px;
+            background-color: #f9fafb;
+            border: 1px dashed #d1d5db;
+        }
+
+        /* The Staging Area for Puzzle Pieces */
+        #staging-area {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 2px dashed #93c5fd;
+            border-radius: 8px;
+            min-height: 540px;
+        }
+
+        /* Puzzle Piece Styling */
+        .puzzle-piece {
+            cursor: grab;
+            z-index: 10;
+        }
+        .puzzle-piece:active {
+            cursor: grabbing;
+            z-index: 100;
+        }
+        .number-block {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #3b82f6; 
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            width: 50px;
+            height: 50px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        }
+        .empty-space {
+            width: 50px;
+            height: 50px;
+            visibility: hidden;
+        }
+        
+        /* Success Message Overlay */
+        #success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #15803d;
+            color: white;
+            padding: 30px 60px;
+            font-size: 3rem;
+            font-weight: bold;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Number Detective: Place Value Puzzle</h1>
+    <p>Drag the blocks onto the board to complete the 1 to 100 sequence!</p>
+
+    <div id="game-container">
+        <!-- Target Board -->
+        <div id="board-container">
+            <div id="board"></div>
+        </div>
+
+        <!-- Draggable Pieces Go Here -->
+        <div id="staging-area"></div>
+    </div>
+
+    <!-- Success Feedback -->
+    <div id="success-message">Solved!</div>
+
+    <script>
+        const gridSize = 10;
+        let totalPieces = 0;
+        let piecesPlaced = 0;
+
+        $(document).ready(function() {
+            initGame();
+        });
+
+        function initGame() {
+            renderEmptyBoard();
+            const grid = generateDynamicShapes();
+            const shapes = extractShapes(grid);
+            totalPieces = Object.keys(shapes).length;
+            piecesPlaced = 0;
+            renderPuzzlePieces(shapes);
+        }
+
+        // 1. Render the Empty 10x10 Target Board (No droppable logic needed)
+        function renderEmptyBoard() {
+            const $board = $('#board');
+            $board.empty();
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    $board.append(`<div class="board-cell" data-row="${r}" data-col="${c}"></div>`);
+                }
+            }
+        }
+
+        // 2. Generate Random Shapes (Flood Fill)
+        function generateDynamicShapes() {
+            let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+            let currentShapeId = 1;
+
+            function getEmptyNeighbors(row, col) {
+                const neighbors = [];
+                if (row > 0 && grid[row - 1][col] === 0) neighbors.push({ r: row - 1, c: col });
+                if (row < gridSize - 1 && grid[row + 1][col] === 0) neighbors.push({ r: row + 1, c: col });
+                if (col > 0 && grid[row][col - 1] === 0) neighbors.push({ r: row, c: col - 1 });
+                if (col < gridSize - 1 && grid[row][col + 1] === 0) neighbors.push({ r: row, c: col + 1 });
+                return neighbors;
+            }
+
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    if (grid[r][c] === 0) {
+                        let targetSize = Math.floor(Math.random() * 3) + 4; // Size 4, 5, or 6
+                        let currentSize = 0;
+                        let possibleMoves = [{ r: r, c: c }];
+                        
+                        while (possibleMoves.length > 0 && currentSize < targetSize) {
+                            let randomIndex = Math.floor(Math.random() * possibleMoves.length);
+                            let cell = possibleMoves.splice(randomIndex, 1)[0];
+
+                            if (grid[cell.r][cell.c] === 0) {
+                                grid[cell.r][cell.c] = currentShapeId;
+                                currentSize++;
+                                possibleMoves.push(...getEmptyNeighbors(cell.r, cell.c));
+                            }
+                        }
+                        currentShapeId++;
+                    }
+                }
+            }
+            return cleanUpOrphans(grid);
+        }
+
+        // 3. Clean up shapes that are too small
+        function cleanUpOrphans(grid) {
+            let counts = {};
+            // Count sizes
+            for(let r=0; r<gridSize; r++) {
+                for(let c=0; c<gridSize; c++) {
+                    let id = grid[r][c];
+                    counts[id] = (counts[id] || 0) + 1;
+                }
+            }
+            // Merge small ones
+            for(let r=0; r<gridSize; r++) {
+                for(let c=0; c<gridSize; c++) {
+                    let id = grid[r][c];
+                    if(counts[id] < 4) {
+                        let neighbors = [];
+                        if (r > 0) neighbors.push(grid[r - 1][c]);
+                        if (r < gridSize - 1) neighbors.push(grid[r + 1][c]);
+                        if (c > 0) neighbors.push(grid[r][c - 1]);
+                        if (c < gridSize - 1) neighbors.push(grid[r][c + 1]);
+                        
+                        let validNeighborId = neighbors.find(n => n !== id && counts[n] >= 4);
+                        if(validNeighborId) {
+                            grid[r][c] = validNeighborId;
+                            counts[validNeighborId]++;
+                            counts[id]--;
+                        }
+                    }
+                }
+            }
+            return grid;
+        }
+
+        // 4. Extract mathematical values and group by Shape ID
+        function extractShapes(grid) {
+            const shapes = {};
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    let shapeId = grid[r][c];
+                    if (!shapes[shapeId]) shapes[shapeId] = [];
+                    let numberValue = (r * 10) + c + 1;
+                    shapes[shapeId].push({ row: r, col: c, val: numberValue });
+                }
+            }
+            return shapes;
+        }
+
+        // 5. Render the physical HTML blocks
+        function renderPuzzlePieces(shapes) {
+            const $stagingArea = $('#staging-area');
+            $stagingArea.empty();
+
+            $.each(shapes, function(id, cells) {
+                if (cells.length === 0) return; // Skip if cleanup emptied it
+
+                let minR = Math.min(...cells.map(c => c.row));
+                let maxR = Math.max(...cells.map(c => c.row));
+                let minC = Math.min(...cells.map(c => c.col));
+                let maxC = Math.max(...cells.map(c => c.col));
+                
+                let rows = (maxR - minR) + 1;
+                let cols = (maxC - minC) + 1;
+
+                let $piece = $('<div class="puzzle-piece"></div>');
+                $piece.css({
+                    'display': 'grid',
+                    'grid-template-rows': `repeat(${rows}, 50px)`,
+                    'grid-template-columns': `repeat(${cols}, 50px)`,
+                    'gap': '2px'
+                });
+
+                // Store target coordinates on the piece itself
+                $piece.attr('data-target-row', minR);
+                $piece.attr('data-target-col', minC);
+
+                for (let r = minR; r <= maxR; r++) {
+                    for (let c = minC; c <= maxC; c++) {
+                        let cellData = cells.find(cell => cell.row === r && cell.col === c);
+                        if (cellData) {
+                            $piece.append(`<div class="number-block">${cellData.val}</div>`);
+                        } else {
+                            $piece.append(`<div class="empty-space"></div>`);
+                        }
+                    }
+                }
+                $stagingArea.append($piece);
+            });
+
+            // Initialize Smarter Draggable
+            $('.puzzle-piece').draggable({
+                snap: '.board-cell',
+                snapMode: 'inner',
+                containment: 'document',
+                cursor: 'grab',
+                
+                // Custom revert logic: visually check the distance
+                revert: function() {
+                    let $piece = $(this);
+                    let targetRow = $piece.attr('data-target-row');
+                    let targetCol = $piece.attr('data-target-col');
+                    let $targetCell = $(`.board-cell[data-row='${targetRow}'][data-col='${targetCol}']`);
+                    
+                    let pieceOffset = $piece.offset();
+                    let targetOffset = $targetCell.offset();
+                    
+                    let dist = Math.abs(pieceOffset.top - targetOffset.top) + Math.abs(pieceOffset.left - targetOffset.left);
+                    
+                    // If the top-left corner is within 30px of the target cell, stay put
+                    if (dist < 30) {
+                        return false; 
+                    }
+                    // Otherwise, fly back to the staging area
+                    return true;
+                },
+                
+                // Lock the piece in place if it is correct
+                stop: function(event, ui) {
+                    let $piece = $(this);
+                    let targetRow = $piece.attr('data-target-row');
+                    let targetCol = $piece.attr('data-target-col');
+                    let $targetCell = $(`.board-cell[data-row='${targetRow}'][data-col='${targetCol}']`);
+                    
+                    let pieceOffset = ui.helper.offset();
+                    let targetOffset = $targetCell.offset();
+                    let dist = Math.abs(pieceOffset.top - targetOffset.top) + Math.abs(pieceOffset.left - targetOffset.left);
+                    
+                    if (dist < 30) {
+                        // Snap perfectly to the target cell coordinates
+                        $piece.offset(targetOffset);
+                        
+                        // Disable dragging safely
+                        setTimeout(() => {
+                            $piece.draggable('disable');
+                            $piece.css({'cursor': 'default', 'z-index': '1'});
+                        }, 10);
+                        
+                        // Increment win counter
+                        piecesPlaced++;
+                        if (piecesPlaced === totalPieces) {
+                            setTimeout(() => {
+                                $('#success-message').text('Solved!').fadeIn();
+                            }, 400);
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

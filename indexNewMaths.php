@@ -55,7 +55,8 @@
 <div class="math-grid">
 
    <a href="jigsaw/jigsawNumbers.html"><button class="btn btn-info">Jigsaw numbers</button></a>
-
+   <a href="abacus/abacus_target.html"><button class="btn btn-info">Abacus - learn</button></a>
+   <a href="abacus/abacus.html"><button class="btn btn-info">Abacus</button></a>
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>

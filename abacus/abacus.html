@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Soroban Abacus</title>
+    <!-- Fixed the invalid jQuery URL to a working CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            user-select: none;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .abacus-outer {
+            background: #8B4513;
+            border: 12px solid #5C2E0B;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+        .abacus-inner {
+            display: flex;
+            background: #fff;
+            position: relative;
+            border: 4px solid #333;
+        }
+        .column {
+            width: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(90deg, #999, #ccc, #777);
+            left: 42px;
+            z-index: 1;
+        }
+        .upper-deck {
+            height: 90px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        .divider-beam {
+            height: 14px;
+            width: 100%;
+            background: #333;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+            z-index: 3;
+            position: relative;
+        }
+        .lower-deck {
+            height: 240px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        .bead {
+            width: 70px;
+            height: 34px;
+            background: #e67e22;
+            margin: 0 auto;
+            position: absolute;
+            left: 10px;
+            border-radius: 50% / 20%;
+            box-shadow: inset 0 4px 6px rgba(255,255,255,0.6), inset 0 -4px 6px rgba(0,0,0,0.6), 0 4px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: top 0.15s ease-out;
+            z-index: 5;
+        }
+        .bead:hover {
+            background: #d35400;
+        }
+        .column-label {
+            background: #2c3e50;
+            color: #fff;
+            width: 100%;
+            text-align: center;
+            padding: 8px 0;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 4;
+            border-top: 2px solid #333;
+        }
+        .panel {
+            margin-top: 25px;
+            background: white;
+            padding: 15px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .total-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 5px 0;
+        }
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .clear-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🧮 Virtual Soroban Abacus</h1>
+    <div class="subtitle">
+        Click beads to move them toward the center beam to count!<br>
+        Upper Bead = 5 | Lower Beads = 1 each
+    </div>
+
+    <div class="abacus-outer">
+        <div class="abacus-inner">
+            
+            <!-- Added 4th Column (Thousands) -->
+            <div class="column" data-place="1000">
+                <div class="upper-deck">
+                    <div class="bead upper-bead" data-val="5" style="top: 5px;"></div>
+                </div>
+                <div class="divider-beam"></div>
+                <div class="lower-deck">
+                    <div class="bead lower-bead" data-idx="0" data-val="1" style="top: 80px;"></div>
+                    <div class="bead lower-bead" data-idx="1" data-val="1" style="top: 118px;"></div>
+                    <div class="bead lower-bead" data-idx="2" data-val="1" style="top: 156px;"></div>
+                    <div class="bead lower-bead" data-idx="3" data-val="1" style="top: 194px;"></div>
+                </div>
+                <div class="column-label">Thousands</div>
+            </div>
+
+            <!-- Existing Columns -->
+            <div class="column" data-place="100">
+                <div class="upper-deck">
+                    <div class="bead upper-bead" data-val="5" style="top: 5px;"></div>
+                </div>
+                <div class="divider-beam"></div>
+                <div class="lower-deck">
+                    <div class="bead lower-bead" data-idx="0" data-val="1" style="top: 80px;"></div>
+                    <div class="bead lower-bead" data-idx="1" data-val="1" style="top: 118px;"></div>
+                    <div class="bead lower-bead" data-idx="2" data-val="1" style="top: 156px;"></div>
+                    <div class="bead lower-bead" data-idx="3" data-val="1" style="top: 194px;"></div>
+                </div>
+                <div class="column-label">Hundreds</div>
+            </div>
+
+            <div class="column" data-place="10">
+                <div class="upper-deck">
+                    <div class="bead upper-bead" data-val="5" style="top: 5px;"></div>
+                </div>
+                <div class="divider-beam"></div>
+                <div class="lower-deck">
+                    <div class="bead lower-bead" data-idx="0" data-val="1" style="top: 80px;"></div>
+                    <div class="bead lower-bead" data-idx="1" data-val="1" style="top: 118px;"></div>
+                    <div class="bead lower-bead" data-idx="2" data-val="1" style="top: 156px;"></div>
+                    <div class="bead lower-bead" data-idx="3" data-val="1" style="top: 194px;"></div>
+                </div>
+                <div class="column-label">Tens</div>
+            </div>
+
+            <div class="column" data-place="1">
+                <div class="upper-deck">
+                    <div class="bead upper-bead" data-val="5" style="top: 5px;"></div>
+                </div>
+                <div class="divider-beam"></div>
+                <div class="lower-deck">
+                    <div class="bead lower-bead" data-idx="0" data-val="1" style="top: 80px;"></div>
+                    <div class="bead lower-bead" data-idx="1" data-val="1" style="top: 118px;"></div>
+                    <div class="bead lower-bead" data-idx="2" data-val="1" style="top: 156px;"></div>
+                    <div class="bead lower-bead" data-idx="3" data-val="1" style="top: 194px;"></div>
+                </div>
+                <div class="column-label">Ones</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel">
+        <div>Total Value:</div>
+        <div class="total-display" id="grandTotal">0</div>
+        <button class="clear-btn" id="clearBtn">Reset Abacus</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var UPPER_UP = 5;
+            var UPPER_DOWN = 50; 
+            
+            var LOWER_RESET_POSITIONS = "80,118,156,194".split(",").map(Number);
+            var LOWER_ACTIVE_POSITIONS = "5,43,81,119".split(",").map(Number);
+
+            // Added 1000 place to the state object
+            var abacusState = {
+                1000: { upperActive: false, lowerCount: 0 },
+                100: { upperActive: false, lowerCount: 0 },
+                10:  { upperActive: false, lowerCount: 0 },
+                1:   { upperActive: false, lowerCount: 0 }
+            };
+
+            $('.upper-bead').on('click', function() {
+                var $column = $(this).closest('.column');
+                var place = parseInt($column.attr('data-place'));
+                var state = abacusState[place];
+
+                state.upperActive = !state.upperActive;
+                
+                if (state.upperActive) {
+                    $(this).css('top', UPPER_DOWN + 'px');
+                } else {
+                    $(this).css('top', UPPER_UP + 'px');
+                }
+                
+                updateMath();
+            });
+
+            $('.lower-bead').on('click', function() {
+                var $column = $(this).closest('.column');
+                var place = parseInt($column.attr('data-place'));
+                var clickedIdx = parseInt($(this).attr('data-idx'));
+                var state = abacusState[place];
+
+                if (clickedIdx < state.lowerCount) {
+                    state.lowerCount = clickedIdx;
+                } else {
+                    state.lowerCount = clickedIdx + 1;
+                }
+
+                animateLowerDeck($column, state.lowerCount);
+                updateMath();
+            });
+
+            $('#clearBtn').on('click', function() {
+                resetAbacus();
+            });
+
+            function animateLowerDeck($column, count) {
+                $column.find('.lower-bead').each(function() {
+                    var idx = parseInt($(this).attr('data-idx'));
+                    if (idx < count) {
+                        $(this).css('top', LOWER_ACTIVE_POSITIONS[idx] + 'px');
+                    } else {
+                        $(this).css('top', LOWER_RESET_POSITIONS[idx] + 'px');
+                    }
+                });
+            }
+
+            function resetAbacus() {
+                $('.upper-bead').css('top', UPPER_UP + 'px');
+                
+                $('.column').each(function() {
+                    var place = parseInt($(this).attr('data-place'));
+                    abacusState[place] = { upperActive: false, lowerCount: 0 };
+                    animateLowerDeck($(this), 0);
+                });
+                
+                updateMath();
+            }
+
+            function updateMath() {
+                var total = 0;
+                
+                Object.keys(abacusState).forEach(function(place) {
+                    var multiplier = parseInt(place);
+                    var state = abacusState[place];
+                    
+                    var colValue = 0;
+                    if (state.upperActive) colValue += 5;
+                    colValue += state.lowerCount;
+                    
+                    total += (colValue * multiplier);
+                });
+
+                $('#grandTotal').text(total);
+            }
+        });
+    </script>
+</body>
+</html>

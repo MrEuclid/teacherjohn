@@ -122,7 +122,7 @@
           <a href="https://pio-students.net/arduino/index.php" target="_blank" class="app-btn">
             <img src="images/arduino.png" alt="Arduino"> Arduino
           </a> 
-          <a href="https://trinket.io" target="_blank" class="app-btn">
+          <a href="https://trinket.strivemath.org/" target="_blank" class="app-btn">
             <img src="images/python.jpeg" alt="Python"> Python
           </a> 
           <a href="https://www.microsoft.com/en-us/microsoft-365/free-office-online-for-the-web" target="_blank" class="app-btn">

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Merchant QR Code Generator</title>
+  <style>
+    /* Screen Styles */
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background-color: #e8f4f8; 
+      padding: 20px; 
+      text-align: center;
+    }
+    
+    .controls { margin-bottom: 30px; }
+    button { 
+      padding: 12px 24px; 
+      font-size: 18px; 
+      background-color: #27ae60; 
+      color: white; 
+      border: none; 
+      border-radius: 6px; 
+      cursor: pointer; 
+    }
+    button:hover { background-color: #219a52; }
+
+    /* CSS Grid to layout the placards */
+    .grid-container {
+      display: grid;
+      /* Makes the cards roughly 4x6 inches for easy desk display */
+      grid-template-columns: repeat(auto-fill, minmax(4in, 1fr));
+      gap: 30px;
+      justify-items: center;
+    }
+
+    /* The Merchant Placard Design */
+    .merchant-card {
+      width: 4in;
+      height: 6in;
+      background: white;
+      border: 3px solid #2c3e50;
+      border-radius: 15px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      page-break-inside: avoid; /* Prevents awkward printing cuts */
+    }
+
+    /* Top banner */
+    .card-header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .card-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; }
+    .card-header p { margin: 5px 0 0 0; font-size: 16px; opacity: 0.8; }
+
+    /* Main body with QR code */
+    .card-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .card-body h2 { color: #e74c3c; margin-bottom: 20px; font-size: 24px;}
+    
+    .qr-container img { 
+      width: 200px; 
+      height: 200px; 
+      border: 10px solid white;
+      outline: 2px solid #ccc;
+    }
+
+    .merchant-id {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #555;
+      font-weight: bold;
+    }
+
+    /* Print-Specific Styles */
+    @media print {
+      body { background-color: white; padding: 0; }
+      .controls { display: none; } /* Hide the print button when printing */
+      .merchant-card { box-shadow: none; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button onclick="window.print()">Print Merchant Displays</button>
+  </div>
+
+  <div id="card-container" class="grid-container"></div>
+
+  <script>
+    // 1. Define your classroom businesses here
+    // The ID must match the Merchant ID in your MySQL database!
+    const merchants = [
+      { id: "9999", name: "The School Store", category: "Supplies" },
+      { id: "1005", name: "Sokha's Bakery", category: "Snacks & Drinks" },
+      { id: "1006", name: "Tech Repair Squad", category: "IT Services" },
+      { id: "1007", name: "Custom Stickers Co.", category: "Art & Design" }
+    ];
+
+    const container = document.getElementById('card-container');
+
+    // 2. Loop through the array and generate the HTML for each card
+    merchants.forEach(merchant => {
+      
+      const card = document.createElement('div');
+      card.className = 'merchant-card';
+      
+      // Request a large 250x250 QR code so it scans easily from a distance
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${merchant.id}`;
+
+      // Build the card using template literals
+      card.innerHTML = `
+        <div class="card-header">
+          <h1>${merchant.name}</h1>
+          <p>${merchant.category}</p>
+        </div>
+        <div class="card-body">
+          <h2>SCAN TO PAY</h2>
+          <div class="qr-container">
+            <img src="${qrUrl}" alt="QR Code for ${merchant.name}">
+          </div>
+          <div class="merchant-id">Merchant ID: ${merchant.id}</div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>

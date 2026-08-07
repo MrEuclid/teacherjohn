@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Digital Wallet</title>
+  
+  <!-- Include the HTML5-QRCode library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 15px; }
+    .wallet-container { background: white; max-width: 400px; margin: 0 auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .login-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+    input { padding: 10px; font-size: 16px; width: 80%; text-align: center; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;}
+    #reader { width: 100%; margin: 20px auto; }
+    #message-box { padding: 15px; font-size: 18px; font-weight: bold; margin-top: 20px; display: none; border-radius: 8px;}
+  </style>
+</head>
+<body>
+
+  <div class="wallet-container">
+    <h1>Pay a Merchant</h1>
+    
+    <div class="login-section">
+      <label><strong>Who are you?</strong></label><br>
+      <input type="text" id="my-customer-id" placeholder="Enter your Student ID">
+    </div>
+
+    <p>Scan a merchant's QR code to pay.</p>
+    <div id="reader"></div>
+    <div id="message-box"></div>
+  </div>
+
+  <script>
+    // Initialize the scanner
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+    let isScanning = true;
+
+    function onScanSuccess(decodedText, decodedResult) {
+      if (!isScanning) return;
+      
+      // 1. Check if the student entered their own ID
+      let myId = document.getElementById('my-customer-id').value;
+      if (!myId) {
+        alert("Please enter your Student ID at the top first!");
+        return;
+      }
+
+      // Pause scanning so we don't trigger multiple prompts
+      isScanning = false; 
+      html5QrcodeScanner.pause();
+
+      // 2. The scanned text is the Merchant's ID. Ask for the amount.
+      let amount = prompt("Scan successful! Enter amount to pay Merchant ID: " + decodedText);
+
+      // Validate that an amount was entered and it is greater than 0
+      if (amount !== null && amount > 0) {
+        
+        // 3. Prepare the data to send to PHP
+        let formData = new FormData();
+        formData.append("customer_id", myId);
+        formData.append("merchant_id", decodedText);
+        formData.append("amount", amount);
+
+        // 4. Process the payment via our PHP script
+        fetch("pay.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          let msgBox = document.getElementById("message-box");
+          msgBox.style.display = "block";
+          
+          if (data.status === "success") {
+            msgBox.style.backgroundColor = "#e6ffe6";
+            msgBox.style.color = "green";
+            // Using the requested positive reinforcement style
+            msgBox.innerText = "Solved! Payment sent successfully.";
+          } else {
+            msgBox.style.backgroundColor = "#ffe6e6";
+            msgBox.style.color = "red";
+            msgBox.innerText = data.message;
+          }
+          
+          // Clear the message and resume scanning after 4 seconds
+          setTimeout(() => {
+            msgBox.style.display = "none";
+            isScanning = true;
+            html5QrcodeScanner.resume();
+          }, 4000);
+        });
+
+      } else {
+        // If they hit cancel on the prompt, just resume scanning
+        isScanning = true;
+        html5QrcodeScanner.resume();
+      }
+    }
+
+    // Start rendering the camera interface
+    html5QrcodeScanner.render(onScanSuccess);
+  </script>
+</body>
+</html>

@@ -195,6 +195,8 @@ button {margin: 0.5em;}
          
 <div class= "row">
  <div class = "col-12 text-center">
+
+<a href = "slidingBlock/slidingblock_15.html" target = "_blank"><button class = "btn btn-info">Sliding blocks</button></a>
 <a href = "logic/hanoi.html" target = "_blank"><button class = "btn btn-info">Tower of Hanoi</button></a>
 
 <a href = "logic/blackbox.html" target = "_blank"><button class = "btn btn-warning">Atoms</button></a>

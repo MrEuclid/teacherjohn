@@ -77,8 +77,13 @@
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 
-<a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank">
-        <button class = "btn btn-warning" title = "TSP map">Remainders game</button> </a>
+<a href = "slidingBlock/slidingblock_15.html" target = "_blank"><button class = "btn btn-info">Sliding blocks</button></a>
+<a href = "twoPlayerGames/checkers.html" target = "_blank"><button class = "btn btn-info">Checkers</button></a>
+
+        </div>
+    </div>
+
+    <div class="row mt-3">
 
  <div class="col-12 text-center">
             <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>

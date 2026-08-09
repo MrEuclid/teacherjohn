@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classroom POS Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+    .pos-screen { border: 2px solid #333; padding: 20px; border-radius: 8px; background: #f9f9f9; }
+    .screen-section { margin-bottom: 20px; }
+    button { padding: 10px 15px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+    #qr-result { text-align: center; margin-top: 20px; display: none; }
+    #qr-image { border: 10px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+  <div class="pos-screen">
+    <h2>Retailer POS System</h2>
+    
+    <div class="screen-section">
+      <label>1. Retailer scans barcode (Enter Item ID):</label><br><br>
+      <!-- We use '101' as our demo item -->
+      <input type="text" id="barcode-scanner" value="101" style="font-size: 18px; padding: 5px;">
+      <button onclick="scanItem()">Simulate Scan</button>
+    </div>
+
+    <div class="screen-section" id="item-display">
+      <strong>Scanned Item:</strong> <span id="item-name">---</span><br>
+      <strong>Price:</strong> $<span id="item-price">0.00</span>
+    </div>
+
+    <div id="qr-result">
+      <h3>2. Customer scans to pay:</h3>
+      <img id="qr-image" src="" alt="Payment QR Code">
+      <p><small id="url-display" style="color: gray; word-break: break-all;"></small></p>
+    </div>
+  </div>
+
+  <script>
+    // Step 1: The Mock Database
+    // In a real POS, this data lives on a server. 
+    const inventory = {
+      "101": { name: "University Hoodie", price: 45.00 },
+      "102": { name: "Campus Coffee Mug", price: 12.50 }
+    };
+
+    function scanItem() {
+      // Get the ID from our "scanner"
+      const itemId = document.getElementById('barcode-scanner').value;
+      const item = inventory[itemId];
+
+      if (!item) {
+        alert("Item not found in inventory!");
+        return;
+      }
+
+      // Step 2: Display the data on the POS screen
+      document.getElementById('item-name').innerText = item.name;
+      document.getElementById('item-price').innerText = item.price.toFixed(2);
+
+      // Step 3: Create the dynamic checkout URL
+      // We pass the data into the URL so the customer's phone can read it
+      // NOTE: In a real app, this would point to your actual checkout website
+      const checkoutWebsite = "https://example.com/pay";
+      const paymentUrl = `${checkoutWebsite}?id=${itemId}&name=${encodeURIComponent(item.name)}&price=${item.price}`;
+
+      // Step 4: Generate the QR Code using the API
+      // We encode the paymentUrl so the special characters (&, ?) don't break the QR generator
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(paymentUrl)}`;
+
+      // Step 5: Show the QR code to the customer
+      document.getElementById('qr-image').src = qrApiUrl;
+      document.getElementById('url-display').innerText = "Data inside QR: " + paymentUrl;
+      document.getElementById('qr-result').style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Sliding Puzzle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #board {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            background-color: #bbada0;
+            border-radius: 10px;
+            border: 8px solid #bbada0;
+            box-sizing: content-box;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .tile {
+            position: absolute;
+            width: 96px; /* 100px minus 4px for gaps */
+            height: 96px;
+            background-color: #eee4da;
+            color: #776e65;
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            /* Smooth sliding animation */
+            transition: transform 0.15s ease-in-out;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.5), 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tile:hover {
+            background-color: #f2e8de;
+        }
+
+        #controls {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #8f7a66;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #9e8b78;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4caf50;
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>15 Puzzle</h1>
+    <div id="board"></div>
+    <div id="controls">
+        <button onclick="shufflePuzzle()">Shuffle</button>
+    </div>
+    <div id="message"></div>
+
+    <script>
+        const SIZE = 4;
+        const TILE_SIZE = 100; // 100px per grid block
+        let tiles = [];
+        const board = document.getElementById('board');
+        const messageDisplay = document.getElementById('message');
+        const tileElements = {};
+
+        // Initialize the board
+        function init() {
+            // Create array: [1, 2, ..., 15, 0] where 0 is the empty space
+            tiles = Array.from({ length: SIZE * SIZE - 1 }, (_, i) => i + 1);
+            tiles.push(0); 
+
+            // Create DOM elements for tiles 1-15
+            tiles.forEach(number => {
+                if (number === 0) return;
+                
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.textContent = number;
+                
+                // Add click listener to move tile
+                tile.addEventListener('click', () => moveTile(number));
+                
+                board.appendChild(tile);
+                tileElements[number] = tile; // Store reference for easy styling
+            });
+
+            shufflePuzzle();
+        }
+
+        // Render tiles to their current X and Y coordinates based on the array
+        function render() {
+            tiles.forEach((number, index) => {
+                if (number === 0) return;
+                
+                // Calculate grid coordinates based on array index
+                const x = (index % SIZE) * TILE_SIZE;
+                const y = Math.floor(index / SIZE) * TILE_SIZE;
+                
+                // Use CSS transform to move the tile (this triggers the sliding animation)
+                tileElements[number].style.transform = `translate(${x + 2}px, ${y + 2}px)`; 
+                // +2px creates a nice gap between tiles
+            });
+        }
+
+        // Logic to move a tile
+        function moveTile(number) {
+            const tileIndex = tiles.indexOf(number);
+            const emptyIndex = tiles.indexOf(0);
+
+            const tileX = tileIndex % SIZE;
+            const tileY = Math.floor(tileIndex / SIZE);
+            const emptyX = emptyIndex % SIZE;
+            const emptyY = Math.floor(emptyIndex / SIZE);
+
+            // Check if the clicked tile is adjacent to the empty space
+            const isAdjacent = Math.abs(tileX - emptyX) + Math.abs(tileY - emptyY) === 1;
+
+            if (isAdjacent) {
+                // Swap the clicked tile with the empty space
+                tiles[emptyIndex] = number;
+                tiles[tileIndex] = 0;
+                
+                render();
+                checkWin();
+            }
+        }
+
+        // Shuffle by making lots of random valid moves (Guarantees the puzzle is solvable)
+        function shufflePuzzle() {
+            messageDisplay.textContent = ""; // clear win message
+            
+            for (let i = 0; i < 300; i++) {
+                const emptyIndex = tiles.indexOf(0);
+                const emptyX = emptyIndex % SIZE;
+                const emptyY = Math.floor(emptyIndex / SIZE);
+                
+                // Find all valid neighbors of the empty space
+                const neighbors = [];
+                if (emptyX > 0) neighbors.push(emptyIndex - 1); // left
+                if (emptyX < SIZE - 1) neighbors.push(emptyIndex + 1); // right
+                if (emptyY > 0) neighbors.push(emptyIndex - SIZE); // up
+                if (emptyY < SIZE - 1) neighbors.push(emptyIndex + SIZE); // down
+
+                // Pick a random neighbor and swap
+                const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
+                tiles[emptyIndex] = tiles[randomNeighbor];
+                tiles[randomNeighbor] = 0;
+            }
+            render();
+        }
+
+        // Check if array matches [1, 2, ..., 15, 0]
+        function checkWin() {
+            let isWin = true;
+            for (let i = 0; i < tiles.length - 1; i++) {
+                if (tiles[i] !== i + 1) {
+                    isWin = false;
+                    break;
+                }
+            }
+            if (isWin && tiles[tiles.length - 1] === 0) {
+                // Wait for the slide animation to finish before announcing win
+                setTimeout(() => {
+                    messageDisplay.textContent = "You Win! 🎉";
+                }, 200);
+            }
+        }
+
+        // Start the game
+        init();
+    </script>
+</body>
+</html>

@@ -78,7 +78,7 @@
 
 
 <a href = "slidingBlock/slidingblock_15.html" target = "_blank"><button class = "btn btn-info">Sliding blocks</button></a>
-<a href = "twoPlayerGames/checkers.html" target = "_blank"><button class = "btn btn-info">Checkers</button></a>
+<a href = "https://cariboutests.com/games/sliding_Blocks.php?lang=en#:~:text=How%20To%20Play,click%20on%20the%20empty%20space." target = "_blank"><button class = "btn btn-info">Sling blocks - Harder</button></a>
 
         </div>
     </div>

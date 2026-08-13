@@ -1,0 +1,255 @@
+html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Ninja Puzzle</title>
+    <style>
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background-color: #f0f8ff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .game-board { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 100%; box-sizing: border-box; }
+        h1 { color: #333; margin-top: 0; }
+        .target-box { background: #ffe0b2; padding: 10px 20px; border-radius: 10px; display: inline-block; font-size: 28px; font-weight: bold; border: 3px solid #ff9800; color: #e65100; margin-bottom: 20px; }
+        
+        .equation-line { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .slot { width: 60px; height: 60px; border: 3px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none; }
+        .slot:hover { border-color: #999; }
+        .num-slot { background: #e0f7fa; color: #006064; border-color: #80deea; }
+        .op-slot { background: #f3e5f5; color: #4a148c; border-color: #ce93d8; }
+        .slot.filled { border-style: solid; }
+
+        .pools { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .pool-group { display: flex; gap: 10px; }
+        .pool-btn { width: 50px; height: 50px; font-size: 24px; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: 0.1s; display: flex; justify-content: center; align-items: center; user-select: none; }
+        .pool-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .pool-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: translateY(4px); box-shadow: 0 0 0; }
+        .num-btn { background: #26c6da; color: white; }
+        .op-btn { background: #ab47bc; color: white; }
+
+        .actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .action-btn { padding: 12px 24px; font-size: 18px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: 0.1s;}
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        #check-btn { background: #66bb6a; }
+        #clear-btn { background: #ef5350; }
+        #next-btn { background: #42a5f5; display: none; margin: 0 auto; }
+        
+        .message { margin-top: 20px; font-size: 20px; font-weight: bold; min-height: 30px; }
+        .success { color: #2e7d32; }
+        .error { color: #c62828; }
+    </style>
+</head>
+<body>
+
+<div class="game-board">
+    <h1>Math Ninja</h1>
+    <div>Make the number:</div>
+    <div class="target-box" id="target-display">?</div>
+
+    <div class="equation-line">
+        <div class="slot num-slot" id="slot-0" onclick="clearSlot(0)"></div>
+        <div class="slot op-slot"  id="slot-1" onclick="clearSlot(1)"></div>
+        <div class="slot num-slot" id="slot-2" onclick="clearSlot(2)"></div>
+        <div class="slot op-slot"  id="slot-3" onclick="clearSlot(3)"></div>
+        <div class="slot num-slot" id="slot-4" onclick="clearSlot(4)"></div>
+    </div>
+    <div style="font-size: 14px; color: #666; margin-bottom: 20px;">(Click a filled box to remove it)</div>
+
+    <div class="pools">
+        <div class="pool-group" id="number-pool">
+            <!-- Populated by JS -->
+        </div>
+        <div class="pool-group" id="operator-pool">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="action-btn" id="check-btn" onclick="checkAnswer()">Check Answer</button>
+        <button class="action-btn" id="clear-btn" onclick="resetSlots()">Clear</button>
+        <button class="action-btn" id="next-btn" onclick="initGame()">Next Puzzle ➔</button>
+    </div>
+
+    <div class="message" id="message-display"></div>
+</div>
+
+<script>
+    // Game State
+    let currentSlots = [null, null, null, null, null]; // [num, op, num, op, num]
+    let currentPuzzle = {};
+    
+    // Elements
+    const targetDisplay = document.getElementById('target-display');
+    const numberPool = document.getElementById('number-pool');
+    const operatorPool = document.getElementById('operator-pool');
+    const messageDisplay = document.getElementById('message-display');
+    const checkBtn = document.getElementById('check-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Puzzle Generator
+    function generatePuzzle() {
+        const ops = ['+', '-', '*', '/'];
+        const getRandomNum = () => Math.floor(Math.random() * 9) + 1; 
+        const getRandomOp = () => ops[Math.floor(Math.random() * ops.length)];
+
+        let valid = false;
+        let n1, n2, n3, op1, op2, target;
+
+        while (!valid) {
+            n1 = getRandomNum();
+            n2 = getRandomNum();
+            n3 = getRandomNum();
+            op1 = getRandomOp();
+            op2 = getRandomOp();
+
+            let isCleanMath = true;
+            if (op1 === '/') {
+                if (n1 % n2 !== 0) isCleanMath = false;
+            }
+            if (op2 === '/') {
+                if (op1 === '+' || op1 === '-') {
+                    if (n2 % n3 !== 0) isCleanMath = false; 
+                } 
+                else if (op1 === '*') {
+                    if ((n1 * n2) % n3 !== 0) isCleanMath = false;
+                } 
+                else if (op1 === '/') {
+                    if ((n1 / n2) % n3 !== 0) isCleanMath = false;
+                }
+            }
+            if (!isCleanMath) continue;
+
+            target = eval(`${n1} ${op1} ${n2} ${op2} ${n3}`);
+
+            if (target > 0 && target <= 100 && Number.isInteger(target)) {
+                // Avoid too simple equations
+                if (n1 === 1 && n2 === 1 && n3 === 1) continue;
+                valid = true;
+            }
+        }
+
+        const shuffledNumbers = [n1, n2, n3].sort(() => Math.random() - 0.5);
+        const shuffledOps = [op1, op2].sort(() => Math.random() - 0.5);
+
+        return { target, providedNumbers: shuffledNumbers, providedOps: shuffledOps };
+    }
+
+    function initGame() {
+        currentPuzzle = generatePuzzle();
+        targetDisplay.textContent = currentPuzzle.target;
+        messageDisplay.textContent = "";
+        
+        // Setup UI
+        checkBtn.style.display = 'block';
+        clearBtn.style.display = 'block';
+        nextBtn.style.display = 'none';
+
+        renderPools();
+        resetSlots();
+    }
+
+    function renderPools() {
+        numberPool.innerHTML = '';
+        operatorPool.innerHTML = '';
+
+        currentPuzzle.providedNumbers.forEach((num, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'pool-btn num-btn';
+            btn.textContent = num;
+            btn.id = `num-btn-${index}`;
+            btn.onclick = () => selectItem(num, 'num', btn.id);
+            numberPool.appendChild(btn);
+        });
+
+        currentPuzzle.providedOps.forEach((op, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'pool-btn op-btn';
+            // Use nice math symbols for multiplication and division
+            btn.textContent = op === '*' ? '×' : op === '/' ? '÷' : op;
+            btn.dataset.realOp = op; // Store real operator for math evaluation
+            btn.id = `op-btn-${index}`;
+            btn.onclick = () => selectItem(btn.dataset.realOp, 'op', btn.id, btn.textContent);
+            operatorPool.appendChild(btn);
+        });
+    }
+
+    function selectItem(val, type, btnId, displayVal = val) {
+        // Find first empty slot of the correct type
+        const validIndices = type === 'num' ? [0, 2, 4] : [1, 3];
+        const emptyIndex = validIndices.find(i => currentSlots[i] === null);
+
+        if (emptyIndex !== undefined) {
+            currentSlots[emptyIndex] = { val: val, btnId: btnId, displayVal: displayVal };
+            updateSlotUI(emptyIndex);
+            document.getElementById(btnId).disabled = true;
+        }
+        messageDisplay.textContent = "";
+    }
+
+    function clearSlot(index) {
+        if (currentSlots[index] !== null) {
+            const btnId = currentSlots[index].btnId;
+            document.getElementById(btnId).disabled = false;
+            currentSlots[index] = null;
+            updateSlotUI(index);
+        }
+        messageDisplay.textContent = "";
+    }
+
+    function updateSlotUI(index) {
+        const slotDiv = document.getElementById(`slot-${index}`);
+        const data = currentSlots[index];
+        if (data) {
+            slotDiv.textContent = data.displayVal;
+            slotDiv.classList.add('filled');
+        } else {
+            slotDiv.textContent = '';
+            slotDiv.classList.remove('filled');
+        }
+    }
+
+    function resetSlots() {
+        for (let i = 0; i < 5; i++) {
+            clearSlot(i);
+        }
+        messageDisplay.textContent = "";
+    }
+
+    function checkAnswer() {
+        if (currentSlots.includes(null)) {
+            showMessage("Fill all the boxes first!", "error");
+            return;
+        }
+
+        const equation = currentSlots.map(s => s.val).join(' ');
+        let result = 0;
+        try {
+            result = eval(equation);
+        } catch (e) {
+            showMessage("Invalid equation!", "error");
+            return;
+        }
+
+        if (result === currentPuzzle.target) {
+            showMessage("🎉 Brilliant! You did it!", "success");
+            checkBtn.style.display = 'none';
+            clearBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+        } else {
+            showMessage(`That equals ${result}. Check order of operations!`, "error");
+        }
+    }
+
+    function showMessage(msg, type) {
+        messageDisplay.textContent = msg;
+        messageDisplay.className = `message ${type}`;
+    }
+
+    // Start first game
+    initGame();
+</script>
+</body>
+</html>
+"""
+with open('math_ninja_prototype.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+print("math_ninja_prototype.html")

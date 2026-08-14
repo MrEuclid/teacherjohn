@@ -69,7 +69,7 @@
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
     <a href = "arithmagons/arithmagons_junior.html" target="_blank"><button class = "btn btn-info">Arithmagons</button></a>
 <a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
-
+<a href = "greenlight/greenLightAppJunior.html" target ="_blank"><button class = "btn btn-primary">Green light easy</button></a>
 </div>
 
 <div class = "row text-center">

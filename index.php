@@ -78,7 +78,7 @@
 
 
 <a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect 3 - easy</button></a>
-<a href = "https://cariboutests.com/games/sliding_Blocks.php?lang=en#:~:text=How%20To%20Play,click%20on%20the%20empty%20space." target = "_blank"><button class = "btn btn-info">Sling blocks - Harder</button></a>
+<a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja maths</button></a>
 
         </div>
     </div>

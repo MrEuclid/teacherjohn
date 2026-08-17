@@ -77,7 +77,12 @@
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 
+<<<<<<< HEAD
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
+=======
+<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect 3 - easy</button></a>
+<a href = "https://cariboutests.com/games/sliding_Blocks.php?lang=en#:~:text=How%20To%20Play,click%20on%20the%20empty%20space." target = "_blank"><button class = "btn btn-info">Sling blocks - Harder</button></a>
+>>>>>>> 0cc231383e21dfbbcd07a8db83769f0e1d7060c5
 
         </div>
     </div>

@@ -55,17 +55,23 @@
 <div class="math-grid">
 
    <a href="jigsaw/jigsawNumbers.html"><button class="btn btn-info">Jigsaw numbers</button></a>
+   <a href="ninja/ninja.html"><button class="btn btn-info">Ninja maths</button></a>
    <a href="abacus/abacus_target.html"><button class="btn btn-info">Abacus - learn</button></a>
    <a href="abacus/abacus.html"><button class="btn btn-info">Abacus</button></a>
-    
-   <a href="https://teacherjohn.org/arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
-    
+      <a href="https://nrich.maths.org/problems/first-connect-three">
+        <button class="btn btn-info">Connect Three easy</button></a>
+      <a href="https://nrich.maths.org/problems/connect-three">
+        <button class="btn btn-info">Connect Three</button></a>
+
+   <a href="https://nrich.maths.org/games/dicey-operations"><button class="btn btn-info">Dicey operations</button></a>
+
+
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
     <a href = "arithmagons/arithmagons_junior.html" target="_blank"><button class = "btn btn-info">Arithmagons</button></a>
 <a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
-
+<a href = "greenLight/greenLightAppJunior.html" target ="_blank"><button class = "btn btn-primary">Green light easy</button></a>
 </div>
 
 <div class = "row text-center">
@@ -74,7 +80,10 @@
 <div class="math-grid">
         <a href="24Game/24.html"><button class="btn btn-primary">24 game</button></a>
 
-       <a href="dragons/dragons.html"><button class="btn btn-primary ">Dragons</button></a>
+        <a href="https://nrich.maths.org/problems/treasure-hunt">
+            <button class="btn btn-primary">Treasure hunt - coordinates</button></a>
+
+<a href="dragons/dragons.html"><button class="btn btn-primary ">Dragons</button></a>
         <a href="escape/escape.html"><button class="btn btn-primary">Escape</button></a>
      <a href="jimmyGame/jimmyMath.html"><button class="btn btn-primary">Jimmy Gemini</button></a>
       <a href="decimalsPercentages/decimals.html"><button class="btn btn-primary">Percent</button></a>

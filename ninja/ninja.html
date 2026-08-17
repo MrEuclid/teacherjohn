@@ -57,9 +57,9 @@
     
     <div class="top-bar">
         <select class="level-select" id="level-selector" onchange="changeLevel()">
-            <option value="1">Level 1 (1 - 10)</option>
-            <option value="2">Level 2 (11 - 20)</option>
-            <option value="3">Level 3 (21 - 50)</option>
+            <option value="1">Level 1 (10 - 50)</option>
+            <option value="2">Level 2 (51 - 100)</option>
+            <option value="3">Level 3 (101 - 200)</option>
         </select>
         <div class="star-container">
             <span id="star-count">0</span> <span id="star-icon">⭐</span>
@@ -129,11 +129,11 @@
         // Set Target Boundaries based on Level
         let minTarget, maxTarget;
         if (level === 1) {
-            minTarget = 1; maxTarget = 10;
+            minTarget = 10; maxTarget = 30;
         } else if (level === 2) {
-            minTarget = 11; maxTarget = 20;
+            minTarget = 31; maxTarget = 50;
         } else {
-            minTarget = 21; maxTarget = 50;
+            minTarget = 51; maxTarget = 100;
         }
 
         let valid = false;

@@ -144,7 +144,11 @@
             n2 = getRandomNum();
             n3 = getRandomNum();
             op1 = getRandomOp();
-            op2 = getRandomOp();
+            
+            // Loop to ensure the second operator is always different from the first
+            do {
+                op2 = getRandomOp();
+            } while (op1 === op2);
 
             let isCleanMath = true;
             // Prevent division resulting in fractions

@@ -63,6 +63,8 @@
       <a href="https://nrich.maths.org/problems/connect-three">
         <button class="btn btn-info">Connect Three</button></a>
 
+   <a href="https://nrich.maths.org/games/dicey-operations"><button class="btn btn-info">Dicey operations</button></a>
+
 
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>

@@ -57,6 +57,9 @@
    <a href="jigsaw/jigsawNumbers.html"><button class="btn btn-info">Jigsaw numbers</button></a>
    <a href="abacus/abacus_target.html"><button class="btn btn-info">Abacus - learn</button></a>
    <a href="abacus/abacus.html"><button class="btn btn-info">Abacus</button></a>
+    
+   <a href="https://teacherjohn.org/arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
+    
    <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
     <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
     <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
@@ -103,6 +106,8 @@
 <div class = "row text-center">
     <p class = "h2">G9 - G10</p>
     <div class="math-grid">
+       
+
            <a href="crossNumber/crossNumberHarder.html"><button class="btn btn-warning">Crossnumber</button></a>
               <a href="crossNumber/crossNumberFractions"><button class="btn btn-success">Crossnumber fractions</button></a>
     <a href="egyptian/egyptianFractions.php"><button class="btn btn-warning">Egyptian fractions</button></a>

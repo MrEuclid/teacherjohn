@@ -57,9 +57,9 @@
     
     <div class="top-bar">
         <select class="level-select" id="level-selector" onchange="changeLevel()">
-            <option value="1">Level 1 (1 - 10)</option>
-            <option value="2">Level 2 (11 - 20)</option>
-            <option value="3">Level 3 (21 - 50)</option>
+            <option value="1">Level 1 (10 - 50)</option>
+            <option value="2">Level 2 (51 - 100)</option>
+            <option value="3">Level 3 (101 - 200)</option>
         </select>
         <div class="star-container">
             <span id="star-count">0</span> <span id="star-icon">⭐</span>
@@ -120,31 +120,45 @@
         initGame();
     }
 
-    // Puzzle Generator with Level Logic
+   // Puzzle Generator with Level Logic
     function generatePuzzle(level) {
         const ops = ['+', '-', '*', '/'];
-        const getRandomNum = () => Math.floor(Math.random() * 9) + 1; 
+        
+        // FIX 1: Scale the random numbers based on the level so higher targets are possible
+        const getRandomNum = () => {
+            let maxNum = 9;
+            if (level === 2) maxNum = 15;
+            if (level === 3) maxNum = 25;
+            return Math.floor(Math.random() * maxNum) + 1; 
+        };
+        
         const getRandomOp = () => ops[Math.floor(Math.random() * ops.length)];
 
         // Set Target Boundaries based on Level
         let minTarget, maxTarget;
         if (level === 1) {
-            minTarget = 1; maxTarget = 10;
+            minTarget = 10; maxTarget = 50;
         } else if (level === 2) {
-            minTarget = 11; maxTarget = 20;
+            minTarget = 51; maxTarget = 100;
         } else {
-            minTarget = 21; maxTarget = 50;
+            minTarget = 101; maxTarget = 200;
         }
 
         let valid = false;
         let n1, n2, n3, op1, op2, target;
+        let attempts = 0; // FIX 2: Fail-safe counter
 
-        while (!valid) {
+        while (!valid && attempts < 5000) {
+            attempts++;
             n1 = getRandomNum();
             n2 = getRandomNum();
             n3 = getRandomNum();
             op1 = getRandomOp();
-            op2 = getRandomOp();
+            
+            // Ensure the second operator is always different from the first
+            do {
+                op2 = getRandomOp();
+            } while (op1 === op2);
 
             let isCleanMath = true;
             // Prevent division resulting in fractions
@@ -168,10 +182,16 @@
 
             // Ensure the target falls within the current level's boundaries
             if (target >= minTarget && target <= maxTarget && Number.isInteger(target)) {
-                // Avoid extremely simple equations like 1 * 1 * 1 = 1
+                // Avoid extremely simple equations
                 if (n1 === 1 && n2 === 1 && n3 === 1) continue;
                 valid = true;
             }
+        }
+
+        // Fallback just in case the loop ever hits the 5000 attempt limit
+        if (!valid) {
+            target = 42;
+            n1 = 6; n2 = 7; n3 = 1; op1 = '*'; op2 = '/';
         }
 
         const shuffledNumbers = [n1, n2, n3].sort(() => Math.random() - 0.5);

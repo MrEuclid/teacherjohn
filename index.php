@@ -77,8 +77,16 @@
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 
+<<<<<<< HEAD
+<a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
+=======
 <a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect 3 - easy</button></a>
+<<<<<<< HEAD
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja maths</button></a>
+=======
+<a href = "https://cariboutests.com/games/sliding_Blocks.php?lang=en#:~:text=How%20To%20Play,click%20on%20the%20empty%20space." target = "_blank"><button class = "btn btn-info">Sling blocks - Harder</button></a>
+>>>>>>> 0cc231383e21dfbbcd07a8db83769f0e1d7060c5
+>>>>>>> 5455cbe90993bc346305fffa25041625621d329b
 
         </div>
     </div>
@@ -91,7 +99,6 @@
             <a href="https://lichess.org" target="_blank"><button class="btn btn-info">Li-chess</button></a>
             <a href="https://chess.com" target="_blank"><button class="btn btn-info">chess.com</button></a>
          <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
-<a href = "logic/miniSudoku.html" target = "_blank"><button class="btn btn-info">Mini Sudoku</button></a>
 
     <a href = "https://docs.google.com/document/d/1YPN-pLiewTq81Sq3YjJpymzjt7E_9xt78DeBU0c0458/edit?usp=sharing">
         <button>XAMPP</button></a>  

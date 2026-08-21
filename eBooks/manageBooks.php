@@ -1,6 +1,6 @@
 <?php
 // Include your database connection
-require_once '../connectTeac.php';
+require_once '../connectTeacherJohn.php';
 
 $message = '';
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // --- Fetch all existing books to populate the table below ---
 $books = [];
-$result = $conn->query("SELECT * FROM ebooks ORDER BY id DESC");
+$result = $dbServer->query("SELECT * FROM ebooks ORDER BY id DESC");
 if ($result) {
     while ($row = $result->fetch_assoc()) {
         $books[] = $row;

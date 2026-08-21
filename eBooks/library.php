@@ -78,12 +78,16 @@
             color: white;
         }
 
+      
+
         .book img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 10px;
-            object-fit: contain;
-        }
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    object-fit: contain;
+    display: block;      /* Add this */
+    max-width: 100%;     /* Add this */
+}
     </style>
 </head>
 <body>

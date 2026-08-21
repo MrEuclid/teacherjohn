@@ -157,22 +157,31 @@
             });
     });
 
-    // Automatically generate filter chips, supporting comma-separated topics
+    // Automatically generate filter chips, supporting comma-separated values for EVERYTHING
     function buildFilters() {
         const topics = new Set(['All']);
         const languages = new Set(['All']);
         const levels = new Set(['All']);
 
         allBooks.forEach(book => {
-            // Split comma-separated topics and add them individually
+            // Split comma-separated topics
             if (book.topic) {
-                const topicList = book.topic.split(',').map(t => t.trim());
-                topicList.forEach(t => {
-                    if (t) topics.add(t);
+                book.topic.split(',').forEach(t => {
+                    if (t.trim()) topics.add(t.trim());
                 });
             }
-            if (book.language) languages.add(book.language.trim());
-            if (book.level) levels.add(book.level.trim());
+            // Split comma-separated languages
+            if (book.language) {
+                book.language.split(',').forEach(l => {
+                    if (l.trim()) languages.add(l.trim());
+                });
+            }
+            // Split comma-separated levels
+            if (book.level) {
+                book.level.split(',').forEach(lvl => {
+                    if (lvl.trim()) levels.add(lvl.trim());
+                });
+            }
         });
 
         createChipGroup('topic-filters', 'topic', Array.from(topics));
@@ -203,17 +212,21 @@
         const selectedLevel = document.querySelector('input[name="level"]:checked')?.value || 'All';
 
         const filteredBooks = allBooks.filter(book => {
-            // Check if the selected topic is included in the book's comma-separated topic list
+            
+            // Check Topic
             let matchTopic = false;
-            if (selectedTopic === 'All') {
-                matchTopic = true;
-            } else if (book.topic) {
-                const topicList = book.topic.split(',').map(t => t.trim());
-                matchTopic = topicList.includes(selectedTopic);
-            }
+            if (selectedTopic === 'All') matchTopic = true;
+            else if (book.topic) matchTopic = book.topic.split(',').map(t => t.trim()).includes(selectedTopic);
 
-            const matchLang = (selectedLang === 'All' || book.language === selectedLang);
-            const matchLevel = (selectedLevel === 'All' || book.level === selectedLevel);
+            // Check Language
+            let matchLang = false;
+            if (selectedLang === 'All') matchLang = true;
+            else if (book.language) matchLang = book.language.split(',').map(l => l.trim()).includes(selectedLang);
+
+            // Check Level
+            let matchLevel = false;
+            if (selectedLevel === 'All') matchLevel = true;
+            else if (book.level) matchLevel = book.level.split(',').map(lvl => lvl.trim()).includes(selectedLevel);
             
             return matchTopic && matchLang && matchLevel;
         });

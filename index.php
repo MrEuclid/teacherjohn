@@ -52,6 +52,9 @@
             <a href="/askTheAudience/g11_final.html" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
             <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
             <a href="https://docs.google.com/spreadsheets/d/1lEj53GVNF-46u-Jsn2Kl7CsHeh7zxI8XkQgVSfC71AE/edit?usp=sharing" target="_blank"><button class="btn btn-info">Timetable</button></a>
+
+            <a href="https://docs.google.com/spreadsheets/d/1zBJ3RHw8nQrTN8BlloGpCtAQybgd4f7V_5YuBplGVy8/edit?usp=sharing" target="_blank"><button class="btn btn-info">2027 Schedule</button></a>
+            
         </div>
     </div>
 

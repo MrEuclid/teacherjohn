@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // --- Fetch all existing books to populate the table below ---
 $books = [];
-$result = $dbServer->query("SELECT * FROM ebooks ORDER BY id DESC");
+$result = $dbServer->query("SELECT * FROM ebooks ORDER BY title ASC");
 if ($result) {
     while ($row = $result->fetch_assoc()) {
         $books[] = $row;
@@ -73,7 +73,7 @@ if ($result) {
             <h5 class="mb-0" id="formTitle">Add a New Book</h5>
         </div>
         <div class="card-body">
-            <form method="POST" action="manage_books.php">
+            <form method="POST" action="manageBooks.php">
                 <!-- Hidden field to hold ID during updates -->
                 <input type="hidden" id="book_id" name="book_id" value="">
                 

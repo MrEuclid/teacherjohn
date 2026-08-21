@@ -78,16 +78,20 @@
             color: white;
         }
 
-      
-
-        .book img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-    object-fit: contain;
-    display: block;      /* Add this */
-    max-width: 100%;     /* Add this */
-}
+ .book img {
+            height: 100px;       /* Increased from 50px to make the image much larger */
+            width: auto;         /* Allows the width to scale naturally based on the image's shape */
+            max-width: 90%;      /* Ensures wide images don't touch the very edges of the button */
+            margin-bottom: 12px; /* Adds a little breathing room between the image and the text */
+            object-fit: contain; /* Prevents the image from being cropped or squished */
+            display: block;      
+        }
+        
+        .book span {
+            font-size: 0.95rem;  /* Keeps the text cleanly sized below the larger image */
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* Optional: helps text pop against the button color */
+        }
     </style>
 </head>
 <body>
@@ -98,7 +102,7 @@
     <div class="row mt-4 mb-4">
         <div class="col-12 text-center">
             <h2>
-                <a href="index.php" class="btn btn-success me-3">Home</a>
+                <a href="https://teacherjohn.org" class="btn btn-success me-3">Home</a>
                 Teacher John eBooks
             </h2>
         </div>

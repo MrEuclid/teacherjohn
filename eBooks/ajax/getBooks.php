@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once '../connectDB.php'; // Ensure this points to your database connection script
+require_once '../../connectDB.php'; // Ensure this points to your database connection script
 
 $query = "SELECT * FROM ebooks ORDER BY title ASC";
 

@@ -16,24 +16,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($id)) {
         // No ID means it is a NEW record
-        $stmt = $conn->prepare("INSERT INTO ebooks (title, url, image_path, topic, level, language) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $dbServer->prepare("INSERT INTO ebooks (title, url, image_path, topic, level, language) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssss", $title, $url, $image_path, $topic, $level, $language);
         
         if ($stmt->execute()) {
             $message = "<div class='alert alert-success'>New book added successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>Error adding book: " . $conn->error . "</div>";
+            $message = "<div class='alert alert-danger'>Error adding book: " . $dbServer->error . "</div>";
         }
         $stmt->close();
     } else {
         // An ID exists, so UPDATE the existing record
-        $stmt = $conn->prepare("UPDATE ebooks SET title=?, url=?, image_path=?, topic=?, level=?, language=? WHERE id=?");
+        $stmt = $dbServer->prepare("UPDATE ebooks SET title=?, url=?, image_path=?, topic=?, level=?, language=? WHERE id=?");
         $stmt->bind_param("ssssssi", $title, $url, $image_path, $topic, $level, $language, $id);
         
         if ($stmt->execute()) {
             $message = "<div class='alert alert-success'>Book updated successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>Error updating book: " . $conn->error . "</div>";
+            $message = "<div class='alert alert-danger'>Error updating book: " . $dbServer->error . "</div>";
         }
         $stmt->close();
     }

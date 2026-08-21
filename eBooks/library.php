@@ -125,11 +125,10 @@
     </div>
 
 </div>
-
 <script>
     let allBooks = [];
     
-    // An array of your original button colors to randomly assign to books for that vibrant look
+    // An array of button colors to randomly assign to books for a vibrant look
     const btnColors = ['btn-info', 'btn-danger', 'btn-success', 'btn-warning', 'btn-primary'];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -150,16 +149,22 @@
             });
     });
 
-    // Automatically generate filter chips based on the unique values in the database
+    // Automatically generate filter chips, supporting comma-separated topics
     function buildFilters() {
         const topics = new Set(['All']);
         const languages = new Set(['All']);
         const levels = new Set(['All']);
 
         allBooks.forEach(book => {
-            if (book.topic) topics.add(book.topic);
-            if (book.language) languages.add(book.language);
-            if (book.level) levels.add(book.level);
+            // Split comma-separated topics and add them individually
+            if (book.topic) {
+                const topicList = book.topic.split(',').map(t => t.trim());
+                topicList.forEach(t => {
+                    if (t) topics.add(t);
+                });
+            }
+            if (book.language) languages.add(book.language.trim());
+            if (book.level) levels.add(book.level.trim());
         });
 
         createChipGroup('topic-filters', 'topic', Array.from(topics));
@@ -183,16 +188,25 @@
         container.innerHTML = html;
     }
 
-    // Filter and display the books
+    // Filter and display the books, checking inside comma-separated strings
     function renderBooks() {
         const selectedTopic = document.querySelector('input[name="topic"]:checked')?.value || 'All';
         const selectedLang = document.querySelector('input[name="language"]:checked')?.value || 'All';
         const selectedLevel = document.querySelector('input[name="level"]:checked')?.value || 'All';
 
         const filteredBooks = allBooks.filter(book => {
-            const matchTopic = (selectedTopic === 'All' || book.topic === selectedTopic);
+            // Check if the selected topic is included in the book's comma-separated topic list
+            let matchTopic = false;
+            if (selectedTopic === 'All') {
+                matchTopic = true;
+            } else if (book.topic) {
+                const topicList = book.topic.split(',').map(t => t.trim());
+                matchTopic = topicList.includes(selectedTopic);
+            }
+
             const matchLang = (selectedLang === 'All' || book.language === selectedLang);
             const matchLevel = (selectedLevel === 'All' || book.level === selectedLevel);
+            
             return matchTopic && matchLang && matchLevel;
         });
 
@@ -205,7 +219,7 @@
 
         let html = '';
         filteredBooks.forEach((book, index) => {
-            // Pick a color based on the index so it remains consistent for the same book
+            // Pick a color based on the index
             const colorClass = btnColors[index % btnColors.length]; 
             
             html += `
@@ -221,6 +235,5 @@
         grid.innerHTML = html;
     }
 </script>
-
 </body>
 </html>

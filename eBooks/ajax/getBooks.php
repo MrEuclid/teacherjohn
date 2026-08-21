@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once '../../connectDB.php'; // Ensure this points to your database connection script
+require_once '../../connectTeacherJohn.php'; // Ensure this points to your database connection script
 
 $query = "SELECT * FROM ebooks ORDER BY title ASC";
 
-if ($result = $conn->query($query)) {
+if ($result = $dbServer->query($query)) {
     $books = [];
     while ($row = $result->fetch_assoc()) {
         $books[] = $row;

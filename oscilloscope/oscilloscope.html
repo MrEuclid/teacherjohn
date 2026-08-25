@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Oscilloscope</title>
+    <!-- Load Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        canvas { max-width: 100%; margin-top: 20px; }
+        .controls { margin-bottom: 20px; }
+        button, input { margin: 0 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Sound Wave Visualizer</h1>
+    
+    <div class="controls">
+        <button id="connectBtn">Connect to Arduino</button>
+        <button id="pauseBtn" disabled>Pause Graph</button>
+        <label for="timeScale">Time Scale:</label>
+        <input type="range" id="timeScale" min="50" max="500" value="200">
+    </div>
+
+    <canvas id="oscilloscopeCanvas"></canvas>
+
+    <script>
+        // --- 1. Chart.js Setup ---
+        const ctx = document.getElementById('oscilloscopeCanvas').getContext('2d');
+        let maxDataPoints = 200; 
+        let isPaused = false;
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array(maxDataPoints).fill(''), 
+                datasets: [{
+                    label: 'Analog Reading (A0)',
+                    data: Array(maxDataPoints).fill(null),
+                    borderColor: 'blue',
+                    borderWidth: 2,
+                    pointRadius: 0, // Hide points for a smoother line
+                    fill: false,
+                    tension: 0.1 // Slight curve to the line
+                }]
+            },
+            options: {
+                animation: false, // Must be false for real-time performance
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 1023, // Arduino 10-bit ADC limits
+                        title: { display: true, text: 'Voltage (0 - 5V mapped to 0 - 1023)' }
+                    },
+                    x: { display: false } // Hide X axis labels for cleaner look
+                }
+            }
+        });
+
+        // --- 2. User Interface Controls ---
+        document.getElementById('timeScale').addEventListener('input', (e) => {
+            maxDataPoints = parseInt(e.target.value);
+            // Adjust label array to match new size
+            chart.data.labels = Array(maxDataPoints).fill('');
+        });
+
+        const pauseBtn = document.getElementById('pauseBtn');
+        pauseBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? "Resume Graph" : "Pause Graph";
+        });
+
+        // --- 3. Web Serial API Logic ---
+        let port;
+        let reader;
+
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            try {
+                // Request a port and open it
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 9600 }); // Must match Arduino Serial.begin()
+
+                document.getElementById('connectBtn').disabled = true;
+                pauseBtn.disabled = false;
+
+                // Setup the stream to decode incoming bytes to text
+                const textDecoder = new TextDecoderStream();
+                const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+                reader = textDecoder.readable.getReader();
+
+                readLoop();
+            } catch (err) {
+                console.error('Connection error:', err);
+            }
+        });
+
+        // --- 4. Data Processing Loop ---
+        async function readLoop() {
+            let buffer = '';
+            
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    reader.releaseLock();
+                    break;
+                }
+                
+                buffer += value;
+                let lines = buffer.split('\n');
+
+                // Keep the last partial line in the buffer
+                buffer = lines.pop(); 
+
+                // Process complete lines
+                for (let line of lines) {
+                    let reading = parseInt(line.trim());
+                    
+                    // Only update the chart if it is a valid number and not paused
+                    if (!isNaN(reading) && !isPaused) {
+                        const dataArray = chart.data.datasets[0].data;
+                        dataArray.push(reading);
+                        
+                        // Keep array at the designated length
+                        while (dataArray.length > maxDataPoints) {
+                            dataArray.shift();
+                        }
+                    }
+                }
+                
+                if (!isPaused) {
+                    chart.update();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

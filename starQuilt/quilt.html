@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Star Quilt Pattern Planner</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 { color: #333; }
+        .instructions {
+            margin-bottom: 20px;
+            color: #555;
+            text-align: center;
+            max-width: 600px;
+        }
+        svg {
+            background-color: white;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        /* Make it clear that the shapes are clickable */
+        .rhombus {
+            cursor: pointer;
+            transition: opacity 0.1s;
+        }
+        .rhombus:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Star Quilt Pattern Planner</h2>
+    <p class="instructions">Click on any single rhombus to cycle through the color palette from the original quilt image. Plan your design here before coding it in Python!</p>
+
+    <!-- The SVG canvas where the star will be drawn -->
+    <svg id="quilt-canvas" width="600" height="600"></svg>
+
+    <script>
+        // Palette extracted from quilt.png (plus white for the starting template)
+        const palette = [
+            '#FFFFFF', '#FFF000', '#FFA500', '#FF0000', 
+            '#00FF00', '#00FFFF', '#6495ED', '#0000FF', 
+            '#800080', '#FF00FF'
+        ];
+        
+        const svg = document.getElementById('quilt-canvas');
+        const centerX = 300; // Center of the 600x600 SVG
+        const centerY = 300;
+        const L = 30; // Side length of each individual rhombus
+
+        // Function to draw the 8 points of the star
+        function drawStar() {
+            for (let i = 0; i < 8; i++) {
+                // Each large point is rotated by 45 degrees
+                let theta = i * 45; 
+                
+                // Calculate the direction vectors for the edges of the rhombuses
+                // A standard star quilt diamond uses 45-degree points.
+                let rad1 = (theta - 22.5) * Math.PI / 180;
+                let rad2 = (theta + 22.5) * Math.PI / 180;
+
+                let u_x = L * Math.sin(rad1);
+                let u_y = -L * Math.cos(rad1); // -y is up in SVG coordinates
+                let v_x = L * Math.sin(rad2);
+                let v_y = -L * Math.cos(rad2);
+
+                // Each large point is a 4x4 grid of smaller rhombuses
+                for (let x = 0; x < 4; x++) {
+                    for (let y = 0; y < 4; y++) {
+                        
+                        // Calculate the 4 corners of the current rhombus
+                        let p0x = centerX + x * u_x + y * v_x;
+                        let p0y = centerY + x * u_y + y * v_y;
+
+                        let p1x = centerX + (x + 1) * u_x + y * v_x;
+                        let p1y = centerY + (x + 1) * u_y + y * v_y;
+
+                        let p2x = centerX + (x + 1) * u_x + (y + 1) * v_x;
+                        let p2y = centerY + (x + 1) * u_y + (y + 1) * v_y;
+
+                        let p3x = centerX + x * u_x + (y + 1) * v_x;
+                        let p3y = centerY + x * u_y + (y + 1) * v_y;
+
+                        // Create the SVG polygon element
+                        let poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                        poly.setAttribute("points", `${p0x},${p0y} ${p1x},${p1y} ${p2x},${p2y} ${p3x},${p3y}`);
+                        poly.setAttribute("fill", palette[0]);
+                        poly.setAttribute("stroke", "#444");
+                        poly.setAttribute("stroke-width", "0.5");
+                        poly.setAttribute("class", "rhombus");
+                        poly.setAttribute("data-color-idx", "0"); // Start at index 0 (White)
+
+                        // Attach the click event to cycle colors
+                        poly.addEventListener('click', function() {
+                            let currentIndex = parseInt(this.getAttribute('data-color-idx'));
+                            let nextIndex = (currentIndex + 1) % palette.length;
+                            
+                            this.setAttribute('fill', palette[nextIndex]);
+                            this.setAttribute('data-color-idx', nextIndex);
+                        });
+
+                        svg.appendChild(poly);
+                    }
+                }
+            }
+        }
+
+        // Initialize the drawing
+        drawStar();
+    </script>
+</body>
+</html>

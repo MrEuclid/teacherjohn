@@ -101,7 +101,8 @@
    
              <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
   
-   
+              <a href="https://stickmanphysics.com/stickman-physics-home/two-dimensional-motion/angry-birds-projectile-motion/#:~:text=Work%20through%20Angry%20Birds%20projectile%20motion%20questions,and%20in%202020%20into%20this%20physics%20lesson." target="_blank"><button class="btn btn-info">Angry birds</button></a>
+
         </div>
     </div>
 

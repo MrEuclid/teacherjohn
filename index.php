@@ -71,23 +71,16 @@
     <div class="row">
         <div class="col-12 text-center">
 
-  <a href = "swissMulti.html" target = "_blank"><button class = "btn btn-info">Swiss Multi</button></a>
  
-   <a href = "factors/factorGameJSv2.php" target = "_blank"><button title = "Factors Game v2" class = "btn btn-info">Factor Game v2</button></a>
-<a href = "scrabble/scrabbleComp2.html" target ="_blank"><button class = "btn btn-primary">Word Builder</button></a>
-
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
-
+<a href = "https://teacherjohn.org/jigsaw/jigsawNumbers.html" target = "_blank"><button class = "btn btn-info">JigsawMaths</button></a>
 
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
 
-<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect 3 - easy</button></a>
 
-<a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja maths</button></a>
-
-<a href = "https://cariboutests.com/games/sliding_Blocks.php?lang=en#:~:text=How%20To%20Play,click%20on%20the%20empty%20space." target = "_blank"><button class = "btn btn-info">Sling blocks - Harder</button></a>
+<a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 
 
         </div>
@@ -104,6 +97,12 @@
 
     <a href = "https://docs.google.com/document/d/1YPN-pLiewTq81Sq3YjJpymzjt7E_9xt78DeBU0c0458/edit?usp=sharing">
         <button>XAMPP</button></a>  
+
+   
+             <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
+  
+              <a href="https://stickmanphysics.com/stickman-physics-home/two-dimensional-motion/angry-birds-projectile-motion/#:~:text=Work%20through%20Angry%20Birds%20projectile%20motion%20questions,and%20in%202020%20into%20this%20physics%20lesson." target="_blank"><button class="btn btn-info">Angry birds</button></a>
+
         </div>
     </div>
 

@@ -84,7 +84,7 @@
 
 <a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 
-<a href = "https://studio.code.org/flappy/2?section_id=6641896&viewAs=Participant" target = "_blank"><button class = "btn btn-info">AFlappy Bird coding</button></a>
+<a href = "https://studio.code.org/flappy/2?section_id=6641896&viewAs=Participant" target = "_blank"><button class = "btn btn-info">Flappy Bird coding</button></a>
 
 </div>
     </div>

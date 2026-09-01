@@ -79,6 +79,11 @@
 
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
 
+<a href = "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">G5 - Intro</button></a>
+
+
+
+<a href = "https://studio.code.org/courses/dance-ai-2023/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">DNCE pArty FXJPNW</button></a>
 
 <a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 

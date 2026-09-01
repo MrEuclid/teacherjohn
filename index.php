@@ -83,7 +83,7 @@
 
 
 
-<a href = "https://studio.code.org/courses/dance-ai-2023/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">DNCE pArty FXJPNW</button></a>
+<a href = "https://studio.code.org/courses/dance-ai-2023/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">Dance Party  FXJPNW</button></a>
 
 <a href = "https://studio.code.org/courses/infinity/units/1/lessons/1/levels/3" target = "_blank"><button class = "btn btn-info">Infinity coding</button></a>
 

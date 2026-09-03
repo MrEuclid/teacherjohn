@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angry Physics Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #container {
+            display: flex;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #sidebar {
+            width: 250px;
+            padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        canvas {
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            border-radius: 5px;
+            cursor: crosshair;
+        }
+        .panel {
+            background-color: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #7f8c8d;
+        }
+        h2 { margin-top: 0; font-size: 1.2rem; color: #f1c40f; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            border-radius: 4px;
+            border: none;
+            box-sizing: border-box;
+            background-color: #ecf0f1;
+            font-size: 1rem;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        button {
+            padding: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #c0392b; }
+        .highlight { color: #2ecc71; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="sidebar">
+        <div class="panel">
+            <h2>Environment</h2>
+            <label for="gravity">Gravity (m/s²):</label>
+            <input type="number" id="gravity" value="9.8" step="0.1">
+        </div>
+        
+        <div class="panel">
+            <h2>Initial Vectors</h2>
+            <div class="data-row"><span>Angle:</span> <span id="out-angle">0°</span></div>
+            <div class="data-row"><span>Velocity:</span> <span id="out-velo">0.0 m/s</span></div>
+        </div>
+
+        <div class="panel">
+            <h2>Flight Data</h2>
+            <div class="data-row"><span>Time:</span> <span id="out-time" class="highlight">0.00 s</span></div>
+            <div class="data-row"><span>Max Height:</span> <span id="out-height" class="highlight">0.00 m</span></div>
+            <div class="data-row"><span>Distance:</span> <span id="out-dist" class="highlight">0.00 m</span></div>
+        </div>
+
+        <button onclick="resetSimulation()">Reset Sling</button>
+    </div>
+
+    <canvas id="simCanvas" width="800" height="500"></canvas>
+</div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Display Elements
+    const outAngle = document.getElementById('out-angle');
+    const outVelo = document.getElementById('out-velo');
+    const outTime = document.getElementById('out-time');
+    const outHeight = document.getElementById('out-height');
+    const outDist = document.getElementById('out-dist');
+    const gravityInput = document.getElementById('gravity');
+
+    // Physics & Scale Constants
+    const PIXELS_PER_METER = 20; // 20px = 1 real-world meter
+    const GROUND_Y = 450;
+    const SLING_ANCHOR_X = 150;
+    const SLING_ANCHOR_Y = 380;
+    const DRAG_SCALE = 0.15; // Translates mouse drag pixels to m/s
+
+    // Simulation State
+    let state = 'idle'; // idle, dragging, flying, landed
+    let birdX = SLING_ANCHOR_X;
+    let birdY = SLING_ANCHOR_Y;
+    
+    // Kinematic Variables
+    let v0 = 0;
+    let theta = 0; // in radians
+    let v0x = 0;
+    let v0y = 0;
+    
+    // Flight Tracking
+    let flightStartTime = 0;
+    let currentTime = 0;
+    let maxHeight = 0;
+
+    // Mouse Tracking
+    canvas.addEventListener('mousedown', (e) => {
+        if (state === 'idle' || state === 'landed') {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            
+            // Check if clicking near the bird
+            if (Math.hypot(mx - birdX, my - birdY) < 30) {
+                state = 'dragging';
+            }
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (state === 'dragging') {
+            const rect = canvas.getBoundingClientRect();
+            let mx = e.clientX - rect.left;
+            let my = e.clientY - rect.top;
+
+            // Restrict dragging behind the sling anchor for a normal slingshot feel
+            if (mx > SLING_ANCHOR_X + 20) mx = SLING_ANCHOR_X + 20;
+            
+            birdX = mx;
+            birdY = my;
+
+            // Calculate physics vectors based on pull
+            let dx = SLING_ANCHOR_X - birdX;
+            let dy = SLING_ANCHOR_Y - birdY; // Positive dy means pulled down, aiming UP
+            
+            v0x = dx * DRAG_SCALE;
+            v0y = dy * DRAG_SCALE; 
+            
+            v0 = Math.hypot(v0x, v0y);
+            theta = Math.atan2(v0y, v0x);
+
+            outAngle.innerText = (theta * 180 / Math.PI).toFixed(1) + '°';
+            outVelo.innerText = v0.toFixed(1) + ' m/s';
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        if (state === 'dragging') {
+            state = 'flying';
+            flightStartTime = Date.now();
+            maxHeight = 0;
+        }
+    });
+
+    function resetSimulation() {
+        state = 'idle';
+        birdX = SLING_ANCHOR_X;
+        birdY = SLING_ANCHOR_Y;
+        outTime.innerText = '0.00 s';
+        outHeight.innerText = '0.00 m';
+        outDist.innerText = '0.00 m';
+    }
+
+    // Drawing Functions
+    function drawScenery() {
+        // Ground
+        ctx.fillStyle = '#7cb342'; // Green grass
+        ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
+        ctx.fillStyle = '#558b2f';
+        ctx.fillRect(0, GROUND_Y, canvas.width, 10);
+    }
+
+    function drawSlingshot() {
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#5d4037'; // Brown wood
+        
+        // Back strap (drawn only if dragging to look 3D)
+        if (state === 'dragging') {
+            ctx.beginPath();
+            ctx.moveTo(SLING_ANCHOR_X - 15, SLING_ANCHOR_Y);
+            ctx.lineTo(birdX, birdY);
+            ctx.stroke();
+        }
+
+        // Sling base
+        ctx.beginPath();
+        ctx.moveTo(SLING_ANCHOR_X, GROUND_Y);
+        ctx.lineTo(SLING_ANCHOR_X, SLING_ANCHOR_Y + 20);
+        ctx.lineTo(SLING_ANCHOR_X - 20, SLING_ANCHOR_Y);
+        ctx.moveTo(SLING_ANCHOR_X, SLING_ANCHOR_Y + 20);
+        ctx.lineTo(SLING_ANCHOR_X + 20, SLING_ANCHOR_Y);
+        ctx.stroke();
+
+        // Front strap
+        if (state === 'dragging' || state === 'idle') {
+            ctx.beginPath();
+            ctx.moveTo(SLING_ANCHOR_X + 15, SLING_ANCHOR_Y);
+            ctx.lineTo(birdX, birdY);
+            ctx.stroke();
+        }
+    }
+
+    function drawBird() {
+        ctx.fillStyle = '#e74c3c'; // Red bird
+        ctx.beginPath();
+        ctx.arc(birdX, birdY, 15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#c0392b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Little beak (pointing along velocity vector if flying, or forward if idle)
+        let lookAngle = (state === 'flying') ? Math.atan2(-v0y + parseFloat(gravityInput.value)*(currentTime), v0x) : -theta;
+        if (state === 'idle') lookAngle = 0;
+        
+        ctx.save();
+        ctx.translate(birdX, birdY);
+        ctx.rotate(-lookAngle);
+        ctx.fillStyle = '#f1c40f'; // Yellow beak
+        ctx.beginPath();
+        ctx.moveTo(10, -5);
+        ctx.lineTo(25, 0);
+        ctx.lineTo(10, 5);
+        ctx.fill();
+        
+        // Eye
+        ctx.fillStyle = 'white';
+        ctx.beginPath(); ctx.arc(5, -5, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'black';
+        ctx.beginPath(); ctx.arc(6, -5, 2, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+    }
+
+    function drawTrajectoryPrediction() {
+        if (state === 'dragging' && v0 > 0) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            
+            const g = parseFloat(gravityInput.value);
+            for (let t = 0; t < 5; t += 0.1) {
+                let px = SLING_ANCHOR_X + (v0x * t) * PIXELS_PER_METER;
+                let py = SLING_ANCHOR_Y - (v0y * t - 0.5 * g * t * t) * PIXELS_PER_METER;
+                if (py > GROUND_Y) break;
+                if (t === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    // Main Game Loop
+    function update() {
+        const g = parseFloat(gravityInput

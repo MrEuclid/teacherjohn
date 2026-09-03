@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Angry Physics Simulator</title>
+    <title>Kinematics Simulator</title>
     <style>
         body {
             margin: 0;
@@ -22,10 +22,10 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            gap: 20px;
         }
         #sidebar {
-            width: 250px;
-            padding-right: 20px;
+            width: 260px;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -33,7 +33,7 @@
         canvas {
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
             border-radius: 5px;
-            cursor: crosshair;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
         .panel {
             background-color: #2c3e50;
@@ -41,16 +41,16 @@
             border-radius: 8px;
             border: 1px solid #7f8c8d;
         }
-        h2 { margin-top: 0; font-size: 1.2rem; color: #f1c40f; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        h2 { margin-top: 0; font-size: 1.1rem; color: #f1c40f; border-bottom: 1px solid #7f8c8d; padding-bottom: 5px; }
+        label { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; align-items: center; }
         input[type="number"] {
-            width: 100%;
+            width: 80px;
             padding: 5px;
             border-radius: 4px;
-            border: none;
-            box-sizing: border-box;
+            border: 1px solid #bdc3c7;
             background-color: #ecf0f1;
             font-size: 1rem;
+            text-align: right;
         }
         .data-row {
             display: flex;
@@ -59,9 +59,10 @@
             font-family: monospace;
             font-size: 1.1rem;
         }
+        .btn-group { display: flex; gap: 10px; }
         button {
-            padding: 10px;
-            background-color: #e74c3c;
+            flex: 1;
+            padding: 12px;
             color: white;
             border: none;
             border-radius: 5px;
@@ -70,8 +71,11 @@
             font-weight: bold;
             transition: background 0.2s;
         }
-        button:hover { background-color: #c0392b; }
-        .highlight { color: #2ecc71; font-weight: bold; }
+        #btn-launch { background-color: #2ecc71; }
+        #btn-launch:hover { background-color: #27ae60; }
+        #btn-reset { background-color: #e74c3c; }
+        #btn-reset:hover { background-color: #c0392b; }
+        .highlight { color: #3498db; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -79,15 +83,15 @@
 <div id="container">
     <div id="sidebar">
         <div class="panel">
-            <h2>Environment</h2>
-            <label for="gravity">Gravity (m/s²):</label>
-            <input type="number" id="gravity" value="9.8" step="0.1">
+            <h2>Launch Parameters</h2>
+            <label>Velocity (m/s): <input type="number" id="in-velo" value="20" step="0.5"></label>
+            <label>Angle (degrees): <input type="number" id="in-angle" value="45" step="1"></label>
+            <label>Gravity (m/s²): <input type="number" id="in-gravity" value="9.8" step="0.1"></label>
         </div>
-        
-        <div class="panel">
-            <h2>Initial Vectors</h2>
-            <div class="data-row"><span>Angle:</span> <span id="out-angle">0°</span></div>
-            <div class="data-row"><span>Velocity:</span> <span id="out-velo">0.0 m/s</span></div>
+
+        <div class="btn-group">
+            <button id="btn-launch" onclick="launchProjectile()">Launch!</button>
+            <button id="btn-reset" onclick="resetSimulation()">Reset</button>
         </div>
 
         <div class="panel">
@@ -96,8 +100,10 @@
             <div class="data-row"><span>Max Height:</span> <span id="out-height" class="highlight">0.00 m</span></div>
             <div class="data-row"><span>Distance:</span> <span id="out-dist" class="highlight">0.00 m</span></div>
         </div>
-
-        <button onclick="resetSimulation()">Reset Sling</button>
+        
+        <div class="panel" style="text-align: center; color: #ecf0f1; font-size: 0.9rem;">
+            Goal: Land the projectile on the 🐷 at exactly <strong>35 meters</strong>.
+        </div>
     </div>
 
     <canvas id="simCanvas" width="800" height="500"></canvas>
@@ -107,29 +113,28 @@
     const canvas = document.getElementById('simCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Display Elements
-    const outAngle = document.getElementById('out-angle');
-    const outVelo = document.getElementById('out-velo');
+    // UI Elements
+    const inVelo = document.getElementById('in-velo');
+    const inAngle = document.getElementById('in-angle');
+    const inGravity = document.getElementById('in-gravity');
     const outTime = document.getElementById('out-time');
     const outHeight = document.getElementById('out-height');
     const outDist = document.getElementById('out-dist');
-    const gravityInput = document.getElementById('gravity');
+    const btnLaunch = document.getElementById('btn-launch');
 
     // Physics & Scale Constants
-    const PIXELS_PER_METER = 20; // 20px = 1 real-world meter
-    const GROUND_Y = 450;
-    const SLING_ANCHOR_X = 150;
+    const PIXELS_PER_METER = 18; 
+    const GROUND_Y = 430;
+    const SLING_ANCHOR_X = 80;
     const SLING_ANCHOR_Y = 380;
-    const DRAG_SCALE = 0.15; // Translates mouse drag pixels to m/s
+    const TARGET_DIST_METERS = 35; 
 
     // Simulation State
-    let state = 'idle'; // idle, dragging, flying, landed
+    let state = 'idle'; // idle, flying, landed
     let birdX = SLING_ANCHOR_X;
     let birdY = SLING_ANCHOR_Y;
     
     // Kinematic Variables
-    let v0 = 0;
-    let theta = 0; // in radians
     let v0x = 0;
     let v0y = 0;
     
@@ -137,55 +142,27 @@
     let flightStartTime = 0;
     let currentTime = 0;
     let maxHeight = 0;
+    let successMessage = false;
 
-    // Mouse Tracking
-    canvas.addEventListener('mousedown', (e) => {
-        if (state === 'idle' || state === 'landed') {
-            const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            
-            // Check if clicking near the bird
-            if (Math.hypot(mx - birdX, my - birdY) < 30) {
-                state = 'dragging';
-            }
-        }
-    });
+    function launchProjectile() {
+        if (state === 'flying') return; // Prevent multiple clicks
 
-    canvas.addEventListener('mousemove', (e) => {
-        if (state === 'dragging') {
-            const rect = canvas.getBoundingClientRect();
-            let mx = e.clientX - rect.left;
-            let my = e.clientY - rect.top;
+        const v0 = parseFloat(inVelo.value);
+        const thetaDeg = parseFloat(inAngle.value);
+        const thetaRad = thetaDeg * (Math.PI / 180);
 
-            // Restrict dragging behind the sling anchor for a normal slingshot feel
-            if (mx > SLING_ANCHOR_X + 20) mx = SLING_ANCHOR_X + 20;
-            
-            birdX = mx;
-            birdY = my;
+        // Decompose vectors
+        v0x = v0 * Math.cos(thetaRad);
+        v0y = v0 * Math.sin(thetaRad); 
 
-            // Calculate physics vectors based on pull
-            let dx = SLING_ANCHOR_X - birdX;
-            let dy = SLING_ANCHOR_Y - birdY; // Positive dy means pulled down, aiming UP
-            
-            v0x = dx * DRAG_SCALE;
-            v0y = dy * DRAG_SCALE; 
-            
-            v0 = Math.hypot(v0x, v0y);
-            theta = Math.atan2(v0y, v0x);
-
-            outAngle.innerText = (theta * 180 / Math.PI).toFixed(1) + '°';
-            outVelo.innerText = v0.toFixed(1) + ' m/s';
-        }
-    });
-
-    canvas.addEventListener('mouseup', () => {
-        if (state === 'dragging') {
-            state = 'flying';
-            flightStartTime = Date.now();
-            maxHeight = 0;
-        }
-    });
+        state = 'flying';
+        flightStartTime = Date.now();
+        maxHeight = 0;
+        successMessage = false;
+        
+        btnLaunch.disabled = true;
+        btnLaunch.style.backgroundColor = '#95a5a6';
+    }
 
     function resetSimulation() {
         state = 'idle';
@@ -194,98 +171,105 @@
         outTime.innerText = '0.00 s';
         outHeight.innerText = '0.00 m';
         outDist.innerText = '0.00 m';
+        successMessage = false;
+        
+        btnLaunch.disabled = false;
+        btnLaunch.style.backgroundColor = '#2ecc71';
     }
 
-    // Drawing Functions
-    function drawScenery() {
-        // Ground
-        ctx.fillStyle = '#7cb342'; // Green grass
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Ground
+        ctx.fillStyle = '#7cb342';
         ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
         ctx.fillStyle = '#558b2f';
-        ctx.fillRect(0, GROUND_Y, canvas.width, 10);
-    }
+        ctx.fillRect(0, GROUND_Y, canvas.width, 15);
 
-    function drawSlingshot() {
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = '#5d4037'; // Brown wood
-        
-        // Back strap (drawn only if dragging to look 3D)
-        if (state === 'dragging') {
-            ctx.beginPath();
-            ctx.moveTo(SLING_ANCHOR_X - 15, SLING_ANCHOR_Y);
-            ctx.lineTo(birdX, birdY);
-            ctx.stroke();
-        }
+        // Draw Clouds (Decoration)
+        ctx.font = '40px Arial';
+        ctx.fillText('☁️', 150, 100);
+        ctx.fillText('☁️', 450, 150);
+        ctx.fillText('☁️', 650, 80);
 
-        // Sling base
-        ctx.beginPath();
-        ctx.moveTo(SLING_ANCHOR_X, GROUND_Y);
-        ctx.lineTo(SLING_ANCHOR_X, SLING_ANCHOR_Y + 20);
-        ctx.lineTo(SLING_ANCHOR_X - 20, SLING_ANCHOR_Y);
-        ctx.moveTo(SLING_ANCHOR_X, SLING_ANCHOR_Y + 20);
-        ctx.lineTo(SLING_ANCHOR_X + 20, SLING_ANCHOR_Y);
-        ctx.stroke();
+        // Draw Target Pig
+        const targetPx = SLING_ANCHOR_X + (TARGET_DIST_METERS * PIXELS_PER_METER);
+        ctx.font = '35px Arial';
+        ctx.fillText('🐷', targetPx - 17, GROUND_Y + 5);
+        // Distance marker
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = '14px Arial';
+        ctx.fillText('35m', targetPx - 15, GROUND_Y + 25);
 
-        // Front strap
-        if (state === 'dragging' || state === 'idle') {
-            ctx.beginPath();
-            ctx.moveTo(SLING_ANCHOR_X + 15, SLING_ANCHOR_Y);
-            ctx.lineTo(birdX, birdY);
-            ctx.stroke();
-        }
-    }
+        // Draw Slingshot
+        ctx.font = '50px Arial';
+        ctx.fillText('🪵', SLING_ANCHOR_X - 25, SLING_ANCHOR_Y + 45);
 
-    function drawBird() {
-        ctx.fillStyle = '#e74c3c'; // Red bird
-        ctx.beginPath();
-        ctx.arc(birdX, birdY, 15, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#c0392b';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        // Little beak (pointing along velocity vector if flying, or forward if idle)
-        let lookAngle = (state === 'flying') ? Math.atan2(-v0y + parseFloat(gravityInput.value)*(currentTime), v0x) : -theta;
-        if (state === 'idle') lookAngle = 0;
-        
-        ctx.save();
-        ctx.translate(birdX, birdY);
-        ctx.rotate(-lookAngle);
-        ctx.fillStyle = '#f1c40f'; // Yellow beak
-        ctx.beginPath();
-        ctx.moveTo(10, -5);
-        ctx.lineTo(25, 0);
-        ctx.lineTo(10, 5);
-        ctx.fill();
-        
-        // Eye
-        ctx.fillStyle = 'white';
-        ctx.beginPath(); ctx.arc(5, -5, 4, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = 'black';
-        ctx.beginPath(); ctx.arc(6, -5, 2, 0, Math.PI*2); ctx.fill();
-        ctx.restore();
-    }
+        // Draw Bird
+        ctx.font = '35px Arial';
+        // Adjust emoji center
+        ctx.fillText('😡', birdX - 17, birdY + 12); 
 
-    function drawTrajectoryPrediction() {
-        if (state === 'dragging' && v0 > 0) {
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath();
-            
-            const g = parseFloat(gravityInput.value);
-            for (let t = 0; t < 5; t += 0.1) {
-                let px = SLING_ANCHOR_X + (v0x * t) * PIXELS_PER_METER;
-                let py = SLING_ANCHOR_Y - (v0y * t - 0.5 * g * t * t) * PIXELS_PER_METER;
-                if (py > GROUND_Y) break;
-                if (t === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
+        // Draw Success Message
+        if (successMessage) {
+            ctx.fillStyle = '#f1c40f';
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 4;
+            ctx.font = 'bold 50px Arial';
+            const msg = "Well done!";
+            const txtWidth = ctx.measureText(msg).width;
+            ctx.strokeText(msg, (canvas.width/2) - (txtWidth/2), 200);
+            ctx.fillText(msg, (canvas.width/2) - (txtWidth/2), 200);
         }
     }
 
-    // Main Game Loop
+    // Main Engine Loop
     function update() {
-        const g = parseFloat(gravityInput
+        const g = parseFloat(inGravity.value);
+
+        if (state === 'flying') {
+            currentTime = (Date.now() - flightStartTime) / 1000; 
+            
+            let xMeters = v0x * currentTime;
+            let yMeters = v0y * currentTime - 0.5 * g * currentTime * currentTime;
+
+            birdX = SLING_ANCHOR_X + (xMeters * PIXELS_PER_METER);
+            birdY = SLING_ANCHOR_Y - (yMeters * PIXELS_PER_METER);
+
+            if (yMeters > maxHeight) maxHeight = yMeters;
+
+            // Collision with ground
+            if (birdY >= GROUND_Y - 15) { 
+                birdY = GROUND_Y - 15;
+                state = 'landed';
+                
+                // Calculate precise landing metrics using the quadratic formula
+                let h0 = (GROUND_Y - SLING_ANCHOR_Y - 15) / PIXELS_PER_METER;
+                let preciseTime = (-v0y - Math.sqrt(v0y*v0y - 4 * (-0.5*g) * h0)) / (-g);
+                let finalDistance = v0x * preciseTime;
+
+                outTime.innerText = preciseTime.toFixed(2) + ' s';
+                outDist.innerText = finalDistance.toFixed(2) + ' m';
+                outHeight.innerText = maxHeight.toFixed(2) + ' m';
+
+                // Check if they reached the goal (allow 1 meter margin of error)
+                if (Math.abs(finalDistance - TARGET_DIST_METERS) < 1.0) {
+                    successMessage = true;
+                }
+            } else {
+                outTime.innerText = currentTime.toFixed(2) + ' s';
+                outDist.innerText = xMeters.toFixed(2) + ' m';
+                outHeight.innerText = maxHeight.toFixed(2) + ' m';
+            }
+        }
+
+        drawScene();
+        requestAnimationFrame(update);
+    }
+
+    // Initialize
+    drawScene();
+    update();
+</script>
+</body>
+</html>

@@ -92,7 +92,7 @@
 <a href = "https://www.arvindguptatoys.com/toys-from-trash.php" target = "_blank"><button class = "btn btn-success">Arvind Gupta</button></a>
 
 
-
+<a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technoloy G12<button></a>
 </div>
 
     </div>
@@ -112,7 +112,7 @@
    
              <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
   
-              <a href="https://stickmanphysics.com/stickman-physics-home/two-dimensional-motion/angry-birds-projectile-motion/#:~:text=Work%20through%20Angry%20Birds%20projectile%20motion%20questions,and%20in%202020%20into%20this%20physics%20lesson." target="_blank"><button class="btn btn-info">Angry birds</button></a>
+     
 
         </div>
     </div>

@@ -234,11 +234,11 @@ Electrostatics</button></a>
 <a href = "https://nrich.maths.org/problems/crossing-bridge" target = "_blank"><button class="btn btn-info">Cross the Bridge</button></a>
 
 <a href = "https://www.google.com/fbx?fbx=minesweeper" target = "_blank"><button class="btn btn-info">Minesweeper</button></a>
-</div></div>
+
 
 
 <a href = "https://teacherjohn.org/physics/simulator.html" target = "_blank"><button class="btn btn-info">Projectile Motion</button></a>
-
+</div></div>
 
         </div>
       </div>

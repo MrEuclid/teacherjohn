@@ -83,16 +83,16 @@
 
 <a href = "https://studio.code.org/courses/coursee-2025/units/1/lessons/6/levels/1
 " target = "_blank"><button class = "btn btn-info">G10 Game Design</button></a>
-<a href = "https://studio.code.org/courses/dance-ai-2023/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">Dance Party  FXJPNW</button></a>
+<a href = "https://studio.code.org/courses/coursec-2025/units/1/lessons/12/levels/10?viewAs=Participant" target = "_blank"><button class = "btn btn-info">Flaay Contest</button></a>
 
 <a href = "https://studio.code.org/courses/infinity/units/1/lessons/1/levels/3" target = "_blank"><button class = "btn btn-info">Infinity coding</button></a>
-
+<!--
 <a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 
 <a href = "https://www.arvindguptatoys.com/toys-from-trash.php" target = "_blank"><button class = "btn btn-success">Arvind Gupta</button></a>
 
-
-<a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technoloy G12<button></a>
+-->
+<a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
 </div>
 
     </div>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Certificate Generator (Stabilized)</title>
+    <!-- Using Bootstrap 5 for modern styles and utility classes -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- IMPORTANT: Using the core libraries directly for stability -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #cce5ff;
+            border-radius: 8px;
+            background-color: #e6f2ff;
+            box-shadow: 0 4px 12px rgba(0, 70, 140, 0.1);
+        }
+        
+        /* Certificate Template (11in x 8.5in Landscape) */
+        /* Note: This class is applied to a dynamically created element now */
+        .certificate-template {
+            width: 11in; 
+            height: 8.5in; 
+            padding: 0.5in;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            border: 5px solid #0056b3;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            /* CRITICAL for Capture: Temporarily position off-screen but in DOM */
+            position: fixed;
+            top: -5000px;
+            left: 0;
+            z-index: -1; 
+        }
+        .certificate-header {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.2in;
+            font-size: 32pt;
+        }
+        .certificate-name {
+            color: #000;
+            font-size: 24pt;
+            font-weight: 600;
+            margin-bottom: 0.1in;
+            border-bottom: 3px double #0056b3;
+            padding-bottom: 5px;
+        }
+        .certificate-title {
+            color: #333;
+            font-size: 18pt;
+            margin-top: 0.1in;
+        }
+        .certificate-photo {
+            width: 1.5in;
+            height: 1.5in;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f8d7da;
+            margin-top: 0.2in;
+            display: block; 
+        }
+        
+        /* Loading indicator styles */
+        #loading-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            color: #0056b3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4 text-primary">Batch Certificate PDF Generator</h1>
+
+        <div class="controls">
+            <p class="mb-3">
+                <span class="text-danger fw-bold">Note:</span> If you see "NO PHOTO" in the generated PDF, it means the photo link in the CSV is either empty or not a public URL (e.g., `images/3354...` are usually not accessible by the PDF renderer).
+            </p>
+            <div class="input-group">
+                <input type="file" class="form-control" id="csvFile" accept=".csv">
+                <button class="btn btn-primary" id="generatePdfBtn" disabled>
+                    <i class="fas fa-file-pdf"></i> Generate Combined PDF
+                </button>
+            </div>
+            <div class="mt-3">
+                <small class="text-muted">Status: <span id="statusMessage" class="text-dark">Please upload a CSV file.</span></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading message box -->
+    <div id="loading-message">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2" id="loadingText">Processing certificates...</p>
+    </div>
+
+    <!-- The old hidden content-wrapper is no longer needed but kept for completeness, though it's removed below. -->
+    
+    <script>
+        // Ensure the jsPDF library is accessible
+        const { jsPDF } = window.jspdf;
+        
+        $(document).ready(function() {
+            const PLACEHOLDER_IMG_URL = "https://placehold.co/150x150/f8d7da/721c24?text=NO+PHOTO";
+
+            // --- UI/Event Handlers ---
+            $('#csvFile').on('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                    $('#statusMessage').text(`File selected: ${file.name}. Ready to generate.`);
+                } else {
+                    $('#generatePdfBtn').prop('disabled', true).text('Generate Combined PDF');
+                    $('#statusMessage').text('Please upload a CSV file.');
+                }
+            });
+
+            $('#generatePdfBtn').on('click', async function() {
+                const file = $('#csvFile')[0].files[0];
+                if (!file) {
+                    $('#statusMessage').text('Please select a CSV file first.');
+                    return;
+                }
+
+                $(this).prop('disabled', true).text('Reading File...');
+                $('#loadingText').text('Reading file...');
+                $('#loading-message').show();
+
+                const reader = new FileReader();
+
+                reader.onload = async function(e) {
+                    let studentRecords = [];
+                    try {
+                        const csvString = e.target.result;
+                        const { records } = parseCSV(csvString);
+                        studentRecords = records; 
+                        
+                        if (studentRecords.length === 0) {
+                            throw new Error("No data records found in the CSV file.");
+                        }
+                        
+                        await generateBatchPDF(studentRecords);
+
+                        $('#statusMessage').text(`Successfully generated PDF for ${studentRecords.length} certificates.`);
+                        $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+
+                    } catch (error) {
+                        console.error("PDF Generation failed:", error);
+                        // The error 'Unable to find element in cloned iframe' is often suppressed with this method, 
+                        // but if another error occurs, we handle it gracefully.
+                        $('#statusMessage').html(`<span class="text-danger">Error: ${error.message}. Check console for details.</span>`);
+                        $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                    } finally {
+                        $('#loading-message').hide();
+                    }
+                };
+
+                reader.onerror = function() {
+                    $('#loading-message').hide();
+                    console.error("Error reading file.");
+                    $('#statusMessage').html('<span class="text-danger">Error reading file.</span>');
+                    $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                };
+
+                reader.readAsText(file);
+            });
+
+            // --- Core PDF Generation Logic ---
+
+            function getPhotoUrl(record) {
+                let photoUrl = record.Photo ? record.Photo.trim() : '';
+                
+                // If it's a local path or empty, use the public placeholder.
+                // Assuming any path that doesn't start with http/https is a local path
+                if (!photoUrl || !photoUrl.startsWith('http')) {
+                    return PLACEHOLDER_IMG_URL;
+                }
+                return photoUrl;
+            }
+
+            function renderCertificateHTML(record) {
+                const photoUrl = getPhotoUrl(record);
+                
+                return `
+                    <h1 class="certificate-header">Certificate of Completion</h1>
+                    <p class="fs-4">Proudly presented to</p>
+                    <h2 class="certificate-name">${record.Name || 'N/A'}</h2>
+                    <p class="fs-5">for successfully completing the course</p>
+                    <h3 class="certificate-title">"${record.Certificate || 'N/A'}"</h3>
+                    <p class="mt-3">in Grade ${record.Grade || 'N/A'} (ID: ${record.ID || 'N/A'})</p>
+                    
+                    <!-- Image with fallback handling -->
+                    <img src="${photoUrl}" class="certificate-photo" alt="Student Photo" crossorigin="anonymous" 
+                         onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG_URL}';">
+                         
+                    <div class="certificate-footer">
+                        Issued: ${new Date().toLocaleDateString()}
+                    </div>
+                `;
+            }
+
+            function waitForImage(imgElement) {
+                return new Promise((resolve) => {
+                    if (imgElement.complete && imgElement.naturalWidth !== 0) {
+                        resolve();
+                        return;
+                    }
+                    // Resolve promise on load OR error to prevent infinite waiting
+                    imgElement.onload = resolve;
+                    imgElement.onerror = resolve; 
+                });
+            }
+
+            /**
+             * Generates the combined PDF using the stable html2canvas -> jsPDF method.
+             */
+            async function generateBatchPDF(records) {
+                
+                // Initialize jsPDF for Landscape Letter size (11x8.5 inches)
+                const pdf = new jsPDF('l', 'in', 'letter'); 
+                const imgWidth = 11; 
+                const imgHeight = 8.5; 
+
+                for (let i = 0; i < records.length; i++) {
+                    const record = records[i];
+                    $('#loadingText').text(`Capturing Certificate ${i + 1} of ${records.length} for ${record.Name}...`);
+                    
+                    // a. CRITICAL STEP: Create a temporary element in the DOM for capture
+                    const tempDiv = document.createElement('div');
+                    tempDiv.className = 'certificate-template';
+                    tempDiv.innerHTML = renderCertificateHTML(record);
+                    
+                    // Append the element to the body, where html2canvas can easily find it
+                    document.body.appendChild(tempDiv); 
+
+                    // b. Wait for the image to load/fail
+                    const imageElement = tempDiv.querySelector('.certificate-photo');
+                    if (imageElement) {
+                        await waitForImage(imageElement);
+                    }
+                    
+                    // c. Convert temporary element to Canvas image
+                    const canvas = await html2canvas(tempDiv, {
+                        scale: 2, 
+                        useCORS: true, 
+                        allowTaint: true,
+                    });
+                    
+                    // d. Remove the temporary element immediately after capture
+                    document.body.removeChild(tempDiv);
+                    
+                    // e. Convert canvas to image data URL
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+                    // f. Add to PDF
+                    if (i > 0) {
+                        pdf.addPage(); // Add a new page before adding the image, except for the first one
+                    }
+                    // Add the image to the entire page (0, 0 position, full dimensions)
+                    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight); 
+                }
+
+                // --- 3. Save the Final Combined PDF ---
+                $('#loadingText').text('Saving final PDF...');
+                
+                const filename = `${records[0].Grade}_${records[0].Certificate}_Certificates.pdf`;
+                pdf.save(filename); 
+            }
+
+            // --- CSV Parser Function ---
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/[\r\n]+/).filter(line => line.trim().length > 0);
+                
+                if (lines.length === 0) return { records: [], headers: [] };
+                
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        // Simple split by comma, works with your provided CSV structure
+                        const values = line.split(',').map(value => value.trim().replace(/^"|"$/g, ''));
+                        
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return { records, headers };
+            }
+        });
+    </script>
+</body>
+</html>

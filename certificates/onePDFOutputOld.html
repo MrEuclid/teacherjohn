@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Conversion (jQuery)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2px;  /* changed from 20 */
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .certificate-template {
+            padding: 20px;
+            border: 1px solid #ccc;
+            /* Added background image and related properties */
+         /*   background-image: url('https://pio-students.net/certificates/images/bkgnd.jpg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-color: transparent;
+            */
+        }
+        img { display: inline-block; 
+            width:120px; 
+            height:120px; 
+             border-radius: 20px;
+        }
+
+        .line {
+            width: 100%;
+            height: 5em;
+            border-bottom: 2px solid black;
+            opacity:100%;
+        }
+        .name {
+            font-weight: bold;
+            margin-top:1em;
+            font-size:1.2em;
+        }
+        #status-message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        /* This is the only item we will hide/show */
+        #content-wrapper {
+            display: none;
+        }
+        /* This class will force a new page in the PDF */
+        .page-break-after {
+            page-break-after: always;
+        }
+
+        .fullName {font-weight: bolder;}
+
+        .title {margin-top:5em; margin-bottom:5em;}
+
+        #topBlock {
+                    width: 100%; 
+                    height:auto;
+                    margin-top:2em;
+                    margin-bottom: 5em;
+                }
+
+          #bottomBlock {
+                    width: 100%; 
+                    height:auto;
+                    margin-top:5em;
+                    margin-bottom: 1em;
+                }
+
+            #motto {
+                font-size: 2em;
+            }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Generate Certificates from CSV</h1>
+        <div class="controls">
+            <div class="mb-3">
+                <label for="csvFile" class="form-label">Upload CSV File:</label>
+                <input class="form-control" type="file" id="csvFile" accept=".csv" required>
+            </div>
+            <button id="generateButton" class="btn btn-primary w-100">Generate All PDFs</button>
+            <div id="status-message"></div>
+        </div>
+    </div>
+
+    <!-- The template and content to be converted -->
+    <div id="content-wrapper">
+        <div class="certificate-template">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                       <img id = "topBlock" src = "images/pixel_block_800x20.png">
+                    </div>
+                </div>
+
+                <div class="row">
+                   
+                        <div class = "col-2 text-left">
+                         <img  id = "logo" src="images/PIOLogo.png" alt="Accounting">
+                     </div> <!-- another image -->
+                      
+
+                          <div id = "title" class="col-8 text-center">
+                        <p class="h1">Certificate of Achievement</p>
+                        <p class="h2">Introduction to Accounting</p>
+                        <p class="h3 text-primary">Awarded to</p>
+                    </div> <!-- title -->
+
+                    <div class = "col-2 text-right">
+                         <img class="certificateLogo"  src="https://placehold.co/100x100?text=LOGO" alt="Student Photo">
+                     </div> <!-- student photo -->
+
+                </div> <!-- row --> 
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="fullName h1"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4 text-center">
+                        <div class="line"></div>
+                    </div>
+                    <div class="col-4 text-center"></div>
+                    <div class="col-4 text-center">
+                        <div class="line"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 text-center">
+                        <p class="text-center name">Mean Malyda</p>
+                    </div>
+                    <div class="col-4 text-center"></div>
+                    <div class="col-4 text-center">
+                        <p class="text-center name">John Thompson</p>
+                    </div>
+                </div>
+
+                <div class = "row">
+                    <div class = "col-12 text-center">
+                        <p id = "motto" class = "h4 text-success">Study - Learn - Achieve</p>
+                    </div></div>
+
+                      <div class="row">
+                    <div class="col-12 text-center">
+                       <img id = "bottomBlock" src = "images/pixel_block_800x20.png">
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const generateButton = $('#generateButton');
+            const csvFile = $('#csvFile');
+            const statusMessage = $('#status-message');
+            const contentWrapper = $('#content-wrapper');
+            const certificateTemplate = contentWrapper.find('.certificate-template').clone();
+
+            generateButton.on('click', async function() {
+                if (csvFile[0].files.length === 0) {
+                    statusMessage.text('Please select a CSV file first.').css('color', 'red');
+                    return;
+                }
+                const file = csvFile[0].files[0];
+                const reader = new FileReader();
+
+                reader.onload = async function(event) {
+                    try {
+                        const csvText = event.target.result;
+                        const records = parseCSV(csvText);
+                        
+                        console.log('--- CSV PARSING LOG ---');
+                        console.log('Parsed Records:', records);
+                        console.log('-----------------------');
+
+                        if (records.length === 0) {
+                            statusMessage.text('CSV file is empty or could not be parsed.').css('color', 'red');
+                            return;
+                        }
+                        
+                        statusMessage.text(`Found ${records.length} records. Beginning PDF generation...`).css('color', 'blue');
+                        
+                        // Clear the container before adding new content
+                        contentWrapper.empty();
+                        const imagePromises = [];
+
+                        // Loop through each record and create a full certificate for it
+                        for (let i = 0; i < records.length; i++) {
+                            const record = records[i];
+                            // Check if a record exists and has a student ID before processing
+                            if (record.studentID && record.studentID.trim() !== '') {
+                              //  const fullName = `${record.familyName || ''} ${record.firstName || ''} ${record.grade || ''}`.trim();
+                                const fullName = '${'record.Name}'.trim(); 
+                                
+                                console.log(`Processing record ${i + 1} of ${records.length}: ${fullName}`);
+                                
+                                // Create a full, populated clone of the certificate template for this record
+                                const certificateClone = certificateTemplate.clone();
+                                certificateClone.find('.fullName').text(fullName);
+                                
+                                const photoUrl = record.photo;
+                                const certificateLogo = certificateClone.find('.certificateLogo');
+                                
+                                // Create a promise to wait for the image to load
+                                const imageLoadPromise = new Promise((resolve, reject) => {
+                                    // Set the src only if it exists, otherwise use the placeholder
+                                    const srcToLoad = (photoUrl && photoUrl.trim() !== '') ? photoUrl : 'https://placehold.co/120x120?text=NO+PHOTO';
+                                    certificateLogo.attr('src', srcToLoad);
+
+                                    certificateLogo.on('load', () => {
+                                        console.log(`Image loaded for ${fullName}`);
+                                        resolve();
+                                    }).on('error', () => {
+                                        console.error(`Failed to load image for ${fullName} at URL: ${srcToLoad}. Using placeholder.`);
+                                        certificateLogo.attr('src', 'https://placehold.co/120x120?text=NO+PHOTO');
+                                        resolve(); // Resolve anyway so as not to block the process
+                                    });
+                                });
+                                imagePromises.push(imageLoadPromise);
+
+                                // Append the updated clone to the hidden container
+                                contentWrapper.append(certificateClone);
+
+                                // Add a page break if it's not the last record
+                                if (i < records.length - 1) {
+                                    certificateClone.addClass('page-break-after');
+                                }
+                            }
+                        }
+
+                        // Temporarily make the container visible to ensure rendering
+                        contentWrapper.show();
+
+                        // Wait for all images to finish loading before proceeding
+                        statusMessage.text(`Waiting for all images to load...`).css('color', 'orange');
+                        console.log('--- AWAITING IMAGE LOADING ---');
+                        await Promise.all(imagePromises);
+                        console.log('--- ALL IMAGES LOADED ---');
+
+                        statusMessage.text(`Generating single PDF from ${contentWrapper.children().length} certificates...`).css('color', 'green');
+                        
+                        const element = contentWrapper[0];
+
+                        // Generate a single PDF from the entire container
+                        await html2pdf().set({
+                            filename: 'All_Certificates.pdf',
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'cm', format: 'letter', orientation: 'landscape' },
+                            margins: {
+                                    top: 3,
+                                    left: 3,
+                                    right: 3,
+                                    bottom: 3
+                                }
+                        }).from(element).save();
+
+                        statusMessage.text(`PDF generation complete!`).css('color', 'green');
+                    } catch (error) {
+                        console.error('An error occurred during PDF generation:', error);
+                        statusMessage.text(`An error occurred: ${error.message}`).css('color', 'red');
+                    } finally {
+                        // Hide the container again after generation is complete, regardless of success or failure
+                        contentWrapper.hide();
+                    }
+                };
+
+                reader.readAsText(file);
+            });
+
+            // A more robust CSV parser that handles quotes and commas in fields, and accounts for trailing commas
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/\r?\n/).filter(line => line.trim().length > 0);
+                if (lines.length === 0) return records;
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        const values = line.split(',').map(value => value.trim().replace(/^"|"$/g, ''));
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return records;
+            }
+        });
+    </script>
+</body>
+</html>

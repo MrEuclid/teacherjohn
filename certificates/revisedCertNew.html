@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revised certificate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    
+
+    <style>
+        body {
+            /* This ensures the lines extend fully */
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Light background for contrast */
+        }
+        .bordered-section {
+            border-top: 2em solid lightgreen;
+            border-bottom: 2em solid lightgreen;
+            border-left: 2em solid lightgreen;
+            border-right: 2em solid lightgreen;
+            padding: 2em; /* Inner padding for content */
+            margin: 2em; /* Space between the page edge and the bordered section */
+            background-color: white; /* Content background */
+        }
+        .title-container {
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Vertically align items in the middle */
+           justify-content: space-between;
+            /* Vertically align all items in the middle */
+            align-items: center;
+            /* Remove default gap to ensure max edge closeness */
+            gap: 0;
+            
+        }
+        .header-image {
+            height: 120px; /* Set a consistent height for both images */
+            width: auto; /* Maintain aspect ratio */
+            border-radius: 20%;
+        }
+        .blue-title {
+            color: blue;
+            margin: 0; /* Remove default margin from h1 */
+        }
+
+        /* Responsive adjustments for smaller screens if needed */
+        @media (max-width: 768px) {
+            .bordered-section {
+                border-width: 2em; /* Smaller borders on small screens */
+                margin: 1em;
+            }
+            .title-container {
+                flex-direction: column; /* Stack items vertically on small screens */
+                text-align: center;
+            }
+        }
+
+        hr {
+                margin-top: 5em; /* Adds 20 pixels of padding above the hr */
+                margin-bottom: 20px; /* Adds 20 pixels of padding below the hr */
+                border: none; /* Optional: Resets default hr border for cleaner styling */
+                height: 3px; /* Optional: Sets a specific height for the visual line */
+                background-color: blue; /* Optional: Styles the visual line */
+}
+
+
+        .name {font-size: 1.2em ; font-weight: bold; height: 5em;}
+
+        pre  {
+            font-family: sans-serif;
+            font-size: 1.2em;
+        }
+
+        #words {font-style: italic; font-size: 1.1em;}
+
+        #currentDate {font-weight: bold; color:black; font-size:1.2em;}
+
+        #motto {text-align: center; font-size: 1.4em; color:blue; font-weight: bold;}
+    </style>
+
+</head>
+<body>
+
+
+    <div class="container my-5">
+        <h1 class="text-center mb-4 text-primary">Batch Certificate PDF Generator</h1>
+
+        <div class="controls">
+            <p class="mb-3">
+                <span class="text-danger fw-bold">Note:</span> If you see "NO PHOTO" in the generated PDF, it means the photo link in the CSV is either empty or not a public URL (e.g., `images/3354...` are usually not accessible by the PDF renderer).
+            </p>
+            <div class="input-group">
+                <input type="file" class="form-control" id="csvFile" accept=".csv">
+                <button class="btn btn-primary" id="generatePdfBtn" disabled>
+                    <i class="fas fa-file-pdf"></i> Generate Combined PDF
+                </button>
+            </div>
+            <div class="mt-3">
+                <small class="text-muted">Status: <span id="statusMessage" class="text-dark">Please upload a CSV file.</span></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading message box -->
+    <div id="loading-message">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2" id="loadingText">Processing certificates...</p>
+    </div>
+
+    <!-- The old hidden content-wrapper is no longer needed but kept for completeness, though it's removed below. -->
+    
+
+    <div class="bordered-section">
+        <div class="title-container">
+            <img src="images/PIOLogo.png" alt="PIO Logo" class="header-image">
+            <h1 class="blue-title">Certificate of Achievement</h1>
+            <img src="images/1544.png" alt="Your Photo" class="header-image">
+        </div>
+          <p id = "course" class = "mt-8 text-center h2 textsuccessinfo">
+            Introduction to Accounting
+        </p>
+<p class= "text-center h5">Awarded to </p>
+        <p id = "student" class="mt-8 text-center h1 text-info">
+            Ry Reaksa
+        </p>
+
+
+<p class = "text-center" id = "words">
+    Who has  successfully completed 10 hours of classes and shown these skills. 
+</p>
+<ul>
+<li>Understand basic accounting concepts including assets, liabilities, income, expenditure, profit and net worth.</li>
+<li> Handle cash transactions accurately.</li>
+<li> Work in a group to do business transactions.</li>
+<li> Use an online accounting system.</li>
+ <li> Make a simple report showing financial performance and financial position.</li>
+</ul>
+      
+
+    <div class = "row h-25">
+            <div class = "col-4 text-center"><hr></div>
+            <div class = "col-4 text-center"></div>
+            <div class = "col-4 text-center"><hr></div>
+            
+            </div>
+
+
+<div class="row">
+    <div class="col-4 text-">
+        <p class = "name text-center">Mean Malyda </p>
+    </div>
+    <div class = "col-4"></div>
+ <div class = "col-4 text-center">
+    <p class = "name" >John Thompson</p></div>
+</div>
+  
+ 
+ <div class = "mb-8">
+
+ <p class = "text-center" id = "currentDate">Awarded by the People Improvement Organization (PIO) on </p>   
+ </div>   
+
+  <div class="col-12 text-center text-primary">
+        <p id="motto" class="h4 text-success">Study - Learn - Achieve</p>
+
+ 
+</body>
+</html>
+
+<script>
+
+  // --- CSV Parser Function ---
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/[\r\n]+/).filter(line => line.trim().length > 0);
+                
+                if (lines.length === 0) return { records: [], headers: [] };
+                
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        // Simple split by comma, works with your provided CSV structure
+                        const values = line.split(',').map(value => value.trim().replace(/^"|"$/g, ''));
+                        
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return { records, headers };
+            }
+
+</script>
+
+
+<script>
+ $(document).ready(function() {
+// Get the HTML element by its ID
+//bdateDisplayElement = document.getElementById('currentDate');
+
+// Create a new Date object (gets the current date and time)
+const today = new Date();
+
+// Format the date using toLocaleDateString() for a locale-specific format
+// For example, 'en-US' with short dateStyle for "MM/DD/YY"
+const options = { year: 'numeric', month: 'long', day: 'numeric' }; // Example for "Month Day, Year"
+const formattedDate = today.toLocaleDateString('en-GB', options);
+
+// Update the text content of the HTML element
+// dateDisplayElement.textContent = formattedDate;
+// Get the HTML element by its ID
+// dateDisplayElement = document.getElementById(currentDate');
+$('#currentDate').append(formattedDate);
+})
+</script>
+
+<script>
+ $(document).ready(function() {
+// messages about the csv file
+            // --- UI/Event Handlers ---
+            $('#csvFile').on('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                    $('#statusMessage').text(`File selected: ${file.name}. Ready to generate.`);
+                } else {
+                    $('#generatePdfBtn').prop('disabled', true).text('Generate Combined PDF');
+                    $('#statusMessage').text('Please upload a CSV file.');
+                }
+            });
+
+})
+</script>
+
+
+<script>
+     $(document).ready(function() {
+
+        // process data fro file
+
+            $('#generatePdfBtn').on('click', async function() {
+                const file = $('#csvFile')[0].files[0];
+                if (!file) {
+                    $('#statusMessage').text('Please select a CSV file first.');
+                    return;
+                }
+
+                $(this).prop('disabled', true).text('Reading File...');
+                $('#loadingText').text('Reading file...');
+                $('#loading-message').show();
+
+                const reader = new FileReader();
+
+                reader.onload = async function(e) {
+                    let studentRecords = [];
+                    try {
+                        const csvString = e.target.result;
+                        const { records } = parseCSV(csvString);
+                        studentRecords = records; 
+                        
+                        if (studentRecords.length === 0) {
+                            throw new Error("No data records found in the CSV file.");
+                        }
+// show that the csv file contents are in records
+                console.log("Records",records);
+                        
+                        await generateBatchPDF(studentRecords);
+
+                        $('#statusMessage').text(`Successfully generated PDF for ${studentRecords.length} certificates.`);
+                        $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+
+                    } catch (error) {
+                        console.error("PDF Generation failed:", error);
+                        // The error 'Unable to find element in cloned iframe' is often suppressed with this method, 
+                        // but if another error occurs, we handle it gracefully.
+                        $('#statusMessage').html(`<span class="text-danger">Error: ${error.message}. Check console for details.</span>`);
+                        $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                    } finally {
+                        $('#loading-message').hide();
+                    }
+                };
+
+                reader.onerror = function() {
+                    $('#loading-message').hide();
+                    console.error("Error reading file.");
+                    $('#statusMessage').html('<span class="text-danger">Error reading file.</span>');
+                    $('#generatePdfBtn').prop('disabled', false).text('Generate Combined PDF');
+                };
+
+                reader.readAsText(file);
+            });
+
+            // --- Core PDF Generation Logic ---
+
+})
+</script>

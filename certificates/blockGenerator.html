@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Block Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Pixel Block Generator</h1>
+        <p class="text-gray-600 mb-6">Choose your dimensions and a color to create and download a single-color pixel block.</p>
+        
+        <div class="space-y-4 mb-8">
+            <div class="flex items-center justify-between">
+                <label for="widthInput" class="text-gray-700">Width (pixels):</label>
+                <input type="number" id="widthInput" value="200" min="1" class="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center">
+            </div>
+
+            <div class="flex items-center justify-between">
+                <label for="heightInput" class="text-gray-700">Height (pixels):</label>
+                <input type="number" id="heightInput" value="200" min="1" class="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center">
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <label for="colorInput" class="text-gray-700">Color:</label>
+                <input type="color" id="colorInput" value="#4682B4" class="w-24 h-10 rounded-lg border-none cursor-pointer">
+            </div>
+        </div>
+
+        <button id="downloadButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+            Generate and Download
+        </button>
+
+        <canvas id="myCanvas" class="hidden mt-6 mx-auto border-4 border-gray-300 rounded-lg"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const widthInput = document.getElementById('widthInput');
+            const heightInput = document.getElementById('heightInput');
+            const colorInput = document.getElementById('colorInput');
+            const downloadButton = document.getElementById('downloadButton');
+            const canvas = document.getElementById('myCanvas');
+            const ctx = canvas.getContext('2d');
+
+            downloadButton.addEventListener('click', () => {
+                const width = parseInt(widthInput.value);
+                const height = parseInt(heightInput.value);
+                const color = colorInput.value;
+
+                if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+                    alert('Please enter valid dimensions (width and height must be positive numbers).');
+                    return;
+                }
+                
+                // Set canvas dimensions
+                canvas.width = width;
+                canvas.height = height;
+
+                // Fill the canvas with the selected color
+                ctx.fillStyle = color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Get the data URL of the canvas
+                const imageURL = canvas.toDataURL('image/png');
+                
+                // Create a temporary link element
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = `pixel_block_${width}x${height}.png`;
+                
+                // Programmatically click the link to trigger the download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    </script>
+</body>
+</html>

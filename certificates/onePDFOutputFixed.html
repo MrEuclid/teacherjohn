@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Conversion (jQuery)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* This is the new, more reliable way to control PDF margins */
+        @page {
+            size: letter landscape;
+            margin: 0.5in; /* Sets a 0.5-inch margin on all sides of the PDF */
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        /* The certificate template is hidden and only used for PDF generation */
+        .certificate-template {
+            width: 100%; /* Take up the full width available within the page margins */
+            height: 100%; /* Take up the full height available within the page margins */
+            box-sizing: border-box; /* Include padding in the width/height */
+            position: relative;
+            background-color: white; 
+            display: none; /* Hide the template from the view */
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .certificate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5in; /* Space below the header logos */
+        }
+
+        .certificate-logo {
+            height: 0.5in;
+            width: auto;
+        }
+
+        .certificate-content {
+            text-align: center;
+        }
+        
+        .certificate-title {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .certificate-course {
+            font-size: 1.5em;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .certificate-awarded-to {
+            font-size: 1em;
+            margin-top: 0.5in;
+            font-style: italic;
+        }
+
+        .student-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 0.1in 0 0.5in;
+        }
+
+        .certificate-photo {
+            width: 1in;
+            height: 1in;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 0.5in;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            bottom: 0.5in;
+            left: 0;
+            right: 0;
+        }
+
+        .signature-line {
+            width: 30%;
+            border-bottom: 1px solid black;
+            text-align: center;
+            padding-bottom: 5px;
+        }
+        
+        .signature-name {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h2>Generate Certificates from CSV</h2>
+        <div class="mb-3">
+            <label for="csvFile" class="form-label">Select a CSV file:</label>
+            <input type="file" class="form-control" id="csvFile" accept=".csv">
+        </div>
+        <div id="statusMessage" class="text-info mt-2"></div>
+    </div>
+
+    <!-- The hidden HTML template to be converted to PDF -->
+    <div id="certificateTemplate" class="certificate-template">
+        <img id="backgroundFrame" src="" alt="Background Frame" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;">
+        <div class="certificate-header">
+            <!-- These URLs are placeholders. Replace them with your actual image URLs. -->
+            <img id="pioLogo" class="certificate-logo" src="https://placehold.co/300x300/e9e9e9/000000?text=PIO+Logo" alt="PIO Logo">
+            <img id="blockMimage" class="certificate-logo" src="https://placehold.co/300x300/e9e9e9/000000?text=Block+M+Image" alt="Block M Image">
+        </div>
+        <div class="certificate-content">
+            <p class="certificate-title">Certificate of Completion</p>
+            <p class="certificate-course">Introduction Accounting</p>
+            <p class="certificate-awarded-to">Awarded to</p>
+            <h1 class="student-name"></h1>
+            <img id="studentPhoto" class="certificate-photo" src="" alt="Student Photo">
+        </div>
+        <div class="signature-section">
+            <div class="signature-line">
+                <span id="signature1"></span>
+                <p class="signature-name">Mean Malyda</p>
+            </div>
+            <div class="signature-line">
+                <span id="signature2"></span>
+                <p class="signature-name">John Thompson</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#csvFile').on('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const statusMessage = $('#statusMessage');
+                statusMessage.text('Reading CSV file...').css('color', 'black');
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const csvString = e.target.result;
+                        const records = parseCSV(csvString);
+
+                        if (records.length === 0) {
+                            statusMessage.text('No valid records found in the CSV.').css('color', 'red');
+                            return;
+                        }
+
+                        // Set up the PDF generation options
+                        const pdfOptions = {
+                            filename: 'All_Certificates.pdf',
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+                            pagebreak: { mode: ['css', 'avoid-all'], before: '.certificate-page' }
+                        };
+                        
+                        // Create a temporary container to hold all certificates for batch generation
+                        const tempContainer = $('<div>').hide().appendTo('body');
+                        
+                        records.forEach((record, index) => {
+                            const fullName = `${record.firstName.trim()} ${record.familyName.trim()}`;
+                            const photoUrl = record.photo.trim();
+
+                            const certificateClone = $('#certificateTemplate').clone()
+                                .attr('id', 'certificate-' + index)
+                                .addClass('certificate-page')
+                                .show();
+
+                            certificateClone.find('h1.student-name').text(fullName);
+                            if (photoUrl) {
+                                certificateClone.find('#studentPhoto').attr('src', photoUrl).show();
+                            } else {
+                                certificateClone.find('#studentPhoto').hide();
+                            }
+                            tempContainer.append(certificateClone);
+                        });
+
+                        // Generate the multi-page PDF
+                        html2pdf().set(pdfOptions).from(tempContainer[0]).save().finally(() => {
+                            tempContainer.remove();
+                            statusMessage.text('PDF generation complete for all records!').css('color', 'green');
+                        });
+
+                    } catch (error) {
+                        console.error("Error processing CSV:", error);
+                        statusMessage.text(`An error occurred: ${error.message}`).css('color', 'red');
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/\r?\n/).filter(line => line.trim().length > 0);
+                if (lines.length === 0) return records;
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^\"|\"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        const values = line.split(',').map(value => value.trim().replace(/^\"|\"$/g, ''));
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return records;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Certificate Generator (Fixed Circular Images)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f4f9; }
+
+        /* FIXED ASPECT RATIO: 11 inches to 8.5 inches (1056x816 px) */
+        .certificate-template {
+            width: 1056px !important; 
+            height: 816px !important;
+            background-color: white;
+            position: absolute;
+            left: -9999px; /* Renders off-screen */
+            top: 0;
+            overflow: hidden;
+        }
+
+    .bordered-section {
+    /* Remove the margin so it touches the paper edge */
+    margin: 0; 
+    
+    /* Use a fixed border thickness */
+    border: 1.5cm solid lightgreen; 
+    
+    /* Ensure the section fills the 1056x816 capture area exactly */
+    width: 100%;
+    height: 100%;
+    
+    box-sizing: border-box; /* This keeps the border INSIDE the 11x8.5 dimensions */
+    padding: 2em;
+    background-color: white;
+}
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* IDENTICAL RULES FOR BOTH IMAGES */
+        .header-image, .header-image2 {
+            height: 100px !important;
+            width: 100px !important;
+            min-width: 100px !important;
+            min-height: 100px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important; /* Forces internal square cropping */
+            display: block;
+            border: 1px solid #ddd;
+        }
+
+        .blue-title { color: blue; margin: 0; flex-grow: 1; text-align: center; }
+        #objectives { font-style: italic; min-height: 150px; margin-top: 20px; font-size: 0.9em; text-align: center; font-weight: bold;}
+
+        #words {font-size: 1.4em;}
+        hr { border: none; height: 3px; background-color: blue; margin-top: 2em; width: 100%; }
+        .name { font-weight: bold; margin-top: 5px; }
+
+        .controls { padding: 20px; background: #e6f2ff; border-radius: 8px; margin: 20px; }
+        #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="controls">
+        <h2 class="text-primary">Certificate Generator</h2>
+        <p>This version forces images to remain circular by locking the 11:8.5 aspect ratio.</p> 
+        <button class="btn btn-warning shadow-sm px-6 font-bold" id="back" onclick="history.back()">
+            GO BACK
+        </button>
+        <input type="file" id="csvFile" class="form-control" accept=".csv">
+        <button id="generatePdfBtn" class="btn btn-success mt-3" disabled>Download Combined PDF</button>
+    </div>
+</div>
+
+<div id="loading" style="display:none; text-align:center;">
+    <div class="spinner-border text-primary"></div>
+    <p id="loadingText" class="mt-2">Starting...</p>
+</div>
+
+<div id="objectives-loader" style="display:none;"></div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+
+    $(document).ready(function() {
+        const PLACEHOLDER = "https://placehold.co/100x100?text=No+Photo";
+        const today = new Date();
+        const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+
+        $('#csvFile').on('change', function() {
+            if (this.files[0]) $('#generatePdfBtn').prop('disabled', false);
+        });
+
+        $('#generatePdfBtn').on('click', async function() {
+            const file = $('#csvFile')[0].files[0];
+            const reader = new FileReader();
+            $('#loading').show();
+
+            reader.onload = async function(e) {
+                const records = parseCSV(e.target.result);
+                await generatePDF(records);
+                $('#loading').hide();
+            };
+            reader.readAsText(file);
+        });
+
+        function renderHTML(record, objectives) {
+            return `
+            <div class="bordered-section">
+                <div class="title-container">
+                    <img src="images/PIOLogo.png" class="header-image2" width="100" height="100">
+                    <h2 class="blue-title">Certificate of Achievement</h2>
+                    <img src="${record.Photo || PLACEHOLDER}" class="header-image" width="100" height="100">
+                </div>
+                <h2 class="text-center mt-4 text-info" style="font-size: 2em;">${record.Certificate}</h2>
+                <p class="text-center h5 mt-2">Awarded to</p>
+                <h1 class="text-center text-primary" style="font-size: 3em;">${record.Name}</h1>
+                <p class="text-center h4 text-secondary">Grade: ${record.Grade}</p>
+                <div id="objectives">${objectives}</div>
+                <div class="mt-auto">
+                    <div class="row">
+                        <div class="col-4 text-center"><hr><p class="name">Mean Malyda</p></div>
+                        <div class="col-4"></div>
+                        <div class="col-4 text-center"><hr><p class="name">John Thompson</p></div>
+                    </div>
+                    <p class="text-center mt-3" style="font-weight: bold;">Awarded by PIO on ${formattedDate}</p>
+                    <p class="text-center text-success" style="font-size: 1.2em; font-weight: bold;">Study - Learn - Achieve</p>
+                </div>
+            </div>`;
+        }
+
+        async function generatePDF(records) {
+            // Create PDF in Landscape Letter format
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'in',
+                format: 'letter'
+            });
+
+            for (let i = 0; i < records.length; i++) {
+                const record = records[i];
+                $('#loadingText').text(`Capturing ${i+1} of ${records.length}: ${record.Name}`);
+
+                const objectives = await new Promise(res => {
+                    const url = 'https://pio-students.net/certificates/objectives/' + (record.Objectives || '');
+                    $('#objectives-loader').load(url, (resp, stat) => res(stat === "error" ? "Error loading objectives" : resp));
+                });
+
+                const tempDiv = document.createElement('div');
+                tempDiv.className = 'certificate-template';
+                tempDiv.innerHTML = renderHTML(record, objectives);
+                document.body.appendChild(tempDiv);
+
+                // Ensure both logo and photo are fully loaded
+                const imgs = tempDiv.querySelectorAll('img');
+                await Promise.all(Array.from(imgs).map(img => new Promise(resolve => {
+                    if (img.complete) resolve(); else { img.onload = resolve; img.onerror = resolve; }
+                })));
+
+                // Capture with the exact dimensions defined in CSS
+                const canvas = await html2canvas(tempDiv, {
+                    scale: 2,
+                    useCORS: true,
+                    width: 1056,
+                    height: 816,
+                    windowWidth: 1056,
+                    windowHeight: 816
+                });
+
+                document.body.removeChild(tempDiv);
+                
+                if (i > 0) pdf.addPage();
+                
+                // Add image to PDF. 11x8.5 inches matches 1056x816 pixels at 96 DPI.
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, 11, 8.5);
+            }
+            pdf.save(`${records[0].Grade}_Certificates.pdf`);
+        }
+
+        function parseCSV(str) {
+            const lines = str.split(/\r?\n/).filter(l => l.trim());
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            return lines.slice(1).map(line => {
+                const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                return headers.reduce((obj, h, idx) => ({ ...obj, [h]: vals[idx] || '' }), {});
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificate Generator</title>
+
+
+<style>
+
+/* Basic Certificate Styling - Adjust this to match your design */
+.certificate {
+    width: 8.5in; /* Standard paper width for an 8.5x11in US Letter */
+    height: 11in; /* Standard paper height */
+    padding: 1in;
+    box-sizing: border-box;
+    border: 5px solid gold;
+    text-align: center;
+    position: relative;
+    /* This is the key for new pages! */
+    break-after: page; /* Forces a page break after each certificate div */
+    /* Older versions/browsers might need the deprecated property as a fallback */
+    page-break-after: always; 
+}
+
+/* Style for the student's name */
+.student-name {
+    font-size: 2.5em;
+    color: darkblue;
+    margin-top: 2in;
+}
+
+/* Styles that only apply when printing (not on screen) */
+@media print {
+    /* Hide the controls when printing */
+    input, button {
+        display: none;
+    }
+
+    /* Ensure the body or main container doesn't have extra margins that mess up the page size */
+    body {
+        margin: 0;
+        padding: 0;
+    }
+}
+</style>
+</head>
+<body>
+
+    <input type="file" id="csvFile" accept=".csv">
+    <button onclick="generateCertificates()">Generate & Print</button>
+    <div id="certificates-container">
+        </div>
+
+    
+</body>
+</html>
+
+
+<script>
+
+
+function generateCertificates() {
+    const fileInput = document.getElementById('csvFile');
+    const container = document.getElementById('certificates-container');
+    container.innerHTML = ''; // Clear previous results
+
+    if (fileInput.files.length === 0) {
+        alert("Please select a CSV file first.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const csvData = event.target.result;
+        // Split by newline to get an array of names
+        const data= csvData.split('\n')
+                             // Clean up names (remove carriage returns, trim whitespace, and filter out empty lines)
+                             .map(item => data.replace(/\r/g, '').trim())
+                             .filter(name => name.length > 0); 
+        
+        names.forEach(item => {
+
+            const id = item.ID;
+  const name = item.Name;
+  const title = item.Title;
+  const photoUrl = item.photo_url;
+
+  console.log("Names ",name,title,id,photoUrl);
+            // Create a new certificate div for each name
+            const certificateHtml = `
+                <div class="certificate">
+                    <h1>Certificate of Achievement</h1>
+                    <p>Proudly presented to</p>
+                    <div class="student-name">${name}</div>
+                    <p>For successfully completing the course.</p>
+                    <p>Date: October 20, 2025</p>
+                    </div>
+            `;
+            container.innerHTML += certificateHtml;
+             console.log("Names ",name);
+        });
+
+        // After generating, immediately open the print dialog
+    //    window.print();
+    };
+
+    reader.onerror = function() {
+        alert("Error reading file.");
+    };
+
+    reader.readAsText(file);
+}
+
+</script>

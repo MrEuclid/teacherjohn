@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Viewer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+        }
+        .container {
+            max-width: 960px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .card-img-top {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        .placeholder-image {
+            background-color: #e9ecef;
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center mb-4">Student Records Viewer</h1>
+        
+        <!-- File Upload Section -->
+        <div class="mb-4 p-4 bg-white rounded shadow-sm">
+            <label for="csvFile" class="form-label">
+                Select a CSV file to view student data:
+            </label>
+            <input type="file" class="form-control" id="csvFile" accept=".csv">
+        </div>
+
+        <!-- Filter Section -->
+        <div id="filter-section" class="mb-4 p-4 bg-white rounded shadow-sm" style="display:none;">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="gradeFilter" class="form-label">Filter by Grade:</label>
+                    <select id="gradeFilter" class="form-select">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="text-center mb-4"></div>
+
+        <!-- Student Data Display Area -->
+        <div id="studentData" class="row g-4">
+            <!-- Student cards will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        let allRecords = [];
+
+        $(document).ready(function() {
+            // Event listener for when a file is selected
+            $('#csvFile').on('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const statusMessage = $('#statusMessage');
+                const filterSection = $('#filter-section');
+                const studentDataContainer = $('#studentData');
+                
+                studentDataContainer.empty(); // Clear previous data
+                filterSection.hide();
+                statusMessage.removeClass('text-success text-danger').text('Reading file...').addClass('text-info');
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const csvString = e.target.result;
+                        allRecords = parseCSV(csvString);
+
+                        if (allRecords.length === 0) {
+                            statusMessage.text('No valid records found in the CSV.').addClass('text-danger');
+                            return;
+                        }
+
+                        populateGradeFilter(allRecords);
+                        displayStudents();
+                        filterSection.show();
+                        statusMessage.text(`Successfully loaded ${allRecords.length} student records.`).addClass('text-success');
+
+                    } catch (error) {
+                        console.error("Error processing CSV:", error);
+                        statusMessage.text(`An error occurred: ${error.message}`).addClass('text-danger');
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            // Event listener for the grade filter dropdown
+            $('#gradeFilter').on('change', function() {
+                displayStudents();
+            });
+
+            // Function to populate the grade filter dropdown
+            function populateGradeFilter(records) {
+                const gradeFilter = $('#gradeFilter');
+                gradeFilter.empty(); // Clear previous options
+                gradeFilter.append(`<option value="all">All Grades</option>`);
+
+                const grades = [...new Set(records.map(record => record.grade))].sort();
+                grades.forEach(grade => {
+                    if (grade) {
+                        gradeFilter.append(`<option value="${grade}">${grade}</option>`);
+                    }
+                });
+            }
+
+            // Function to display students based on the selected filter
+            function displayStudents() {
+                const selectedGrade = $('#gradeFilter').val();
+                const studentDataContainer = $('#studentData');
+                studentDataContainer.empty();
+                
+                const studentsToDisplay = (selectedGrade === 'all')
+                    ? allRecords
+                    : allRecords.filter(record => record.grade === selectedGrade);
+                
+                if (studentsToDisplay.length === 0) {
+                    studentDataContainer.append(`<div class="col-12 text-center text-muted mt-5">No students found for this grade.</div>`);
+                    return;
+                }
+
+                studentsToDisplay.forEach(record => {
+                    const fullName = `${record.firstName} ${record.familyName}`;
+                    const photoUrl = record.photo;
+
+                    // Create a Bootstrap card for each student
+                    const cardHtml = `
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="card h-100 rounded-3">
+                                ${photoUrl ? `<img src="${photoUrl}" class="card-img-top" alt="${fullName}">` : `<div class="card-img-top placeholder-image d-flex align-items-center justify-content-center" style="height: 250px;">No Photo</div>`}
+                                <div class="card-body">
+                                    <h5 class="card-title">${fullName}</h5>
+                                    <p class="card-text"><strong>Grade:</strong> ${record.grade}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    studentDataContainer.append(cardHtml);
+                });
+            }
+
+            // A simple CSV parser that handles the provided file format
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/\r?\n/).filter(line => line.trim().length > 0);
+                if (lines.length === 0) return records;
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^\"|\"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        const values = line.split(',').map(value => value.trim().replace(/^\"|\"$/g, ''));
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return records;
+            }
+        });
+    </script>
+    <!-- Bootstrap JS (optional, but good practice) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

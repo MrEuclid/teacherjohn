@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Conversion (jQuery)</title>
+    <!-- Using Bootstrap 5 for modern styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- html2pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Style for a single certificate (simulating an A4 page) */
+        .certificate-page {
+            width: 210mm; /* A4 width */
+            height: 297mm; /* A4 height */
+            margin: 10px auto;
+            padding: 20mm;
+            border: 2px solid #333; /* Simple border */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            position: relative;
+            box-sizing: border-box;
+            page-break-after: always; /* Force a page break for each certificate in the PDF */
+            text-align: center; /* Center content on the page */
+        }
+        .certificate-page:last-child {
+            page-break-after: avoid;
+        }
+        .data-label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .student-data {
+            font-size: 2em;
+            color: #007bff; /* Blue for student name */
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px dashed #ccc;
+            display: inline-block;
+        }
+        .certificate-title-data {
+            font-size: 1.5em;
+            color: #28a745; /* Green for certificate title */
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+        .photo-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            border: 5px solid #007bff;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .student-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center my-4 text-primary">PDF Certificate Generator</h1>
+        
+        <div class="controls">
+            <div class="mb-3">
+                <label for="csvFile" class="form-label">
+                    Upload CSV File
+                </label>
+                <input class="form-control" type="file" id="csvFile" accept=".csv">
+            </div>
+
+            <!-- Dynamic Header Mapping Section -->
+            <div id="headerMapping" style="display: none;" class="p-3 mb-3 border rounded bg-light">
+                <h5 class="mb-3">Map CSV Columns to Certificate Fields</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="nameKeySelect" class="form-label">Name Field:</label>
+                        <select id="nameKeySelect" class="form-select"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="certificateKeySelect" class="form-label">Certificate Field:</label>
+                        <select id="certificateKeySelect" class="form-select"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="photoKeySelect" class="form-label">Photo URL Field:</label>
+                        <select id="photoKeySelect" class="form-select"></select>
+                    </div>
+                </div>
+            </div>
+
+            <button id="generatePdfBtn" class="btn btn-success" disabled>
+                Generate Certificates PDF
+            </button>
+        </div>
+
+        <!-- The PDF content will be generated and placed here -->
+        <div id="content-to-pdf" class="p-4" style="background-color: #fff;">
+            <!-- Certificates will be rendered here -->
+            <p class="text-center text-muted">Upload a CSV file and map the required fields.</p>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const $csvFile = $('#csvFile');
+            const $generateBtn = $('#generatePdfBtn');
+            const $pdfContentContainer = $('#content-to-pdf');
+            const $headerMapping = $('#headerMapping');
+            
+            let currentRecords = []; // Store parsed records
+            let currentHeaders = []; // Store parsed headers
+
+            // Helper to populate select menus
+            function populateSelects(headers) {
+                const fields = [
+                    { id: 'nameKeySelect', label: 'Name' },
+                    { id: 'certificateKeySelect', label: 'Certificate' },
+                    { id: 'photoKeySelect', label: 'Photo' }
+                ];
+                
+                fields.forEach(field => {
+                    const $select = $(`#${field.id}`);
+                    $select.empty();
+                    $select.append(`<option value="">-- Select ${field.label} Column --</option>`);
+                    
+                    headers.forEach(header => {
+                        const isDefault = (field.label === 'Name' && header.toLowerCase().includes('name')) || 
+                                          (field.label === 'Certificate' && header.toLowerCase().includes('cert')) ||
+                                          (field.label === 'Photo' && header.toLowerCase().includes('photo'));
+
+                        $select.append(`<option value="${header}" ${isDefault ? 'selected' : ''}>${header}</option>`);
+                    });
+                });
+                $headerMapping.show();
+            }
+
+            // --- Function to Render a Single Certificate ---
+            function renderCertificate(record, nameKey, certKey, photoKey) {
+                // Use the dynamically selected keys to fetch data
+                const studentName = record[nameKey] || `NAME MISSING (Key: ${nameKey})`;
+                const certificateTitle = record[certKey] || `CERTIFICATE MISSING (Key: ${certKey})`;
+                const photoUrl = record[photoKey] || 'https://placehold.co/150x150/007bff/ffffff?text=No+Photo';
+                
+                return `
+                    <div class="certificate-page">
+                        <h2 class="text-secondary mb-5">STUDENT CERTIFICATE</h2>
+                        
+                        <!-- 1. Display Photo (Using selected key: ${photoKey}) -->
+                        <div class="photo-container">
+                            <img src="${photoUrl}" alt="Student Photo" class="student-photo" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/150x150/dc3545/ffffff?text=Photo+Error';"
+                            >
+                        </div>
+
+                        <!-- 2. Display Name (Using selected key: ${nameKey}) -->
+                        <!-- NOTE: The header name (${nameKey}) is used as the display label -->
+                        <span class="data-label">${nameKey} (Name):</span>
+                        <div class="student-data">${studentName}</div>
+                        
+                        <!-- 3. Display Certificate Title (Using selected key: ${certKey}) -->
+                        <!-- NOTE: The header name (${certKey}) is used as the display label -->
+                        <span class="data-label">${certKey} (Certificate Awarded):</span>
+                        <div class="certificate-title-data">${certificateTitle}</div>
+                        
+                        <div class="mt-5 pt-3 border-top">
+                            <p class="small text-muted">Please fill in additional certificate details here.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- Event Listeners and CSV Processing ---
+
+            $csvFile.on('change', function () {
+                $generateBtn.prop('disabled', this.files.length === 0);
+                $pdfContentContainer.html('<p class="text-center text-muted">File selected. Click "Generate" to process.</p>');
+                $headerMapping.hide(); // Hide mapping until file is successfully parsed
+                
+                const file = $csvFile[0].files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const csvString = e.target.result;
+                        const { records, headers } = parseCSV(csvString);
+                        
+                        if (records.length === 0 || headers.length === 0) {
+                            $pdfContentContainer.html('<p class="text-center text-danger">Error: CSV file is empty or headers could not be read.</p>');
+                            return;
+                        }
+
+                        currentRecords = records;
+                        currentHeaders = headers;
+                        
+                        populateSelects(headers);
+
+                    } catch (error) {
+                        console.error("Error reading CSV file:", error);
+                        $pdfContentContainer.html('<p class="text-center text-danger">An error occurred during CSV parsing. Check console for details.</p>');
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            $generateBtn.on('click', function () {
+                // Get selected keys
+                const nameKey = $('#nameKeySelect').val();
+                const certKey = $('#certificateKeySelect').val();
+                const photoKey = $('#photoKeySelect').val();
+                
+                if (!nameKey || !certKey || !photoKey) {
+                    $pdfContentContainer.html('<p class="text-center text-danger">Please select all three required columns (Name, Certificate, Photo).</p>');
+                    return;
+                }
+
+                $generateBtn.prop('disabled', true).text('Processing...');
+                $pdfContentContainer.empty();
+                
+                let certificatesHtml = '';
+                try {
+                    // Build HTML from stored CSV data
+                    currentRecords.forEach(record => {
+                        certificatesHtml += renderCertificate(record, nameKey, certKey, photoKey);
+                    });
+                    $pdfContentContainer.html(certificatesHtml);
+
+                    // --- HTML2PDF Configuration ---
+                    const options = {
+                        margin: 0,
+                        filename: 'Certificates_' + new Date().toISOString().slice(0, 10) + '.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, logging: false },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                    };
+
+                    // Generate PDF
+                    const element = document.getElementById('content-to-pdf');
+                    html2pdf().from(element).set(options).save()
+                        .then(function() {
+                             // Success: Re-enable button
+                             $generateBtn.prop('disabled', false).text('Generate Certificates PDF');
+                        })
+                        .catch(function(pdfError) {
+                            // Error during PDF creation
+                            console.error("Error generating PDF:", pdfError);
+                            $pdfContentContainer.append('<p class="text-center text-danger">Error creating PDF. Check console.</p>');
+                            $generateBtn.prop('disabled', false).text('Generate Certificates PDF');
+                        });
+
+                } catch (error) {
+                    console.error("Error during initial data processing:", error);
+                    $pdfContentContainer.html(certificatesHtml || '<p class="text-center text-danger">An error occurred during data processing. Check console for details.</p>');
+                    $generateBtn.prop('disabled', false).text('Generate Certificates PDF');
+                }
+            });
+
+            // A robust CSV parser that handles headers and data
+            function parseCSV(csvString) {
+                const records = [];
+                const lines = csvString.split(/[\r\n]+/).filter(line => line.trim().length > 0);
+                
+                if (lines.length === 0) return { records: [], headers: [] };
+                
+                // Headers are the first line
+                const headers = lines[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.length > 0) {
+                        // Simple split by comma, assuming standard CSV format without deeply nested quotes for now
+                        const values = line.split(',').map(value => value.trim().replace(/^"|"$/g, ''));
+                        
+                        if (values.length >= headers.length) {
+                            const record = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                // Map value to its header name
+                                record[headers[j]] = values[j] || '';
+                            }
+                            records.push(record);
+                        }
+                    }
+                }
+                return { records, headers };
+            }
+        });
+    </script>
+</body>
+</html>

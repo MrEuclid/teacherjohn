@@ -3,12 +3,7 @@
 $message = "";
 $photoLink = "";
 
-// Database configuration
-// IMPORTANT: Replace these with your actual database credentials
-$servername = "localhost";
-$username = 'teacherj_euclid';
-$password = "puthisastra2024";
-$dbname = "teacherj_temple";
+include "../connectTempleDB.php"; // Include the database connection template
 
 // Check if the form was submitted via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -21,13 +16,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "<p class='message-error'>Please enter a Student ID.</p>";
     } else {
         // Create a database connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            $message = "<p class='message-error'>Connection to database failed: " . $conn->connect_error . "</p>";
+      
+        if ($dbServer->connect_error) {
+            $message = "<p class='message-error'>Connection to database failed: " . $dbServer->connect_error . "</p>";
         } else {
             // Prepare a SQL query to prevent SQL injection
             $sql = "SELECT photo FROM certificates WHERE studentID = ?";
-            $stmt = $conn->prepare($sql);
+            $stmt = $dbServer->prepare($sql);
             $stmt->bind_param("s", $studentID);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -48,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Close statement and connection
             $stmt->close();
-            $conn->close();
+            $dbServer->close();
         }
     }
 }

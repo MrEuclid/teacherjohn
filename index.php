@@ -75,7 +75,7 @@
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
-<a href = "https://teacherjohn.org/jigsaw/jigsawNumbers.html" target = "_blank"><button class = "btn btn-info">JigsawMaths</button></a>
+<a href = "https://www.youtube.com/watch?v=8vHEqVdWn08" target = "_blank"><button class = "btn btn-info">Video Sensing Scratch</button></a>
 
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
 

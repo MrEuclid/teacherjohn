@@ -76,6 +76,7 @@
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 <a href = "https://www.youtube.com/watch?v=8vHEqVdWn08" target = "_blank"><button class = "btn btn-info">Video Sensing Scratch</button></a>
+<a href = "https://docs.google.com/document/d/1piXf5GX-uco0YsZ_C_cGgDXYxF-R2IC1Qv2cRkEsxmw/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Video Sensing Lesson</button></a>
 
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
 

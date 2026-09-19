@@ -1,6 +1,5 @@
 <?php
-include "../../connect_db_euclid_pio.php" ; 
-
+include "../../connectTTempleDB.php" ; 
 
 $query = "SELECT max(Year) FROM New_ID_Year_Grade";
 $result = mysqli_query($dbServer,$query);

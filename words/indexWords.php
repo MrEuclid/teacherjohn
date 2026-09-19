@@ -70,7 +70,7 @@ $(document).ready(function(){
         let gradeText = $(this).text();
         let level = gradeText.charAt(gradeText.length - 1); 
         level = parseInt(level) - 1; // Base on previous year as requested in original code
-
+$('#wordPreview').hide()
         // Fetch words
         $.ajax({
             url: 'loadWords.php',

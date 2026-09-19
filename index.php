@@ -82,14 +82,12 @@
 
 <a href = "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">G4 - G5 - Intro</button></a>
 
-<a href = "https://studio.code.org/courses/coursee-2025/units/1/lessons/6/levels/1
-" target = "_blank"><button class = "btn btn-info">G10 Game Design</button></a>
-<a href = "https://studio.code.org/courses/coursec-2025/units/1/lessons/12/levels/10?viewAs=Participant" target = "_blank"><button class = "btn btn-info">Flappy Contest</button></a>
+<a href = "https://teacherjohn.org/words/indexWords.php" target = "_blank"><button class = "btn btn-info">Words</button></a>
 
 <a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
-<!--
-<a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 
+<a href = "https://teacherjohn.org/greenLight/greenLightAppJunior.html" target = "_blank"><button class = "btn btn-info">Green Light Easy</button></a>
+<!--
 <a href = "https://www.arvindguptatoys.com/toys-from-trash.php" target = "_blank"><button class = "btn btn-success">Arvind Gupta</button></a>
 
 -->

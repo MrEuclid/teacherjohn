@@ -1,0 +1,56 @@
+
+    .equationStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 120px ; 
+        text-align: center;
+      }
+
+  .coefficientStyle 
+
+        {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 40px ; 
+        text-align: center;
+      }
+
+    .answerStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 120px ; 
+        text-align: center;
+        margin: 5px ;
+      }
+ 
+
+    .limitStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 60px ; 
+        text-align: center;
+      }
+
+table {
+  border-collapse: collapse; 
+    margin: 0 auto; /* or margin: 0 auto 0 auto */
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+td {width: 10% ;  background-color: lightgreen ; color: black ; font-size: 12pt ; text-align: center; padding: 5px ; }
+
+#xStart, #yStart {font-size: 14pt ; font-weight: bolder; color: black ;}
+
+#checked {font-size: 14pt ; font-weight: bolder; color: black ; width: 80px ; height: 30px }
+
+#theAnswer {font-style: italic;font-weight: bold;font-size: 14pt ; color:blue ; text-align: center;}
+
+
+
+

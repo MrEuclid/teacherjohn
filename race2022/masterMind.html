@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+
+
+  <style>
+
+.bull  {background-color:green !important ; color:white  !important;}
+.cow  {background-color:orange !important ; color:white  !important;}
+.miss  {background-color:black !important ; color:white  !important;}
+
+
+
+
+[id^=grid] {
+  width:2em ; 
+  height:2em ; 
+  margin:0.1em ; 
+  background-color: lightblue;
+   color:black;
+  font-weight: bolder;
+  font-size: 1em;
+  display: inline;
+  text-align: center;
+  margin: 2px ;
+  
+  }
+
+  [id^=turn]
+  {
+  width:1em ; 
+  height:1em ; 
+  margin:0.1em ; 
+  background-color: black;
+  vertical-align: middle;
+ 
+  }
+
+  h1 {color: green; font-size: 3em; text-align: center; }
+
+
+  [id^=key] {
+      background-color: lightgrey; 
+      color: black; 
+      font-size: 1em; 
+      font-weight: bolder;
+      text-align: center;
+      border-radius: 50%;
+      height: 3em;
+      width: 3em;
+      margin: 2px;
+    }
+
+  #send {
+
+    height: 3em;
+    width: 5em;
+    font-size: 1em;
+    background-color: lightgreen;
+    color: red;
+    vertical-align: middle;
+    margin: 10px;
+
+  }
+
+    #clear {
+
+    height: 3em;
+    width: 5em;
+    font-size: 1em;
+    background-color: lightblue;
+    color: red;
+    vertical-align: middle;
+    margin: 10px;
+
+  }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class  = "container-fluid">
+
+    <div class = "row">
+  <div class = "col-4 text-center">
+
+
+     <button  id = "exit" class="btn btn-info btn-sm">Exit</button>
+
+   </div>
+     <div class = "col-4 text-center">
+     <h1>Mastermind</h1>
+   </div>
+
+     <div class = "col-4 text-center">
+
+  <a href="masterMind.html" >
+      
+        <button id = "retry" class="btn btn-info btn-sm">Try again</button>
+     </a>
+
+  </div></div>
+
+  <div class = "row">
+        <div class = "col- text-center">
+        <button  id = "send">Send</button>  <button  id = "clear">Clear</button> 
+    </div></div>
+
+  <div class = "row">
+    <div class = "col- text-center">
+<div id = "secret"></div>
+</div></div>
+
+  <div class = "row">
+    <div class = "col- text-center">
+<p id = "victory"></p>
+</div></div>
+
+<!-- grid is y ,x  i.e row,column -->
+<div id = "playingArea">
+  <div class = "row">
+    <div class = "col- text-center">
+<input  id = "grid11"><input  id = "grid12"><input  id = "grid13"><input  id = "grid14">
+<button id = "turn11"></button><button id = "turn12"></button>
+<button id = "turn13"></button><button id = "turn14"></button>
+</div></div>
+
+  <div class = "row">
+
+<div class = "col- text-center">
+  <input  id = "grid21"><input  id = "grid22"><input  id = "grid23"><input  id = "grid24">
+  <button id = "turn21"></button><button id = "turn22"></button>
+  <button id = "turn23"></button><button id = "turn24"></button>
+  </div></div>
+
+    <div class = "row">
+
+  <div class = "col- text-center">
+    <input  id = "grid31"><input  id = "grid32"><input  id = "grid33"><input  id = "grid34">
+    <button id = "turn31"></button><button id = "turn32"></button>
+    <button id = "turn33"></button><button id = "turn34"></button>
+    </div></div>
+
+      <div class = "row">
+
+    <div class = "col- text-center">
+      <input  id = "grid41"><input  id = "grid42"><input  id = "grid43"><input  id = "grid44">
+      <button id = "turn41"></button><button id = "turn42"></button>
+      <button id = "turn43"></button><button id = "turn44"></button>
+      </div></div>
+  <div class = "row">
+      <div class = "col- text-center">
+        <input  id = "grid51"><input  id = "grid52"><input  id = "grid53"><input  id = "grid54">
+        <button id = "turn51"></button><button id = "turn52"></button>
+        <button id = "turn53"></button><button id = "turn54"></button>
+        </div></div>
+  <div class = "row">
+        <div class = "col- text-center">
+          <input  id = "grid61"><input  id = "grid62"><input  id = "grid63"><input  id = "grid64">
+          <button id = "turn61">.</button><button id = "turn62">.</button>
+          <button id = "turn63">.</button><button id = "turn64">.</button>
+          </div></div>
+  <div class = "row">
+          <div class = "col- text-center">
+            <input  id = "grid71"><input  id = "grid72"><input  id = "grid73"><input  id = "grid74">
+            <button id = "turn71">.</button><button id = "turn72">.</button>
+            <button id = "turn73">.</button><button id = "turn74">.</button>
+            </div></div>
+
+</div> <!-- playing area -->
+
+<div id = "numPad">
+  <div class = "row">
+   <div class = "col- text-center">
+        <button   id = "key7">7</button>  <button id = "key8">8</button>  <button  id = "key9">9</button> 
+    </div></div>
+
+  <div class = "row">
+       <div class = "col- text-center">
+        <button class = "circle" id = "key4">4</button>  <button class = "circle" id = "key5">5</button>  <button class = "circle" id = "key6">6
+        </button> 
+    </div></div>
+
+  <div class = "row">
+       <div class = "col- text-center">
+        <button class = "circle" id = "key1">1</button>  <button class = "circle" id = "key2">2</button>  <button class = "circle" id = "key3">3</button> 
+    </div></div>
+
+
+</div>      
+
+
+</div>
+  </body>
+  </html>
+
+
+  <script type="text/javascript">
+    
+
+function checkNumbers(row)
+// check that row has four distinct letters
+
+{
+
+ var  good = true ;
+ temp = [] ;
+
+ // put numbers into an array
+
+ for (var i = 1; i <= 4 ; i++)
+ {
+  var id = 'grid' + row + i;
+  var digit = $('#' + id).val();
+  temp.push(digit);
+ }
+
+ var l = temp.leng;
+
+ for (var i = 0; i < 4; i++)
+ {
+  for (var j = 0 ; j < 4 ; j++)
+  {
+    if (i != j && temp[i] == temp[j])
+      good = false ;
+
+  }
+ }
+
+console.log(temp,good);
+return good ;
+
+}
+
+  </script>
+
+  <script>
+
+    function makeNumber()
+
+    {
+      var max = 9 ;
+      var min = 1 ;
+      var numbers = [] ;
+
+ var digit = Math.floor(Math.random() * (max - min) + min);
+ numbers.push(digit);
+
+ for (var i = 0 ; i <= 3 ; i++)
+ {
+   var duplicate = true;
+   digit = Math.floor(Math.random() * (max - min) + min);
+   while (duplicate == true)
+
+   {
+    digit = Math.floor(Math.random() * (max - min) + min);
+     var index = numbers.indexOf(digit) ;
+     if (index != -1) {duplicate = true;} else {duplicate = false;}
+   }
+   numbers[i] = digit ;
+ }
+
+
+ return numbers ;
+    }
+  </script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+$('#exit').hide() ;
+
+question = '<?php echo $_POST['question'];?>' ;
+
+alert(question);
+
+var data = localStorage.getItem("teamName");
+alert(data);
+
+  $('input').attr('readonly', true);
+  $('#secret').hide() ;
+  $('#victory').hide() ;
+  secret = [] ;
+  $('[id^=turn]').hide();
+  secret = makeNumber();
+  console.log("secret number made",secret) ;
+  nString = '' ;
+  turnNumber = 1 ;
+  target = "" ; // clicked id
+  
+  for (var i = 0; i < secret.length; i++)
+  {
+    nString += secret[i];
+  }
+
+$('#secret').text(nString);
+// $('[id^=grid]').prop('disabled',true).css({"background-color":"red","color":"green"}); // disable grid
+$('[id^=grid' + turnNumber + ']').prop('disabled',false).css({"background-color":"orange","color":"yellow"});
+$('#grid11').focus().css({"background-color":"blue","color":"yellow"});
+$('#send').prop('disabled',true);
+
+  })
+
+  </script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+       $('[id^=key]').click(function(){
+
+clicked = this.id ;
+$('#' + clicked).prop('disabled',true);
+var digit = parseInt(clicked.substring(3,4));
+// alert(target);
+// write to grid 
+$('#' + target).val(digit).css({"background-color":"blue","color":"yellow"});
+
+// move focus to next in row gridrc
+    var row = parseInt(target.substr(4,1));
+    var column = parseInt(target.substr(5,1));
+    var nextColumn = parseInt(column + 1);
+
+    target = 'grid' + row + nextColumn;
+    console.log("moving right",target,row,column,nextColumn);
+
+    if (nextColumn <=  4)
+    {
+      $('#grid' + row + nextColumn).focus().val('').css({"background-color":"blue","color":"yellow"});
+    }
+    else
+      {
+        var distinct = checkNumbers(row);
+
+      if (distinct == true)
+        {
+          $('#send').prop('disabled',false);
+          $('#send').focus().css({"background-color":"blue","color":"yellow"}) ;
+      }
+
+
+  }
+
+
+
+  })
+  })
+
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+       $('[id^=grid]').click(function(){
+
+           var id = this.id;
+
+           // get x,y position
+
+           var x = id.substring(4,5);
+
+        //   alert(id + 'x = ' + x);
+
+$('#' + id).val('').css({"background-color":"blue","color":"yellow"});
+  })
+  })
+
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+       $('[id^=grid]').blur(function(){
+
+        var id = this.id;
+      
+        target = this.id;
+        $('#' + id).css({"background-color":"lightblue","color":"black"});
+        //  alert(id + " is blurred " + target);
+  })
+  })
+
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+       $('#clear').click(function(){
+
+       var  row = turnNumber;
+
+       for (var i = 1 ; i <= 4 ; i++)
+
+       {
+        $('#grid' + row + i).val('').css({"background-color":"lightblue","color":"black"});
+        $('[id^=key]').prop('disabled',false);
+        $('#grid' + turnNumber + 1).focus().css({"background-color":"blue","color":"yellow"});
+        $('#send').prop('disabled',true).css({"background-color":"lightgreen","color":"red"});;
+       }
+
+       })
+     })
+
+   </script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+       $('#send').click(function(){
+
+
+     temp = [] ;
+     row = turnNumber;
+
+ // put numbers into an array
+
+ for (var i = 0; i <= 3 ; i++)
+ {
+  var id = 'grid' + row + parseInt(i + 1);
+  var digit = $('#' + id).val();
+  temp[i] = digit;
+ }
+
+ console.log("secret",secret,"temp",temp);
+
+
+ var cows = 0 ;
+ var bulls = 0 ;
+ var misses = 0 ;
+
+ for (var i = 0 ; i <= 3 ; i++)
+
+ {
+
+  var offset = parseInt(i+1);  // rows have element 1..4
+  var t = secret.indexOf(parseInt(temp[i]));
+  if (secret[i] == temp[i]) 
+    {
+      bulls++; 
+     $('#turn' + turnNumber + offset).css({"background-color":"green"});
+     $('#grid' + turnNumber + offset).addClass('bull');
+
+     if (bulls == 4)
+     {
+      $('#victory').text("You win!").show();
+      $('#playingArea').hide();
+      $('#numPad').hide() ;
+      $('#send').hide();
+      $('#clear').hide();
+
+     var pts = localStorage.getItem('teamName');
+     pts = parseInt(pts);
+     console.log("points",pts);
+     pts = parseInt(pts + 6);
+     console.log("points",pts);
+     localStorage.setItem('teamName',pts);
+     localStorage.setItem('currentQuestion','q9');
+
+    $('#menu').show();
+   
+
+     $('#play').empty().show();
+     $('#q9').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
+     }
+    
+   }
+  if (t < 0) 
+    {
+      misses++; 
+      $('#turn' + turnNumber + offset).css({"background-color":"black"});
+      $('#grid' + turnNumber + offset).addClass('miss');
+    }
+
+
+  if (t  >= 0 & secret[i] != temp[i]) 
+    {
+      cows++; 
+      $('#turn' + turnNumber + offset).css({"background-color":"orange"});
+      $('#grid' + turnNumber + offset).addClass('cow');
+    }
+// $('#grid' + turnNumber + offset).prop('disabled',true);
+
+console.log(i,offset,t,secret[i],temp[i]);
+
+ }
+// misses = parseInt(4 - (bulls + cows)) ;
+// console.log(turnNumber,bulls,cows,misses);
+
+ turnNumber++;
+
+
+
+  $('[id^=grid]').prop('disabled',false).css({"background-color":"red","color":"green"}); // disable grid
+  $('#grid' + turnNumber + 1).prop('disabled',false).focus().css({"background-color":"blue","color":"yellow"});
+    var id = 'grid' + turnNumber + 1;
+      //   alert(id);
+        target = id;
+        $('#' + id).css({"background-color":"lightblue","color":"black"});
+$('#send').prop('disabled',true).css({"background-color":"lightgreen","color":"red"});
+
+$('[id^=key]').prop('disabled',false);
+
+
+       })
+
+    })
+
+  </script>
+
+
+  <script type="text/javascript">
+  
+    $(document).ready(function(){
+    $('#exit').on('click', function()
+
+{
+
+
+var data = localStorage.getItem("teamName");
+alert(data);
+
+ $('#menu').show() ;
+ $('#title').hide();
+ $('#play').hide();
+ $('#q9').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
+
+  })
+  })
+
+
+</script>
+
+  

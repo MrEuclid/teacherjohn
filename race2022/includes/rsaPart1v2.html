@@ -1,0 +1,210 @@
+
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+      
+ 
+    //  var y = findD(3,160);
+    //  alert(' d = ' + y);
+
+  //    var x = expModulo(3,4,10);
+   //   alert(' x = ' + x ) ;
+      
+    })
+
+</script>
+
+
+
+
+<script type="text/javascript">
+  function checkMessageToJohn()
+
+  {
+    var plain = $('#plainText').text() ; 
+    var translated = $('#decoded').text();
+   // alert('translated ' + plain + ' as ' + translated);
+    if (plain == translated)
+    {
+      $('#teacherJohnAnswer').text('I understand your message.');
+      $('#nextLevel').show() ;
+    }
+    else 
+      {
+       $('#teacherJohnAnswer').text('I cannot understand your message, please try again.');
+      }
+  }
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#sendEncoded').on('click', function()
+  {
+
+$('#decoded').text('');
+var plainText = $('#myMessage1').val() ;
+var p = parseInt($('#part1P').val()) ;
+var q = parseInt($('#part1Q').val()) ;
+var d = parseInt($('#part1D').val()) ;
+// alert(' d = ' + d) ; 
+ var n = p*q ;
+// alert('Sending to Teacher John message  ' + letterArray + ' from ' + plainText);
+
+var messageToJohn = [] ;
+for (var i = 0 ;i < letterArray.length ; i++)
+{
+var x = $('#coded-'+i).val() ;
+x = parseInt(x);
+//var cipherText = expModulo(x,3,n); 
+//cipherText = parseInt(cipherText); // teacher john gets this
+// alert('cipher ' + cipherText + ' ' + cipherText + 1);
+var translated = expModulo(x,d,n);
+translated  = parseInt(translated);
+// alert('translated ' + cipherText + ' ' + cipherText);
+
+var word = String.fromCharCode(translated) ;
+// alert(i + ' word = ' + word + ' letter arraay ' + plainText[i]);
+if (word == plainText[i])
+  {$('#coded-'+i).css({"background-color":"green","color":"yellow"}) ;}
+// console.log(i,letterArray[i],"coded to  TJ",x,"decoded TJ",translated,word) ;
+$('#decoded').append(word); 
+}
+ 
+checkMessageToJohn();
+
+  })
+  })
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#convertMessage').on('click', function()
+  {
+    $('#encode').empty() ;
+
+      var letters = $('#myMessage1').val() ;
+     //  var letterArray = Array.from(letters) ;
+      letterArray = [] ;
+     var l =letters.length;
+      //alert('Converting ' + letterArray ) ;
+      $('#myNumbers').text('*');
+      for (var i = 0 ; i < l ; i++)
+        {
+          var char = letters.charCodeAt(i);
+          letterArray.push(char) ;
+          $('#myNumbers').append(char + '*');
+          var p = parseInt($('#part1P').val()) ;
+          var q = parseInt($('#part1Q').val()) ;
+          var n = p*q ;
+     //    alert(' n = ' + p + ' ' + q + ' ' + p*q);
+          var eqtn = '$ ' + char + '^' + 3 + ' mod ' + n + ' $ = ';
+
+          var tag = '<input class = ' + '\"data\"' +  ' id=' + '\"coded-' + i +  '\"' + 'type = ' + '\"text\"' + ' >' ;
+
+          $('#encoded').append(eqtn + ' ' + tag + '<br><br>');
+
+          var target = '#encoded';
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub, "target"]);
+
+        }
+         $('#myMessage1').empty();
+         $('#sendEncoded').show() ;
+         $('#teacherJohnHeading').show() ;
+         $('#plainText').text(letters);
+
+     //  alert('Converted to  ' + letterArray ) ; 
+
+  })
+})
+
+    </script>
+
+<script type="text/javascript">
+
+  
+  $(document).ready(function(){
+    $('#nextLevel').on('click', function()
+
+{
+
+  $('#gamePart1').hide() ;
+  $('#gamePart2').show() ;
+  })
+
+})
+</script>
+
+
+  <div class = "row">
+    <div class = "col-sm-12 c ">
+      <input id = "part1P" type = "text" hidden="true"><input id = "part1Q" type = "text" hidden = "true">
+       <input id = "part1E" type = "text" hidden="true"><input id = "part1D" type = "text" hidden = "true">
+  <h1 class = "c">Game part 1 </h1>
+</div></div>
+
+<div class = "row">
+  <div class = "col-sm-4 ">
+    <h3 class = "c">Write your message</h3>
+    <div class = "c">
+      <input id = "myMessage1" class = "data" type = "text" size = "20">
+      <br>
+      <button id = "convertMessage">Change to code</button>
+      <p>Then send the message</p>
+      <p id = "myNumbers"></p>
+      </div> <!-- class= c -->
+
+
+      <div class = "c" id = "example">
+      <strong>Example
+<br> Calculate  $ 123^3 \, mod \, 187 $ 
+</strong>
+<br>
+$ 123^1 \, mod \, 187 $ = 123
+<br>
+$ 123^2 \, mod \, 187  = 
+<br>
+(123 \times 123) \, mod \,187 $ 
+<br> = 15129 mod 187
+<br>
+15129 $ \div $ 187 = 80 + 169 remainder  
+<br>
+therefore
+<br>
+$ 123^2 \, mod \, 187 $  = 169
+<br>
+$ 123^3 \, mod \, 187 $ 
+<br>
+ =  (169 $ \times $ 123 ) mod 187 
+<br> = 20787 mod 187
+<br>
+20787 $ \div 187 $ = 111 + 30 remainder
+<br>
+<strong> $ 123^3 \, mod \, 187 $ = 30 </strong>
+  </div> <!-- example -->
+</div> <!-- col -->
+
+<div class = "col-sm-4 ">
+  <div class = "c">
+    <h3>Code your message</h3>
+     <p id = "codingMessage"></p>
+     <p id = "plainText"></p>
+  <div id = "encoded"></div>
+  <button id = "sendEncoded">Send to Teacher John</button>
+</div> <!-- class = c -->
+</div> <!-- col -->
+
+
+<div class = "col-sm-4 ">
+  <div class = "c">
+    <h3 id = "teacherJohnHeading">Teacher John received this message</h3>
+     <strong> <p id = "decoded"></p></strong>
+      <p id = "teacherJohnAnswer"></p>
+      <button id = "nextLevel">Level 2</button>
+ 
+</div>  <!-- class = c -->
+</div> <!-- col -->
+</div> <!-- row -->
+
+

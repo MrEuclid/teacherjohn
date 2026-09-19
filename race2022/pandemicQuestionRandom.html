@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+<title>Pandemic v2</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="//javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel = "stylesheet" href  = "css/rsaStyles.css">
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="MathJax-2.7.5/MathJax.js"></script>
+
+<!-- scripts for functions used in the app -->
+
+<style>
+
+  [id^=bPan-] {width: 1px ; height: 1px;  color:white; background-color: blue; display: inline;}
+  label {margin-right: 20px ;}
+
+  input {text-align: center;; color:black; background-color: lightblue ; width:50px; height:25px ;}
+
+  </style>
+
+<script type="text/javascript">
+// returns a random integer between min and max
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+</script>
+
+<script type="text/javascript">
+  function makeButtons(n)
+
+  {
+//  alert('Making buttons ') ;
+
+for (var i = 0 ; i < n ;i++)
+{
+ var r = '<div id =bPan-' + i + '>+</div>'
+ $("#grid").append(r); 
+ if ((i+1)  % 50 == 0  & i > 0 ) { $("#grid").append('<br>'); }
+}
+}
+</script>
+
+
+
+<script type="text/javascript">
+  function displayButtons(data)
+
+  {
+ //console.log('cloned = ',data);
+  // styles the grid based on the people array
+
+    n = data.length;
+    var S = 0 ;
+    var I= 0 ;
+    var R = 0 ;
+
+for (var i = 0 ; i < n ;i++)
+{
+var condition = data[i].status;
+// alert(i + ' condition ' + condition);
+if (condition == "S")
+{
+$('#bPan-'+i).css({"background-color":"blue"});
+}
+if (condition == "I")
+{
+$('#bPan-'+i).css({"background-color":"red"});
+}
+if (condition == "R")
+{
+$('#bPan-'+i).css({"background-color":"green"});
+}
+
+if (condition == "N") // not susceptible = immune
+{
+$('#bPan-'+i).css({"background-color":"black"});
+}
+var d =data[i].socialDistance;
+d = parseInt(d);
+var space = d + 'px';
+$('#bPan-'+i).css(
+      {"margin-left":space,
+      "margin-right":space, 
+      "margin-top" :space,
+      "margin-bottom": space});
+
+} // loop
+
+var tempS = people.filter(function(p) {return p.status == "S" ; });
+var S = tempS.length ;
+
+var tempI = people.filter(function(p) {return p.status == "I" ; });
+var I = tempI.length ;
+
+var tempR = people.filter(function(p) {return p.status == "R" ; });
+var R = tempR.length ;
+
+var tempN = people.filter(function(p) {return p.status == "N" ; });
+var N = tempN.length ;
+
+$('#susceptibleID').text(S);
+$('#infectedID').text(I);
+$('#recoveredID').text(R);
+$('#immuneID').text(N);
+$('#timeElapsed').text(time);
+$('#results').append(time + ' * ' + I + ' * ' + R + ' * ' + N + '<br>');
+
+// update stats array 
+
+var newData = [i,S,N,I,R];
+stats.push(newData);
+
+
+// console.table(stats);
+
+if (I == 0 ) 
+  {
+   // alert('Game over ');
+  }
+} // function
+</script>
+
+
+</head>
+
+
+<body>
+  <div class  = "container-fluid">
+
+<div class = "row">
+<div class = "col-sm-12 ">
+  <h2 class = "c">INFECTION?</h2>
+  <p>
+    Examines spread of infection with differing parameters for transmission and recovery rates.
+  </p>
+  <h3>Disease parameters</h3>
+  <label>Population size</label><input type = "number" id = "populationSize">
+  <br>
+  <label>Recovery time</label><input type = "number" id = "recoveryTime" >
+  <br>
+  <label>Probaility of transmission </label><input type = "text" id = "probTransmission">
+  <br>
+  <label>Reproduction factor</label><input type="number" id ="reproductionFactor">
+  <br>
+  <label>Percent who are immune</label><input type="text" id ="percentImmune">
+
+</div></div>
+
+
+<div class = "row">
+<div class = "col-sm-12 ">
+  <h3 class =  "c">The Infection</h3> 
+</div></div>
+
+
+<div class = "row">
+<div class = "col-sm-12 c">
+  <button id = "start">Start the disease</button> 
+  <button id = "newCycle2">Next day</button> <br>
+    <label>Time </label><label id = "timeElapsed"></label><br>
+  <label>Immune </label><label id = "immuneID"></label><br>
+     <label>Susceptible </label><label id = "susceptibleID"></label><br>
+  <label>Infected </label><label id = "infectedID"></label><br>
+   <label>Recovered </label><label id = "recoveredID"></label><br>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-2 c ">
+  <h3 class = "c" >Results</h3>
+  <p id = "results"></p>
+</div>
+
+
+<div class = "col-sm-10 c ">
+    <h3 class = "c" >Crowd</h3>
+  <p id = "grid"></p>
+</div></div>
+
+
+</div>
+</body>
+</html>
+
+
+
+<script>
+$(document).ready(function(){
+
+
+// alert("loading document ");
+
+populationSize = 2000 ;
+recoveryTime = 4 ;
+probTransmission = 1;  // level of infectiousness
+//numberContacts = 1 ; // average number of contacts per person per day
+reproductionFactor = 1; 
+percentImmune = 10 ;
+
+$('#populationSize').attr('value',populationSize);
+$('#recoveryTime').attr('value',recoveryTime);
+//$('#numberContacts').attr('value',numberContacts);
+$('#probTransmission').attr('value',probTransmission);
+$('#percentImmune').attr('value',percentImmune);
+$('#reproductionFactor').attr('value',reproductionFactor);
+  
+stats = [[]] ; //   records data each time interval ;
+people = [] ;
+person = {};
+$('#newCycle').hide() ;
+
+for (var i = 0 ; i < populationSize ; i++)
+{
+  // make the crowd
+person = {
+            "status": "S",   // from S,I,R,N
+            "idN":i ,
+            "timeInfected": 0 ,
+            "timeRecovered": 0,
+            "socialDistance": 0
+          } ;
+
+people.push(person) ;
+
+}
+makeButtons(populationSize);
+// 4.table(people);
+})
+
+</script>
+
+<script>
+      $(document).ready(function(){
+    $('#start').on('click', function()
+  {
+
+time = 0;
+// make one infection
+// alert('Starting') ;
+
+// make some people immune
+var numberPeople = parseInt(people.length) ;
+var percentImmune = parseInt($('#percentImmune').val()) ;
+var numberImmune = Math.floor(percentImmune * numberPeople / 100);
+// console.log('Initially immune',numberImmune,numberPeople,percentImmune);
+var cnt = 0 ;
+while (cnt < numberImmune)
+{
+var n = getRandomInt(0,numberPeople-1);
+var status = people[n].status ;
+if (status != "N") 
+  {
+    people[n].status = "N" ; 
+    cnt++;
+  }
+
+
+}
+
+// add initial infections 
+var cnt = 0 ;
+var initialInfections = 1 ;
+while (cnt < initialInfections)
+{
+var n = getRandomInt(0,numberPeople-1);
+var status = people[n].status ;
+if (status != "N") 
+  {
+    people[n].status = "I" ; 
+    people[n].timeInfected = time ;
+    cnt++;
+  }
+}
+
+// everyone else should be left as susceptible
+clones = people.slice() ;
+displayButtons(clones);
+
+})
+})
+
+</script>
+
+
+<script>
+      $(document).ready(function(){
+    $('#newCycle2').on('click', function()
+  {
+
+//alert('New cycle');
+// spreading the infecton
+// simple case is that it must be an uninfected person
+// more complex calculations based on several paprameters
+
+time++ ;
+
+// check for recovery before new infections 
+// console.table(people);
+
+
+var recoveryPool = people.filter(function(p) {return (time - p.timeInfected)  >= recoveryTime & p.status == "I"});
+
+console.log('Number recovered ' + recoveryPool.length);
+
+// set recover first before dealing with new infections
+var recoveryL = recoveryPool.length ;
+if (recoveryL > 0)
+
+{
+  for (var i = 0 ; i < recoveryL; i++)
+  {
+    recoveredID = recoveryPool[i].idN ;
+    people[recoveredID].status = "R";
+    people[recoveredID].timeRecovered = time;
+  }
+}
+
+var susceptiblePool = people.filter(function(p) {return p.status == "S" });
+var numberSusceptible = susceptiblePool.length;
+
+var infectedPool = people.filter(function(p) {return p.status == "I" });
+var numberInfected = infectedPool.length;
+
+var numberVictims = Math.floor(numberInfected*probTransmission) + 1 ;
+
+// use people 
+// contact regardless of status 
+console.log('victims ',numberVictims);
+for (var i = 1 ; i <= numberVictims; i++ )
+{
+var n = getRandomInt(0,populationSize-1) ; // choose someone at random
+var status = people[n].status;
+if (status == "S")
+  {
+    people[n].status = "I" ;
+    people[n].timeInfected = time ;
+  }
+
+}
+clones = people.slice() ;
+displayButtons(clones);
+})
+})
+</script>
+
+

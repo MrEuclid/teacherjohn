@@ -1,0 +1,223 @@
+
+  <script type="text/javascript">
+
+    $(document).ready(function(){
+      
+// need to get values for n when e = 3, i.e p-1, q-1 not divisible by 3
+
+   var primes = [] ;
+   var choicesN = [] ;
+   primes = makePrimes(200) ;
+   var l = primes.length ;
+ //  console.log(l,primes) ;
+
+   for (var i = 2 ; i < l ; i++)
+   {
+    var x = gcd(3,primes[i]-1) ;
+  //   console.log(i,x,primes[i]-1);
+     if (x == 1 )
+      {
+        choicesN.push(primes[i]);
+       
+      }
+    }
+
+   var l = choicesN.length ;
+  console.log(l,choicesN) ;
+
+  var min = Math.floor(l/2) ;
+  var max = l-1 ;
+  var n1 = getRandomInt(1,min-3);
+  var n2 = getRandomInt(n1 + 1 , l-1);
+
+  var e = 3;
+  var p = choicesN[n1] ;
+  var q = choicesN[n2] ;
+  var phi = (p-1)*(q-1);
+
+  var d = findD(e,phi);
+
+  $('#part3P').attr('value',p) ;
+  $('#part3Q').attr('value',q) ;
+  $('#part3E').attr('value',e) ;
+  $('#part3PHI').attr('value',phi) ;
+ // $('#my3Phi').attr('value',phi) ;
+  $('#part3D').attr('value',d) ;
+  $('#showN').text(' n = ' + p*q + ' e = ' + e) ;
+
+
+  console.log(p,q) ;
+
+   var message = "HAVE I BEEN HACKED?" ;
+
+
+    })
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+    $('#check3D').on('click', function()
+  {
+
+
+    var d = $('#my3D').val() ;
+    d = parseInt(d);
+    var e = $('#part3E').val() ;
+    e = parseInt(e);
+    var phi = $('#my3Phi').val() ;
+    phi =parseInt(phi);
+    truePhi = $('#part3PHI');
+    truePhi = parseInt(truePhi);
+    trueD = $('#part3D').val() ;
+    trueD = parseInt(trueD);
+
+ if (phi == truePhi)
+    {
+      alert('d = ' + d + ' is correct');
+      $('#my3P', '#my3Q', '#my3Phi').css({"background-color":"lightgreen"});
+      $('#check3D').hide() ;
+    
+      $('#level4').show();
+    }
+    else
+    {
+       alert('d = ' + d + ' is incorrect ' + trueD);
+       $('#my3P', '#my3Q', '#my3Phi').css({"background-color":"orange"});
+    }
+
+    if (d == trueD & phi == truePhi)
+    {
+      alert('d = ' + d + ' is correct');
+      $('#my3D').css({"background-color":"lightgreen"});
+      $('#check3D').hide() ;
+    
+      $('#level4').show();
+    }
+    else
+    {
+       alert('d = ' + d + ' is incorrect ' + trueD);
+       $('#my3D').css({"background-color":"orange"});
+    }
+  })
+  })
+</script>
+
+<div class = "row">
+	<div class = "col-sm-12">
+<input id = "part3P" type = "number" >
+<input id = "part3Q" type = "number" >
+<input id = "part3PHI" type = "number" >
+<input id = "part3E" type = "number" >
+<input id = "part3D" type = "number" >
+ <h1 class = "c">Game part 3 </h1>
+ <p>
+ 	In this part you will see how a message can be cracked if only small prime numbers are used.
+
+ </p>
+ <p>An evil hacker has got into Teacher John's computer. He sees that Teacher John has hidden the secret key, but he thinks that he can work it out 
+ using the public keys e and n that Teacher John has sent to his students.</p>
+ <h2>The public keys </h2>
+ <h2 class = "c" id = "showN"></h2>
+ <p>See if you can find out how the hacker will do this, so that you can warn Teacher John to make his codes more secure.</p>
+</div></div>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		<h3 class = "c">Put in the factors of n</h3>n = 
+ <label id = "3n" ></label> = 
+ <input id = "my3P" type = "number" class = "data"> $ \,\times \, $ 
+ <input id = "my3Q" type = "number" class = "data">
+
+
+</div></div>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		<h3 class = "c">Now find the value of $ \phi = (p-1) \times (q-1) $ </h3>
+		
+ <label>$ \phi $ = </label> = <input id = "my3Phi" type = "number" class = "data"> 
+
+
+ <h3 class = "c">Now add the value of d </h3>
+  <br>
+  <label>d = </label><input type="number" id ="my3D" class = "data">
+  <br>
+  <button id = "check3D"   class="btn btn-info btn-lg" >Read the message</button>
+</div></div>
+
+<div id = "showAnswerPart3">
+<div class = "row">
+	<div class = "col-sm-12 c">
+<h3 class = "c" >Here is you answer</h3>
+<br>
+  <label>m = </label><label id = "encodedText3" ></label>
+  <br>
+  <label>n = </label><label id ="part3N"></label>
+
+  <br>
+
+  <label>The message in English is  </label>
+  <br>
+  <label id = "englishText3"></label>
+</div></div>
+</div>
+
+<button id = "level4">Go to level 4</button>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		  <br>
+  <button >Help to calculate d</button>
+  <div id = "secretKeyCalculation3">
+<h2 class = "c">Calculate the secret key d</h2>
+<p class = "c">The secret key <strong>d</strong> is found using this equation. </p>
+  <p class = "c">
+  <strong>d x e = 1 mod $ \phi $</strong>.
+</p>
+<p>
+    <p>Using the method shown in this example</p>
+    <strong>Example</strong>
+    <br>
+    $ \phi = 20 $ and e = 3 
+    <br>
+    Calculate $ \phi \div  e $ and use only the whole number part.
+    <br>
+    a = 20 $ \div $ 3 = 6
+    <br>
+    Add 1 to the answer to get d, so d = 7
+    <br>
+    Check to see if 3 $ \times  $ 7 = 1 mod  $ \phi $
+    <br>
+    21 $ \div 20 $ = 1 + remainder 1 
+    <br>
+    <strong>d = 7 </strong>
+    <br>
+    <strong>Example</strong>
+    Find d when e = 3 and $ \phi = 88 $
+    <br>
+    a = 88 $ \div $ 3 ,  <strong>q = 29</strong> 
+    <br>
+    Add 1 to a to get d.
+    <br>
+    d = 30
+  <br>
+  Check 30 $ \times 3 $ mod 28 = 2,
+  <br>
+   d = 30 is not the answer.
+  <br>
+  Add 29 to 30 and try again
+  <br>
+  d = 29  + 30 = 59.
+  <br>
+  3 $ \times 59 $ mod 88 = 177
+  <br>
+  177 $ \div $ 88  = 2 + 1 remainder, we have an answer.
+  <br>
+  <strong>d = 59</strong> 
+   </p>
+  </div> <!-- secret key calculation -->
+
+</div></div>
+

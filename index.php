@@ -86,7 +86,7 @@
 " target = "_blank"><button class = "btn btn-info">G10 Game Design</button></a>
 <a href = "https://studio.code.org/courses/coursec-2025/units/1/lessons/12/levels/10?viewAs=Participant" target = "_blank"><button class = "btn btn-info">Flappy Contest</button></a>
 
-<a href = "https://studio.code.org/courses/infinity/units/1/lessons/1/levels/3" target = "_blank"><button class = "btn btn-info">Infinity coding</button></a>
+<a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
 <!--
 <a href = "https://studio.code.org/join/LFRSBF" target = "_blank"><button class = "btn btn-info">Angry Birds coding</button></a>
 

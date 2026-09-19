@@ -1,0 +1,52 @@
+
+    #exit {margin: 10px ;}
+
+
+html { font-size: calc(1em + 1vw) }
+
+    .c {
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            margin: 0 ;
+          }
+
+h1 {color: blue; font-size: 2em}
+h2 {color: green ; font-size: 1.5em}
+
+h3 {color: red; font-size: 1em}
+h4 {color: lightblue ; font-size: 0.8em}
+
+#words 
+  {
+    font-size: 1 em; 
+    text-align: left; 
+    font-family: sans-serif;}
+
+.btn-med 
+  {
+    width:160px; 
+    height:80px; 
+    text-align: center ; 
+    font-size: 1.2em ; 
+    font-weight: bold; 
+    color: white
+  }
+
+  input {text-align: center;font-size: 1.2em;}
+
+  .data 
+      {
+       margin-top:10px;
+       margin-bottom: 10px ;
+       margin-left: 20px ;
+       margin-right: 20px ;
+       background-color: lightblue ;
+       color:black; 
+       font-size: 1.2em; 
+       text-align: center;
+       width: 120px ; 
+       height: 40px ;
+      }
+
+    label {text-align: center ; font-size: 1.2em ;}

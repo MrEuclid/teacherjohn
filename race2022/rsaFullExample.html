@@ -1,0 +1,481 @@
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+<title>RSA Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+
+
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
+
+<style type="text/css">
+  
+input.uppercase { text-transform: uppercase; }
+
+html { font-size: calc(1em + 1vw) }
+
+    .c {
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            margin: 0 ;
+          }
+
+h1 {color: black; font-size: 2.4em ; font-weight: bolder;}
+h2 {color: green ; font-size: 1.8em; font-weight: bolder;}
+h3 {color: red; font-size: 1.2em ;font-weight: bolder;}
+h4 {color: blue ; font-size: 1em ; font-weight: bolder;}
+</style>
+
+</head>
+
+<body>
+
+<div class = "row">
+<div class = "col-sm-12 c">
+  <h2 class = "c">The RSA Algorithm</h2>
+    <p id = "words">
+       This lesson tells you how to use the RSA method for cryptography (secret writing).</p>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-4 ">
+<h3 class = "c">Prime numbers</h3>
+<p>
+  First, you need four different prime numbers: p,q,e and d.  
+</p>
+
+  <h4 class = "c">Choose p and q</h4>
+<p class = "c">
+
+  p = 5
+  <br>
+  q = 23
+
+</p>
+
+
+  <h4 class = "c">Multiply them together</h4>
+  <p class = "c">
+    n = $ 5 \times 23 = 115 $
+  </p>
+
+
+  <h4 class = "c">Calculate $ \phi $</h4>
+  <p class = "c">
+    $ \phi  = (5 -1) \times (23-1) $
+    <br>
+    $ \phi = 4 \times 22 = 88 $
+  </p>
+<p>
+  The numbers <strong>n</strong> and <strong>$ \phi $</strong> are used to make the keys.
+</p>
+</div>
+    <div class = "col-sm-4 ">
+   
+<h3 class = "c">Make the public key, e</h3>
+  <p>
+    You need two numbers, e and d. The public key is e, anyone can see this and they use it to code
+    messages that they send to you.
+    <br>
+    To read those messages you need to use d, which is your secret key.
+  </p>
+  <h4 class = "c">Making e</h4>
+  <p>
+    <ul>
+      <li>
+    e can be a small <strong>prime</strong> number (3,5,7,11,..)
+  </li>
+  <li>
+    e must be less than $ \phi $
+  </li>
+  <li>
+    When $ \phi $ is divided by e, the remainder must be greater then 0.
+  </li>
+  </ul>
+  </p>
+  <p>Try e = 3. $ \phi \div e = 22 \div 3 $ = 7 + remainder 1.<p>
+  We can use e = 3.</p>
+  <p>
+    You could not use e = 11 because $ \phi \div e = 88 \div 11 $ = 8 + remainder 0
+  </p>
+</div>
+
+ <div class = "col-sm-4 ">
+  
+<h3 class = "c">Make the private key, d</h3>
+<p>
+Making d can be difficult. But for small numbers this method can be used.
+</p>
+<p>
+  You need to find a number so that $ e \times d $ has a remainder of 1 when divided by $ \phi $
+  <br>
+  3 $ \times d \div 88 $ has a remainder of 1 
+  </p>
+<p>
+  <ol>
+    <li>Divide $ \phi $ by e 
+<br>
+    88 $ \div 3 $ = 29 + 1 remainder
+    </li>
+    <li>add 1 to 29 and see if 30 is an answer</li>
+    <li>3 $ \times 30 \div 88 = 90 \div 88 = $ 1 + 2 remainder</li>
+    <li>d = 30 is NOT an answer</li>
+    <li>Try 30  + 29 = 59</li>
+    <li>3 $ \times 59 \div 88 = 177 \div 88 $</li>
+    <li>177  $ \div 88 = 2 + 1 $ remainder.</li>
+    <li>d = 59 IS an answer</li>
+  </ol>
+<p>Now we have n = 115, e = 3 and d = 59 - you are ready to start sending messages!</p>
+
+  </div><
+</div>
+
+</div>
+
+<div class = "row">
+<div class = "col-sm-12 ">
+   <h2 class = "c">Coding and Decoding a Message</h2>
+   <p>
+    We will start with a message in words and then change it into the number codes that are used by computers.
+    A = 65, B = 66, Z = Z = 90. A space has a code of 32.
+    <p>
+      To send the message HELLO change it into 6 number codes H = 72, E = 69, L = 76, O =79.
+    </p>
+    <p>Now use this formula C(i) = $ m(i)^e $ mod n, 
+      <br> m(i) is the number code - m(1) = 72, m(2) = 69, m(3) = 78, m(4) = 76 and m(5) =79.</p>
+      <p> C(1) = $ 72 ^ 3 $ mod 115</p>
+<p>When using modulo arithmetic you only use the remainder from each calculation, it works like this:
+<ul>
+  <li>$ 72^1 \div 115 = 72 \div 115 = 0 + 72 $ remainder</li>
+  <li>$ 72^1 $ mod 115 = 72 </li>
+  <li>$ 72^2 \div 115 = 5184 $ \div 115  = 45 + 9 remainder</li>
+  <li>$ 72^3 mod 115 = (72^2 \times 72^1) mod 115 = (72 \times 9) $ mod 115</li>
+  <li>$ 72^3 $ mod 115 = 648 mod 115 = 73</li>
+</ul>
+<p> The letter H = 72 and 72 is sent as 73
+<p> Using the same method, E = 69 and 69 is sent as 69, L = 76 and 76 is sent as 21, O = 79 and 79 is sent as 34.
+</p>
+<p>HELLO -> 73 69 76 76 79 and is sent as 72,69,62,62,34</p>
+<button id = "computeC">Calculate C</button>
+<div id = "answerC"></div>
+<div id = "answerE"></div>
+</div></div>
+
+
+<div class = "row">
+<div class = "col-sm-4 ">
+  <h3 class = "c">Receiving the message</h3>
+  <p>
+  The person receiving the message gets these numbers (72,69,62,62,34). If they try to read them using computer codes without decoding they will
+  make  <strong>OE>>"</strong> which doesn't make any sense.
+</p>
+  <h4 class = "c">Decoding the message</h4>
+  <p>To decode the message they must use this formula P(i) = $ C(i)^d $ mod n $ = C(i)^59 $ mod 115</p>
+  <p>
+    <ol>
+      <li>P(1) = $73^59 $ mod 115</li>
+      <li>P(2) = $69^59 $ mod 115</li>
+      <li>P(3) = $62^59 $ mod 115</li>
+      <li>P(4) = $62^59 $ mod 115</li>
+      <li>P(5) = $34^59 $ mod 115</li>
+      <li></li>
+    </ol>
+They are BIG numbers but with modulo we only need to use the remainders.
+  </p>
+  <p>
+    $ 72^59 $ mod 115 is calculated like this
+    <br>
+    <ul>
+      <li>$ 73^1 $ mod 115 = 73</li>
+      <li>$ 73^2 $ mod 115 = 73 x 73 mod 115 = 39</li>
+      <li>$73^4 $ mod 115 = $ 73^2 \times 73^2 $ mod 115 = 39 x 39 mod 115 = 26</li>
+      <li>$73^8 $ mod 115 = $ 73^4 \times 73^4 $ mod 115 = 26 x 26 mod 115 = 676 mod 115 = 101</li>
+      <li>$73^16 $ mod 115 = $ 73^8 \times 73^8 $ mod 115 = 101 x 101 mod 115 = 10201 mod 115 = 81</li>
+      <li>$73^32 $ mod 115 = $ 73^16 \times 73^16 $ mod 115 = 81 x 81 mod 115 = 6561 mod 115 = 6</li>
+
+
+    </ul>
+  </p>
+  <p> 59 = 32 + 16 + 8 + 2 + 1, so  
+    $73^59 mod 115  = $73^(32+16+8+2+1) $ mod 115 = 6 x 81 x 101 x 39 x 73 mod 115
+    <br>
+    = (6 x 81) mod 115 x (101 x 39) mod 115 x 73
+    = 26 x 29 x 73 mod 115 = 72
+  </p>
+  <p>And 72 is the computer code for H - the message can now be decoded </p>
+  <p>The other answers can be checked by using tonline calculator.
+
+
+
+</div>
+
+<div class = "col-sm-4 ">
+   <h3 class = "c">Coding and Decoding</h3>
+<h4 class = "c">Send a message</h4>
+<br>
+  <label>m = </label><input id = "cipherText" type = "text" class = "uppercase">
+  <br>
+  <label>n = </label><input type="number" id ="n">
+  <br>
+  <label>e = </label><input type="number" id ="e">
+  <button id = "sendMessage">Send</button>
+  <br>
+  <label>Your message in computer code is </label>
+  <label id = "computerCodesSent"></label>
+  <label>Your message in RSA code is  </label>
+  <label id = "RSACodesSent"></label>
+
+  <h4 class = "c">Read a message</h4>
+<br>
+  <label>m = </label><input id = "encodedText" type = "text">
+  <br>
+  <label>n = </label><input type="number" id ="nd">
+  <br>
+  <label>d = </label><input type="number" id ="d">
+  <button id = "readMessage">Read</button>
+  <br>
+  <label>Your message in computer code is </label>
+  <label id = "decodedText"></label>
+  <label>Your message in English is  </label>
+  <label id = "englishText"></label>
+
+</div>
+
+
+<div class = "col-sm-4 ">
+
+
+
+</div>
+</div>
+</div>
+
+<div class = "row">
+<div class = "col-sm-12 ">
+   <h2 class = "c">Example - Sending an English Message</h2>
+   <p>
+    We will start with a message in words and then change the letters into a number code. 
+    That number code will be sent using n and e. The number codes are up to 255  so to make n you need p and q to be 
+    a value of n that is greater than 255.
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-12 ">
+   <h2 class = "c">Example - Sending an English Message - Letter combined in groups of 2</h2>
+   <p>
+    We will start with a message in words and then change the letters into a number code. 
+    That number code will be sent using n and e. The number codes are up to 255  so to make n you need p and q to be 
+    a value of n that is greater than 255.
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-12 ">
+   <h2 class = "c">Example - Sending a Khmer Message</h2>
+   <p>
+    We will start with a message in words and then change the letters into a number code. 
+    That number code will be sent using n and e. The number codes are greater than 6000 so to make n you need p and q to be 
+    be primes that are between 80 and 120,
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-4 ">
+  <h3 class = "c">Letters -> Numbers</h3>
+</div>
+
+<div class = "col-sm-4 ">
+ <h3 class = "c">p,q,n,e,d</h3>
+</div>
+
+<div class = "col-sm-4 ">
+   <h3 class = "c">Coding and Decoding</h3>
+
+
+</div>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#readMessage').on('click', function()
+  {
+    var codedMessage = $('#encodedText').val() ;
+  //  alert(codedMessage) ;
+    codedMessage.toString() ;
+ //    alert(codedMessage) ;
+    var n = $('#nd').val() ;
+    var d = $('#d').val() ;
+    d = parseInt(d) ;
+    n = parseInt(n) ;
+    $('#decodedText').empty() ;
+    $('#englishText').empty();
+
+    // get array of number codes
+    var message = codedMessage.split("+");
+    alert('split ' + message);
+    var l = message.length ;
+    for (var i = 0 ; i < l ; i++)
+    {
+      
+      var code = message[i] ;
+      code = parseInt(code) ;
+      if (code > 0)
+      {var decodedText = expModulo(code,d,n);}
+    
+      var englishText = String.fromCharCode(decodedText);
+      $('#decodedText').append(decodedText + '-');
+      $('#englishText').append(englishText);
+
+    }
+  
+
+  })
+  })
+
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#sendMessage').on('click', function()
+  {
+    var message = $('#cipherText').val() ;
+    var n = $('#n').val() ;
+    var e = $('#e').val() ;
+    var added = '' ;
+    e = parseInt(e) ;
+    n = parseInt(n) ;
+    $('[id$=CodesSent').empty() ;
+   message.toString() ;
+   message = message.toUpperCase() ;
+   $('#cipherText').attr('value', message);
+   // avoid computer code >= 115 , the value of n
+    var l = message.length ;
+    for (var i = 0 ; i < l ; i++)
+    {
+      var char = message.charCodeAt(i);
+      char = parseInt(char);
+      $('#computerCodesSent').append(char+'-');
+      var coded = expModulo(char,e,n);
+      if (i < l-1) {added = ' ';} else { added = '';}
+      $('#RSACodesSent').append(coded + added);
+
+    }
+  
+  })
+  })
+
+</script>
+
+
+<script type="text/javascript">
+
+  function expModulo(a,b,m)
+
+  {
+     // calculates a^b mod m
+
+  //  alert('received a^b mod m' + a + ' ' + b + ' ' + m + a*m % m);
+    var term = a ;
+    var product =1 ;
+    var q = b ;
+    var r = 0 ;
+
+    while (q > 0)
+    {
+      r = q % 2 ;
+      q = Math.floor(q / 2) ;
+      if (r == 1) 
+        {
+          product = (product*term) % m ;
+        }
+        term = (term * term) % m ;
+      
+    }
+   return product ;
+  }
+
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#computeC').on('click', function()
+  {
+
+    var n = 115;
+    var phi = 4*22;
+    var e = 3 ;
+    var d = findD(e,phi) ;
+   // alert(' d = ' + d);
+    var c = [72,69,76,76,79];
+    $('#answerC').empty();
+    $('#answerD').empty();
+    var cipher = []
+
+    var l = c.length;
+    for (var i = 0 ; i < l; i++)
+    {
+      var x = expModulo(c[i],e,n);
+      var y = expModulo(x,d,n);
+      cipher.push(x);
+      $('#answerC').append(' ' + x + ' ');
+       $('#answerE').append(' ' + y + ' ');
+    }
+
+   // alert('cipher = ' + cipher);
+
+  })
+  })
+
+</script>
+
+
+<script type="text/javascript">
+
+  function findD(e,phi)
+
+  {
+    // calculates a^b mod m
+   // console.log(e,phi);
+    var step = 1;
+    var a1 = 1 ;
+    var found = false ;
+    var a2 = Math.floor(phi/e) ;
+    var d = a1 + a2 ;
+    var answer = (e*d) % phi ;
+     if (answer == 1){found = true;}
+  //  console.log(a1,a2,d,found,step,answer);
+  
+    while (!found &  e*d < 20000)
+    {
+      a1 = a2 ;
+      a2 = d ;
+      var d = a1 + a2 ;
+      var answer = (e*d) % phi ;
+      if (answer == 1){found = true;}
+   //   console.log(a1,a2,t,found,step,answer);
+      step++ ;
+
+    }
+    if (found) {return d ;} else return 0 ;
+  }
+
+</script>

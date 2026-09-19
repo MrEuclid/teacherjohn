@@ -1,0 +1,502 @@
+<?php 
+$question = $_POST['question'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+  <title>Sort the Surds</title>
+  <meta charset="utf-8">
+
+
+
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+
+<script src="../javaScript/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="../javaScript/touchPunch/punch.js"></script> 
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+<style type="text/css">
+	
+	<style type="text/css">
+
+    #exit {margin: 10px ;}
+
+   h1 {color: blue; font-size: 2em}
+h2 {color: green ; font-size: 1.5em} 
+  .c {text-align:center ; }
+  .r {text-align:right ; }
+  .l {text-align:left ; }
+
+  [id^=sortable] 
+    { 
+      list-style-type: none; 
+      margin: 0; 
+      padding: 0; 
+      width: 600px; 
+      margin-left: auto ; 
+      margin-right: auto ; 
+      width: auto;
+      }
+      
+  #sortable li 
+    { 
+    margin: 3px 3px 3px 0; 
+    padding: 5px; 
+    float: left; 
+    width: auto;
+    width:100px;
+    height: 80px; 
+    font-size: 2em; 
+    text-align: center; 
+    font-weight: bold;  
+    line-height: 2em; /* sets vertical height */
+    background-color: blue;
+    color: white;
+    font-weight: bolder;
+    }
+
+    #sortable4 li 
+    { 
+    margin: 3px 3px 3px 0; 
+    padding: 5px; 
+    float: left; 
+    width: auto;
+    width:100px;
+    height: 80px; 
+    font-size: 1.5em; 
+    text-align: center; 
+    font-weight: bold;  
+    line-height: 2em; /* sets vertical height */
+    background-color: blue;
+    color: white;
+    font-weight: bolder;
+    }
+
+ .wrapper 
+    {
+        text-align: center;
+    }
+    .wrapper ul {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        /* For IE, the outcast */
+        zoom:1;
+        *display: inline;
+    }
+    .wrapper li {
+        float: left;
+        left: 300px ;
+        padding: 2px 5px;
+        border-left: : 0px solid black;
+    }
+
+
+
+    .c {
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            margin: 0 ;
+          }
+
+h1 {color: blue; font-size: 2em}
+h2 {color: green ; font-size: 1.5em}
+
+h3 {color: orange; font-size: 1em}
+h4 {color: lightblue ; font-size: 0.8em}
+
+</style>
+ 
+</head>
+<body>
+
+
+
+
+
+  <div class  = "container-fluid">
+
+
+       <div class = "row">
+   <div class = "col-sm-12 c">
+
+<h2>Sort the fractions from lowest to highest</h2>
+
+   </div></div>
+
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+ 
+   </div></div>
+
+
+
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+ <div class = "wrapper ">
+   <ul id="sortable4">
+   <li id = "4answer0" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel0">A</label></span></li>
+   <li id = "4answer1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel1">B</label></span></li>
+   <li id = "4answer2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel2">C</label></span></li>
+   <li id = "4answer3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel3">D</label></span></li>
+   <li id = "4answer4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel4">E</label></span></li>
+   <li id = "4answer5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "4answerLabel5">F</label></span></li>
+
+</ul>
+</div>
+
+  </div></div>
+
+    <div class = "row">
+   <div class = "col-sm-2 c">
+     <button  id = "value0"> $ \sqrt{2} = 1.41 $</button>
+     </div>
+
+  <div class = "col-sm-2 c">
+     <button  id = "value1"> $ \sqrt{3} = 1.73 $</button>
+     </div>
+
+       <div class = "col-sm-2 c">
+     <button  id = "value2"> $ \sqrt{5} = 2,24 $</button>
+     </div>
+
+       <div class = "col-sm-2 c">
+     <button  id = "value3"> $ \sqrt{7} = 2,65 $</button>
+     </div>
+
+       <div class = "col-sm-2 c">
+     <button  id = "value4"> $ \sqrt{11} = 3,32 $</button>
+     </div>
+
+        <div class = "col-sm-2 c">
+     <button  id = "value5"> $ \sqrt{13} = 3.61 $</button>
+     </div></div>
+  
+  <div class = "row">
+   <div class = "col-sm-12 c">
+     <button  id = "check4" class="btn btn-primary btn-lg">Check</button>
+   </div></div>
+
+</div>
+</body>
+</html>
+
+<script>
+
+// swap on basis of decimal value data[i][2] for each index i
+function bubbleSort(a,index,tdata) {
+    var swapped;
+
+ //  alert(' bubble ' + a + ' ' + index + ' data ' + tdata);
+    do {
+        swapped = false;
+        for (var i=0; i < a.length-1; i++) {
+            if (tdata[a[i]][index] > tdata[a[i+1]][index]) {
+                var temp = a[i];
+                a[i] = a[i+1];
+                a[i+1] = temp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+
+  //   alert(' bubble ' + a + ' ' + index);
+ 
+    
+    return a ;
+  }
+
+
+
+
+// returns a random integer between min and max
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+  // gcd of a,b - recursive method
+   var gcd = function(a, b) {
+  if (!b) {
+    return a;
+  }
+
+  return gcd(b, a % b);
+}
+
+
+
+  
+  function makeRandomList(l,nOptions) 
+
+  {
+  
+  // receives length of the data array
+ var randomList = []; // indexes of questions
+var originalList = [] ; // indexes from 0 to l-1
+
+
+
+var n = nOptions;
+
+for (var i = 0; i < l; i++)
+  {
+    originalList.push(i);  // has the indexes of the data array
+  }
+
+//alert(' original list ' + originalList);
+// select n randomly chosen indexes and place in randomOrder
+
+for (var i = 0 ; i < n ; i++)    // make randomList of length equal to the number of questions required
+{
+  var indexLast = originalList.length-1 ;
+  var position = getRandomInt(0,indexLast-1); // choose randomly from original
+  randomList.push(originalList[position]); // put into the randomList
+
+  // reduce original list by removing element at position
+   originalList.splice(position, 1);
+}
+
+return randomList ;
+
+}
+    
+
+</script>
+
+
+<script type="text/javascript">
+  
+
+  function getSurd(a,b,c,d)
+
+  {
+
+    var s = '' ;
+    var value = 0 ;
+    a = parseInt(a) ;
+    b = parseInt(b) ;
+    c = parseInt(c) ;
+    d = parseInt(d) ;
+    
+    if (d == 1) 
+      {
+        s = '+'; 
+        m = 1 ;
+      } 
+
+    else
+      {
+        s = '-' ;
+        m = -1 ;
+      }
+
+    var numerator = a ;
+    var t = Math.sqrt(c);
+    var denominator = b + m*t ;
+    var value = numerator/denominator;
+
+    return value ;
+
+  }
+
+</script>
+
+ <script>
+  $( function() {
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+// $('#sortable li').addClass('ui-state-default');
+  } );
+  </script>
+
+
+  
+
+
+
+  <script>
+  $( function() {
+    $( "#sortable4" ).sortable();
+    $( "#sortable4" ).disableSelection();
+// $('#sortable li').addClass('ui-state-default');
+  } );
+  </script>
+
+<script>
+
+    $(document).ready(function(){
+
+question = '<?php echo $question; ?>' ;
+points = parseInt(question.substr(-1));
+
+numberOptions = 6 ; // number of elements to be sorted
+//copySort4 = $('#sortable4').html() ;  // copy the html for the sortable buttons
+
+// make a / b. +/- sqrt(c)
+aChoices = [1,2,3,5,7,11];
+bChoices = [-11,-7,-5,-3,-2,-1,1,2,3,5,7,11] ;
+cChoices = [2,3,5,7,11,13];
+dChoices =  [0,1];
+
+data = [] ;
+for (var i = 0 ; i < aChoices.length; i++)
+  {
+    for (var j = 0 ; j < bChoices.length ; j++)
+      {
+        for (var k = 0 ; k < cChoices.length; k++)
+       {
+        for (var l = 0 ; l <dChoices.length ; l++)
+        {
+          var a = aChoices[i] ;
+          var b = bChoices[j] ;
+          var c = cChoices[k] ;
+          var d = dChoices[l] ;
+          value = getSurd(a,b,c,d);
+          var t = [a,b,c,d,value];
+          data.push(t) ;
+        }
+
+       }
+
+      }  
+  }
+
+//alert('Here is the data ' + data);
+var dataLength = data.length ;
+randomOrder4 = [] ;
+randomOrder4  = makeRandomList(dataLength,numberOptions);
+sortedList = [] ;
+sortedList = randomOrder4.slice(0);
+
+// because JS sorts as string not number
+sortedList.sort(function(a, b) {
+  return a - b;
+});
+
+var myData = data.slice(0) ;
+buttonList4 = randomOrder4.slice(0);
+buttonList4 = bubbleSort(buttonList4,4,myData) ; // 0 = a, 1 = b, 2 = c , 3 = d , 4 = value
+// alert(' two lists one sorted and one unsorted ' +randomOrder4 + '  ' + buttonList4);
+
+
+sortedIDs4 = $( "#sortable4" ).sortable( "toArray" );
+// alert(' List of options ' + randomOrder4 + ' sorted list ' + sortedList + ' button list ' + buttonList4);
+
+values  = [] ; // array of values as dispalyed
+// populate choices
+choices4  = sortedList.slice(0) ; // stores choices to be ordered by the student
+for (var i = 0 ; i < numberOptions ; i++)
+  {
+    var a = data[choices4[i]][0] ;
+    var b = data[choices4[i]][1] ; 
+    var c = data[choices4[i]][2] ;
+    var d = data[choices4[i]][3] ;
+        if (d == 1) 
+      {
+        s = '+'; 
+        m = 1 ;
+      } 
+
+    else
+      {
+        s = '-' ;
+        m = -1 ;
+      }
+
+    var value = getSurd(a,b,c,d);
+    var index = sortedList.indexOf(buttonList4[i]); 
+    values.push(index) ;
+    var target = '4answerLabel' + i ;
+    var frac = '$  \\frac{ ' + a  + '}{ ' + b + s  + ' \\sqrt{' + c + '}} $' ;
+    $('#4answerLabel'+i).html(frac);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "target"]);
+    // $('#value'+i).text(value) ;
+  
+  } // for loop
+
+ 
+})
+
+
+</script>
+
+ <script type="text/javascript">
+    
+    $(document).ready(function(){
+  $('#check4').on("click", function(event) 
+
+  {
+    alert("Clicked check4");
+  sortedIDs4 = $( "#sortable4" ).sortable( "toArray" );
+// alert('Index of sorted buttons ' + sortedIDs4 + ' button list ' + buttonList4);
+moveable = [] ;
+
+for (var i = 0 ; i < sortedIDs4.length; i++)
+{
+  var x = parseInt(sortedIDs4[i].substr(7)) ; // allow for 4 as a prefix e.g. 4answer0
+  moveable.push(x);
+}
+
+// alert(moveable + ' goal = ' + values)
+var i = 0 ;
+var passed = true ;
+while (i < numberOptions & passed == true) 
+{
+  if (values[i] != moveable[i]) 
+    {
+      passed = false ; 
+      alert('Not yet');
+    }
+  i++ ;
+}
+
+if (passed) 
+{
+  
+
+     var pts = parseInt($('#total').text());
+     pts = parseInt(pts);
+     points = parseInt(points) ;
+     console.log("points",pts);
+     pts = parseInt(pts + points);
+     console.log("points",pts);
+     $('#total').text(pts);
+    alert("You have solved the puzzle!");
+    $('#menu').show();
+  processWin(questionID);
+    
+
+     $('#play').empty().show();
+     $('#q6').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
+      
+ 
+  
+
+
+}
+
+}) // end of click 
+
+}) // end of click
+
+
+
+  </script>
+
+

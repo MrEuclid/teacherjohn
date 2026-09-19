@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+ 
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+
+<link rel="stylesheet" href="../css/templeStyles.css">
+<link rel="stylesheet" href="../css/newTempleStyles.css">
+ 
+
+
+    <meta charset="utf-8">
+    
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title>Open the Door</title>
+
+<style type="text/css">
+
+  #tens,#units {
+              width: 8vw ; 
+              height: 8vw; 
+              background-color: lightblue;
+              color: black;
+              font-size: 3vw;
+              text-align: center;
+              vertical-align: center;
+              font-weight: bolder;
+              margin: 4vw;
+            }
+
+
+  [id^=moves]{
+              width: 8vw ; 
+              height: 8vw; 
+              background-color: lightblue;
+              color: black;
+              font-size: 3vw;
+              text-align: center;
+              vertical-align: center;
+              font-weight: bolder;
+              margin: 1vw;
+            }
+
+  [id^=menu]{
+              width: 8vw ; 
+              height: 8vw; 
+              background-color: lightgreen;
+              color: black;
+              font-size: 3vw;
+              text-align: center;
+              vertical-align: center;
+              font-weight: bolder;
+              margin: 1vw;
+            }
+
+#attempt{
+              width: 20vw ; 
+              height: 10vw; 
+              background-color: lightyellow;
+              color: black;
+              font-size: 3vw;
+              text-align: center;
+              font-weight: bolder;
+            
+            }
+
+
+ #guess {
+              width: 15vw ; 
+              height: 10vw; 
+              background-color: lightgrey;
+              color: black;
+              font-size: 2vw;
+              text-align: center;
+              font-weight: bolder;
+            
+            }
+
+#message {text-align: center; font-size: 3vw; ; color:green;}
+
+img {display: inline-block;}
+
+
+</style>
+
+</head>
+
+<body>
+
+   <div class  = "container-fluid">
+      <div class = "row">
+        <div class = "col-sm-12 c">
+   <h1><img id = "pio1" src = "images/dragon1.jpeg" width = "auto" height = "auto">
+Guess the Numbers
+   <img id = "pio2" src = "images/dragon2.png" width = "50px" height = "auto">
+ </h1>
+</div></div>
+<div class = "row">
+  <div class = "col-sm-12 c">
+<a href="index.php" >
+
+     <button id = "home" class="btn btn-info btn-sm">Home</button>
+     </a>
+
+  <a href="openTheDoor.html" >
+      
+        <button id = "retry" class="btn btn-info btn-sm">Try again</button>
+     </a>
+
+       <button id = "counter">Counter</button>
+  </div></div>
+
+<div id = "game">
+<div class = "row">
+  <div class = "col-sm c">
+   <p id = "messageGame"></p>
+    </div></div>
+
+<!-- menu grid  -->
+
+<div class = "row">
+  <div class = "col- c">
+
+ <button id = "menu1"></button>
+  <button id = "menu2"></button>
+   <button id = "menu3"></button>
+
+ </div></div>
+
+ <div class = "row">
+  <div class = "col- c">
+
+ <button id = "menu4"></button>
+  <button id = "menu5"></button>
+   <button id = "menu6"></button>
+
+ </div></div>
+
+<div class = "row">
+  <div class = "col- c">
+
+ <button id = "menu7"></button>
+  <button id = "menu8"></button>
+   <button id = "menu9"></button>
+
+ </div></div>
+
+
+</div> <!-- game -->
+
+<div id = "unlock">
+<!-- top left = (0,) and bottom right = (3,3)  -->
+
+<div class = "row">
+  <div class = "col-sm c">
+    <p id = "message"></p>
+    </div></div>
+
+<!-- grd-row-column -->
+<div class = "row">
+<div class = "col-sm c">
+  <button id = "tens" class = "digit"></button>
+   <button id = "units" class = "digit"></button>
+
+</div></div>
+
+<div class = "row">
+<div class = "col-sm c">
+
+  <input id = "attempt" type = "number" min="10" max="99">
+  <button id = "guess">Guess</button>
+ 
+ 
+</div></div>
+
+<div class = "row">
+<div class = "col-sm c">
+
+ 
+  <button id = "moves1"></button>
+  <button id = "moves2"></button>
+   <button id = "moves3"></button>
+    <button id = "moves4"></button>
+     <button id = "moves5"></button>
+      <button id = "moves6"></button>
+       <button id = "moves7"></button>
+ 
+</div></div>
+
+<div class = "row">
+  <div class = "col-sm c">
+<img src = "images/dragon2.png">
+    </div></div>
+
+</div> <!-- unlock -->
+  
+</div> <!-- container -->
+  
+</body>
+</html>
+
+<script>
+
+  function newGame()
+  {
+ 
+   tries = 0 ;
+
+  // set places[x,y] = 0 
+  // enable all squares
+  
+  }
+
+
+
+</script>
+
+<script>
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+</script>
+<script>
+function initialise()
+{
+$('#attempt').val(50);
+tries = 0 ;
+$('#message').text("8 moves you have to open the door. Fail, and then I will devour you with my fire!");
+$('#attempt').val(50);
+// $('[id^=moves]').hide();
+
+  $('[id^=grd]').text("?");
+  $('[id^=moves]').empty() ;
+
+  tens = randomIntFromInterval(1,9);
+  units = randomIntFromInterval(0,9);
+
+  console.log(tens,units);
+  number = parseInt(tens*10 + units);
+  console.log(number,tens,units);
+
+}
+
+</script>
+
+<script> 
+
+  $(document).ready(function(){
+
+    initialise();
+    $('#unlock').show() ;
+    $('#game').hide();
+
+    })
+
+</script>
+
+
+<script> 
+
+  $(document).ready(function(){
+      $('#guess').click(function(){
+
+  var choice = $('#attempt').val();
+  $('#message').text("");
+
+console.log("Choice",choice,"Number",number,"Tries",tries);
+
+  var t = Math.floor(choice/10);
+  var u = choice % 10 ;
+
+  if (choice > 99 | choice < 10) {alert("The Number is between 10 and 99.");  $('#attempt').val(""); }
+else
+{
+tries++ ;
+
+  if (choice < number) {$('.digit').css("background-color","yellow") ;  
+  // alert("Low");
+  $('#message').text("Too small!");}
+    if (choice > number) {$('.digit').css("background-color","orange") ; 
+    $('#message').text("Too big!");
+  //   alert("High");
+  }
+  
+      if (choice ==  number) {$('.digit').css({"background-color":"green","color":"yellow"}) ;}
+  $('#tens').text(t);
+  $('#units').text(u);
+  $('#moves' + tries).text(choice);
+   if (choice < number) 
+    { $('#moves' + tries).css("background-color","yellow") ;  
+     
+    }
+
+    if (choice > number) 
+      {
+        $('#moves' + tries).css("background-color","orange") ;
+        
+      }
+
+     if (choice ==  number & tries <= 8) 
+      { 
+        $('#moves' + tries).css("background-color","green").css("color","yellow") ; 
+        $('#messageGame').text("Welcome to the Game!");
+        $('#counter').text('-');
+        $('#unlock').hide();
+        $('#game').show();
+        exit();
+      }
+
+  if (tries > 8) {initialise();}
+  console.log("Tries",tries,choice == number);
+  $('#counter').text(tries);
+
+}
+
+
+})
+})
+
+
+</script>
+
+
+
+<script> 
+
+$(document).ready(function(){
+
+
+initialise() ;
+
+    })
+
+</script> 
+
+
+

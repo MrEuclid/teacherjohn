@@ -1,0 +1,114 @@
+
+
+<div class = "row">
+	<div class = "col-sm-12">
+<input id = "part3P" type = "number" hidden = "true">
+<input id = "part3Q" type = "number" hidden = "true">
+<input id = "part3PHI" type = "number" hidden = "true">
+<input id = "part3E" type = "number" hidden = "true">
+<input id = "part3D" type = "number" hidden = "true">
+ <h1 class = "c">Game part 3 </h1>
+ <p>
+ 	In this part you will see how a message can be cracked if only small prime numbers are used.
+
+ </p>
+ <p>An evil hacker has got into Teacher John's computer. He sees that Teacher John has hidden the secret key, but he thinks that he can work it out 
+ using the public keys e and n that Teacher John has sent to his students.</p>
+ <h2 class = "c" id = "showN"> n = 943 and e = 3 </h2>
+ <p>See if you can find out how the hacker will do this, so that you can warn Teacher John to make his codes more secure.</p>
+</div></div>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		<h3 class = "c">Put in the factors of n</h3>
+ <label id = "3n" ></label> = <input id = "my3P" type = "number" class = "data"> $ \,\times \, $ <input id = "my3Q" type = "number" class = "data">
+
+
+</div></div>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		<h3 class = "c">Now find the value of $ \phi = (p-1) \times (q-1) $ </h3>
+		
+ <label>$ \phi $ = </label> = <input id = "my3Phi" type = "number" class = "data"> 
+
+
+ <h3 class = "c">Now add the value of d </h3>
+  <br>
+  <label>d = </label><input type="number" id ="d3" class = "data">
+  <br>
+  <button id = "check3D"   class="btn btn-info btn-lg" >Read the message</button>
+</div></div>
+
+<div id = "showAnswerPart3">
+<div class = "row">
+	<div class = "col-sm-12 c">
+<h3 class = "c" >Here is you answer</h3>
+<br>
+  <label>m = </label><label id = "encodedText3" ></label>
+  <br>
+  <label>n = </label><label id ="part3N"></label>
+
+  <br>
+
+  <label>The message in English is  </label>
+  <br>
+  <label id = "englishText3"></label>
+</div></div>
+</div>
+
+<div class = "row">
+	<div class = "col-sm-12 c">
+		  <br>
+  <button id = "check3D"   class="btn btn-primary btn-lg" >Help to calculate d</button>
+  <div id = "secretKeyCalculation3">
+<h2 class = "c">Calculate the secret key d</h2>
+<p class = "c">The secret key <strong>d</strong> is found using this equation. </p>
+  <p class = "c">
+  <strong>d x e = 1 mod <label id = "phi"></label></strong>.
+</p>
+<p>
+    <p>Using the method in this example</p>
+    <strong>Example</strong>
+    <br>
+    $ \phi = 20 $ and e = 3 
+    <br>
+    Calculate $ \phi \div  e $ and use only the whole number part.
+    <br>
+    a = 20 $ \div $ 3 = 6
+    <br>
+    Add 1 to the answer to get d, so d = 7
+    <br>
+    Check to see if 3 $ \times  $ 7 = 1 mod  $ \phi $
+    <br>
+    21 $ \div 20 $ = 1 + remainder 1 
+    <br>
+    <strong>d = 7 </strong>
+    <br>
+    <strong>Example</strong>
+    Find d when e = 3 and $ \phi = 88 $
+    <br>
+    a = 88 $ \div $ 3 ,  <strong>q = 29</strong> 
+    <br>
+    Add 1 to a to get d.
+    <br>
+    d = 30
+  <br>
+  Check 30 $ \times 3 $ mod 28 = 2,
+  <br>
+   d = 30 is not the answer.
+  <br>
+  Add 29 to 30 and try again
+  <br>
+  d = 29  + 30 = 59.
+  <br>
+  3 $ \times 59 $ mod 88 = 177
+  <br>
+  177 $ \div $ 88  = 2 + 1 remainder, we have an answer.
+  <br>
+  <strong>d = 59</strong> 
+   </p>
+  </div> <!-- secret key calculation -->
+
+</div></div>
+

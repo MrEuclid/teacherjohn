@@ -6,28 +6,34 @@
   <title>Crossword 5x5 PHP_Refactored</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-  <style>
-    label { font-size: 1em; font-weight: bolder; color: blue; cursor: pointer; }
-    #home, #retry, #check { font-size: 1.2em; font-weight: bolder; }
-    [id^=grid] {
-      width: 50px; height: 50px; 
-      background-color: lightblue; color: black;
-      font-size: 1.2em; text-align: center; font-weight: bolder;
-      margin-right: 1px; margin-bottom: 1px; text-transform: uppercase;
-    }
-    [id^=puzzle] {
-      color: black; background-color: pink; 
-      font-weight: bolder; font-size: 1.2em; 
-      width: 40px; height: 40px; margin-top: 10px; padding-bottom: 5px;
-    }
-    #message { text-align: center; font-size: 3vw; color: green; }
-    img, input, div { display: inline-block; }
-    input { width: 50px; height: 50px; text-align: center; text-transform: uppercase; }
-    
-    .c { text-align: center; }
-    .clue-list label { display: block; margin-bottom: 5px; padding: 2px; }
-    .clue-active { background-color: lightblue; }
-  </style>
+ <style>
+  label { font-size: 1em; font-weight: bolder; color: blue; cursor: pointer; }
+  #home, #retry, #check { font-size: 1.2em; font-weight: bolder; }
+  
+  [id^=grid] {
+    width: 50px; height: 50px; 
+    background-color: lightblue; color: black;
+    font-size: 1.2em; text-align: center; font-weight: bolder;
+    margin-right: 1px; margin-bottom: 1px; text-transform: uppercase;
+  }
+  
+  [id^=puzzle] {
+    color: black; background-color: pink; 
+    font-weight: bolder; font-size: 1.2em; 
+    width: 40px; height: 40px; margin-top: 10px; padding-bottom: 5px;
+  }
+  
+  #message { text-align: center; font-size: 3vw; color: green; }
+  img, input { display: inline-block; }
+  input { width: 50px; height: 50px; text-align: center; text-transform: uppercase; }
+  
+  /* Safely scope the inline-block rule so it only affects the imported grid file */
+  .grid-wrapper div { display: inline-block; }
+  
+  .c { text-align: center; }
+  .clue-list label { display: block; margin-bottom: 5px; padding: 2px; text-align: left; }
+  .clue-active { background-color: lightblue; }
+</style>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/x-mathjax-config">
@@ -41,15 +47,7 @@
 
 <body>
   <div class="container-fluid">
-    <div class="row text-center">
-      <div class="col-sm-12 c">
-        <h1>
-          <img src="images/dragon1.jpeg" width="auto" height="auto" alt="Dragon">
-          Solve the Puzzle
-          <img src="images/dragon2.png" width="50px" height="auto" alt="Dragon">
-        </h1>
-      </div>
-    </div>
+  
     
     <div class="row text-center mb-3">
       <div class="col-sm-12 c">
@@ -72,29 +70,38 @@
     </div>
 
     <div class="row text-center"><div class="col-sm c"><p id="messageGame"></p></div></div>
-
-    <!-- Menu grid -->
-    <div class="text-center">
-      <?php include "crosswordGrid5x5.html"; ?>
+<!-- Menu grid with safe centering wrapper -->
+    <div class="row justify-content-center text-center">
+      <div class="col-auto grid-wrapper">
+        <?php include "crosswordGrid5x5.html"; ?>
+      </div>
     </div>
 
-    <div class="row text-center mt-3"><div class="col-sm c"><h2 id="message1">Find the Correct Words</h2></div></div>
+    <div class="row justify-content-center mt-3">
+      <div class="col-auto c">
+        <h2 id="message1">Find the Correct Words</h2>
+      </div>
+    </div>
     
-    <div class="row mt-4">
-      <div class="col-2"></div>
-      <div class="col-4 text-center"><b>Across</b></div>
-      <div class="col-4 text-center"><b>Down</b></div>
-      <div class="col-2"></div>
+    <!-- Centered Clue Headers -->
+    <div class="row justify-content-center mt-4">
+      <div class="col-12 col-sm-6 col-md-4 text-center">
+        <b>Across</b>
+      </div>
+      <div class="col-12 col-sm-6 col-md-4 text-center">
+        <b>Down</b>
+      </div>
     </div>
 
-    <div class="row clue-list">
-      <div class="col-2"></div>
-      <div class="col-4" id="clues-across"></div>
-      <div class="col-4" id="clues-down"></div>
-      <div class="col-2"></div>
+    <!-- Centered Clues List -->
+    <div class="row justify-content-center clue-list">
+      <div class="col-12 col-sm-6 col-md-4" id="clues-across">
+        <!-- Across clues inject here -->
+      </div>
+      <div class="col-12 col-sm-6 col-md-4" id="clues-down">
+        <!-- Down clues inject here -->
+      </div>
     </div>
-  </div> 
-
   <script>
     // --- 1. DATA STRUCTURE ---
     // Extracting the hardcoded lines and clues into a clean dictionary.

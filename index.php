@@ -86,7 +86,7 @@
 
 <a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
 
-<a href = "https://teacherjohn.org/greenLight/greenLightAppJunior.html" target = "_blank"><button class = "btn btn-info">Green Light Easy</button></a>
+<a href = "https://teacherjohn.org/tetris/tetris.html" target = "_blank"><button class = "btn btn-info">Tetris</button></a>
 <!--
 <a href = "https://www.arvindguptatoys.com/toys-from-trash.php" target = "_blank"><button class = "btn btn-success">Arvind Gupta</button></a>
 

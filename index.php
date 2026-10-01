@@ -75,7 +75,7 @@
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
-<a href = "https://studio.code.org/courses/artist/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-warning">Turtle Graphics</button></a>
+<a href = "https://studio.code.org/courses/artist/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-primary">Turtle Graphics</button></a>
 <!--
 <a href = "https://docs.google.com/document/d/1piXf5GX-uco0YsZ_C_cGgDXYxF-R2IC1Qv2cRkEsxmw/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Video Sensing Lesson</button></a>
 -->

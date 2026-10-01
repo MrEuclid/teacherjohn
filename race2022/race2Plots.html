@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>race 2 Plots</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+  <script src= "../javaScript/plotly/math.min.js"></script>
+  <script src="../javaScript/plotly/plotly-latest.min.js"></script>
+
+<script src="../javaScript/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="../javaScript/touchPunch/punch.js"></script> 
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+<script type="text/javascript" src="javaScript/utilities.js"></script>
+
+
+    <link rel = "stylesheet" href  = "css/pioStudentsStyles.css">
+
+  <style>
+
+
+    .equationStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 120px ; 
+        text-align: center;
+      }
+
+    .limitStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 60px ; 
+        text-align: center;
+      }
+
+table {
+  border-collapse: collapse; 
+    margin: 0 auto; /* or margin: 0 auto 0 auto */
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+td {width: 9% ;  background-color: lightgreen ; color: black ; font-size: 12pt ; text-align: center; padding: 5px ; }
+
+#xStart, #yStart {font-size: 14pt ; font-weight: bolder; color: black ;}
+
+label 
+  {
+    font-size: 1.5em ; 
+    font-weight: bolder ; 
+    color: black ; 
+    background: orange ; 
+    margin:10px ;
+  }
+
+[id^=coeff] 
+  {
+    margin: 10px; 
+    width:3em; 
+    text-align: center ;
+  }
+
+  #showAnswer {font-size: 2em ; font-weight: bolder; color: red;}
+
+  </style>
+
+
+</head>
+<body>
+
+<div class="container">
+
+
+  <div class="row">
+        <div class="col-12 c">
+          <h1 class = "c">What is the Equation of the Graph?</h1>
+          <h2 class = "c" >     $ y = ax^2 + bx + c $ </h2>
+  </div></div>
+
+   <div class="row">
+  <div class="col-12 c">
+
+  <h3 class = "c">My answer</h3>
+
+
+  <label>a = </label><input id = "coeffA" type = "text" maxlength="3" >
+  <label>b = </label><input id = "coeffB" type = "text" maxlength="3">
+  <label>c = </label><input id = "coeffC" type = "text" maxlength="3">
+   <button id = "draw2" class="btn btn-info rectangle" >Check </button>
+    <input type="text"  id = "equationAnswer" hidden="true">
+
+
+</div></div>
+
+    <div class="row">
+        <div class="col-12 c">
+
+<h2 class = "c">Table</h2>
+
+<table>
+  <tr>
+     <td id = "xStart">X</td>
+     <td id = "xv0"></td>
+     <td id = "xv1"></td>
+     <td id = "xv2"></td>
+     <td id = "xv3"></td>
+     <td id = "xv4"></td>
+     <td id = "xv5"></td>
+     <td id = "xv6"></td>
+     <td id = "xv7"></td>
+     <td id = "xv8"></td>
+     <td id = "xv9"></td>
+   
+  </tr>
+  <tr>
+     <td id = "yStart">Y</td>
+     <td id = "yv0"></td>
+     <td id = "yv1"></td>
+     <td id = "yv2"></td>
+     <td id = "yv3"></td>
+     <td id = "yv4"></td>
+     <td id = "yv5"></td>
+     <td id = "yv6"></td>
+     <td id = "yv7"></td>
+     <td id = "yv8"></td>
+     <td id = "yv9"></td>
+  </tr>
+</table>
+
+</div></div>
+
+ <div class="row">
+        <div class="col-12 c">
+          <p id = "showAnswer"></p>
+        </div></div>
+
+
+  <div class="row">
+<div class="col-12 c">
+  <div id="plot"></div>
+</div></div>
+
+    <div class="row">
+        <div class="col-12 c">
+
+  
+  <input type="text" id="eq" value="x" class = "equationStyle" hidden = "true">
+
+  <input type = "text" id = "lowX" class = "limitStyle"  hidden = "true">
+  <input type = "text" id =  "highX" class = "limitStyle" hidden = "true">
+  <input type = "text" id = "highY" class = "limitStyle" hidden = "true">
+  <input type = "text" id = "equationQuestion" hidden = "true">
+</div></div>
+
+
+   
+   
+
+
+
+
+
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+  
+
+function drawGraphs(eqtn1,eqtn2)
+
+  {
+
+
+
+  var eAnswer = $('#equationAnswer').val() ;
+
+if (eqtn2 == '') {answerColor = 'white' ;} else {answerColor = 'red' ;}
+if (eqtn2 == eqtn1) {answerColor = 'blue' ;} 
+
+      var minX = parseInt($('#lowX').val()) ;
+      var maxX = parseInt($('#highX').val()) ;
+
+      var yMax = parseInt($('#highY').val()) ; ;
+
+   // alert('Graphing eqtn 1 '+ eqtn1 + '  eqtn2 ' + eqtn2) ; 
+      var stepX = 0.1 ;
+      
+      var n = 10 ;
+   //   var correctEquation = eqtn ;  // hide later on
+// uses content of input boxes
+      
+var layout = {
+
+
+  autosize: true,
+ 
+
+  // title: 'y = ' + correctEquation ,
+  xaxis: {
+    showgrid: true,
+    zeroline: true,
+    showline: true,
+   // mirror: 'ticks',
+    autoscale:true ,
+    gridcolor: '#bdbdbd',
+    tickmode: "auto" ,
+    nticks: 10,
+    gridwidth: 1,
+    zerolinecolor: 'green',
+    zerolinewidth: 4,
+    linecolor: '#636363',
+    title: 'X',
+    
+    linewidth: 6
+  },
+  yaxis: {
+    showgrid: true,
+    zeroline: true,
+    showline: true,
+  //  mirror: 'ticks',
+    gridcolor: '#bdbdbd',
+    autoscale:true,
+  // range: [minX*4,maxX*4],
+   tickmode: "auto" ,
+    nticks : 10,
+    gridwidth: 1,
+    zerolinecolor: 'green',
+    zerolinewidth: 4,
+    linecolor: '#636363',
+    title: 'Y',
+    linewidth: 6
+  }
+};    
+      // this is the data for trace1 - the question
+      // compile the expression once
+      const expressionQuestion = document.getElementById('equationQuestion').value
+      const exprQuestion = math.compile(expressionQuestion)
+
+      // evaluate the expression repeatedly for different values of x
+      const xValuesQuestion = math.range(minX, maxX, stepX).toArray()
+      const yValuesQuestion = xValuesQuestion.map(function (x) {
+        return exprQuestion.evaluate({x: x})
+      })
+
+      const expressionTableQuestion = document.getElementById('equationQuestion').value
+      const exprTableQuestion = math.compile(expressionTableQuestion)
+
+      // evaluate the expression repeatedly for different values of x
+      const xTableQuestion = math.range(minX, maxX, 1).toArray()
+      const yTableQuestion = xTableQuestion.map(function (x) {
+        return exprTableQuestion.evaluate({x: x})
+      })
+
+// data for answer = trace2
+
+      const expressionAnswer = document.getElementById('equationAnswer').value
+      const exprAnswer = math.compile(expressionAnswer)
+
+      // evaluate the expression repeatedly for different values of x
+      const xValuesAnswer = math.range(minX, maxX, stepX).toArray()
+      const yValuesAnswer = xValuesAnswer.map(function (x) {
+        return exprAnswer.evaluate({x: x})
+      })
+
+      const expressionTableAnswer = document.getElementById('equationAnswer').value
+      const exprTableAnswer = math.compile(expressionTableAnswer)
+
+      // evaluate the expression repeatedly for different values of x
+      const xTableAnswer = math.range(minX, maxX, 1).toArray()
+      const yTableAnswer = xTableAnswer.map(function (x) {
+        return exprTableAnswer.evaluate({x: x})
+      })
+
+for (var i = 0 ; i <= 9; i++)
+{
+
+  var xQuestion = xTableQuestion[i] ;
+  var yQuestion = yTableQuestion[i] ;
+    var x1 = Math.round(xQuestion * 1000) / 1000;
+    var y1 = Math.round(yQuestion * 1000) / 1000;
+  $('#x-'+i).text(x1) ;
+  $('#y-'+i).text(y1) ;
+   
+}
+
+// data for tableAnswer
+
+for (var i = 0; i < 10 ; i++)
+{
+
+  var xAnswer = xTableAnswer[i] ;
+  var yAnswer = yTableAnswer[i] ;
+    var x1 = Math.round(xAnswer * 1000) / 1000;
+    var y1 = Math.round(yAnswer * 1000) / 1000;
+  $('#x-'+i).text(x1) ;
+  $('#yA-'+i).text(y1) ;
+   
+}
+
+ 
+var arrayLength = yValuesQuestion.length;
+ for (var i = 0; i < arrayLength ; i++) 
+
+ {
+
+  if (yValuesQuestion[i] > yMax){yValuesQuestion.splice(i, 1); xValuesQuestion.splice(i,1);}
+  if (yValuesQuestion[i] < -yMax ){yValuesQuestion.splice(i, 1); xValuesQuestion.splice(i,1);}
+
+}
+   
+    // scan for extreme values
+
+// put into array for trace2
+
+ 
+var arrayLength = yValuesAnswer.length;
+ for (var i = 0; i < arrayLength ; i++) 
+
+ {
+
+  if (yValuesAnswer[i] > yMax){yValuesAnswer.splice(i, 1); xValuesAnswer.splice(i,1);}
+  if (yValuesAnswer[i] < -yMax ){yValuesAnswer.splice(i, 1); xValuesAnswer.splice(i,1);}
+
+}
+   
+
+  
+  //    alert(xStored  + yStored);
+
+      // render the plot using plotly
+      var question = {
+        x: xValuesQuestion,
+        y: yValuesQuestion,
+        line: {color: 'blue'},
+        type: 'scatter',
+        name : 'Question',
+         mode: 'markers + line',
+         marker: {color: "black", size:10 ,  symbol: 'x' }
+        
+      }
+
+         var yourAnswer = {
+        x: xValuesAnswer,
+        y: yValuesAnswer,
+        line: {color: answerColor},
+        type: 'scatter',
+        name: 'Answer',
+         mode: 'markers + line',
+         marker: {color: "yellow", size:10 ,  symbol: 'x' }
+        
+      }
+
+ 
+      const data = [question,yourAnswer]
+     // Plotly.newPlot('myDiv', data, layout, {responsive: true});
+      Plotly.react('plot', data, layout,{responsive: true,displayModeBar: false});
+
+ 
+}
+
+
+
+</script>
+
+<script type="text/javascript">
+  
+  function makeQuestion() 
+
+  {
+    var coeff = [] ;
+    var yMax = $('#highY').val() ;
+    var xMin = $('#lowX').val() ;
+    var xMax = $('#highX').val() ;
+    // y = (px + q)(rx + s)
+    var p = [-3,-2,2,3,4,5];
+    var q = [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10] ;
+    var r = [2,3];
+    var s = [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10] ;
+
+    for (i = 0 ; i < p.length; i++)
+    {
+      for (j = 0 ; j < q.length; j++)
+      {
+        for (k = 0 ; k < r.length; k++)
+        {
+          for (l = 0 ; l < s.length ; l++)
+          {
+            a = p[i]*r[k] ;
+            b = q[j]*r[k] + s[l]*p[i] ;
+            c = s[l]*q[j] ;
+            // check range
+            var xMinMax = -b/2*a ;
+            var yMinMax = a*xMinMax*xMinMax + b*xMinMax + c ;
+            var x1 = -p[i] / q[j] ;
+            var x2 = -r[k] / s[l] ;
+           // alert(' abc ' + ' ' + a + ' ' + b + ' ' +c );
+
+            if (
+                gcd(a,b) == 1 & 
+                gcd(a,c) == 1 & 
+                gcd(b,c) == 1 
+                )
+              {
+                var t = [a,b,c];
+                coeff.push(t) ;
+              }
+          }
+        }
+      }
+    }
+
+var n = getRandomInt(0,coeff.length);
+var data = [] ;
+data = coeff[n];
+// alert('Coeff data = ' + coeff + ' n ' + n + ' coeffs[n] ' + coeff[n]);
+
+return data ;
+  }
+
+
+
+</script>
+
+<script type="text/javascript">
+  
+  function checkAnswer()
+
+  { 
+  //  alert('abc = ' + a + ' ' + b + ' ' + c);
+    var myA = parseInt($('#coeffA').val()) ;
+    var myB = parseInt($('#coeffB').val()) ;
+    var myC = parseInt($('#coeffC').val()) ;
+
+
+  //  alert('my abc = ' + myA + ' ' + myB + ' ' + myC);
+    
+
+  }
+
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+    // graphing liits
+ 
+    xMin = -3 ;
+    xMax = 3 ;
+    yMax = 20 ;
+    $('#lowX').val(xMin);
+    $('#highX').val(xMax);
+    $('#highY' ).val(yMax) ;
+
+    var coefficients =makeQuestion() ;
+   // alert('coefficients returned  =' + coefficients);
+    a = coefficients[0] ;
+    b = coefficients[1] ;
+    c = coefficients[2] ;
+
+  //  alert('abc ' + a + ' ' + ' ' + b + ' ' + c);
+
+  // populate table
+  var startX = xMin ;
+  var step = 1;
+  var table = [] ;
+
+  for (var i = 0 ; i <= 9 ; i++)
+  {
+    var xValue = xMin + i*step;
+    var yValue = a*xValue*xValue + b*xValue + c ;
+    $('#xv'+i).text(xValue);
+    $('#yv' + i).text(yValue);
+  }
+
+    var eqtn = a + 'x^2' + '+' + b + 'x' + '+' + c ;
+    $('#equationQuestion').val(eqtn);
+
+    var eqtn1 = $('#equationQuestion').val() ;
+    var eqtn2 = '' ;
+    drawGraphs(eqtn1,eqtn2)  ;
+
+  })
+
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#draw2').on('click', function()
+  {
+    var myA = parseInt($('#coeffA').val()) ;
+    var myB = parseInt($('#coeffB').val()) ;
+    var myC = parseInt($('#coeffC').val()) ;
+
+    if (isNaN(myA)) {myA = 0; $('#coeffA').val(0);}
+    if (isNaN(myB)) {myB = 0; $('#coeffB').val(0);}
+    if (isNaN(myC)) {myC = 0; $('#coeffC').val(0);}
+
+
+
+    var nextTerm = '' ;
+    var myEqtn = '$ y = ' ;
+
+    if (myA == -1) {nextTerm = '-x^2' ;}
+    if (myA == 1) {nextTerm = 'x^2' ;}
+    if (Math.abs(myA) > 1){nextTerm = myA + 'x^2' ;}
+     if (myA == 0) {nextTerm = '';}
+    myEqtn = myEqtn + nextTerm;
+
+
+ 
+
+    if (myB == -1) {nextTerm = '-x' ;}
+    if (myB == 1) {nextTerm = '+x' ;}
+    if (myB > 1){nextTerm = '+' + myB + 'x' ;}
+    if (myB < 1){nextTerm = myB + 'x' ;}
+    if (myB == 0) {nextTerm = '';}
+    myEqtn = myEqtn + nextTerm;
+
+    if (myC < 0 ) {nextTerm = myC  ;}
+    if (myC > 0 ) {nextTerm = '+' + myC ;}
+    if (myC == 0) {nextTerm = '';}
+    myEqtn = myEqtn + nextTerm;
+
+    myEqtn = myEqtn + ' $' ;
+    // alert('my abc = ' + myA + ' ' + myB + ' ' + myC + ' eqtn ' + myEqtn + 'abc ' + a + ' ' + b + ' ' +c);
+
+    var target = 'showAnswer'  ;
+ 
+    $('#showAnswer').html(myEqtn);
+    // render fractions because page is already loaded
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "target"]);
+
+    $('#equationAnswer').val(myA + 'x^2+' + myB + 'x+' + myC) ;
+    var eqtn1 = $('#equationQuestion').val() ;
+    var eqtn2 = $('#equationAnswer').val() ;
+    drawGraphs(eqtn1,eqtn2)  ;
+
+    if( a == myA & b == myB & c == myC)
+      {
+        alert('Correct') ;
+        $('#showAnswer').append('&#10004;') ;
+        /*
+        append('#score').('* 2 *');
+        $('[id^=part]').hide() ;
+        $('#q4').attr("disabled",true) ;
+        $('[id^=q]').show() ;
+        $('#screen').show() ;
+        $('#cancel').hide() ;
+
+        */
+      }
+    else
+      {
+        alert('Try again') ;
+         //   alert('my abc = ' + myA + ' ' + myB + ' ' + myC + ' eqtn ' + myEqtn + 'abc ' + a + ' ' + b + ' ' +c);
+        $('#showAnswer').append('?') ;
+
+      }
+
+   //  var result = checkAnswer() ;
+  })
+})
+
+    </script>
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<title>Pandemic</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="//javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel = "stylesheet" href  = "css/rsaStyles.css">
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="MathJax-2.7.5/MathJax.js"></script>
+
+<!-- scripts for functions used in the app -->
+
+<script type="text/javascript">
+  function displayButtons(n)
+
+  {
+for (var i = 1 ; i <= n ;i++)
+{
+
+$('#grid').append('<button id = \"buttonPandemic'+i+ '\" +   >S</button>');
+
+// $('#grid').append('<button>S</button>');
+if (i % 10 == 0) {$('#grid').append('<br>') ;}
+
+}
+}
+</script>
+
+<script type="text/javascript">
+// returns a random integer between min and max
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+</script>
+
+<script>
+$(document).ready(function(){
+
+// set parameters
+
+var s0 = getRandomInt(1000,2000) ;
+var i0 = 1;
+var r0 = 0 ;
+n = s0+i0+r0 ;
+
+t = [0] ;
+s = [s0] ;
+i = [i0] ;
+r = [r0] ;
+
+a = getRandomInt(3,6) ;
+b = 10 / getRandomInt(2,20) ;
+i = 0 ; // count cycles
+
+
+
+})
+
+</script>
+
+<script>
+
+function modelPandemic(sub0,inf0, recTime,transmission)
+
+{
+// S(t+1)-S(t) = -bS(t)I(t)	
+// I(t+1)-I(t) = bS(t)I(t) - aI(t)	
+// R(t+1)-R(t) = aI(t)	
+// S + I + R = N
+
+
+}  
+
+</script>
+
+<style>
+
+  [id^=buttonPandemic] {width: 20px ; height: 20px; margin: 5px 5px 5px 5px ; background-color: green; font-size: 0.8em}
+
+  </style>
+
+</head>
+
+<body>
+  <div class  = "container-fluid">
+
+<div class = "row">
+<div class = "col-sm-12 ">
+  <h2 class = "c">Pandemic Question</h2>
+  <p>There is a formual for predicting how many people can be infected in an epidemic.
+  In this example there are a large number of people at a meeting and one of them has a cold which gets spread to toher people.
+  </p>
+  
+  <p>
+  Here are the formulas that you need to use
+  <br>
+  S(t)	Susceptible at time t		
+I(t)	Infected at time t		
+R(t)	Recoveries at time t		
+S(t+1)-S(t) = -bS(t)I(t)		b is the infection rate	
+I(t+1)-I(t) = bS(t)I(t) - aI(t)		a is the recovery rate	
+R(t+1)-R(t) = aI(t)	3		
+  </p>
+  
+
+</div></div>
+
+
+<div class = "row">
+<div class = "col-sm-12 ">
+  <h3 class =  "c">Spreading the joke. </h3> 
+</div></div>
+
+
+<div class = "row">
+<div class = "col-sm-12 c">
+  <button id = "newCycle"></button> 
+  Susceptible<label id = "susceptible"></label>
+  Infected<label id = "infected"></label>
+  How mnay times a person tells the joke.<label id = "repeated"></label>
+</div></div>
+
+<div class = "row">
+<div class = "col-sm-12 ">
+  <p id = "grid"></p>
+</div></div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+
+
+
+ <div class = "row">
+    <div class = "col-12 c">
+ <h1>Q1 - Sort the fractions from smallest to biggest</h1>
+</div></div>
+
+ 
+  <!-- Trigger the modal with a button -->
+  <button type="button" class="btn btn-info btn-lg" id="myBtn1">Please help me!</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal1" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Putting fractions in order</h4>
+        </div>
+        <div class="modal-body">
+          <p id = "helpText">
+
+         The easiest way is to change the fractions to percentages.
+         <br>
+         <strong>Example</strong>
+         <br>
+         Is $ \frac{2}{11} <  \frac{3}{13} $ ?
+         <br>
+         $ \frac{2}{11} \times 100\% = \frac{200}{11} \% $ = 18.18%
+         <br>
+          $ \frac{3}{13} \times 100\% = \frac{300}{13} \% $ = 23.08%
+          <br>
+          Therefore $ \frac{2}{11}  $ is less than  $  \frac{3}{13} $ .
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+$(document).ready(function(){
+  $("#myBtn1").click(function(){
+    $("#myModal1").modal();
+  });
+});
+</script>
+
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+     
+ <div class = "wrapper ">
+   <ul id="sortable">
+   <li id = "answer0" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel0">A</label></span></li>
+   <li id = "answer1" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel1">B</label></span></li>
+   <li id = "answer2" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel2">C</label></span></li>
+   <li id = "answer3" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel3">D</label></span></li>
+   <li id = "answer4" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel4">E</label></span></li>
+   <li id = "answer5" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"><label id = "answerLabel5">F</label></span></li>
+
+</ul>
+</div>
+
+  </div></div>
+  
+  <div class = "row">
+   <div class = "col-sm-12 c">
+     <button  id = "check1" class="btn btn-primary btn-lg">Check</button>
+   </div></div>
+ 

@@ -1,0 +1,305 @@
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#p2, #q2').on('change', function()
+  {
+    $('#checkPart2PQ').show() ;
+    $('[id$=OK]').empty() ;
+    $('#p2,#q2').css({"background-color":"lightblue"});
+
+  })
+  })
+
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#checkPart2PQ').on('click', function()
+  {
+   var p = $('#p2').val() ;
+   var q = $('#q2').val() ;
+   p = parseInt(p);
+   q = parseInt(q) ;
+   var n = p*q ;
+   var pPrime = checkPrime(p);
+   var qPrime = checkPrime(q);
+
+  var limit = 127;
+
+   if (n <= limit) 
+{
+  $('#checkPhi').hide() ;
+  $('[id$=OK]').hide() ;
+  alert( '  p x q must be > ' + limit) ;
+}
+
+   if (!pPrime | p*q < limit)
+    {
+      $('#p2').css({"background-color":"orange"});
+    }
+    else
+    {
+      $('#p2').css({"background-color":"lightgreen"});
+    }
+
+   if (!qPrime | p*q < limit)
+    {
+      $('#q2').css({"background-color":"orange"});
+    }
+    else
+    {
+      $('#q2').css({"background-color":"lightgreen"});
+    }
+
+    if (p == q)
+    {
+      $('#p2, #q2').css({"background-color":"orange"});
+    }
+
+    if (pPrime & qPrime & (p != q) & p*q > limit) {$('[id^=checkPhi]').show() ;}
+
+   // alert('checking pq ' + n);
+       
+
+  })
+})
+
+    </script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#checkPhi').on('click', function()
+  {
+   var p = $('#p2').val() ;
+   var q = $('#q2').val() ;
+   p = parseInt(p);
+   q = parseInt(q) ;
+
+   var p1 = p-1 ;
+   var q1 = q-1 ;
+   var phi = p1*q1;
+ 
+
+   var p1eGCD = gcd(e,p1);
+   var q1eGCD = gcd(e,q1);
+
+   if (p1eGCD != 1)
+    {
+      $('#p2').css({"background-color":"orange"});
+      $('#pOK').text(p1 + 'has factor of ' + e);
+    }
+    else
+    {
+      $('#p2').css({"background-color":"lightgreen"});
+      $('#pOK').text(p1 + ' OK ');
+    }
+
+      if (q1eGCD != 1)
+    {
+      $('#q2').css({"background-color":"orange"});
+      $('#qOK').text(q1 + ' has factor of ' + e);
+    }
+    else
+    {
+      $('#q2').css({"background-color":"lightgreen"});
+      $('#qOK').text(q1 + ' OK');
+    }
+
+if (p1eGCD != 1 | q1eGCD != 1)
+   { $('#checkPhi').hide() ;
+    $('[id$=OK]').hide() ; }
+
+
+
+if (p1eGCD == 1 & q1eGCD == 1 )
+   { 
+    // $('#checkPhi').hide() ;
+    $('#checkPart1PQ').hide() ; 
+    $('[id$=OK]').show() ;
+    $('[id^=checkPhi').hide() ;
+    $('[id^=my]').show() ;
+    $('#convertMessage').show() ;
+    var message = 'Using n = ' + p*q + ' and e = ' + e;
+    $('#codingMessage').text(message) ;
+   // alert('PHI = ' + phi);
+   $('#e2').text(3);
+    $('#phi2').text(phi);
+    $('#secretKeyCalculation').show() ;
+    $('#questiond2').show() ;
+   // $('#myPhi').text(phi);
+
+    $('#part2P').attr('value',p);
+    $('#part2Q').attr('value',q);
+    $('#part2E').attr('value',e);
+    $('#myD').show() ;
+    $('#checkD2').show() ;
+     
+    }
+       
+
+  })
+})
+
+    </script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+    $('#checkD2').on('click', function()
+  {
+    var d = $('#myD').val() ;
+    d = parseInt(d);
+    var e = 3 ;
+    var phi = $('#phi2').text() ;
+    phi =parseInt(phi);
+    trueD = findD(e,phi);
+    if (d == trueD)
+    {
+      alert('d = ' + d + ' is correct');
+      $('#myD').css({"background-color":"lightgreen"});
+      $('#checkD2').hide() ;
+      $('#part2D').attr('value',d);
+      $('#level3').show();
+    }
+    else
+    {
+       alert('d = ' + d + ' is incorrect ' + trueD);
+       $('#myD').css({"background-color":"orange"});
+    }
+  })
+  })
+</script>
+
+<script type="text/javascript">
+
+  
+  $(document).ready(function(){
+    $('#level3').on('click', function()
+
+{
+  alert('Going to part 3');
+  $('#gamePart2').hide() ;
+  
+  $('#gamePart3').show() ;
+
+  
+  })
+
+})
+
+</script>
+
+
+  <div class = "row">
+    <div class = "col-sm-12 c ">
+       <h1 class = "c">Game part 2 </h1>
+      <input id = "part2P" type = "text" hidden ="true"><input id = "part2Q" type = "text" hidden ="true">
+       <input id = "part2E" type = "text" hidden ="true"><input id = "part2D" type = "text" hidden ="true">
+</div></div>
+
+ 
+
+    <div class = "row">
+<div class = "col-sm-4 ">
+    <h3>Finding 2 prime numbers</h3>
+    <p>To code messages you need two <strong>different</strong> prime numbers. The prime numbers are 
+      <strong>p</strong> and <strong>q</strong>. Make sure that $ p \times q $ is greater than 255.
+     Click the button to make sure that your numbers are prime and big enough.</p>
+    
+    <div id = "primeBox" class = "c">
+    <labeL class = "c">1st prime p  </labeL>
+    <br>
+    <input type = "number" min = "3" id = "p2"  class = "data">
+    <br>
+     <labeL class = "c">2nd prime q  </labeL>
+     <br>
+     <input type = "number" min = "3" id = "q2"  class = "data">
+     <br>
+     <button id = "checkPart2PQ">Check</button>
+   </div> <!-- prime box -->
+<br>
+<div class = "c">
+    <h3 id = "checkPhiMessage">Check that p-1 and q-1 do not have a factor of 3</h3>
+    <button id = "checkPhi">Check p-1 and q-1</button>
+    <label id = "pOK"></label>&nbsp; &nbsp; <label id = "qOK"></label>
+</div>
+
+</div> <!-- column -->
+
+<div class = "col-sm-4 ">
+  <div id = "secretKeyCalculation">
+<h3 class = "c">Calculate your secret key</h3>
+<p class = "c">The secret key <strong>d</strong> is found using this equation. </p>
+  <p class = "c">
+  <strong>d x e = 1 mod <label>$ \phi $</label></strong>.
+</p>
+<p>
+    <p>Using the method in this example</p>
+    <strong>Example</strong>
+    <br>
+    $ \phi = 20 $ and e = 3 
+    <br>
+    Calculate $ \phi \div  e $ and use only the whole number part.
+    <br>
+    a = 20 $ \div $ 3 = 6
+    <br>
+    Add 1 to the answer to get d, so d = 7
+    <br>
+    Check to see if 3 $ \times  $ 7 = 1 mod  $ \phi $
+    <br>
+    21 $ \div 20 $ = 1 + remainder 1 
+    <br>
+    <strong>d = 7 </strong>
+    <br>
+    <strong>Example</strong>
+    Find d when e = 3 and $ \phi = 88 $
+    <br>
+    a = 88 $ \div $ 3 ,  <strong>q = 29</strong> 
+    <br>
+    Add 1 to a to get d.
+    <br>
+    d = 30
+  <br>
+  Check 30 $ \times 3 $ mod 28 = 2,
+  <br>
+   d = 30 is not the answer.
+  <br>
+  Add 29 to 30 and try again
+  <br>
+  d = 29  + 30 = 59.
+  <br>
+  3 $ \times 59 $ mod 88 = 177
+  <br>
+  177 $ \div $ 88  = 2 + 1 remainder, we have an answer.
+  <br>
+  <strong>d = 59</strong> 
+   </p>
+  
+    <p id = "myNumbers"></p>
+
+
+
+
+
+
+</div> <!-- secret key calculation -->
+</div>  <!-- column -->
+
+<div id = "questiond2">
+<div class = "col-sm-4 ">
+  <div class = "c">
+    <h3>Calculate d</h3>
+    <p>Calculate the value of d using e and $ \phi $</p>
+    <p>e = <label id = "e2"></label> and $ \phi $ = <label id = "phi2"></label></p>
+    <label>d = </label><input type = "number" id = "myD" class = "data"><button id = "checkD2">Check</button>
+  
+ 
+  <button id = "level3">Go to level 3</button>
+</div>
+</div></div>
+
+
+

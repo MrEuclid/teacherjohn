@@ -1,0 +1,164 @@
+
+  <!-- Trigger the modal with a button -->
+  <button type="button" class="btn btn-info btn-lg" id="myBtn2">Please help me!</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+      
+        </div>
+        <div class="modal-body">
+          <p id = "helpText">
+            You need to use three (x,y) values from the table. 
+            <br>
+            The easiest to work with are x = -1, x = 0 and x = 1.
+            <br>
+            You then put the values into $y = ax^2 + bx + c $ to get three equations.
+            <br>
+            Solving those equations will give you the values of a,b and c.
+            <br>
+            <striong>Example</striong>
+            The (x,y) values are  (-1,-2) , (0,-5) and (1-4)
+            <br>
+            $ a \times (-1)^2 + b \times -1 + c = -2 $
+            <br>
+            $ a \times (0)^2 + b \times 0 + c = -5 $
+              <br>
+            $ a \times (1)^2 + b \times 1 + c = - -4 $
+            <br>
+            The three equations are 
+            <br>
+            I  a -b + c = -2
+            <br>
+            II c = -5
+            <br>
+            III  a + b + c = -4
+            <br>
+            Putting c = -5 into I and II gives us
+            <br>
+            a - b - 5 = -2 or a -b = 3
+            <br>
+            a + b + -5 = -4 or a + b = 1
+            <br> 
+            a - b = 3 and a + b = 1
+            <br>
+            So a = 2 and b = -1 and c = -5
+            <br>
+            The equations is 
+            $ y = 2x^2 -x - 5$
+
+
+
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+$(document).ready(function(){
+  $("#myBtn2").click(function(){
+    $("#myModal2").modal();
+  });
+});
+</script>
+
+
+  <div class="row">
+        <div class="col-12 c">
+          <h1 class = "c">Q2 - What is the Equation of the Graph?</h1>
+          <h2 class = "c" >     $ y = ax^2 + bx + c $ </h2>
+  </div></div>
+
+   <div class="row">
+  <div class="col-12 c">
+
+    <!-- store answers -->
+
+  <input type = "text" hidden = "true" id = "answerA">
+    <input type = "text" hidden = "true" id = "answerB">
+      <input type = "text" hidden = "true" id = "answerC">
+
+  <h3 class = "c">My answer</h3>
+
+
+  <label>a = </label><input id = "coeffA" type = "text" maxlength="3" >
+  <label>b = </label><input id = "coeffB" type = "text" maxlength="3">
+  <label>c = </label><input id = "coeffC" type = "text" maxlength="3">
+   <button id = "draw2" class="btn btn-info rectangle" >Check </button>
+    <input type="text"  id = "equationAnswer" hidden="true">
+
+
+</div></div>
+
+    <div class="row">
+        <div class="col-12 c">
+
+<h2 class = "c">Table</h2>
+
+<table>
+  <tr>
+     <td id = "xStart">X</td>
+     <td id = "xv0"></td>
+     <td id = "xv1"></td>
+     <td id = "xv2"></td>
+     <td id = "xv3"></td>
+     <td id = "xv4"></td>
+     <td id = "xv5"></td>
+     <td id = "xv6"></td>
+     <td id = "xv7"></td>
+     <td id = "xv8"></td>
+     <td id = "xv9"></td>
+   
+  </tr>
+  <tr>
+     <td id = "yStart">Y</td>
+     <td id = "yv0"></td>
+     <td id = "yv1"></td>
+     <td id = "yv2"></td>
+     <td id = "yv3"></td>
+     <td id = "yv4"></td>
+     <td id = "yv5"></td>
+     <td id = "yv6"></td>
+     <td id = "yv7"></td>
+     <td id = "yv8"></td>
+     <td id = "yv9"></td>
+  </tr>
+</table>
+
+</div></div>
+
+ <div class="row">
+        <div class="col-12 c">
+          <p id = "showAnswer"></p>
+        </div></div>
+
+
+  <div class="row">
+<div class="col-12 c">
+  <div id="plot"></div>
+</div></div>
+
+    <div class="row">
+        <div class="col-12 c">
+
+  
+  <input type="text" id="eq" value="x" class = "equationStyle" hidden = "true">
+
+  <input type = "text" id = "lowX" class = "limitStyle"  hidden = "true">
+  <input type = "text" id =  "highX" class = "limitStyle" hidden = "true">
+  <input type = "text" id = "highY" class = "limitStyle" hidden = "true">
+  <input type = "text" id = "equationQuestion" hidden = "true">
+</div></div>
+
+
+   

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    <div class="container" style="margin: 20px">
+      Encoded Word: <div id="message"> </div>
+      <br>
+
+      Intial Positions: <div id="iPositions"> </div>
+      New Positions: <div id="nPositions"> </div>
+      <br>
+
+      <strong> Decode the message </strong>
+    </div>
+    <div class="container" style="margin: 20px">
+      <label for="convert"> Convert: </label>
+      <input id="convert" type="text"> </input>
+      <label for="key"> Decoded word: </label>
+      <input id="key"> </input>
+    </div>
+    <br>
+
+
+
+
+
+    <button id="test"> Test </button>
+    <button id="check"> Check </button>
+
+    <script>
+      var orginWord;
+
+      $("#test").on("click", place)
+
+      function place(){
+        orginWord = document.getElementById("convert").value
+        document.getElementById("iPositions").innerHTML = "";
+        document.getElementById("nPositions").innerHTML = "";
+
+        var word = encode(orginWord)
+        document.getElementById("message").innerHTML = word;
+    }
+
+    $("#check").on("click", function(){
+      var foundKey = document.getElementById("key").value;
+
+      if(foundKey == orginWord.toLowerCase()){
+        alert("Correct!")
+      }
+      else{
+        alert("Please try again!")
+        place();
+      }
+    })
+
+      function encode(word){
+        var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        var newWord = "";
+        word = word.toUpperCase();
+
+        for(var i = 0; i < word.length; i++){
+          for(var f = 0; f < letters.length; f++){
+            if(word[i] == letters[f]){
+              if(((i + 1) % 2) == 0){
+                var shift = (f + i + 1) % 25;
+              }
+              else{
+                var shift = (Math.abs(f - i - 1)) % 25;
+              }
+
+              document.getElementById("iPositions").innerHTML += f + ", "
+              document.getElementById("nPositions").innerHTML += shift + ", "
+
+
+              newWord += (letters[shift]);
+              break;
+            }
+          }
+        }
+        newWord = newWord.toLowerCase();
+        return newWord;
+      }
+    </script>
+  </body>
+</html>

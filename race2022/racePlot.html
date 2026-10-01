@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>racePlot</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+  <script src= "../javaScript/plotly/math.min.js"></script>
+  <script src="../javaScript/plotly/plotly-latest.min.js"></script>
+
+<script src="../javaScript/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="../javaScript/touchPunch/punch.js"></script> 
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+
+    <link rel = "stylesheet" href  = "css/pioStudentsStyles.css">
+
+  <style>
+
+
+    .equationStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 120px ; 
+        text-align: center;
+      }
+
+    .limitStyle 
+      {font-size: 12pt ; font-weight: bolder; 
+        background-color: lightblue ; 
+        color: black ; 
+        width : 60px ; 
+        text-align: center;
+      }
+
+table {
+  border-collapse: collapse; 
+    margin: 0 auto; /* or margin: 0 auto 0 auto */
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+td {width: 10% ;  background-color: lightgreen ; color: black ; font-size: 12pt ; text-align: center; padding: 5px ; }
+
+#xStart, #yStart {font-size: 14pt ; font-weight: bolder; color: black ;}
+
+  </style>
+
+
+  <!--
+  <script src="plotly-latest.min.js"></script>
+  -->
+
+
+
+</head>
+<body>
+
+<div class="container">
+<div id = "graph">
+  <div class="row">
+        <div class="col-12 c">
+          <h1 class = "c">What is the Equation of the Graph?
+                <br>
+                $ y = ax^2 + bx + c $
+              </h1>
+        </div></div>
+
+    <div class="row">
+        <div class="col-12 c">
+
+  <label>y = </label>
+  <input type="text" id="eq" value="x" class = "equationStyle" />
+  <label>x = </label>
+  <input type = "text" id = "lowX" class = "limitStyle" value = "-5">
+  <label>to</label>
+  <input type = "text"id = highX class = "limitStyle" value = "5">
+</div></div>
+
+
+    <div class="row">
+  <div class="col-12 c">
+ <button id = "draw" class="btn btn-primary rectangle" >Draw graph</button>
+</div></div>
+<div id="plot"></div>
+    <div class="row">
+        <div class="col-12 c">
+
+<h2 class = "c">Table</h2>
+<div id = "values" class= "c">
+<table>
+  <tr>
+     <td id = "xStart">X</td>
+     <td id = "x-1"></td>
+     <td id = "x-2"></td>
+     <td id = "x-3"></td>
+     <td id = "x-4"></td>
+     <td id = "x-5"></td>
+     <td id = "x-6"></td>
+     <td id = "x-7"></td>
+     <td id = "x-8"></td>
+     <td id = "x-9"></td>
+   
+  </tr>
+  <tr>
+     <td id = "yStart">Y</td>
+     <td id = "y-1"></td>
+     <td id = "y-2"></td>
+     <td id = "y-3"></td>
+     <td id = "y-4"></td>
+     <td id = "y-5"></td>
+     <td id = "y-6"></td>
+     <td id = "y-7"></td>
+     <td id = "y-8"></td>
+     <td id = "y-9"></td>
+     
+  </tr>
+</table>
+</div>
+</div></div>
+
+<div class="row">
+        <div class="col-12 c">
+  <div class = "c" id='myTable'><!-- Plotly chart will be drawn inside this DIV --></div>
+</div></div>
+
+</div>
+
+
+
+<script>
+
+
+  $(document).ready(function(){
+
+    $('#draw').on('click', function()
+  {
+      
+      yMax = 40 ;
+      var minX = parseInt($('#lowX').val()) ;
+      var maxX = parseInt($('#highX').val()) ;
+
+      if (maxX < minX) {var temp = minX; minX = maxX; maxX = temp;}
+      var stepX = 0.1 ;
+      var spread = maxX - minX;
+      var n = 10 ;
+
+var eqtn = $('#eq').val() ;
+      
+var layout = {
+
+   title: 'y = ' + eqtn ,
+  xaxis: {
+    showgrid: true,
+    zeroline: true,
+    showline: true,
+   // mirror: 'ticks',
+    autoscale:false ,
+    gridcolor: '#bdbdbd',
+    tickmode: "auto" ,
+    nticks:n ,
+    gridwidth: 1,
+    zerolinecolor: 'green',
+    zerolinewidth: 4,
+    linecolor: '#636363',
+    title: 'X',
+    
+    linewidth: 6
+  },
+  yaxis: {
+    showgrid: true,
+    zeroline: true,
+    showline: true,
+  //  mirror: 'ticks',
+    gridcolor: '#bdbdbd',
+    autoscale:true,
+   // range: [minX*2,maxX]*2,
+   tickmode: "auto" ,
+    nticks : n,
+    gridwidth: 1,
+    zerolinecolor: 'green',
+    zerolinewidth: 4,
+    linecolor: '#636363',
+    title: 'Y',
+    linewidth: 6
+  }
+};
+      // compile the expression once
+      const expression = document.getElementById('eq').value
+      const expr = math.compile(expression)
+
+      // evaluate the expression repeatedly for different values of x
+      const xValues = math.range(minX, maxX, stepX).toArray()
+      const yValues = xValues.map(function (x) {
+        return expr.evaluate({x: x})
+      })
+
+      const expressionTable = document.getElementById('eq').value
+      const exprTable = math.compile(expressionTable)
+
+      // evaluate the expression repeatedly for different values of x
+      const xTable = math.range(minX, maxX, 1).toArray()
+      const yTable = xTable.map(function (x) {
+        return exprTable.evaluate({x: x})
+      })
+
+for (var i = 0; i < 10 ; i++)
+{
+
+  var x = xTable[i] ;
+  var y = yTable[i] ;
+    var x1 = Math.round(x * 10) / 10;
+    var y1 = Math.round(y * 10) / 10;
+  $('#x-'+i).text(x1) ;
+  $('#y-'+i).text(y1) ;
+   
+}
+       
+var arrayLength = yValues.length;
+ for (var i = 0; i < arrayLength ; i++) {
+
+  if (yValues[i] > yMax){yValues.splice(i, 1); xValues.splice(i,1);}
+  if (yValues[i] < -yMax ){yValues.splice(i, 1); xValues.splice(i,1);}
+
+}
+      xStored = xValues ;
+      yStored = yValues ;
+    // scan for extreme values
+
+  
+  //    alert(xStored  + yStored);
+
+      // render the plot using plotly
+      var trace1 = {
+        x: xValues,
+        y: yValues,
+        line: {color: 'blue'},
+        type: 'scatter',
+         mode: 'markers + line',
+         marker: {color: "black", size:10 ,  symbol: 'x' }
+        
+      }
+
+ 
+      const data = [trace1]
+     // Plotly.newPlot('myDiv', data, layout, {responsive: true});
+      Plotly.react('plot', data, layout,{responsive: true});
+
+ 
+
+      }) ;
+
+  })
+
+ // document.getElementById('draw').onclick = function (event) {
+ //   event.preventDefault()
+ //   draw()
+  
+
+  // draw()
+
+
+</script>
+
+</body>
+</html>

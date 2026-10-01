@@ -1,0 +1,372 @@
+
+  <!-- Trigger tde modal witd a button -->
+<script type="text/javascript">
+
+  function dec2bin(dec){
+  return (dec >>> 0).toString(2);
+}
+
+</script>
+
+<script type="text/javascript">
+  
+  function makeBinary(hexString)
+
+  {
+// convert to binary and light segments orange
+
+var y = "0x"+hexString ;
+var d = parseInt(Number(y), 10);
+var bin = dec2bin(d);
+var l = bin.length;
+
+// do this so number reads from msb on the left to lsb on the right
+
+
+var b = Array.from(bin);
+b.reverse() ;
+
+return b ;
+
+
+  }
+
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+lightData = [
+              ["A",119,"77"],
+              ["b",124,"7C"],
+              ["C",87,"57"],
+              ["d",94,"5E"],
+              ["e",123,"8B"],
+              ["E",121,"79"],
+              ["F",113,"71"],
+              ["g'",111,"6F"],
+              ["h",116,"74"],
+              ["H",54,"36"],
+             
+              ["L",56,"38"],
+              ["n",84,"54"],
+              ["O",63,"3F"],
+              ["0",94,"5C"],
+              ["P",115,"73"],
+              ["r",80,"50"],
+              ["S",109,"6D"],
+              ["U",62,"3C"]
+            ] ;
+// switch segments off
+
+$('[id^=7seg]').css({"background-color":"black"}) ;
+$('[id^=switch]').css({"background-color":"black","color":"white"}) ;
+$('#switch7').attr("disabled",true);
+$('#spaceFiller').attr("disabled",true);
+
+// turn switches off 
+$('[id^=switch]').text('0') ;
+var l = lightData.length ;
+chosenLetter = getRandomInt(0,l-1);
+var hex = lightData[chosenLetter][2] ;
+var letter = lightData[chosenLetter][0] ;
+var dec = dec2bin(lightData[chosenLetter][1]);
+$('#targetLetter').text(letter);
+// alert("chosen " + hex + " " + letter);
+var b = makeBinary(hex);
+
+
+
+  })
+
+</script>
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+
+    $('[id^=switch]').on('click', function()
+  {
+    var switchID = this.id ;
+    var n =switchID;
+    n = n.substr(6);
+    n = parseInt(n) ;
+    var clicked = $('#switch'+n).text() ;
+    clicked = parseInt(clicked) ;
+   // alert(' switch clicked = value ' + clicked);
+    if (clicked == 1) 
+
+      {
+        $('#switch'+n).text('0') ; 
+        $('#7seg'+n).css({"background-color":"black"}) ;
+        $('#switch'+n).css({"background-color":"black"}) ;
+      } 
+    if (clicked == 0) 
+      {
+        $('#switch'+n).text('1') ; 
+        $('#7seg'+n).css({"background-color":"green"}) ;
+        $('#7switch'+n).css({"background-color":"green"}) ;
+      } 
+    
+  // showBinaryNumber
+
+  $('#numberBinary').empty() ;
+  for (var i = 0; i <= 6  ; i++ )
+  {
+    var digit = $('#switch'+i).text() ;
+    $('#numberBinary').prepend(digit);
+  }
+
+    // get number 
+    var sum = 0 ;
+    for (var i = 0 ; i <= 6 ; i++)
+    {
+       var bit = $('#switch'+i).text() ;
+       bit = parseInt(bit) ;
+       if (bit == 1 ) {sum = sum + Math.pow(2,i);}
+ // alert(' i = ' + n + ' value bit = ' + bit + " sum " + sum);
+    }
+
+   // var d = sum ;
+  //  var hex = parseInt(Number(sum), 16);
+   // $('#cheat').text(hex + ' ' + sum);
+  // alert('Switches = ' + sum + '  ' + hex) ;
+  })
+  })
+    
+
+</script>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+
+    $('#send').on('click', function()
+  {
+var guess = $('#numberHex').val() ;
+guess.toUpperCase();
+var answer = lightData[chosenLetter][2];
+// alert('Checking guess with ' + guess + ' with ' + answer);
+if (guess == answer)
+  {
+   
+    $('#targetLetter').append('&#10004;') ;
+        
+    $('#score').append('*5');
+    $('#score').show() ;
+    $('[id^=part]').hide() ;
+    $('#q5').attr("disabled",true) ;
+    $('[id^=q]').show() ;
+        
+    $('#cancel').hide() ;
+
+     alert('Correct') ;
+
+  }
+  else
+  {
+    alert('Keep trying - here is a new letter for you to make');
+$('[id^=7seg]').css({"background-color":"black"}) ;
+// turn switches off 
+$('[id^=switch]').text('0') ;
+$('#numberHex').empty() ;
+var l = lightData.length ;
+chosenLetter = getRandomInt(0,l-1);
+var hex = lightData[chosenLetter][2] ;
+var letter = lightData[chosenLetter][0] ;
+var dec = dec2bin(lightData[chosenLetter][1]);
+$('#targetLetter').text(letter);
+  }
+
+  })
+})
+
+</script>
+  <button type="button" class="btn btn-info btn-lg" id="myBtn5">Please help me!</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal5" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+      
+        </div>
+        <div class="modal-body">
+          <p id = "helpText">
+       <strong>Binary numbers</strong>
+       <br>
+       A binary nmber is made from 0s and 1s.
+       <br>
+       The place value is like tdis
+
+       <table widtd="50%" align="center">
+        <tr class = "c">
+        <td class = "c">$2^3$</td><td class = "c">$2^2$</td><td class = "c">$2^1$</td><td class = "c">$2^0$</td>
+      </tr>
+      <tr>
+      <td class = "c">8</td class = "c"><td class = "c">4</td><td class = "c">2</td><td class = "c">1</td>
+    </tr>
+       </table>
+
+       Use this to find the decimal value of 1010
+       <br>
+       1010 =  $ 1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 0 \times 2^0$
+       <br>
+       1010 =  $ 1 \times 8 + 0 \times 4 + 1 \times 2 + 0 \times 1 = 8 + 0 + 2 + 0 = 12$
+       <br>
+       The <strong>binary number 1010 </strong> is the same as the <strong>decimal number 12.</strong>
+       <br>
+       Counting in binary goes like this: 0, 1 , 10,11,10,11,100,101,110,111,1000,1001, ... , 1111, 10000,...
+
+       <strong>Hexadecimal numbers</strong>
+       Binary numbers are base 2, decimal numbers are base 10 and hexadecimal numbers are in base 16.
+       <br>
+       Counting is hexadecimal goes like this:
+       <br>
+       0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,10,11,..,18,1A,1B,1C,1D,1E,1F,20,...
+       <br>
+       You need 4 binary digits to make 1 hexadecimal digit<br>
+        <table widtd="100%" align="center">
+        <tr class = "c">
+        <td class = "c">0</td><td class = "c">1</td><td class = "c">10</td><td class = "c">11</td>
+        <td class = "c">100</td><td class = "c">101</td><td class = "c">110</td><td class = "c">111</td>
+        <td class = "c">1000</td><td class = "c">1001</td><td class = "c">1010</td><td class = "c">1011</td>
+        <td class = "c">1100</td><td class = "c">1101</td><td class = "c">1110</td><td class = "c">1111</td>
+      </tr>
+      <tr>
+      <td class = "c">0</td class = "c"><td class = "c">1</td><td class = "c">2</td><td class = "c">3</td>
+      <td class = "c">4</td class = "c"><td class = "c">5</td><td class = "c">6</td><td class = "c">7</td>
+      <td class = "c">8</td class = "c"><td class = "c">9</td><td class = "c">A</td><td class = "c">B</td>
+      <td class = "c">C</td class = "c"><td class = "c">D</td>D<td class = "c">E</td><td class = "c">F</td>
+    </tr>
+       </table>
+
+
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+$(document).ready(function(){
+  $("#myBtn5").click(function(){
+    $("#myModal5").modal();
+  });
+});
+</script>
+
+  <div class="row">
+        <div class="col-12 c">
+          <h1 class = "c">Q5 - Binary to Hexadecimal -  Make this letter <label  id = "targetLetter"></label></h1>
+       
+  </div></div>
+
+
+
+
+
+    <div class="row">
+        <div class="col-sm-12 c">
+<h2 class = "c">Instructions</h2>
+<p>Use the buttons to make the letter. It takes 7 binary digits to control the display.
+
+  The light controller uses hexadecimal numbers. So you have to send the hexadecimal number that equal to the binary number to the controller.
+
+</div></div>
+
+<!-- seven segment display 5 x 3grid 
+       0
+5             1
+      6
+4             2
+      3
+
+    -->
+<!-- segment 0 -->
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+  
+  </div></div>
+
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+    <button class = "ledWide" id = "7seg0"></button>
+  </div></div>
+
+<!-- segments 5 and 1 -->  
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+    <button class = "ledLong" id = "7seg5"></button>
+    <button class = "emptyWide" ></button>
+    <button class = "ledLong" id = "7seg1"></button>
+    
+  </div></div>
+
+<!-- segment 6 -->
+
+  <div class = "row">
+  <div class = "col-sm-12 c">
+    <button class = "ledWide" id = "7seg6"></button>
+  </div></div>
+
+  <!-- segments 4 and 2 -->
+
+  <div class = "row">
+  <div class = "col-sm-12 c">
+    <button class = "ledLong" id = "7seg4"></button>
+    <button class = "emptyWide" ></button>
+    <button class = "ledLong" id = "7seg2"></button>
+  </div></div>
+
+<!-- segment 5 -->
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+
+    <button class = "ledWide" id = "7seg3"></button>
+
+  </div></div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12 c">
+
+          <button  id = "switch7" class = " btn btn-circle">0</buton>
+          <button  id = "switch6" class = " btn btn-circle">0</buton>
+          <button  id = "switch5" class = " btn btn-circle">0</buton>
+          <button  id = "switch4" class = " btn btn-circle">0</buton>
+          <button id = "spaceFiller">|*|</button>
+          <button  id = "switch3" class = " btn btn-circle">0</buton>
+          <button  id = "switch2" class = " btn btn-circle">0</buton>
+          <button  id = "switch1" class = " btn btn-circle">0</buton>
+          <button  id = "switch0" class = " btn btn-circle">0</buton>
+        </div></div>
+<br><br>
+<!--
+<p id = "cheat"></p>
+-->
+ <div class="row">
+        <div class="col-sm-12 c">
+          <input id = "numberHex" type = "text" placeholder="Enter the hex number">
+          <button id = "send">Send hex code</button>
+        </div></div>
+
+
+
+ 
+   

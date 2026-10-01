@@ -1,0 +1,638 @@
+<?php 
+$question = $_POST['question'];
+?>
+<!DOCTYPE html>
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+<title>Four 4s</title>
+
+<!--
+  <link rel = "stylesheet" href = "css/mathsTestStyles.css">
+-->
+  <link rel="stylesheet" href="bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+    });
+  </script>   
+  
+   <script type="text/javascript">
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  </script>
+
+  <script type="text/javascript" src="javaScript/mathJax/MathJax-2.7.7/MathJax.js"></script>
+
+
+<style type="text/css">
+	p {text-align: left;
+margin-left: 10% ;
+margin-right: 10% ;
+font-family: sans-serif;
+font-size: 10vw;
+font-style: normal;
+font-weight:normal;}
+
+
+
+button.bigWriting {padding: 2px ; width: 16vw ; margin-bottom: 5px ;
+  margin-top: 2px;vertical-align: top; margin-left: 5px ; margin-right: 5vw ;
+
+  font-size: 2.4vw ; font-weight: bolder;color: white ;}
+
+button.small {padding: 2px ; width: 6vw ; height: 6vw ;margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 2.5vw ; color:black ; background-color: lightblue ;vertical-align: top;font-weight:bold;}
+
+  button.smaller {padding: 2px ; width: 6vw ; height: 6vw ;margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 2.5vw ; color:black ; background-color:pink ;vertical-align: top;font-weight:bold;}
+
+button.large {padding: 2px ; width: 12vw ; height:12vw ; margin-bottom: 1vw ;margin-top: 1vw; 
+  font-size: 8vw ; color:green ; background-color: lightyellow ; vertical-align: top;}
+
+button.large1 {padding: 1vw ; width: 8vw ; height:8vw ; 
+vertical-align: top;
+  margin-bottom: 1vw ;margin-top: 1vw; 
+  font-size: 4vw ; color:blue ; background-color: lightyellow ;}
+
+button.large2 {padding: 2px ; width: 8vw ; height:8vw ; 
+  vertical-align: top;
+  text-align:center;
+  margin-bottom: 1vw ;margin-top: 1vw; 
+  font-size: 6vw ; color:black ; background-color: lightgrey ;}
+
+#message1,#message2    {padding: 2px ; width: 8vw ; height: 6vw ;margin-bottom: 5px ;margin-top: 2px; 
+  font-size: 2vw ; color:white ; background-color:black ;vertical-align: top;font-weight:bold;}
+
+#operation+, #operation*,#operation-, #operation/
+ {padding: 1vw ; width: 12vw ; 
+vertical-align: top;
+  margin-bottom: 1vw;margin-top: 1vw; font-size: 20vw ; font-weight: bolder ;  lightblue ;}
+
+h1 {font-size: 4vw; color:green; font-weight:bolder; display:inline-block; text-align:center;}
+
+[id^=four], [id^=number] {
+  font-size: 2vw; 
+  color:yellow; 
+  font-weight:bold; 
+  background-color:orange ;}
+
+
+#go  {
+  padding: 2px ; width: 8vw ; height:8vw ;  
+  text-align:center;
+  margin-bottom: 1vw ;margin-top: 1vw; 
+  vertical-align: top; font-weight:bolder; font-size:4vw;
+   color:blue ; background-color: lightgreen ;}
+
+.output {color:red; font-size:4vw;}
+  
+ 
+
+.c {text-align:center; width:auto; margin:auto;}
+
+</style>
+
+ </head>
+ <body> 
+
+
+
+<div class = "container-fluid">
+<div class = "row">
+  <div class = "col- text-center">
+ 
+  	<h1>Four 4s</h1>
+    <button id = "four1" class = "smaller">4</button>
+    <button id = "four2" class = "smaller">4</button>
+    <button id = "four3" class = "smaller">4</button>
+    <button id = "four4" class = "smaller">4</button>
+    <button id = "message1" class = "smaller">Target</button>
+    <button id = "target" class = "small"></button>
+    </div></div>
+
+    <div class = "row">
+      <div class = "col-sm-12 c">
+  
+  </div></div>
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+  
+  	<button id = "clear" class="btn btn-danger bigWriting">Clear</button>
+
+  </div>
+
+</div>
+
+
+<div class = "row">
+   <div class = "col-sm-12 c">
+ <button class = "output" id = "operandTrue1" ></button>
+  <button class = "output" id = "opTrue" ></button>
+    <button class = "output" id = "operandTrue2" ></button>
+   </div></div>
+
+<div class = "row">
+   <div class = "col- c">
+  	<button id = "operand1" class="large1"></button>
+ 
+  	<button id = "op" class="large1"></button>
+ 
+  	<button id = "operand2" class="large1"></button>
+ 
+  	<button id = "go" >Go</button>
+ 
+  </div></div>
+
+
+
+<div class = "row">
+  <div class = "col-">
+  	<button id = "operation1" class = "small">+</button>
+
+  	<button id = "operation2" class = "small">$ \times $</button>
+ 
+  	<button id = "operation3" class = "small">-</button>
+ 
+  	<button id = "operation4" class = "small">$ \div $</button>
+
+      <button id = "operation5" class = "small">^</button>
+  
+  </div>
+
+</div>
+
+
+
+
+
+<div class = "row">
+   <div class = "col-sm-12 c">
+   
+   </div></div>
+
+<!-- numbers generated by operations-->
+
+<div class = "row">
+  <div class = "col- text-center">
+  	<button id = "number1" class = "small">0</button>
+  	<button id = "number2" class = "small">0</button>
+  	<button id = "number3" class = "small">0</button>
+    <button id = "number4" class = "small">0</button>
+  </div>
+</div>
+
+
+<div class = "row">
+  <div class = "col- text-center">
+  	<button id = "number5" class = "small">4</button>
+  	<button id = "number6" class = "small">4</button>
+  	<button id = "number7" class = "small">4</button>
+    <button id = "number8" class = "small">4</button>
+  </div>
+</div>
+
+<div class = "row">
+  <div class = "col- text-center">
+  	<button id = "number9" class = "small">44</button>
+  	<button id = "number10" class = "small">$ \sqrt{4} $</button>
+  	<button id = "number11" class = "small">4!</button>
+    <button id = "number12" class = "small">.4</button>
+    <button id = "number13" class = "small">$ \frac{4}{.4} $</button>
+    <!--
+    <button id = "number14" class = "small">$ \bar{.4} $ </button>
+    -->
+
+  </div>
+</div>
+
+<div class = "row">
+  <div class = "col- text-center">
+  	<button id = "value1" class = "smaller">44</button>
+  	<button id = "value2" class = "smaller">2</button>
+  	<button id = "value3" class = "smaller">24</button>
+      <button id = "value4" class = "smaller">0.4</button> 
+    <button id = "value5" class = "smaller">10</button>
+    <!--
+    <button id = "value6" class = "smaller">4/9</button>
+    -->
+  </div>
+</div>
+
+
+
+
+</div> <!-- container -->
+
+</body>
+
+
+</html>
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+
+    question = '<?php echo $question; ?>' ;
+points = parseInt(question.substr(-1));
+
+  clkCount = 0 ; // keep track of how often the numbers are clicked
+
+  myClicks = [] ; // track buttons clicked on one turn
+
+  myClicks[1] = "" ;
+  myClicks[2] = "" ;
+
+  $('[id^=value]').prop('disabled',true);
+  $('[id^=four]').prop('disabled',true);
+  $('#go').prop('disabled',true);
+
+  // disable buttons not meant to be clicked
+
+  $('#go').prop('disabled',true);
+  $('#operand1').prop('disabled',true);
+  $('#operand2').prop('disabled',true);
+  $('#op').prop('disabled',true);
+  $('#target').prop('disabled',true);
+
+  theNumbers = [] ;  // value of number buttons
+  theOperations = [] ; // operands
+
+  moves = 0 ;
+  moves = [] ;
+
+  foursUsed = 0 ;
+
+  var max = 40 ;
+  var min = 10 ;
+
+ target = Math.floor(Math.random() * (max - min) + min);
+  // target = 40;
+  
+
+ 
+  $('#target').text(target);
+
+ 
+
+  theOperations[1] = "+" ;
+  theOperations[2] = "x" ;
+  theOperations[3] = "-" ;
+  theOperations[4] = "/" ;
+  theOperations[5] = "^" ;
+
+  expression = ""; // string to be evaluated
+  expressions = [] ; // array of expression at each move
+
+  console.log(theOperations);
+
+  for (var i = 1 ; i <= 8; i++)
+
+  {
+    clickedNumber =  $('#number' +i).text() ;
+    theNumbers[i] =  +clickedNumber ;
+  }
+
+  for (var i = 1 ; i <= 6; i++)
+
+  {
+    clickedNumber =  $('#value' +i).text() ;
+    var index = parseInt(i + 8);
+    theNumbers[index] =  parseInt(clickedNumber) ;
+  } 
+    theNumbers[12] = 0.4 ; 
+    theNumbers[14] = "4/9" ;
+console.log("The mumbers ",theNumbers)
+countMoves = 0 ;
+ 
+  })
+
+  </script>
+
+
+<script type="text/javascript">
+  
+   $(document).ready(function(){
+     $('[id^=number]').on('click', function(){
+    
+ // number button is clicked
+ 
+ clkCount++ ;
+
+ var clicked = this.id;
+ clickedNumber =  $('#'+clicked).text() ;
+ 
+ // alert(clkCount + 'id' +  clicked + ' clickedNumber ' + clickedNumber);
+
+ var index = clicked.substr(6);
+ myClicks[clkCount] = index ;
+ console.log(index,theNumbers[index],"clicks",clkCount);
+ // alert(index + '-> ' + theNumbers[index]) ;
+ var opValue = theNumbers[index] ;
+
+// place the clicked number
+if (index == 9) {opValue2 = 44 ; }
+if (index == 10) {opValue2 = '$ \\sqrt{4} $' ; }
+if (index == 11) {opValue2 = '4!' ; }
+if (index == 12) {opValue2 = '$ \\frac{2}{5} $' ; }
+if (index == 13) {opValue2 = '$ \\frac{4}{.4} $' ; }
+if (index == 14) {opValue2 = '$ \\bar{.4} $' ; }
+
+if (index <= 4)
+{$('#number' + index).prop('disabled',true) ; } // cannot re-use
+
+
+
+ $('#operand' + clkCount).text(opValue);
+
+ if (index > 8)
+   {
+    $('#operandTrue' + clkCount).text(opValue2); 
+   MathJax.Hub.Queue(["Typeset", MathJax.Hub, "operandTrue1" ]);
+   MathJax.Hub.Queue(["Typeset", MathJax.Hub, "operandTrue2" ]);
+   }
+else
+{
+  $('#operandTrue' + clkCount).text(opValue); 
+}
+
+ if (clkCount == 2)
+ {
+   clkCount = 0 ; 
+ }
+
+ if ($('#operand1').text() != '' & $('#operand2').text() != '' & $('#op').text() != '')
+
+{$('#go').prop('disabled',false);}
+
+     })
+     
+     })     
+</script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('[id^= operation]').on('click', function(){
+
+     var clicked = this.id;
+     var index = clicked.substr(9,1);
+
+  //   alert(index + theOperations[index]) ;
+
+    var symbol = theOperations[index];
+    var symbol2 = symbol; // need a copy without mathjax for expression
+    
+    if (symbol2 == 'x') {symbol2 = '$ \\times $';}
+    if (symbol2 == '/') {symbol2 = '$ \\div $';}
+  //  if (symbol2 == '^') {symbol2 = '**';}
+
+
+    $('#opTrue').text(symbol2) ;
+
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "opTrue"]);
+
+
+    $('#op').text(symbol2) ;
+
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "op"]);
+
+
+
+
+if ($('#operand1').text() != '' & $('#operand2').text() != '' & $('#op').text() != '')
+
+{$('#go').prop('disabled',false); }
+
+
+
+
+})
+    
+    })     
+</script>
+
+<script>
+
+  function checkWin(fours,total)
+
+  {
+
+  console.log("4s",fours,"t",total)
+    if (total == target & fours == 4)
+    {
+      return "You win!" ;
+    }
+    if (total == target & fours != 4)
+    {
+      return "You must use 4 4s" ;
+    }
+
+    if (total != target )
+    {
+      return "Keep trying" ;
+    }
+
+
+
+  }
+
+  </script>
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $('#go').on('click', function(){
+
+      var originalFoursUsed = foursUsed;
+      console.log("Fours",foursUsed);
+   
+      var op1 = ($('#operand1').text()) ;
+      var op2 = ($('#operand2').text()) ;
+      var op = $('#op').text();
+     
+      console.log("Buttons clicked ", myClicks);
+      var firstButton = parseInt(myClicks[1])
+
+      if (firstButton > 0 & firstButton < 5) {foursUsed = foursUsed ;}
+      if (firstButton >= 5 & firstButton <= 8) {foursUsed = foursUsed + 1;}
+      if (firstButton == 9 |  firstButton == 13) {foursUsed = foursUsed + 2;}
+      if (firstButton == 10 |  firstButton == 11) {foursUsed = foursUsed + 1;}
+
+      var secondButton = parseInt(myClicks[2])
+
+      if (secondButton > 0 & secondButton < 5) {foursUsed = foursUsed ;}
+      if (secondButton >= 5 & secondButton <= 8) {foursUsed = foursUsed + 1;}
+      if (secondButton == 9 |  secondButton == 13) {foursUsed = foursUsed + 2;}
+      if (secondButton == 10 |  secondButton == 11) {foursUsed = foursUsed + 1;}
+// can't reuse calculations
+      for (var j = 1 ; j <=4 ; j++)
+      {
+        if (myClicks[1] == j) { $('#number' + j).text(0);}
+        if (myClicks[2] == j) { $('#number' + j).text(0);}
+      }
+
+console.log("Fours used now ",foursUsed);
+
+if (foursUsed > 4) {
+alert("Error you can only use 4 4s");
+$('#operand1').empty() ;
+$('#operand2').empty() ;
+$('#op').empty() ;
+$('.output').empty();
+foursUsed = originalFoursUsed;
+$('#foursUsed').text(foursUsed) ;
+return; }
+
+      $('#foursUsed').text(foursUsed) ;
+
+      if (foursUsed == 4)
+      {
+        for (var i = 5; i <= 15 ; i++)
+        {$('#number'+i).prop('disabled',true).css("background-color","red") ;}
+      }
+
+var foundTimes = op.includes('times');
+if (foundTimes) {op = "*"  ;}
+var foundDivide = op.includes('div');
+if (foundDivide) {op = "/"  ;}
+var foundExponent = op.includes('^');
+if (foundExponent) {op = "**"  ;}
+
+
+
+       var calc  = op1 + op + op2 ;
+       var c = eval(calc);
+
+      expression = op1 + op + op2;
+     
+   
+
+    //  alert(expression + " = " + c);
+if (foursUsed <= 4)
+     { moves++;
+
+    $('.output').empty() ;
+    $('#op').empty();
+    $('#operand1').empty();
+    $('#operand2').empty();
+
+    clkCount = 0 ; 
+
+      $('#number' + moves).text(c) ;
+      theNumbers[moves] = c;
+
+for (var i = 1; i <= foursUsed; i++)
+{
+  $('#four' + i).css("background-color","red").css("color","white")
+}
+
+     
+     expressions.push(expression) ;
+     console.log(expressions);
+     }
+
+ result = checkWin(foursUsed,c);   
+ 
+ 
+ if (result == "You win!")
+ {
+
+/*
+     var pts = parseInt($('#total').text());
+     pts = parseInt(pts);
+     points = parseInt(points) ;
+     console.log("points",pts);
+     pts = parseInt(pts + points);
+     console.log("points",pts);
+     $('#total').text(pts);
+
+*/
+    alert("You have solved the puzzle!");
+    processWin(questionID);
+    $('#menu').show();
+  
+var t = team.split("*");
+    var teamName = t[1];
+    var grade = t[0] ;
+    var score = $('#total').text() ;
+    var timer = $('#timer').text() ;
+
+     console.log("output",teamName,score,timer,grade,question,questionID);
+    updateDatabase(teamName,score,timer,question,grade,questionID);
+
+     $('#play').empty().show();
+     $('#q12').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
+      
+ 
+  
+ }
+
+     })
+     
+     })     
+
+  </script>
+
+<script>
+
+  function clear()
+  {
+
+
+   expression = "" ;
+   expressions = [] ; 
+   moves = 0 ;
+   moves = [] ;
+   foursUsed = 0 ;
+
+   for (var i = 1; i <= 4; i++)
+{
+ $('#four' + i).css("background-color","pink").css("color","black")
+}
+for (var i = 5; i <= 15 ; i++)
+        {$('#number'+i).prop('disabled',false).css("background-color","lightblue") ;}
+
+   $('#foursUsed').text(0) ;
+
+   $('.output').empty() ;
+   $('#op').empty();
+   $('#operand1').empty();
+   $('#operand2').empty();
+   $('[id^=number]').prop('disabled',false) ;
+
+   clkCount = 0 ; 
+
+   for (var i = 1 ; i <= 4 ; i++)
+   {$('#number' +i).text(0);
+    theNumbers[i] = 0 ;}
+
+    }
+    
+   
+</script>
+  }
+</script>
+
+<script type="text/javascript">
+  
+   $(document).ready(function(){
+     $('#clear').on('click', function(){
+
+      clear() ;
+
+     })
+     
+     })     
+</script>
+
+
+

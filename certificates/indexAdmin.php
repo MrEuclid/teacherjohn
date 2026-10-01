@@ -1,5 +1,5 @@
 <?php
-  include "../connectTemple.php" ; 
+  include "../connectTempleDB.php" ; 
 ?>
 
 <!DOCTYPE html>

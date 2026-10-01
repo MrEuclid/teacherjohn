@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+<title>Pandemic part 4</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../javaScript/bootStrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="//javaScript/bootStrap/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel = "stylesheet" href  = "css/rsaStyles.css">
+    
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>
+<script type="text/javascript" src="MathJax-2.7.5/MathJax.js"></script>
+
+<!-- scripts for functions used in the app -->
+
+
+ 
+  <title>array of objects</title>
+</head>
+<body>
+<p id = "who"></p>
+</body>
+</html>
+
+<script>
+$(document).ready(function(){
+
+
+alert("loading document ");
+crowd = 25;
+// susceptible = crowd ;
+
+time = 0 ;
+// use array peopleto hold the crowd
+people = [] ;
+person = {};
+// person has the status and characteristics of each person
+for (var i = 0 ; i < crowd ; i++)
+{
+  // make the crowd
+person = {
+            "status": "S",
+            "id#":i ,
+            "timeInfected": i ,
+            "timeRecovered": i,
+            "socialDistance": i+2
+          } ;
+// people[i] = person ;
+people.push(person) ;
+//console.log('Adding ',i,person)
+}
+var n = 1 ;
+people[n].status = "I" ;
+
+var n = 3 ;
+people[n].status = "I" ;
+
+var n = 5 ;
+people[n].status = "I" ;
+
+var n = 6 ;
+people[n].status = "I" ;
+
+var p = n + ' ' + people[n].socialDistance + ' and ' + people[n].status ;
+
+ var temp = people.filter(function(p) {return p.status == "I" ; });
+ alert('Temp = ' + temp +  ' l = ' + temp.length) ;
+ console.log(temp );
+
+$('#who').text(p);
+})
+</script>

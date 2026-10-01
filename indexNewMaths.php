@@ -96,7 +96,7 @@
     <div class="math-grid">
         <a href="2048Game.html"><button class="btn btn-primary">2048</button></a>
 
-     <a href="crossNumber/crossNumberGemini"><button class="btn btn-success">Crossnumber</button></a>
+     <a href="crossNumber/crossNumberGemini.html"><button class="btn btn-success">Crossnumber</button></a>
     <a href="egyptian/egyptianFractions.php"><button class="btn btn-success">Egyptian fractions</button></a>
       <a href="escape/escape.html"><button class="btn btn-success">Escape</button></a>
        <a href="greenLight/greenLightApp.html" target="_blank"><button class="btn btn-success">Green Light</button></a>
@@ -115,7 +115,8 @@
 <div class = "row text-center">
     <p class = "h2">G9 - G10</p>
     <div class="math-grid">
-       
+  <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank"><button class = "btn btn-success">Cross Number Original</button></a>
+     
 
            <a href="crossNumber/crossNumberHarder.html"><button class="btn btn-warning">Crossnumber</button></a>
               <a href="crossNumber/crossNumberFractions"><button class="btn btn-success">Crossnumber fractions</button></a>

@@ -1,5 +1,5 @@
 <?php
-include "../../connect_db_euclid_pio.php" ; 
+include "../../connectTempleDB.php" ; 
 
 
 $query = "SELECT max(Year) FROM New_ID_Year_Grade";

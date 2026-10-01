@@ -1,0 +1,515 @@
+<?php 
+$question = $_POST['question'];
+?>
+
+<!DOCTYPE html>
+<title>Egyptian Fractions - easy</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="../bootstrap-5.0.2-dist/css/bootstrap.min.css">
+  <script src="../javaScript/jQuery/jquery-3.3.1.min.js"></script>
+  <script src="../bootstrap-5.0.2-dist/js/bootstrap.min.js"></script>
+    
+
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+  });
+</script>   
+
+ <script type="text/javascript">
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+</script>
+
+<script type="text/javascript" src="../MathJax-2.7.5/MathJax.js"></script>
+ 
+
+
+<style type="text/css">
+
+
+    p {text-align: left;
+margin-left: 10% ;
+margin-right: 10% ;
+font-family: sans-serif;
+font-size: 12pt ;
+font-style: normal;
+font-weight:normal;}
+
+
+
+.c {text-align: center;
+margin-right: auto;
+margin-left: auto;
+margin: 0 ;}
+
+
+
+button.fraction {padding: 2px ; width: 120px ;
+height: 60px;
+ margin-bottom: 5px ;
+  margin-top: 2px;vertical-align: top;
+  font-size: 16pt ; 
+  font-weight: bolder;
+ }
+
+.red  {
+   color:white ;
+  background-color: red ;}
+
+ .orange  {
+   color:white ;
+  background-color: orange ;} 
+
+
+ .green  {
+   color:white ;
+  background-color: green ;}
+
+  .blue  {
+   color:white ;
+  background-color: blue  ;}
+
+  .big {width:600px ; height: 60px;
+ margin-bottom: 5px ;
+  margin-top: 2px;vertical-align: top;
+  font-size: 16pt ; 
+  font-weight: bolder;
+  background-color: black ;
+  color: white ;}
+
+.num {padding: 2px ; width: 60px ;
+height: 60px;
+ margin-bottom: 5px ;
+  margin-top: 2px;vertical-align: top;
+  font-size: 12pt ; 
+  font-weight: bolder;
+ }
+
+
+</style>
+
+ </head>
+
+
+ <body> 
+
+ 
+
+
+<div class = "container-fluid">
+<div class = "row">
+  <div class = "col-sm-12 c">
+  	<h1>
+       <!-- 
+     <img src = "images/king.jpg">
+ -->
+     Egyptian Fractions - Easy
+     <!--
+     <img src = "images/queen.jpg">
+ -->
+    </h1>
+    <h2>$  \frac{3}{4} = \frac{1}{2} + \frac{1}{4}  $ </h2>
+  </div></div>
+
+<div class = "row">
+  <div class = "col-sm-12 c">
+    <button id = "newGame" class="btn btn-success bigWriting">New</button>
+  	<button id = "score" class="btn btn-primary bigWriting">Score</button>
+  	<button id = "clear" class="btn btn-danger bigWriting">Clear</button>
+    <a href = "indexPrimaryMaths.php">
+    <button id = "clear" class="btn btn-info bigWriting">End</button>
+  </a>
+  </div></div>
+
+<div class = "row">
+   <div class = "col-sm-12 c">
+    <h3>Fraction equation</h3>
+<br>
+    <button id = "bigFraction" class = "big"></button>
+ <br><br>   
+     <h2 class = "c" id = "sum"></h2>
+      <br><br>
+    <p id = "myAnswer" class = "c"></p>
+    
+</div></div>
+
+  <div class = "row">
+   <div class = "col-sm-12 c">
+
+<div id = "buttonDisplay">
+
+<!--
+    <button id = "frac-1" class="red fraction">$ \frac{1}{2} $</button>
+    <button id = "frac-2" class="orange fraction">$ \frac{1}{3} $</button>
+    <button id = "frac-3" class="blue fraction">$ \frac{1}{4} $</button>
+    <button id = "frac-4" class="green fraction">$ \frac{1}{5} $</button>
+
+ -->
+    
+</div>
+
+   </div></div>
+
+ <div class = "row">
+   <div class = "col-sm-12 c">
+
+<div id = "stars">
+
+</div></div>   
+
+
+  
+</div>   <!-- container -->
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+  
+function gcd(a, b) {
+    if (b) {
+        return gcd(b, a % b);
+    } else {
+        return Math.abs(a);
+    }
+}
+
+</script>
+
+<script type="text/javascript">
+  
+  function addFractions(a,b,c,d)
+
+  {
+   var num = a*d + b*c ;
+   var den = b*d ;
+   var factor = gcd(num,den) ;
+   num = num / factor ;
+   den = den / factor ;
+   var f = [] ;
+   f[0] = num ;
+   f[1] = den ;
+   
+   return f ; 
+  }
+</script>
+ 
+<script type="text/javascript">
+
+// make fractions
+
+function createButton(nButton) {
+
+
+// alert('Making button with ' + nButton) ;
+
+if (nButton % 1 == 0) {myColor = 1 ;}
+if (nButton % 2 == 0) {myColor = 2 ;}
+if (nButton % 3 == 0) {myColor = 3 ;}
+if (nButton % 5 == 0) {myColor = 5 ;}
+
+var clr = colours[myColor] ;
+
+    var term = '$ \\frac{ ' + 1 + '} {' + nButton + '} $' ;
+    var $btn = $('<button  />', {
+      type: 'button',
+      text: term,
+      class: 'fraction',
+      id: 'btn-'+nButton,
+      css: {"background-color":clr,"color":"white" , 
+      "font-size":"16pt","font-weight":"bold" }
+
+           });
+     
+        return $btn;
+  }
+
+
+</script>
+
+<script type="text/javascript">
+
+  
+   $(document).ready(function(){
+
+question = '<?php echo $question; ?>' ;
+points = question.substr(-1);
+
+cnt = 0 ;
+denoma = [] ;
+denomb = [] ;
+numerator = 1 ;
+denominator = 1 ;
+colours = [] ;
+myAttempt = '' ; // shows addends on each turn 
+
+score = 0 ; // score per round 
+total = 10 ; // accumulated score  count down -1 for every incorrect guess
+
+// colour by multiples - prime = 1
+
+colours[1] = 'blue' ;
+colours[2] = 'red' ;
+colours[3] = 'green' ;
+colours[5] = 'orange' ;
+
+sumNumerator = 0 ;
+sumDenominator = 1 ; // cumulative sum of guesses
+
+$('#score').text(score) ;
+
+
+
+screenWidth = 600 ; // based on base 60 to maximise number of divisors
+limit = 10 ; // maximum denominator ;
+
+$('buttonDisplay').hide() ;
+$('#bigFraction').hide() ;
+$('[id^=btn-]').hide() ;
+$('#clear').hide() ;
+
+shapes = [] ;
+shapes[1] = "&#10004;"  ; // tick
+shapes[2] = "&#9733;"  ; // star
+shapes[3] = "&#10084;"  ; // heart 
+shapes[4] = "&#9889;"  ; // lightning
+
+clicks = 0 ; // track clicks on each attempt 
+clicksEasy = 0 ;
+clicksMax = 2 ;
+
+   cntMoves = 0 ;
+ 
+
+ for (i = 2 ; i <= 20; i++)  
+{$("#buttonDisplay").append(createButton(i)); 
+
+cnt = cnt + 1
+
+    if ((cnt % 10) == 0)
+      { // ('Line break needed') ;
+        $('#buttonDisplay').append('<br>') ; }
+
+}  
+$('[id^=btn-]').hide() ;
+$('#buttonDisplay').hide() ;
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation"]);
+
+   })
+
+  </script>
+
+
+
+
+<script type="text/javascript">
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+
+$('#buttonDisplay').show() ;
+$('#myAnswer').text('') ;
+
+clicksEasy = 0 ;
+myAttempt = '' ;
+
+sumNumerator = 0 ;
+sumDenominator = 1 ;
+total= 10 ;
+score =  score ;
+
+
+$('#score').text(score) ;
+$('[id^=btn-]').show() ;
+
+$('#sum').hide() ;
+
+// alert('New game clicked limit = ' + limit) ;
+  var d1 =  getRandomInt(2,limit) ;
+  var equal = 1 ;
+
+  while (equal == 1)
+  {
+  d2 = getRandomInt(2,limit)  ;
+  // alert('Numerator = ' + numerator + ' Denominator ' + denominator) ;
+
+  if (d1 != d2) {equal = 0;}
+  }   
+
+  var f = [] ;
+  f = addFractions(1,d1,1,d2) ;
+  numerator = f[0];
+  denominator = f[1] ;
+var term = '$ \\frac{ ' + numerator + '} {' + denominator + '} $' ;
+$('#lhs').html(term) ;  
+
+$('#bigFraction').html(term) ;
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "bigFraction"]);
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation"]);
+
+$('#bigFraction').show() ;
+
+})
+
+</script>      
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+     $('#clear').on('click', function(){
+
+//alert('Clear') ;
+total = total - 1 ;
+clicksEasy = 0 ;
+myAttempt = '' ;
+if (total < 0) {total = 0;}
+
+$('#buttonDisplay').show() ;
+$('#myAnswer').text('') ;
+$('[id^=btn-]').show() ;
+
+sumNumerator = 0 ;
+sumDenominator = 1 ;
+
+$('#sum').hide() ;
+
+
+var term = '$ \\frac{ ' + numerator + '} {' + denominator + '} $' ;
+
+
+
+
+// $('#lhs').html(myAttempt) ;  
+
+$('#bigFraction').html(term) ;
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "bigFraction"]);
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "equation"]);
+
+$('#bigFraction').show() ;
+
+})
+})
+</script>      
+
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $('[id^=btn-]').on("click", function(event) {
+
+$('#sum').show() ;
+$('#clear').show() ;
+clicksEasy = clicksEasy + 1 ;
+var txt = $(this).attr('id'); 
+ //   index = parseInt(index) ;
+// alert($(this).index());
+
+var n  = txt.substring(4, txt.length);
+   
+if (n % 1 == 0) {myColor = 1 ;}
+if (n % 2 == 0) {myColor = 2 ;}
+if (n % 3 == 0) {myColor = 3 ;}
+if (n % 5 == 0) {myColor = 5 ;}
+
+var clr = colours[myColor] ;   
+
+// alert(' Button clicked text = ' + n + ' Num ' + numerator + ' Denom ' + denominator) ;
+
+var length = 600 * denominator / (n * numerator) ;  // sets length of clicked button when it goes to myAnswer
+
+// make button to append to p#myAnswer
+
+  var term = '$ \\frac{ ' + 1 + '} {' + n + '} $' ;
+    var btnClicked = $('<button  />', {
+      type: 'button',
+      text: term,
+      class: 'fraction',
+      id: 'clicked-'+n,
+      css: {"background-color":clr,"color":"white" , "width":length ,
+      "font-size":"16pt","font-weight":"bold" } 
+
+      });
+
+var frac = [] ;
+frac = addFractions(sumNumerator,sumDenominator,1,n) ;   
+sumNumerator = frac[0] ;
+sumDenominator = frac[1] ;
+
+
+var sumFrac  = '$ \\frac{ ' + sumNumerator + '} {' + sumDenominator + '} $' ;
+
+if (clicksEasy == 1)
+{myAttempt = myAttempt  + ' ' + term  ; 
+$('#sum').html(myAttempt + ' = ' + sumFrac) ;}
+
+
+if (clicksEasy == 2)
+{myAttempt = myAttempt  + ' + ' + term + ' = '  ; 
+$('#sum').html(myAttempt + sumFrac) ;
+$('[id^=btn-]').hide() ;}
+
+
+// $('#temp').html(myAttempt) ;
+ MathJax.Hub.Queue(["Typeset", MathJax.Hub, "temp"]);
+// $('#sum').html(myAttempt + sumFrac) ;
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "sum"]);
+
+$('#myAnswer').append(btnClicked) ;
+$('#btn-'+n).hide() ;
+MathJax.Hub.Queue(["Typeset", MathJax.Hub, "myAnswer"]);
+
+// check answer ;
+
+var correct = (numerator == sumNumerator & denominator == sumDenominator) ;
+if (correct)
+{$('#clear').hide() ;
+/*
+     var pts = parseInt($('#total').text());
+     pts = parseInt(pts);
+     points = parseInt(points) ;
+     console.log("points",pts);
+     pts = parseInt(pts + points);
+     console.log("points",pts);
+     $('#total').text(pts);
+*/
+    alert("You have solved the puzzle!");
+    $('#menu').show();
+    
+  processWin(questionID);
+    console.log("processing ",questionID);
+  
+
+     $('#play').empty().show();
+     $('#q13').prop('disabled',true).css({"background-color":"blue","color":"yellow"});
+   //  $('#q13').html(myAttempt + sumFrac) ;
+     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "q13"]);
+
+
+
+
+
+      
+ 
+}
+
+if (clicksEasy == 2 & !correct) {alert('Not correct - clear and try again'); 
+$('#clear').show() ;
+}
+
+
+      })
+   })
+
+ </script>

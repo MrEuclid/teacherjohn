@@ -560,7 +560,7 @@ d = 4 ;
   $('#message1').text('Solve puzzle ' + n) ;
   $('#message2').text('a = 16, b = 12 , c = 28 , d = 4');
 
-lines[0] = "3925-";
+lines[0] = "3952-";
 lines[1] = "-8--1" ;
 lines[2] = "857-6" ;
 lines[3] = "4-768" ;

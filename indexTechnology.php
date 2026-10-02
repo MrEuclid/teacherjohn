@@ -119,7 +119,7 @@
           <a href="https://pio-students.net/remote/indexRemote.php" target="_blank" class="app-btn">
             <img src="images/arduino.png" alt="Sensors"> Sensors
           </a> 
-          <a href="https://pio-students.net/arduino/index.php" target="_blank" class="app-btn">
+          <a href="https://teacherjohn.org/arduino/index.php" target="_blank" class="app-btn">
             <img src="images/arduino.png" alt="Arduino"> Arduino
           </a> 
           <a href="https://trinket.strivemath.org/" target="_blank" class="app-btn">

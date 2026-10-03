@@ -80,6 +80,7 @@
 <a href = "https://docs.google.com/document/d/1piXf5GX-uco0YsZ_C_cGgDXYxF-R2IC1Qv2cRkEsxmw/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Video Sensing Lesson</button></a>
 -->
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
+   <a href="arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
 
 <a href = "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">G4 - G5 - Intro</button></a>
 

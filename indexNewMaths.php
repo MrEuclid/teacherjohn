@@ -63,6 +63,7 @@
       <a href="https://nrich.maths.org/problems/connect-three">
         <button class="btn btn-info">Connect Three</button></a>
 
+   <a href="arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
    <a href="https://nrich.maths.org/games/dicey-operations"><button class="btn btn-info">Dicey operations</button></a>
 
 

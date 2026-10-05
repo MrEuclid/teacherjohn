@@ -3,7 +3,7 @@
 $message = "";
 $photoLink = "";
 
-include "../connectTempleDB.php"; // Include the database connection template
+include "../connectTeacherJohn.php"; // Include the database connection template
 
 // Check if the form was submitted via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

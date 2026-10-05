@@ -5,6 +5,20 @@ $message = "";
 // Database configuration
 // IMPORTANT: Replace these with your actual database credentials
 
+ include "../connectTeacherJohn.php";
+/*
+
+$server = 'localhost' ;
+$username = 'teacherj_euclid';
+$password = 'puthisastra2024' ;
+$database = 'teacherj_temple' ;
+
+$servername = "localhost";
+$username = 'teacherj_euclid';
+$password = "puthisastra2024";
+$dbname = "teacherj_temple";
+*/
+ $servername = $dbServer;
 include "../connectTeacherJohn.php";
 
 
@@ -26,9 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
 
         // --- 3. Establish database connection ---
-        $dbServer = new mysqli($servername, $username, $password, $dbname);
-        if ($dbServer->connect_error) {
-            $message = "<p style='color:red;'>Connection to database failed: " . $dbServer->connect_error . "</p>";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            $message = "<p style='color:red;'>Connection to database failed: " . $conn->connect_error . "</p>";
         } else {
             // --- 4. Check if Student ID exists in the 'certificates' table ---
             $sql_check = "SELECT studentID FROM certificates WHERE studentID = ?";

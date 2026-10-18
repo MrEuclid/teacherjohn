@@ -139,9 +139,8 @@
     <div class="row mb-5">
       <div class="col-12 action-links">
         <a href="certificates/viewStudents.html" target="_blank" class="btn btn-info text-white shadow-sm">View class</a>
-        <a href="certificates/studentLogin.php" target="_blank" class="btn btn-secondary shadow-sm">Certificates Database</a>
-        <a href="certificates/photoviewer.php" target="_blank" class="btn btn-secondary shadow-sm">Certificates Photos</a>
-        <a href="certificates/onePDFOutput.html" target="_blank" class="btn btn-secondary shadow-sm">Certificates</a>
+        <a href="https://pio-students.net/certificates/studentLogin.php" target="_blank" class="btn btn-secondary shadow-sm">Upload photo</a>
+        <a href="https://pio-students.net/certificates/photoviewer.php" target="_blank" class="btn btn-secondary shadow-sm">View photo</a>
         <a href="certificates/synchCertificates.php" target="_blank" class="btn btn-secondary shadow-sm">Synch Table</a>
         <a href="teachableMachine/machineLearning.html" target="_blank" class="btn btn-secondary shadow-sm">Machine Learning</a>
         <a href="teachableMachine/arduinoInterface.html" target="_blank" class="btn btn-secondary shadow-sm">Arduino Interface</a>

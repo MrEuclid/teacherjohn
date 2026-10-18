@@ -1,14 +1,20 @@
 <?php
 // FILE: arduino/index.php
+<?php
+// FILE: arduino/index.php
 $lessons = [
-    'reaction' => ['title' => '1. Reaction Timer', 'hex' => 'hex/reaction.hex', 'unit' => 'Time (ms)'],
-    'dht11'    => ['title' => '2. DHT11 Climate', 'hex' => 'hex/dht11.hex', 'unit' => 'Temp/Hum'],
-    'cooling'  => ['title' => '3. Newton\'s Cooling', 'hex' => 'hex/ds18.hex', 'unit' => 'Temp (°C)'],
-    'fruit'    => ['title' => '4. Soda Battery - A3', 'hex' => 'hex/fruit.hex', 'unit' => 'Voltage (V)'],
-    'capacitor'=> ['title' => '5. Capacitor Discharge', 'hex' => 'hex/cap.hex', 'unit' => 'Voltage (V)'],
-    'light'    => ['title' => '6. Light Levels', 'hex' => 'hex/light.hex', 'unit' => 'Brightness (%)'],
-    'pendulum' => ['title' => '7. Fruit battery - A3', 'hex' => 'hex/banana.hex', 'unit' => 'Distance (cm)']
+    'reaction'  => ['title' => '1. Reaction Timer', 'hex' => 'hex/reaction.hex', 'unit' => 'Time (ms)'],
+    'dht11'     => ['title' => '2. DHT11 Climate', 'hex' => 'hex/dht11.hex', 'unit' => 'Temp/Hum'],
+    'cooling'   => ['title' => '3. Newton\'s Cooling', 'hex' => 'hex/ds18.hex', 'unit' => 'Temp (°C)'],
+    'fruit'     => ['title' => '4. Soda Battery - A3', 'hex' => 'hex/fruit.hex', 'unit' => 'Voltage (V)'],
+    'capacitor' => ['title' => '5. Capacitor Discharge', 'hex' => 'hex/cap.hex', 'unit' => 'Voltage (V)'],
+    'light'     => ['title' => '6. Light Levels', 'hex' => 'hex/light.hex', 'unit' => 'Brightness (%)'],
+    'pendulum'  => ['title' => '7. Fruit battery - A3', 'hex' => 'hex/banana.hex', 'unit' => 'Distance (cm)'],
+    // New Audio Experiments added below
+    'volume'    => ['title' => '8. Sound Volume', 'hex' => 'hex/volume.hex', 'unit' => 'Amplitude (0-1023)'],
+    'frequency' => ['title' => '9. Voice Frequency', 'hex' => 'hex/frequency.hex', 'unit' => 'Frequency (Hz)']
 ];
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +52,8 @@ $lessons = [
 
     <div class="row mb-4">
         <?php foreach ($lessons as $key => $l): ?>
-        <div class="col-md-2 mb-3" style="flex: 0 0 auto; width: 14.28%;"> <div class="card p-3 flash-card h-100">
-                <h6 class="fw-bold mb-2" style="font-size: 0.85rem;"><?php echo $l['title']; ?></h6>
+<div class="col-md-2 mb-3" style="flex: 0 0 auto; width: 11.11%;">           
+     <h6 class="fw-bold mb-2" style="font-size: 0.85rem;"><?php echo $l['title']; ?></h6>
                 <button class="btn btn-xs btn-outline-primary flash-btn" 
                         data-hex="<?php echo $l['hex']; ?>" 
                         data-unit="<?php echo $l['unit']; ?>"

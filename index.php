@@ -84,7 +84,7 @@
 
 <a href = "https://studio.code.org/courses/pre-express-2025/units/1/lessons/1/levels/1" target = "_blank"><button class = "btn btn-info">G4 - G5 - Intro</button></a>
 
-<a href = "https://teacherjohn.org/words/indexWords.php" target = "_blank"><button class = "btn btn-info">Words</button></a>
+<a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank"><button class = "btn btn-info">Find the Word</button></a>
 
 <a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
 
@@ -111,8 +111,8 @@
 
    
              <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
-  
-     
+
+             <a href="https://www.numberempire.com/" target="_blank"><button class="btn btn-info">Number Empire</button></a>
 
         </div>
     </div>

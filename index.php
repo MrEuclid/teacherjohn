@@ -113,8 +113,13 @@
              <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
 
              <a href="https://www.numberempire.com/" target="_blank"><button class="btn btn-info">Number Empire</button></a>
-
-        </div>
+<button><a href = "https://teacherjohn.org/certificates/images/4936_20251005_213041.png">
+    AI Student Image</a>   </button>
+<button>
+<a href = "https://teacherjohn.org/teacherjohn.org/images/outsidePIO.jpeg
+">
+    Outside PIO</a> </button>
+</div>
     </div>
 
     <div class="row mt-4">

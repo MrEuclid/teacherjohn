@@ -93,6 +93,9 @@
 <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank"><button class = "btn btn-success">Cross Number</button></a>
 
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
+
+<a href = "https://docs.google.com/spreadsheets/d/13sNBPCpoLrn6RIAt9VDrZ0n2evLu9dqsuFU-b0n_HyM/edit?usp=sharing">
+    <button>Spreadsheet lessons</button></a>
 </div>
 
     </div>

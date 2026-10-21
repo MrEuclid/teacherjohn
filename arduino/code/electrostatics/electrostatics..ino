@@ -15,6 +15,6 @@ void loop() {
   // Send to Plotly
   Serial.println(voltage);
 
-  // 2-second interval is perfect for a 100s Time Constant
+  // 2-second interval 
   delay(2000); 
 }

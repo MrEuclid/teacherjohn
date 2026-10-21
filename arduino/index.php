@@ -13,8 +13,8 @@ $lessons = [
     // New Audio Experiments added below
     'volume'    => ['title' => '8. Sound Volume', 'hex' => 'hex/volume.hex', 'unit' => 'Amplitude (0-1023)'],
     'frequency' => ['title' => '9. Voice Frequency', 'hex' => 'hex/frequency.hex', 'unit' => 'Frequency (Hz)']
-];
-?>
+    'electrostatics' => ['title' => '10. Electrostatics', 'hex' => 'hex/electrostatics.hex', 'unit' => 'Voltage (V)']
+    ?>
 ?>
 <!DOCTYPE html>
 <html lang="en">

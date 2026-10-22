@@ -119,9 +119,8 @@
 <button><a href = "https://teacherjohn.org/certificates/images/4936_20251005_213041.png">
     AI Student Image</a>   </button>
 <button>
-<a href = "https://teacherjohn.org/teacherjohn.org/images/outsidePIO.jpeg
-">
-    Outside PIO</a> </button>
+<a href = "https://peopleimprovement.org" target = "_blank">
+     PIO</a> </button>
 </div>
     </div>
 

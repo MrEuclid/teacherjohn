@@ -88,9 +88,12 @@
 
 <a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
 
-<a href = "https://teacherjohn.org/tetris/tetris.html" target = "_blank"><button class = "btn btn-info">Tetris</button></a>
+<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect Three</button></a>
 
 <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank"><button class = "btn btn-success">Cross Number</button></a>
+
+<a href = "https://teacherjohn.org/factors/factorGameJSv2.php" target = "_blank"><button class = "btn btn-success">Factor Game</button></a>
+
 
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
 

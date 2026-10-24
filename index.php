@@ -85,7 +85,7 @@
 
 <a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank"><button class = "btn btn-info">Find the Word</button></a>
 
-<a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
+<a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank"><button class = "btn btn-info">Egyptian Fractions</button></a>
 
 <a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect Three</button></a>
 

@@ -75,8 +75,7 @@
 <a href = "https://share.streamlit.io/?utm_source=streamlit&utm_medium=referral&utm_campaign=main&utm_content=-ss-streamlit-io-topright" target = "_blank">
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
-<a href = "https://teacherjohn.org/juniperGreen/jg2.html" target = "_blank"><button class = "btn btn-primary">Juniper Green</button></a>
-
+<!--
 <a href = "https://docs.google.com/document/d/1piXf5GX-uco0YsZ_C_cGgDXYxF-R2IC1Qv2cRkEsxmw/edit?usp=sharing" target = "_blank"><button class = "btn btn-info">Video Sensing Lesson</button></a>
 
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
@@ -86,11 +85,14 @@
 
 <a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank"><button class = "btn btn-info">Find the Word</button></a>
 
-<a href = "https://teacherjohn.org/race2022/crossword5x5.php" target = "_blank"><button class = "btn btn-info">Crossword</button></a>
+<a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank"><button class = "btn btn-info">Egyptian Fractions</button></a>
 
-<a href = "https://teacherjohn.org/tetris/tetris.html" target = "_blank"><button class = "btn btn-info">Tetris</button></a>
+<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect Three</button></a>
 
 <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank"><button class = "btn btn-success">Cross Number</button></a>
+
+<a href = "https://teacherjohn.org/factors/factorGameJSv2.php" target = "_blank"><button class = "btn btn-success">Factor Game</button></a>
+
 
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
 
@@ -116,9 +118,7 @@
              <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
 
              <a href="https://www.numberempire.com/" target="_blank"><button class="btn btn-info">Number Empire</button></a>
-<button><a href = "https://teacherjohn.org/certificates/images/4936_20251005_213041.png">
-    AI Student Image</a>   </button>
-<button>
+
 <a href = "https://peopleimprovement.org" target = "_blank">
      PIO</a> </button>
 </div>

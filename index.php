@@ -6,8 +6,9 @@
     <title>Teacher John home</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <!--
     <link rel="stylesheet" href="raceGeminiStyles.css">
-    
+-->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js"></script>
@@ -43,14 +44,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 text-center">
-            <a href=" askTheAudience/inputScreen.html" target="_blank"><button class="btn btn-warning">Make questions</button></a>
+            <a href=" askTheAudience/inputScreen.html" target="_blank" class="btn btn-warning">Make questions</a>
 
-            <a href="/askTheAudience/quizMaster.php" target="_blank"><button class="btn btn-warning">Quiz Master</button></a>
+            <a href="/askTheAudience/quizMaster.php" target="_blank" class="btn btn-warning">Quiz Master</a>
           
-            <a href="/askTheAudience/projector.html" target="_blank"><button class="btn btn-warning">Projector</button></a>
-            <a href="/askTheAudience/leaderboard.html" target="_blank"><button class="btn btn-warning">Board</button></a> 
-            <a href="/askTheAudience/g11_final.html" target="_blank"><button class="btn btn-info">What do you know?</button></a> 
-            <a href="/teacher.html" target="_blank"><button class="btn btn-info">Leaderboards</button></a>
+            <a href="/askTheAudience/projector.html" target="_blank" class="btn btn-warning">Projector</a>
+            <a href="/askTheAudience/leaderboard.html" target="_blank" class="btn btn-warning">Board</a> 
+            <a href="/askTheAudience/g11_final.html" target="_blank" class="btn btn-info">What do you know?</a> 
+            <a href="/teacher.html" target="_blank" class="btn btn-info">Leaderboards</a>
             <a href="https://docs.google.com/spreadsheets/d/1lEj53GVNF-46u-Jsn2Kl7CsHeh7zxI8XkQgVSfC71AE/edit?usp=sharing" target="_blank"><button class="btn btn-info">Timetable</button></a>
 
             <a href="https://docs.google.com/spreadsheets/d/1zBJ3RHw8nQrTN8BlloGpCtAQybgd4f7V_5YuBplGVy8/edit?usp=sharing" target="_blank"><button class="btn btn-info">2027 Schedule</button></a>
@@ -76,18 +77,18 @@
         <button class = "btn btn-danger" title = "Streamlit">Streamlit</button> </a>
 
 
-<a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank"><button class = "btn btn-info">Ninja Maths</button></a>
-   <a href="arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
+<a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank" class = "btn btn-info">Ninja Maths</a>
+   <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
 
 
-<a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank"><button class = "btn btn-info">Find the Word</button></a>
+<a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank" class = "btn btn-info">Find the Word</a>
 
-<a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank"><button class = "btn btn-info">Egyptian Fractions</button></a>
+<a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank" class = "btn btn-info">Egyptian Fractions</a>
 
-<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank"><button class = "btn btn-info">Connect Three</button></a>
+<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank" class = "btn btn-info">Connect Three</a>
 
 
-<a href = "https://teacherjohn.org/factors/factorGameJSv2.php" target = "_blank"><button class = "btn btn-success">Factor Game</button></a>
+<a href = "https://teacherjohn.org/factors/factorGameJSv2.php" target = "_blank" class = "btn btn-success">Factor Game</a>
 
 
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
@@ -98,22 +99,21 @@
     <div class="row mt-3">
 
  <div class="col-12 text-center">
-            <a href="indexTechnology.php"><button class="btn btn-success">Web apps</button></a>
-            <a href="eBooks/library.php"><button class="btn btn-warning">eBooks</button></a>
-            <a href="https://lichess.org" target="_blank"><button class="btn btn-info">Li-chess</button></a>
-            <a href="https://chess.com" target="_blank"><button class="btn btn-info">chess.com</button></a>
-         <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank"><button class="btn btn-info">Smart Maths</button></a>
+            <a href="indexTechnology.php" class="btn btn-success">Web apps</a>
+            <a href="eBooks/library.php" class="btn btn-warning">eBooks</a>
+            <a href="https://lichess.org" target="_blank" class="btn btn-info">Li-chess</a>
+            <a href="https://chess.com" target="_blank" class="btn btn-info">chess.com</a>
+         <a href="https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target="_blank" class="btn btn-info">Smart Maths</a>
 
     <a href = "https://docs.google.com/document/d/1YPN-pLiewTq81Sq3YjJpymzjt7E_9xt78DeBU0c0458/edit?usp=sharing">
         <button>XAMPP</button></a>  
 
    
-             <a href="https://phet.colorado.edu/" target="_blank"><button class="btn btn-info">Physics simulations</button></a>
+             <a href="https://phet.colorado.edu/" target="_blank" class="btn btn-info">Physics simulations</a>
 
-             <a href="https://www.numberempire.com/" target="_blank"><button class="btn btn-info">Number Empire</button></a>
+             <a href="https://www.numberempire.com/" target="_blank" class="btn btn-info">Number Empire</a>
 
-<a href = "https://peopleimprovement.org" target = "_blank">
-     PIO</a> </button>
+
 </div>
     </div>
 

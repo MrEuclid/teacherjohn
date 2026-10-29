@@ -91,7 +91,7 @@
 <a href = "https://teacherjohn.org/factors/factorGameJSv2.php" target = "_blank" class = "btn btn-success">Factor Game</a>
 
 
-<a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank"><button class = "btn btn-primary">Smart Technology G12</button></a>
+<a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank" class = "btn btn-primary">Smart Technology G12</a>
 
 
     </div>

@@ -113,7 +113,10 @@
 
              <a href="https://www.numberempire.com/" target="_blank" class="btn btn-info">Number Empire</a>
 
-
+<!--
+<a href = "https://docs.google.com/spreadsheets/d/13sNBPCpoLrn6RIAt9VDrZ0n2evLu9dqsuFU-b0n_HyM/edit?usp=sharing">
+    Spreadsheet lessons<\a>
+-->
 </div>
     </div>
 

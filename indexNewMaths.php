@@ -58,10 +58,8 @@
    <a href="ninja/ninja.html" class="btn btn-info">Ninja maths</a>
    <a href="abacus/abacus_target.html" class="btn btn-info">Abacus - learn</a>
    <a href="abacus/abacus.html" class="btn btn-info">Abacus</a>
-      <a href="https://nrich.maths.org/problems/first-connect-three">
-        <button class="btn btn-info">Connect Three easy</button></a>
-      <a href="https://nrich.maths.org/problems/connect-three">
-        <button class="btn btn-info">Connect Three</button></a>
+      <a href="https://nrich.maths.org/problems/first-connect-three" class="btn btn-info">Connect Three easy</a>
+      <a href="https://nrich.maths.org/problems/connect-three"class="btn btn-info">Connect Three</a>
 
    <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
    <a href="https://nrich.maths.org/games/dicey-operations" class="btn btn-info">Dicey operations</a>
@@ -133,10 +131,10 @@
 </div>
 
         <div class="math-grid">
-                  <a href="functionMachine/functionMachine.html"><button class="btn btn-danger">Func. Machine</button></a>
+                  <a href="functionMachine/functionMachine.html" class="btn btn-danger">Func. Machine</a>
 
-               <a href="crossNumber/crossNumberCalculus.html"><button class="btn btn-danger">Crossnumber</button></a>
-                     <a href="crossNumber/crossNumberFractionsHarder.html"><button class="btn btn-success">Crossnumber fractions</button></a>
+               <a href="crossNumber/crossNumberCalculus.html" class="btn btn-danger">Crossnumber</a>
+                     <a href="crossNumber/crossNumberFractionsHarder.html" class="btn btn-success">Crossnumber fractions</a>
         </div>
 
         <div class="footer-text text-center">

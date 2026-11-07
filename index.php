@@ -80,10 +80,12 @@
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank" class = "btn btn-info">Ninja Maths</a>
    <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
 
-
+<!--
 <a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank" class = "btn btn-info">Find the Word</a>
 
 <a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank" class = "btn btn-info">Egyptian Fractions</a>
+
+-->
 
 <a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank" class = "btn btn-info">Connect Three</a>
 

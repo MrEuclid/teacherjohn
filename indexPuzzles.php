@@ -46,9 +46,7 @@ button {margin: 0.5em;}
       <div class = "row">
         <div class = "col-12 text-center c">
 
-<h1> <a href="index.php" class="btn btn-info btn-lg">
-        <button class= "btn btn-primary" >   Home</button>
-          </a>
+<h1> <a href="index.php" class="btn btn-info btn-lg" class= "btn btn-primary" >Home</a>
         Temple of Learning - Puzzles
 <a href = "swissMulti.html" target = "_blank"><button class = "btn btn-success">Tournament</button></a>
       </h1>

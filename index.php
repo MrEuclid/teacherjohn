@@ -92,6 +92,9 @@
 <a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank" class = "btn btn-success">Remainder Game</a>
 
 <a href = "https://teacherjohn.org/juniperGreen/jg2.html" target = "_blank" class = "btn btn-warning">Juniper Green</a>
+
+<a href = "https://teacherjohn.org/twoPlayerGames/factorGameGemini.html" target = "_blank" class = "btn btn-danger">Factor Game</a>
+
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank" class = "btn btn-primary">Smart Technology G12</a>
 
 <a href = "https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target = "_blank" class = "btn btn-primary">Smart Maths</a>

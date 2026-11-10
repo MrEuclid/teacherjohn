@@ -54,59 +54,56 @@
 
 <div class="math-grid">
 
-   <a href="jigsaw/jigsawNumbers.html"><button class="btn btn-info">Jigsaw numbers</button></a>
-   <a href="ninja/ninja.html"><button class="btn btn-info">Ninja maths</button></a>
-   <a href="abacus/abacus_target.html"><button class="btn btn-info">Abacus - learn</button></a>
-   <a href="abacus/abacus.html"><button class="btn btn-info">Abacus</button></a>
-      <a href="https://nrich.maths.org/problems/first-connect-three">
-        <button class="btn btn-info">Connect Three easy</button></a>
-      <a href="https://nrich.maths.org/problems/connect-three">
-        <button class="btn btn-info">Connect Three</button></a>
+   <a href="jigsaw/jigsawNumbers.html" class="btn btn-info">Jigsaw numbers</a>
+   <a href="ninja/ninja.html" class="btn btn-info">Ninja maths</a>
+   <a href="abacus/abacus_target.html" class="btn btn-info">Abacus - learn</a>
+   <a href="abacus/abacus.html" class="btn btn-info">Abacus</a>
+      <a href="https://nrich.maths.org/problems/first-connect-three" class="btn btn-info">Connect Three easy</a>
+      <a href="https://nrich.maths.org/problems/connect-three"class="btn btn-info">Connect Three</a>
 
-   <a href="arithmetic/arithmetic.html"><button class="btn btn-info">Arithmetic</button></a>
-   <a href="https://nrich.maths.org/games/dicey-operations"><button class="btn btn-info">Dicey operations</button></a>
+   <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
+   <a href="https://nrich.maths.org/games/dicey-operations" class="btn btn-info">Dicey operations</a>
 
 
-   <a href="jimmyGame/jimmyMath.html"><button class="btn btn-info">Jimmy Gemini</button></a>
-    <a href="pyramidGame/pyramids.html"><button class="btn btn-info">Pyramids</button></a>
-    <a href="24Game/24.html"><button class="btn btn-info">24 game</button></a>
-    <a href = "arithmagons/arithmagons_junior.html" target="_blank"><button class = "btn btn-info">Arithmagons</button></a>
-<a href = "tetris/tetris.html" target ="_blank"><button class = "btn btn-primary">Junior Tetris</button></a>
-<a href = "greenLight/greenLightAppJunior.html" target ="_blank"><button class = "btn btn-primary">Green light easy</button></a>
+   <a href="jimmyGame/jimmyMath.html" class="btn btn-info">Jimmy Gemini</a>
+    <a href="pyramidGame/pyramids.html" class="btn btn-info">Pyramids</a>
+    <a href="24Game/24.html" class="btn btn-info">24 game</a>
+    <a href = "arithmagons/arithmagons_junior.html" target="_blank" class="btn btn-info">Arithmagons</a>
+<a href = "tetris/tetris.html" target ="_blank" class="btn btn-primary">Junior Tetris</a>
+<a href = "greenLight/greenLightAppJunior.html" target ="_blank" class="btn btn-primary">Green light easy</a>
 </div>
 
 <div class = "row text-center">
     <p class = "h2">G5 - G6</p>
 </div>
 <div class="math-grid">
-        <a href="24Game/24.html"><button class="btn btn-primary">24 game</button></a>
+        <a href="24Game/24.html" class="btn btn-primary">24 game</a>
 
-        <a href="https://nrich.maths.org/problems/treasure-hunt">
-            <button class="btn btn-primary">Treasure hunt - coordinates</button></a>
+        <a href="https://nrich.maths.org/problems/treasure-hunt" class="btn btn-primary">Treasure hunt - coordinates</a>
 
-<a href="dragons/dragons.html"><button class="btn btn-primary ">Dragons</button></a>
-        <a href="escape/escape.html"><button class="btn btn-primary">Escape</button></a>
-     <a href="jimmyGame/jimmyMath.html"><button class="btn btn-primary">Jimmy Gemini</button></a>
-      <a href="decimalsPercentages/decimals.html"><button class="btn btn-primary">Percent</button></a>
-<a href="2048Game.html" target = "_blank"><button class="btn btn-primary">2048</button></a>
+<a href="dragons/dragons.html" class="btn btn-primary">Dragons</a>
+        <a href="escape/escape.html" class="btn btn-primary">Escape</a>
+     <a href="jimmyGame/jimmyMath.html" class="btn btn-primary">Jimmy Gemini</a>
+      <a href="decimalsPercentages/decimals.html" class="btn btn-primary">Percent</a>
+<a href="2048Game.html" target = "_blank" class="btn btn-primary">2048</a>
 </div>
 </div> 
 
 <div class = "row text-center">
     <p class = "h2">G7 - G8</p>
     <div class="math-grid">
-        <a href="2048Game.html"><button class="btn btn-primary">2048</button></a>
+        <a href="2048Game.html" class="btn btn-primary">2048</a>
 
-     <a href="crossNumber/crossNumberGemini.html"><button class="btn btn-success">Crossnumber</button></a>
-    <a href="egyptian/egyptianFractions.php"><button class="btn btn-success">Egyptian fractions</button></a>
-      <a href="escape/escape.html"><button class="btn btn-success">Escape</button></a>
-       <a href="greenLight/greenLightApp.html" target="_blank"><button class="btn btn-success">Green Light</button></a>
-           <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-success">Number Race</button></a>
-           <a href="factors/factorGameJSv2.php"><button class="btn btn-success">Factor Game</button></a>
-<a href = "arithmagons/arithmagons.html" target="_blank"><button class = "btn btn-success">Arithmagons</button></a>
-<a href = "fruitPuzzle/fruitPuzzle.html" target="_blank"><button class = "btn btn-success">Fruit Puzzle</button></a>
-<a href = "make100/make100.html" target="_blank"><button class = "btn btn-success">Make 100</button></a>
-<a href = "remainders/remaindersGame.html" target="_blank"><button class = "btn btn-success">Remainders</button></a>
+     <a href="crossNumber/crossNumberGemini.html" class="btn btn-success">Crossnumber</a>
+    <a href="egyptian/egyptianFractions.php" class="btn btn-success">Egyptian fractions</a>
+      <a href="escape/escape.html" class="btn btn-success">Escape</a>
+       <a href="greenLight/greenLightApp.html" target="_blank" class="btn btn-success">Green Light</a>
+           <a href="numberRace/countDownNumbersLoad.html" class="btn btn-success">Number Race</a>
+           <a href="factors/factorGameJSv2.php" class="btn btn-success">Factor Game</a>
+<a href = "arithmagons/arithmagons.html" target="_blank" class = "btn btn-success">Arithmagons</a>
+<a href = "fruitPuzzle/fruitPuzzle.html" target="_blank" class = "btn btn-success">Fruit Puzzle</a>
+<a href = "make100/make100.html" target="_blank" class = "btn btn-success">Make 100</a>
+<a href = "remainders/remaindersGame.html" target="_blank" class = "btn btn-success">Remainders</a>
 
 </div>
 
@@ -116,16 +113,16 @@
 <div class = "row text-center">
     <p class = "h2">G9 - G10</p>
     <div class="math-grid">
-  <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank"><button class = "btn btn-success">Cross Number Original</button></a>
+  <a href = "https://teacherjohn.org/crossNumber/crossnumber5x5.php" target = "_blank" class = "btn btn-success">Cross Number Original</a>
      
 
-           <a href="crossNumber/crossNumberHarder.html"><button class="btn btn-warning">Crossnumber</button></a>
-              <a href="crossNumber/crossNumberFractions"><button class="btn btn-success">Crossnumber fractions</button></a>
-    <a href="egyptian/egyptianFractions.php"><button class="btn btn-warning">Egyptian fractions</button></a>
-      <a href="escape/escape.html"><button class="btn btn-warning">Escape</button></a>
-      <a href="functionMachine/functionMachine.html"><button class="btn btn-warning">Func. Machine</button></a>
-       <a href="greenLight/greenLightApp.html" target="_blank"><button class="btn btn-warning">Green Light</button></a>
-           <a href="numberRace/countDownNumbersLoad.html"><button class="btn btn-warning">Number Race</button></a>
+           <a href="crossNumber/crossNumberHarder.html" class="btn btn-warning">Crossnumber</a>
+              <a href="crossNumber/crossNumberFractions" class="btn btn-success">Crossnumber fractions</a>
+    <a href="egyptian/egyptianFractions.php" class="btn btn-warning">Egyptian fractions</a>
+      <a href="escape/escape.html" class="btn btn-warning">Escape</a>
+      <a href="functionMachine/functionMachine.html" class="btn btn-warning">Func. Machine</a>
+       <a href="greenLight/greenLightApp.html" target="_blank" class="btn btn-warning">Green Light</a>
+           <a href="numberRace/countDownNumbersLoad.html" class="btn btn-warning">Number Race</a>
 </div>
 </div>
 
@@ -134,10 +131,10 @@
 </div>
 
         <div class="math-grid">
-                  <a href="functionMachine/functionMachine.html"><button class="btn btn-danger">Func. Machine</button></a>
+                  <a href="functionMachine/functionMachine.html" class="btn btn-danger">Func. Machine</a>
 
-               <a href="crossNumber/crossNumberCalculus.html"><button class="btn btn-danger">Crossnumber</button></a>
-                     <a href="crossNumber/crossNumberFractionsHarder.html"><button class="btn btn-success">Crossnumber fractions</button></a>
+               <a href="crossNumber/crossNumberCalculus.html" class="btn btn-danger">Crossnumber</a>
+                     <a href="crossNumber/crossNumberFractionsHarder.html" class="btn btn-success">Crossnumber fractions</a>
         </div>
 
         <div class="footer-text text-center">

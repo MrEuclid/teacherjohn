@@ -81,7 +81,7 @@
    <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
 
 
-<a href = "hhttps://teacherjohn.org/connect3/connectThree_two_player.html" target = "_blank" class = "btn btn-info">Connect 3</a>
+<a href = "https://teacherjohn.org/connect3/connectThree_two_player.html" target = "_blank" class = "btn btn-info">Connect 3</a>
 
 
 

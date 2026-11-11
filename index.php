@@ -87,8 +87,7 @@
 
 -->
 
-<a href = "https://nrich.maths.org/problems/first-connect-three" target = "_blank" class = "btn btn-info">Connect Three Easy</a>
-<a href = "https://nrich.maths.org/problems/connect-three" target = "_blank" class = "btn btn-info">Connect Three Harder</a>
+<a href = "https://teacherjohn.org/24Game/24.html" target = "_blank" class = "btn btn-info">24 Game</a>
 <a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank" class = "btn btn-success">Remainder Game</a>
 
 <a href = "https://teacherjohn.org/juniperGreen/jg2.html" target = "_blank" class = "btn btn-warning">Juniper Green</a>

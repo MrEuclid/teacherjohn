@@ -81,7 +81,7 @@
    <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
 
 
-<a href = "https://teacherjohn.org/connect3/connectThree_two_player.html" target = "_blank" class = "btn btn-info">Connect 3</a>
+<a href = "/connect3/connectThree_two_player.html" target = "_blank" class = "btn btn-info">Connect 3</a>
 
 
 
@@ -95,7 +95,12 @@
 <a href = "https://docs.google.com/document/d/1BRYhm3mkhc9q-fmET0SfBR2eZ8Gw_zZQI5jAe8KQtQc/edit?tab=t.0" target = "_blank" class = "btn btn-primary">Smart Technology G12</a>
 
 <a href = "https://docs.google.com/document/d/1CtWquQGC3F4kTp12L1owJOodMQ0Dp-aD-eGPK-V30sY/edit?usp=sharing" target = "_blank" class = "btn btn-primary">Smart Maths</a>
-    </div>
+   
+<a href ="https://teacherjohn.org/images/underwater3.png" >Underwater  </a>
+&nbsp; &nbsp;
+<a href ="https://teacherjohn.org/images/fish75x75.png" >Fish</a>
+        </div>
+</div>
 
     <div class="row mt-3">
 

@@ -40,7 +40,7 @@
         .p1 { background-color: #ffb3ba !important; border-color: #ff4d4d !important; color: #cc0000 !important; }
         .p2 { background-color: #bae1ff !important; border-color: #4d94ff !important; color: #0000cc !important; }
         
-        /* Dynamic Hover Effect based on whose turn it is (only affects empty squares) */
+        /* Dynamic Hover Effect based on whose turn it is */
         body.turn-p1 .cell:not(.p1):not(.p2):hover {
             background-color: #ffe6e8;
             border-color: #ff4d4d;
@@ -69,7 +69,32 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         button:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
-        #dice-display { font-size: 24px; min-height: 30px; margin: 15px; color: #333; font-weight: bold; }
+        
+        /* Numbered Square Dice Styling */
+        #dice-display { 
+            font-size: 24px; 
+            min-height: 50px; 
+            margin: 15px; 
+            color: #333; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .die {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            font-size: 26px;
+            color: #333;
+            margin: 0 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body class="turn-p1">
@@ -107,7 +132,6 @@
         const badgeClass = currentPlayer === 1 ? 'p1-badge' : 'p2-badge';
         const playerNameBadge = `<span class="${badgeClass}">Player ${currentPlayer}</span>`;
         
-        // Update body class so CSS knows which hover color to apply
         document.body.className = currentPlayer === 1 ? 'turn-p1' : 'turn-p2';
 
         if (state === 'start') {
@@ -116,7 +140,7 @@
             statusEl.innerHTML = `${playerNameBadge} <span>, select your answer!</span>`;
         } else if (state === 'win') {
             statusEl.innerHTML = `${playerNameBadge} <span> Wins!</span>`;
-            document.body.className = ''; // Remove hover effect on win
+            document.body.className = ''; 
         } else if (state === 'draw') {
             statusEl.innerHTML = `<strong>Game Over - It's a draw! No possible moves left.</strong>`;
             document.body.className = ''; 
@@ -144,13 +168,14 @@
 
         if (!hasValidMove) {
             updateStatusDisplay('draw');
-            document.getElementById('dice-display').innerText = "";
+            document.getElementById('dice-display').innerHTML = "";
             document.getElementById('roll-btn').disabled = true;
             return;
         }
 
         currentRoll = [d1, d2];
-        document.getElementById('dice-display').innerText = `Rolled: ${d1} and ${d2}`;
+        // Inject the numbered square HTML formatting here
+        document.getElementById('dice-display').innerHTML = `Rolled: <span class="die">${d1}</span> and <span class="die">${d2}</span>`;
         updateStatusDisplay('rolling');
         document.getElementById('roll-btn').disabled = true;
     }
@@ -163,7 +188,7 @@
         const validAnswers = [d1 + d2, d1 - d2, d2 - d1];
 
         if (!validAnswers.includes(targetNumber)) {
-            alert("Incorrect answer.");
+            alert("Incorrect! You must use + or - with your rolled numbers.");
             return;
         }
 
@@ -179,7 +204,7 @@
 
         if (checkWin(arrayIndex)) {
             updateStatusDisplay('win');
-            document.getElementById('dice-display').innerText = "Game Over";
+            document.getElementById('dice-display').innerHTML = "Game Over";
             currentRoll = [];
             return;
         }
@@ -188,7 +213,7 @@
         currentRoll = [];
         updateStatusDisplay('start');
         document.getElementById('roll-btn').disabled = false;
-        document.getElementById('dice-display').innerText = '';
+        document.getElementById('dice-display').innerHTML = '';
     }
 
     function checkWin(lastIndex) {

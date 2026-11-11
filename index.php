@@ -80,12 +80,10 @@
 <a href = "https://teacherjohn.org/ninja/ninja.html" target = "_blank" class = "btn btn-info">Ninja Maths</a>
    <a href="arithmetic/arithmetic.html" class="btn btn-info">Arithmetic</a>
 
-<!--
-<a href = "https://teacherjohn.org/hangman/hangman.html" target = "_blank" class = "btn btn-info">Find the Word</a>
 
-<a href = "https://teacherjohn.org/egyptian/egyptianFractions.php" target = "_blank" class = "btn btn-info">Egyptian Fractions</a>
+<a href = "hhttps://teacherjohn.org/connect3/connectThree_two_player.html" target = "_blank" class = "btn btn-info">Connect 3</a>
 
--->
+
 
 <a href = "https://teacherjohn.org/24Game/24.html" target = "_blank" class = "btn btn-info">24 Game</a>
 <a href = "https://teacherjohn.org/remainders/remaindersGame.html" target = "_blank" class = "btn btn-success">Remainder Game</a>

@@ -10,6 +10,7 @@
             text-align: center;
             background-color: #f4f4f9;
             padding: 20px;
+            transition: background-color 0.3s;
         }
         .board {
             display: grid;
@@ -32,10 +33,30 @@
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             user-select: none;
+            transition: all 0.2s ease-in-out;
         }
-        .cell:hover { border-color: #333; }
-        .p1 { background-color: #ffb3ba; border-color: #ff4d4d; color: #cc0000; }
-        .p2 { background-color: #bae1ff; border-color: #4d94ff; color: #0000cc; }
+        
+        /* Claimed Token Colors */
+        .p1 { background-color: #ffb3ba !important; border-color: #ff4d4d !important; color: #cc0000 !important; }
+        .p2 { background-color: #bae1ff !important; border-color: #4d94ff !important; color: #0000cc !important; }
+        
+        /* Dynamic Hover Effect based on whose turn it is (only affects empty squares) */
+        body.turn-p1 .cell:not(.p1):not(.p2):hover {
+            background-color: #ffe6e8;
+            border-color: #ff4d4d;
+            color: #ff4d4d;
+        }
+        body.turn-p2 .cell:not(.p1):not(.p2):hover {
+            background-color: #e6f2ff;
+            border-color: #4d94ff;
+            color: #4d94ff;
+        }
+
+        /* Upgraded Player Badges */
+        #status { font-size: 22px; margin: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .p1-badge { background-color: #ffb3ba; color: #cc0000; padding: 4px 12px; border-radius: 6px; border: 2px solid #ff4d4d; font-weight: bold; }
+        .p2-badge { background-color: #bae1ff; color: #0000cc; padding: 4px 12px; border-radius: 6px; border: 2px solid #4d94ff; font-weight: bold; }
+
         .controls { margin-bottom: 20px; }
         button {
             padding: 10px 20px;
@@ -45,17 +66,17 @@
             color: white;
             border: none;
             border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        #status { font-size: 22px; margin: 15px; font-weight: bold; }
-        #dice-display { font-size: 24px; min-height: 30px; margin: 15px; color: #333; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+        #dice-display { font-size: 24px; min-height: 30px; margin: 15px; color: #333; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="turn-p1">
 
     <h2>Connect Three</h2>
     <div class="controls">
-        <div id="status">Player 1's Turn</div>
+        <div id="status"></div>
         <button id="roll-btn" onclick="rollDice()">Roll Dice</button>
         <div id="dice-display"></div>
     </div>
@@ -78,20 +99,64 @@
             cell.onclick = () => attemptMove(i);
             boardDiv.appendChild(cell);
         }
+        updateStatusDisplay('start');
+    }
+
+    function updateStatusDisplay(state) {
+        const statusEl = document.getElementById('status');
+        const badgeClass = currentPlayer === 1 ? 'p1-badge' : 'p2-badge';
+        const playerNameBadge = `<span class="${badgeClass}">Player ${currentPlayer}</span>`;
+        
+        // Update body class so CSS knows which hover color to apply
+        document.body.className = currentPlayer === 1 ? 'turn-p1' : 'turn-p2';
+
+        if (state === 'start') {
+            statusEl.innerHTML = `${playerNameBadge} <span>'s Turn to Roll</span>`;
+        } else if (state === 'rolling') {
+            statusEl.innerHTML = `${playerNameBadge} <span>, select your answer!</span>`;
+        } else if (state === 'win') {
+            statusEl.innerHTML = `${playerNameBadge} <span> Wins!</span>`;
+            document.body.className = ''; // Remove hover effect on win
+        } else if (state === 'draw') {
+            statusEl.innerHTML = `<strong>Game Over - It's a draw! No possible moves left.</strong>`;
+            document.body.className = ''; 
+        }
     }
 
     function rollDice() {
-        const d1 = Math.floor(Math.random() * 6) + 1;
-        const d2 = Math.floor(Math.random() * 6) + 1;
-        currentRoll = [d1, d2];
+        let d1, d2, validAnswers, hasValidMove;
+        let attempts = 0;
         
+        do {
+            d1 = Math.floor(Math.random() * 6) + 1;
+            d2 = Math.floor(Math.random() * 6) + 1;
+            validAnswers = [d1 + d2, d1 - d2, d2 - d1];
+            
+            hasValidMove = validAnswers.some(ans => {
+                let index = ans + 5;
+                return index >= 0 && index <= 17 && boardState[index] === 0;
+            });
+            
+            attempts++;
+            if (attempts > 100) break;
+            
+        } while (!hasValidMove);
+
+        if (!hasValidMove) {
+            updateStatusDisplay('draw');
+            document.getElementById('dice-display').innerText = "";
+            document.getElementById('roll-btn').disabled = true;
+            return;
+        }
+
+        currentRoll = [d1, d2];
         document.getElementById('dice-display').innerText = `Rolled: ${d1} and ${d2}`;
-        document.getElementById('status').innerText = `Player ${currentPlayer}, select your answer!`;
+        updateStatusDisplay('rolling');
         document.getElementById('roll-btn').disabled = true;
     }
 
     function attemptMove(targetNumber) {
-        if (currentRoll.length === 0) return; // Must roll first
+        if (currentRoll.length === 0) return; 
         
         const d1 = currentRoll[0];
         const d2 = currentRoll[1];
@@ -102,63 +167,55 @@
             return;
         }
 
-        const arrayIndex = targetNumber + 5; // Convert -5..12 to 0..17
+        const arrayIndex = targetNumber + 5; 
         if (boardState[arrayIndex] !== 0) {
             alert("That square is already taken!");
             return;
         }
 
-        // Apply move
         boardState[arrayIndex] = currentPlayer;
         const cell = document.getElementById('cell-' + targetNumber);
         cell.classList.add(currentPlayer === 1 ? 'p1' : 'p2');
 
         if (checkWin(arrayIndex)) {
-            document.getElementById('status').innerText = `Player ${currentPlayer} Wins!`;
+            updateStatusDisplay('win');
             document.getElementById('dice-display').innerText = "Game Over";
             currentRoll = [];
             return;
         }
 
-        // Switch turns
         currentPlayer = currentPlayer === 1 ? 2 : 1;
         currentRoll = [];
-        document.getElementById('status').innerText = `Player ${currentPlayer}'s Turn`;
+        updateStatusDisplay('start');
         document.getElementById('roll-btn').disabled = false;
         document.getElementById('dice-display').innerText = '';
     }
 
     function checkWin(lastIndex) {
-        // Grid is 6 columns x 3 rows
         const row = Math.floor(lastIndex / 6);
         const col = lastIndex % 6;
-
-        // Check horizontal in the current row
         let consecutive = 0;
+        
+        // Horizontal
         for (let i = row * 6; i < (row * 6) + 6; i++) {
             if (boardState[i] === currentPlayer) {
                 consecutive++;
                 if (consecutive === 3) return true;
-            } else {
-                consecutive = 0;
-            }
+            } else { consecutive = 0; }
         }
 
-        // Check vertical in the current column
         consecutive = 0;
+        // Vertical
         for (let i = col; i < 18; i += 6) {
             if (boardState[i] === currentPlayer) {
                 consecutive++;
                 if (consecutive === 3) return true;
-            } else {
-                consecutive = 0;
-            }
+            } else { consecutive = 0; }
         }
 
         return false;
     }
 
-    // Start game
     initBoard();
 </script>
 

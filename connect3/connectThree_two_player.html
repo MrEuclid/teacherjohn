@@ -12,12 +12,22 @@
             padding: 20px;
             transition: background-color 0.3s;
         }
+        
+        /* Scoreboard */
+        #scoreboard {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
         .board {
             display: grid;
             grid-template-columns: repeat(6, 70px);
             gap: 8px;
             justify-content: center;
-            margin: 30px auto;
+            margin: 20px auto;
         }
         .cell {
             width: 70px;
@@ -54,21 +64,31 @@
 
         /* Upgraded Player Badges */
         #status { font-size: 22px; margin: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .p1-badge { background-color: #ffb3ba; color: #cc0000; padding: 4px 12px; border-radius: 6px; border: 2px solid #ff4d4d; font-weight: bold; }
-        .p2-badge { background-color: #bae1ff; color: #0000cc; padding: 4px 12px; border-radius: 6px; border: 2px solid #4d94ff; font-weight: bold; }
+        .p1-badge { background-color: #ffb3ba; color: #cc0000; padding: 6px 16px; border-radius: 6px; border: 2px solid #ff4d4d; font-weight: bold; }
+        .p2-badge { background-color: #bae1ff; color: #0000cc; padding: 6px 16px; border-radius: 6px; border: 2px solid #4d94ff; font-weight: bold; }
 
-        .controls { margin-bottom: 20px; }
+        .controls { margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        
         button {
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
-            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
         }
-        button:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+        button:disabled { background-color: #ccc !important; cursor: not-allowed; box-shadow: none; }
+        
+        .btn-green { background-color: #4CAF50; }
+        .btn-green:hover:not(:disabled) { background-color: #45a049; }
+        
+        .btn-blue { background-color: #2196F3; }
+        .btn-blue:hover:not(:disabled) { background-color: #1e88e5; }
+        
+        .btn-red { background-color: #f44336; }
+        .btn-red:hover:not(:disabled) { background-color: #e53935; }
         
         /* Numbered Square Dice Styling */
         #dice-display { 
@@ -100,11 +120,21 @@
 <body class="turn-p1">
 
     <h2>Connect Three</h2>
-    <div class="controls">
-        <div id="status"></div>
-        <button id="roll-btn" onclick="rollDice()">Roll Dice</button>
-        <div id="dice-display"></div>
+    
+    <div id="scoreboard">
+        <div class="p1-badge">Player 1 Score: <span id="score1">0</span></div>
+        <div class="p2-badge">Player 2 Score: <span id="score2">0</span></div>
     </div>
+
+    <div id="status"></div>
+    
+    <div class="controls">
+        <button id="roll-btn" class="btn-green" onclick="rollDice()">Roll Dice</button>
+        <button id="new-game-btn" class="btn-blue" onclick="resetGame()">New Game</button>
+        <button id="reset-score-btn" class="btn-red" onclick="resetScores()">Reset Scores</button>
+    </div>
+    
+    <div id="dice-display"></div>
 
     <div class="board" id="board"></div>
 
@@ -112,6 +142,8 @@
     let currentPlayer = 1;
     let currentRoll = [];
     let boardState = Array(18).fill(0); // Indices 0-17 map to numbers -5 to 12
+    let p1Score = 0;
+    let p2Score = 0;
 
     function initBoard() {
         const boardDiv = document.getElementById('board');
@@ -125,6 +157,29 @@
             boardDiv.appendChild(cell);
         }
         updateStatusDisplay('start');
+    }
+
+    function updateScoreBoard() {
+        document.getElementById('score1').innerText = p1Score;
+        document.getElementById('score2').innerText = p2Score;
+    }
+
+    function resetGame() {
+        boardState = Array(18).fill(0);
+        currentPlayer = 1;
+        currentRoll = [];
+        initBoard();
+        document.getElementById('roll-btn').disabled = false;
+        document.getElementById('dice-display').innerHTML = '';
+    }
+
+    function resetScores() {
+        if(confirm("Are you sure you want to reset the scores to 0?")) {
+            p1Score = 0;
+            p2Score = 0;
+            updateScoreBoard();
+            resetGame();
+        }
     }
 
     function updateStatusDisplay(state) {
@@ -174,7 +229,6 @@
         }
 
         currentRoll = [d1, d2];
-        // Inject the numbered square HTML formatting here
         document.getElementById('dice-display').innerHTML = `Rolled: <span class="die">${d1}</span> and <span class="die">${d2}</span>`;
         updateStatusDisplay('rolling');
         document.getElementById('roll-btn').disabled = true;
@@ -203,8 +257,10 @@
         cell.classList.add(currentPlayer === 1 ? 'p1' : 'p2');
 
         if (checkWin(arrayIndex)) {
+            if (currentPlayer === 1) p1Score++; else p2Score++;
+            updateScoreBoard();
             updateStatusDisplay('win');
-            document.getElementById('dice-display').innerHTML = "Game Over";
+            document.getElementById('dice-display').innerHTML = "Game Over - Click New Game to play again.";
             currentRoll = [];
             return;
         }

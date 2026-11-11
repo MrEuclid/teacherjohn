@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Three - Math Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 70px);
+            gap: 8px;
+            justify-content: center;
+            margin: 30px auto;
+        }
+        .cell {
+            width: 70px;
+            height: 70px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+        .cell:hover { border-color: #333; }
+        .p1 { background-color: #ffb3ba; border-color: #ff4d4d; color: #cc0000; }
+        .p2 { background-color: #bae1ff; border-color: #4d94ff; color: #0000cc; }
+        .controls { margin-bottom: 20px; }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status { font-size: 22px; margin: 15px; font-weight: bold; }
+        #dice-display { font-size: 24px; min-height: 30px; margin: 15px; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h2>Connect Three</h2>
+    <div class="controls">
+        <div id="status">Player 1's Turn</div>
+        <button id="roll-btn" onclick="rollDice()">Roll Dice</button>
+        <div id="dice-display"></div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+<script>
+    let currentPlayer = 1;
+    let currentRoll = [];
+    let boardState = Array(18).fill(0); // Indices 0-17 map to numbers -5 to 12
+
+    function initBoard() {
+        const boardDiv = document.getElementById('board');
+        boardDiv.innerHTML = '';
+        for (let i = -5; i <= 12; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = 'cell-' + i;
+            cell.innerText = i;
+            cell.onclick = () => attemptMove(i);
+            boardDiv.appendChild(cell);
+        }
+    }
+
+    function rollDice() {
+        const d1 = Math.floor(Math.random() * 6) + 1;
+        const d2 = Math.floor(Math.random() * 6) + 1;
+        currentRoll = [d1, d2];
+        
+        document.getElementById('dice-display').innerText = `Rolled: ${d1} and ${d2}`;
+        document.getElementById('status').innerText = `Player ${currentPlayer}, select your answer!`;
+        document.getElementById('roll-btn').disabled = true;
+    }
+
+    function attemptMove(targetNumber) {
+        if (currentRoll.length === 0) return; // Must roll first
+        
+        const d1 = currentRoll[0];
+        const d2 = currentRoll[1];
+        const validAnswers = [d1 + d2, d1 - d2, d2 - d1];
+
+        if (!validAnswers.includes(targetNumber)) {
+            alert("Incorrect! You must use + or - with your rolled numbers.");
+            return;
+        }
+
+        const arrayIndex = targetNumber + 5; // Convert -5..12 to 0..17
+        if (boardState[arrayIndex] !== 0) {
+            alert("That square is already taken!");
+            return;
+        }
+
+        // Apply move
+        boardState[arrayIndex] = currentPlayer;
+        const cell = document.getElementById('cell-' + targetNumber);
+        cell.classList.add(currentPlayer === 1 ? 'p1' : 'p2');
+
+        if (checkWin(arrayIndex)) {
+            document.getElementById('status').innerText = `Player ${currentPlayer} Wins!`;
+            document.getElementById('dice-display').innerText = "Game Over";
+            currentRoll = [];
+            return;
+        }
+
+        // Switch turns
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        currentRoll = [];
+        document.getElementById('status').innerText = `Player ${currentPlayer}'s Turn`;
+        document.getElementById('roll-btn').disabled = false;
+        document.getElementById('dice-display').innerText = '';
+    }
+
+    function checkWin(lastIndex) {
+        // Grid is 6 columns x 3 rows
+        const row = Math.floor(lastIndex / 6);
+        const col = lastIndex % 6;
+
+        // Check horizontal in the current row
+        let consecutive = 0;
+        for (let i = row * 6; i < (row * 6) + 6; i++) {
+            if (boardState[i] === currentPlayer) {
+                consecutive++;
+                if (consecutive === 3) return true;
+            } else {
+                consecutive = 0;
+            }
+        }
+
+        // Check vertical in the current column
+        consecutive = 0;
+        for (let i = col; i < 18; i += 6) {
+            if (boardState[i] === currentPlayer) {
+                consecutive++;
+                if (consecutive === 3) return true;
+            } else {
+                consecutive = 0;
+            }
+        }
+
+        return false;
+    }
+
+    // Start game
+    initBoard();
+</script>
+
+</body>
+</html>

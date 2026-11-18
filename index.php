@@ -117,7 +117,7 @@
    
              <a href="https://phet.colorado.edu/" target="_blank" class="btn btn-info">Physics simulations</a>
 
-             <a href="https://canva.link/mmfqwe8yzjknoyh" target="_blank" class="btn btn-info">Story Report Template</a>
+             <a href="https://canva.link/2t9c69gsxftz4gk" target="_blank" class="btn btn-info">Story Report Template</a>
 
 <!--
 <a href = "https://docs.google.com/spreadsheets/d/13sNBPCpoLrn6RIAt9VDrZ0n2evLu9dqsuFU-b0n_HyM/edit?usp=sharing">

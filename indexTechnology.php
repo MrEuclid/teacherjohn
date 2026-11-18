@@ -122,6 +122,8 @@
           <a href="https://teacherjohn.org/arduino/index.php" target="_blank" class="app-btn">
             <img src="images/arduino.png" alt="Arduino"> Arduino
           </a> 
+          <a href="https://teacherjohn.org/flasher/flashIndex.html" target="_blank" class="app-btn">
+            <img src="images/arduino.png" alt="Arduino Interface"> Arduino Code
           <a href="https://trinket.strivemath.org/" target="_blank" class="app-btn">
             <img src="images/python.jpeg" alt="Python"> Python
           </a> 

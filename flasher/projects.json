@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ultrasonic",
+    "title": "1. Ultrasonic Distance & Traffic Light",
+    "board": "uno",
+    "file": "hex/ultrasonic_display.hex",
+    "description": "Measures distance in cm and lights Green (≥50cm), Yellow (11–49cm), or blinking Red (≤10cm).",
+    "pins": "HC-SR04: Trig=D7, Echo=D6 | TM1637: CLK=D2, DIO=D3 | LEDs: Green=D10, Yellow=D11, Red=D12"
+  },
+  {
+    "id": "counter",
+    "title": "2. Laser / Sensor Event Counter",
+    "board": "uno",
+    "file": "hex/laser_counter.hex",
+    "description": "Counts sensor triggers on the 4-digit display with a push-button reset.",
+    "pins": "Sensor=D8 | Reset Switch=D9 | TM1637: CLK=D6, DIO=D7"
+  },
+  {
+    "id": "blink",
+    "title": "0. Board Test (Built-in LED Blink)",
+    "board": "uno",
+    "file": "hex/blink_test.hex",
+    "description": "Use this first to test your USB cable and Arduino board.",
+    "pins": "No external wiring required (uses onboard Pin 13 LED)."
+  }
+]
